@@ -2,10 +2,10 @@ package events
 
 import (
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/nats-io/nats.go"
+	"github.com/praction-networks/common/logger"
 )
 
 type StreamManager struct {
@@ -41,7 +41,7 @@ func (sm *StreamManager) CreateOrUpdateStream(config StreamConfig) error {
 				return fmt.Errorf("stream %s exists but does not contain subject %s", config.Name, subject)
 			}
 		}
-		log.Printf("Stream %s already exists and is valid.\n", config.Name)
+		logger.Info(fmt.Sprintf("Stream %s already exists and is valid.\n", config.Name))
 		return nil
 	}
 
@@ -63,7 +63,7 @@ func (sm *StreamManager) CreateOrUpdateStream(config StreamConfig) error {
 		return fmt.Errorf("failed to create or update stream %s: %w", config.Name, err)
 	}
 
-	log.Printf("Stream %s created/updated successfully.\n", config.Name)
+	logger.Info(fmt.Sprintf("Stream %s created/updated successfully.\n", config.Name))
 	return nil
 }
 

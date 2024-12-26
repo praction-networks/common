@@ -3,10 +3,10 @@ package events
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/nats-io/nats.go"
+	"github.com/praction-networks/common/logger"
 )
 
 type Publisher[T any] struct {
@@ -53,6 +53,6 @@ func (p *Publisher[T]) Publish(data T, config StreamConfig) error {
 		return fmt.Errorf("failed to publish event to subject %s: %w", p.Subject, err)
 	}
 
-	log.Printf("Published event to subject: %s, Ack: %+v\n", p.Subject, ack)
+	logger.Info("Published event to", "subject", p.Subject, "Ack", ack)
 	return nil
 }

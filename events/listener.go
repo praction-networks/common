@@ -4,10 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/nats-io/nats.go"
+	"github.com/praction-networks/common/logger"
 )
 
 type Listener[T any] struct {
@@ -56,7 +56,7 @@ func (l *Listener[T]) Listen(config StreamConfig) error {
 		case msgCh <- msg:
 		default:
 			// Handle overflow (e.g., drop messages or log warning)
-			log.Printf("Message dropped: %s", msg.Subject)
+			logger.Warn(fmt.Sprintf("Message dropped: %s", msg.Subject))
 			msg.Term()
 		}
 	}, nats.ManualAck(), nats.AckWait(l.AckWait), nats.Bind(config.Name, l.DurableName))
@@ -76,23 +76,23 @@ func (l *Listener[T]) Listen(config StreamConfig) error {
 			case msg := <-msgCh:
 				var event Event[T]
 				if err := json.Unmarshal(msg.Data, &event); err != nil {
-					log.Printf("Failed to unmarshal message: %v", err)
+					logger.Error("Failed to unmarshal message", err)
 					msg.Nak() // Negative acknowledgment for malformed messages
 					continue
 				}
 
 				// Pass the message data to the user-defined function for processing
 				if err := l.OnMessageFunc(event.Data, msg); err != nil {
-					log.Printf("Error processing message: %v", err)
+					logger.Error("Error processing message:", err)
 				}
 			case <-l.stopCh:
-				log.Printf("Stopping listener for subject: %s", l.Subject)
+				logger.Info(fmt.Sprintf("Stopping listener for subject: %s", l.Subject))
 				return
 			}
 		}
 	}()
 
-	log.Printf("Listening to subject: %s, Durable: %s\n", l.Subject, l.DurableName)
+	logger.Info("Listening to subject:", "Subject", l.Subject, "Durable:", l.DurableName)
 	return nil
 }
 
@@ -103,10 +103,10 @@ func (l *Listener[T]) Stop(ctx context.Context) error {
 	// Unsubscribe from the subject
 	if l.Subscription != nil {
 		if err := l.Subscription.Unsubscribe(); err != nil {
-			log.Printf("Failed to unsubscribe from subject: %v", err)
+			logger.Error("Failed to unsubscribe from subject:", err)
 			return fmt.Errorf("failed to unsubscribe: %w", err)
 		}
-		log.Printf("Unsubscribed from subject: %s", l.Subject)
+		logger.Info(fmt.Sprintf("Unsubscribed from subject: %s", l.Subject))
 	}
 
 	select {
