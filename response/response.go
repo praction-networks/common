@@ -18,7 +18,7 @@ type ErrorDetail struct {
 	Message string `json:"message"`
 }
 
-// WriteResponse is a generic utility for writing responses
+// writeResponse is a generic utility for writing responses
 func writeResponse(w http.ResponseWriter, status string, message string, data interface{}, errors []ErrorDetail, statusCode int) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(statusCode)
@@ -39,61 +39,105 @@ func writeResponse(w http.ResponseWriter, status string, message string, data in
 }
 
 func sendError(w http.ResponseWriter, message string, errors []ErrorDetail, statusCode int) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(statusCode)
-
-	response := APIResponse{
-		Status:  "error",
-		Message: message, // Optional general error message
-		Errors:  errors,  // Detailed error list
-	}
-
-	if err := json.NewEncoder(w).Encode(response); err != nil {
-		http.Error(w, `{"status":"error","message":"Failed to encode error response"}`, http.StatusInternalServerError)
-	}
+	writeResponse(w, "error", message, nil, errors, statusCode)
 }
 
 func sendSuccess(w http.ResponseWriter, message string, data interface{}, statusCode int) {
 	writeResponse(w, "success", message, data, nil, statusCode)
 }
 
-func SendCreated(w http.ResponseWriter, message string, data interface{}) {
+// Informational responses
+func Send100Continue(w http.ResponseWriter, message string) {
+	writeResponse(w, "info", message, nil, nil, http.StatusContinue)
+}
+
+func Send101SwitchingProtocols(w http.ResponseWriter, message string) {
+	writeResponse(w, "info", message, nil, nil, http.StatusSwitchingProtocols)
+}
+
+func Send102Processing(w http.ResponseWriter, message string) {
+	writeResponse(w, "info", message, nil, nil, http.StatusProcessing)
+}
+
+func Send103EarlyHints(w http.ResponseWriter, message string) {
+	writeResponse(w, "info", message, nil, nil, http.StatusEarlyHints)
+}
+
+// Success responses
+func Send200OK(w http.ResponseWriter, message string, data interface{}) {
+	sendSuccess(w, message, data, http.StatusOK)
+}
+
+func Send201Created(w http.ResponseWriter, message string, data interface{}) {
 	sendSuccess(w, message, data, http.StatusCreated)
 }
 
-func SendBadRequest(w http.ResponseWriter, message string) {
+func Send202Accepted(w http.ResponseWriter, message string, data interface{}) {
+	sendSuccess(w, message, data, http.StatusAccepted)
+}
+
+func Send203NonAuthoritativeInfo(w http.ResponseWriter, message string, data interface{}) {
+	sendSuccess(w, message, data, http.StatusNonAuthoritativeInfo)
+}
+
+func Send204NoContent(w http.ResponseWriter) {
+	writeResponse(w, "success", "No Content", nil, nil, http.StatusNoContent)
+}
+
+func Send205ResetContent(w http.ResponseWriter, message string) {
+	writeResponse(w, "success", message, nil, nil, http.StatusResetContent)
+}
+
+func Send206PartialContent(w http.ResponseWriter, message string, data interface{}) {
+	sendSuccess(w, message, data, http.StatusPartialContent)
+}
+
+func Send207MultiStatus(w http.ResponseWriter, message string, data interface{}) {
+	sendSuccess(w, message, data, http.StatusMultiStatus)
+}
+
+func Send208AlreadyReported(w http.ResponseWriter, message string, data interface{}) {
+	sendSuccess(w, message, data, http.StatusAlreadyReported)
+}
+
+// Redirection responses
+// Add similar handlers here for 300-series responses if needed
+
+// Client error responses
+func Send400BadRequest(w http.ResponseWriter, message string) {
 	sendError(w, message, []ErrorDetail{{Field: "request", Message: message}}, http.StatusBadRequest)
 }
 
-func SendUnauthorized(w http.ResponseWriter, message string) {
+func Send401Unauthorized(w http.ResponseWriter, message string) {
 	sendError(w, message, []ErrorDetail{{Field: "authentication", Message: message}}, http.StatusUnauthorized)
 }
 
-func SendForbidden(w http.ResponseWriter, message string) {
+func Send403Forbidden(w http.ResponseWriter, message string) {
 	sendError(w, message, []ErrorDetail{{Field: "authorization", Message: message}}, http.StatusForbidden)
 }
 
-func SendNotFound(w http.ResponseWriter, message string) {
+func Send404NotFound(w http.ResponseWriter, message string) {
 	sendError(w, message, []ErrorDetail{{Field: "resource", Message: message}}, http.StatusNotFound)
 }
 
-func SendGone(w http.ResponseWriter, message string) {
+func Send410Gone(w http.ResponseWriter, message string) {
 	sendError(w, message, []ErrorDetail{{Field: "resource", Message: message}}, http.StatusGone)
 }
 
-func SendConflict(w http.ResponseWriter, message string) {
+func Send409Conflict(w http.ResponseWriter, message string) {
 	sendError(w, message, []ErrorDetail{{Field: "conflict", Message: message}}, http.StatusConflict)
 }
 
-func SendUnsupportedMediaType(w http.ResponseWriter, message string) {
+func Send415UnsupportedMediaType(w http.ResponseWriter, message string) {
 	sendError(w, message, []ErrorDetail{{Field: "media_type", Message: message}}, http.StatusUnsupportedMediaType)
 }
 
-func SendInternalServerError(w http.ResponseWriter, message string) {
+// Server error responses
+func Send500InternalServerError(w http.ResponseWriter, message string) {
 	sendError(w, message, []ErrorDetail{{Field: "server", Message: message}}, http.StatusInternalServerError)
 }
 
-func SendServiceUnavailable(w http.ResponseWriter, message string) {
+func Send503ServiceUnavailable(w http.ResponseWriter, message string) {
 	sendError(w, message, []ErrorDetail{{Field: "server", Message: message}}, http.StatusServiceUnavailable)
 }
 
@@ -101,6 +145,7 @@ func SendCustomError(w http.ResponseWriter, message string, errors []ErrorDetail
 	sendError(w, message, errors, statusCode)
 }
 
+// calculateCount calculates the count for the data field
 func calculateCount(data interface{}) *int {
 	switch v := data.(type) {
 	case []interface{}:

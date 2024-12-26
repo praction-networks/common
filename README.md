@@ -9,4 +9,4 @@ A shared library for Go microservices, including:
 
 ## Installation
 ```bash
-go get github.com/praction-networks/common@v1.0.0
+go get github.com/praction-networks/common
