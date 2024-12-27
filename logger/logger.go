@@ -30,6 +30,56 @@ type LoggerConfig struct {
 	LogLevel        string
 }
 
+// CasbinLogger is a wrapper for your custom logger to integrate with Casbin
+type CasbinLogger struct {
+	enabled bool
+}
+
+// NewCasbinLogger creates a new CasbinLogger instance
+func NewCasbinLogger() *CasbinLogger {
+	return &CasbinLogger{
+		enabled: true, // Enable logging by default
+	}
+}
+
+// EnableLog enables or disables logging
+func (c *CasbinLogger) EnableLog(enabled bool) {
+	c.enabled = enabled
+}
+
+// IsEnabled checks if logging is enabled
+func (c *CasbinLogger) IsEnabled() bool {
+	return c.enabled
+}
+
+// LogModel logs Casbin model details
+func (c *CasbinLogger) LogModel(v ...interface{}) {
+	if c.IsEnabled() {
+		Debug("Casbin Model", v...)
+	}
+}
+
+// LogPolicy logs Casbin policy details
+func (c *CasbinLogger) LogPolicy(v ...interface{}) {
+	if c.IsEnabled() {
+		Debug("Casbin Policy", v...)
+	}
+}
+
+// LogEnforce logs Casbin enforcement results
+func (c *CasbinLogger) LogEnforce(v ...interface{}) {
+	if c.IsEnabled() {
+		Info("Casbin Enforcement", v...)
+	}
+}
+
+// Log logs general Casbin messages
+func (c *CasbinLogger) Log(v ...interface{}) {
+	if c.IsEnabled() {
+		Info("Casbin Log", v...)
+	}
+}
+
 // logstashWriter implements zapcore.WriteSyncer for sending logs to Logstash
 type logstashWriter struct {
 	url string
