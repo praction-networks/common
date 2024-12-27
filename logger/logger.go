@@ -53,16 +53,23 @@ func (c *CasbinLogger) IsEnabled() bool {
 }
 
 // LogModel logs Casbin model details
-func (c *CasbinLogger) LogModel(v ...interface{}) {
+func (c *CasbinLogger) LogModel(model [][]string) {
 	if c.IsEnabled() {
-		Debug("Casbin Model", v...)
+		Debug("Casbin Model", model)
 	}
 }
 
 // LogPolicy logs Casbin policy details
-func (c *CasbinLogger) LogPolicy(v ...interface{}) {
+func (c *CasbinLogger) LogPolicy(policy map[string][][]string) {
 	if c.IsEnabled() {
-		Debug("Casbin Policy", v...)
+		Debug("Casbin Policy", policy)
+	}
+}
+
+// LogRole logs Casbin role-related information
+func (c *CasbinLogger) LogRole(roles []string) {
+	if c.IsEnabled() {
+		Debug("Casbin Role", "roles", roles)
 	}
 }
 
