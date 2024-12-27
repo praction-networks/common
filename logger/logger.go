@@ -78,6 +78,13 @@ func (c *CasbinLogger) LogEnforce(matcher string, request []interface{}, result 
 	}
 }
 
+// LogError logs error messages
+func (c *CasbinLogger) LogError(v ...interface{}) {
+	if c.IsEnabled() {
+		Error("Casbin Error", v...)
+	}
+}
+
 // Log logs general Casbin messages
 func (c *CasbinLogger) Log(v ...interface{}) {
 	if c.IsEnabled() {
