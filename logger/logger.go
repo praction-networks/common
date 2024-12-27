@@ -67,7 +67,7 @@ func (c *CasbinLogger) LogPolicy(v ...interface{}) {
 }
 
 // LogEnforce logs Casbin enforcement results
-func (c *CasbinLogger) LogEnforce(matcher string, request []interface{}, result bool, explains []string) {
+func (c *CasbinLogger) LogEnforce(matcher string, request []interface{}, result bool, explains [][]string) {
 	if c.IsEnabled() {
 		Info("Casbin Enforcement",
 			"matcher", matcher,
