@@ -79,9 +79,12 @@ func (c *CasbinLogger) LogEnforce(matcher string, request []interface{}, result 
 }
 
 // LogError logs error messages
-func (c *CasbinLogger) LogError(v ...interface{}) {
+func (c *CasbinLogger) LogError(err error, v ...string) {
 	if c.IsEnabled() {
-		Error("Casbin Error", v...)
+		Error("Casbin Error",
+			"error", err,
+			"details", v,
+		)
 	}
 }
 
@@ -102,7 +105,7 @@ func InitializeLogger(config LoggerConfig) error {
 
 	initOnce.Do(func() {
 		if config.LogstashEnabled && (config.LogstashHost == "" || config.LogstashPort == 0) {
-			errInit = fmt.Errorf("Invalid Logstash configuration: Host or port is missing.")
+			errInit = fmt.Errorf("invalid logstash configuration: host or port is missing")
 			return
 		}
 
