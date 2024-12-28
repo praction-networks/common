@@ -19,6 +19,8 @@ const (
 	ErrorCodeInternalServerError = 5000
 	ErrorCodeUnknown             = 9999
 	ErrorCodeEmptyBody           = 9000
+	ErrorCodeInactiveUser        = 9001
+	ErrorCodeDeletedUser         = 9002
 )
 
 // AppError defines the structure of a standardized application error.
