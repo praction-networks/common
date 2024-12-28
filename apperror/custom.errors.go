@@ -1,32 +1,43 @@
 package apperror
 
-import (
-	"context"
-	"errors"
-	"net/http"
-	"strings"
+// Predefined error codes
+const (
+	// Repository Errors
+	ErrorCodeDatabaseConnection = 1001
+	ErrorCodeDuplicateKey       = 1002
+	ErrorCodeRecordNotFound     = 1003
 
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/x/mongo/driver"
+	// Service Errors
+	ErrorCodeBusinessLogicFailure = 2001
+	ErrorCodeInvalidInput         = 2002
+
+	// Handler Errors
+	ErrorCodeRequestParsingFailed = 4001
+	ErrorCodeUnauthorized         = 4003
+
+	// Generic Errors
+	ErrorCodeInternalServerError = 5000
+	ErrorCodeUnknown             = 9999
 )
 
-// AppError interface defines the structure of a custom application error.
+// AppError defines the structure of a standardized application error.
 type AppError interface {
-	Error() string                     // Returns the error message
-	Type() string                      // Returns the error type (e.g., "validation", "database", etc.)
-	StatusCode() int                   // Returns the corresponding HTTP status code
-	Cause() error                      // Returns the original error, if any
-	Metadata() map[string]interface{}  // Returns additional context for the error
-	LogFields() map[string]interface{} // Returns structured fields for logging
+	Error() string                   // Returns the error message.
+	ErrorCode() int                  // Returns the unique error code.
+	ErrorType() string               // Returns the error type (e.g., "database", "validation").
+	Layer() string                   // Returns the layer where the error originated.
+	Details() map[string]interface{} // Returns additional context for the error.
+	Unwrap() error                   // Returns the original error, if any.
 }
 
 // appErrorImpl is the concrete implementation of the AppError interface.
 type appErrorImpl struct {
-	message    string
-	errType    string
-	statusCode int
-	cause      error
-	metadata   map[string]interface{}
+	message   string
+	errorCode int
+	errorType string
+	layer     string
+	details   map[string]interface{}
+	cause     error
 }
 
 // Error returns the error message.
@@ -34,172 +45,72 @@ func (e *appErrorImpl) Error() string {
 	return e.message
 }
 
-// Type returns the error type.
-func (e *appErrorImpl) Type() string {
-	return e.errType
+// ErrorCode returns the unique error code.
+func (e *appErrorImpl) ErrorCode() int {
+	return e.errorCode
 }
 
-// StatusCode returns the HTTP status code associated with the error.
-func (e *appErrorImpl) StatusCode() int {
-	return e.statusCode
+// ErrorType returns the error type.
+func (e *appErrorImpl) ErrorType() string {
+	return e.errorType
 }
 
-// Cause returns the original error, if any.
-func (e *appErrorImpl) Cause() error {
+// Layer returns the layer where the error originated.
+func (e *appErrorImpl) Layer() string {
+	return e.layer
+}
+
+// Details returns additional context for the error.
+func (e *appErrorImpl) Details() map[string]interface{} {
+	return e.details
+}
+
+// Unwrap returns the original error, if any.
+func (e *appErrorImpl) Unwrap() error {
 	return e.cause
 }
 
-// Metadata returns additional context for the error.
-func (e *appErrorImpl) Metadata() map[string]interface{} {
-	return e.metadata
-}
-
-// LogFields returns structured fields for logging.
-func (e *appErrorImpl) LogFields() map[string]interface{} {
-	return map[string]interface{}{
-		"message":    e.message,
-		"type":       e.errType,
-		"statusCode": e.statusCode,
-		"metadata":   e.metadata,
-	}
-}
-
-// Factory methods to create specific errors
-
-func NewValidationError(message string, metadata map[string]interface{}) AppError {
+// NewAppError creates a new AppError.
+func NewAppError(message string, errorCode int, errorType, layer string, details map[string]interface{}, cause error) AppError {
 	return &appErrorImpl{
-		message:    message,
-		errType:    "validation",
-		statusCode: http.StatusBadRequest,
-		metadata:   metadata,
+		message:   message,
+		errorCode: errorCode,
+		errorType: errorType,
+		layer:     layer,
+		details:   details,
+		cause:     cause,
 	}
 }
 
-func NewDatabaseError(message string, cause error) AppError {
-	return &appErrorImpl{
-		message:    message,
-		errType:    "database",
-		statusCode: http.StatusInternalServerError,
-		cause:      cause,
-	}
+// Predefined factory methods for creating layer-specific errors.
+
+// Repository Errors
+func NewRepositoryError(message string, errorCode int, cause error) AppError {
+	return NewAppError(message, errorCode, "repository", "repository", nil, cause)
 }
 
-func NewNotFoundError(message string) AppError {
-	return &appErrorImpl{
-		message:    message,
-		errType:    "not_found",
-		statusCode: http.StatusNotFound,
-	}
+// Service Errors
+func NewServiceError(message string, errorCode int, cause error) AppError {
+	return NewAppError(message, errorCode, "service", "service", nil, cause)
 }
 
-func NewConflictError(message string) AppError {
-	return &appErrorImpl{
-		message:    message,
-		errType:    "conflict",
-		statusCode: http.StatusConflict,
-	}
+// Handler Errors
+func NewHandlerError(message string, errorCode int, cause error) AppError {
+	return NewAppError(message, errorCode, "handler", "handler", nil, cause)
 }
 
-func NewAuthenticationError(message string) AppError {
-	return &appErrorImpl{
-		message:    message,
-		errType:    "authentication",
-		statusCode: http.StatusUnauthorized,
-	}
+// Validation Errors
+func NewValidationError(message string, errorCode int, details map[string]interface{}) AppError {
+	return NewAppError(message, errorCode, "validation", "service", details, nil)
 }
 
-func NewAuthorizationError(message string) AppError {
-	return &appErrorImpl{
-		message:    message,
-		errType:    "authorization",
-		statusCode: http.StatusForbidden,
-	}
-}
-
-func NewRateLimitError(message string) AppError {
-	return &appErrorImpl{
-		message:    message,
-		errType:    "rate_limit",
-		statusCode: http.StatusTooManyRequests,
-	}
-}
-
-func NewInternalError(message string, cause error) AppError {
-	return &appErrorImpl{
-		message:    message,
-		errType:    "internal",
-		statusCode: http.StatusInternalServerError,
-		cause:      cause,
-	}
-}
-
-// Utility function to convert generic error to AppError
+// Utility function to convert a generic error into an AppError.
 func AsAppError(err error) (AppError, bool) {
 	appErr, ok := err.(AppError)
 	return appErr, ok
 }
 
-// MongoDB-specific error checks
-
-// IsDuplicateKeyError checks if the error is a MongoDB duplicate key error.
-func IsDuplicateKeyError(err error) bool {
-	var writeErr mongo.WriteException
-	if errors.As(err, &writeErr) {
-		for _, we := range writeErr.WriteErrors {
-			if we.Code == 11000 {
-				return true
-			}
-		}
-	}
-	return false
-}
-
-// IsNetworkError checks if the error is a network-related MongoDB error.
-func IsNetworkError(err error) bool {
-	_, isNetworkError := err.(driver.Error)
-	return isNetworkError
-}
-
-// IsTimeoutError checks if the error is a timeout error.
-func IsTimeoutError(err error) bool {
-	return errors.Is(err, context.DeadlineExceeded) || strings.Contains(err.Error(), "timeout")
-}
-
-// IsReadPrefError checks if the error is related to MongoDB read preference.
-func IsReadPrefError(err error) bool {
-	return strings.Contains(err.Error(), "invalid read preference")
-}
-
-// IsWriteConcernError checks if the error is a MongoDB write concern error.
-func IsWriteConcernError(err error) bool {
-	var writeErr mongo.WriteException
-	if errors.As(err, &writeErr) {
-		for _, we := range writeErr.WriteErrors {
-			// Check if the error relates to write concern
-			if strings.Contains(we.Message, "write concern error") {
-				return true
-			}
-		}
-	}
-
-	// Fallback: Check for generic write concern error messages
-	return strings.Contains(err.Error(), "write concern error")
-}
-
-// Example usage of the MongoDB error checks
-func HandleMongoError(err error) AppError {
-	switch {
-	case IsDuplicateKeyError(err):
-		return NewConflictError("Duplicate key error in MongoDB")
-	case IsNetworkError(err):
-		return NewInternalError("Network error in MongoDB", err)
-	case IsTimeoutError(err):
-		return NewInternalError("Timeout error in MongoDB", err)
-	case IsReadPrefError(err):
-		return NewDatabaseError("Invalid read preference error", err)
-	case IsWriteConcernError(err):
-		return NewDatabaseError("Write concern error", err)
-	default:
-		return NewInternalError("Unknown MongoDB error", err)
-	}
+// Example utility to handle unknown errors.
+func NewUnknownError(cause error) AppError {
+	return NewAppError("An unknown error occurred", ErrorCodeUnknown, "unknown", "unknown", nil, cause)
 }

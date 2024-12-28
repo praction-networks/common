@@ -95,7 +95,7 @@ func (c *CasbinLogger) LogError(err error, v ...string) {
 	}
 }
 
-// Log logs general Casbin messages
+// logs general Casbin messages
 func (c *CasbinLogger) Log(v ...interface{}) {
 	if c.IsEnabled() {
 		Info("Casbin Log", v...)
