@@ -2,25 +2,53 @@ package apperror
 
 // Predefined error codes
 const (
-	// Repository Errors
-	ErrorCodeDatabaseConnection = 1001
-	ErrorCodeDuplicateKey       = 1002
-	ErrorCodeRecordNotFound     = 1003
+	// Informational (3xx)
+	ErrorCodeProcessing           = 3300 // Processing in progress
+	ErrorCodeMovedPermanently     = 3301 // Resource moved permanently (301)
+	ErrorCodeFoundRedirect        = 3302 // Temporary redirect (302)
+	ErrorCodeNotModified          = 3304 // Resource not modified (304)
+	ErrorCodeTemporaryRedirect    = 3307 // Temporary redirect (307)
+	ErrorCodeRedirectToLogin      = 3310 // Redirect to login page
+	ErrorCodeRedirectToHome       = 3311 // Redirect to home page
+	ErrorCodeTemporaryUnavailable = 3312 // Temporary unavailability
 
-	// Service Errors
-	ErrorCodeBusinessLogicFailure = 2001
-	ErrorCodeInvalidInput         = 2002
+	// Client Errors (4xx)
+	ErrorCodeInvalidInput         = 4400 // Invalid input or bad request
+	ErrorCodeUnauthorized         = 4401 // Unauthorized access
+	ErrorCodeForbidden            = 4403 // Forbidden action
+	ErrorCodeResourceNotFound     = 4404 // Resource not found (404)
+	ErrorCodeEmptyBody            = 4405 // Empty request body
+	ErrorCodeNotAcceptable        = 4406 // Not acceptable
+	ErrorCodePayloadTooLarge      = 4407 // Payload too large
+	ErrorCodeUnsupportedMedia     = 4408 // Unsupported media type
+	ErrorCodeResourceConflict     = 4409 // Conflict (e.g., duplicate resource)
+	ErrorCodeSessionExpired       = 4410 // Session expired
+	ErrorCodeInvalidCredentials   = 4411 // Invalid username or password
+	ErrorCodeTokenExpired         = 4412 // Token has expired
+	ErrorCodeCSRFValidationFailed = 4413 // CSRF validation failed
 
-	// Handler Errors
-	ErrorCodeRequestParsingFailed = 4001
-	ErrorCodeUnauthorized         = 4003
+	// Security Errors (4xx)
+	ErrorCodeInactiveUser    = 4414 // Inactive user
+	ErrorCodeDeletedUser     = 4415 // Deleted user
+	ErrorCodeTooManyRequests = 4429 // Too many requests (rate-limited)
 
-	// Generic Errors
-	ErrorCodeInternalServerError = 5000
-	ErrorCodeUnknown             = 9999
-	ErrorCodeEmptyBody           = 9000
-	ErrorCodeInactiveUser        = 9001
-	ErrorCodeDeletedUser         = 9002
+	// Repository Errors (4xx/5xx)
+	ErrorCodeDuplicateKey      = 4500 // Duplicate key error (Conflict)
+	ErrorCodeRecordNotFound    = 4504 // Record not found (Repository)
+	ErrorCodeQueryTimeout      = 5501 // Query execution timeout
+	ErrorCodeTransactionFailed = 5502 // Transaction failure
+
+	// Service Errors (5xx)
+	ErrorCodeInternalServerError = 5500 // Generic internal server error
+	ErrorCodeDatabaseConnection  = 5503 // Database connection error
+	ErrorCodeExternalService     = 5504 // External service failure
+	ErrorCodeDependencyFailure   = 5505 // Dependency service failure
+	ErrorCodeConfigurationError  = 5506 // Misconfiguration on the server
+	ErrorCodeResourceExhausted   = 5507 // Server resources exhausted
+	ErrorCodeServiceUnavailable  = 5508 // Service unavailable
+	ErrorCodeGatewayTimeout      = 5509 // Gateway timeout
+	ErrorCodeInsufficientStorage = 5510 // Insufficient storage
+	ErrorCodeUnknown             = 5599 // Unknown server error
 )
 
 // AppError defines the structure of a standardized application error.
