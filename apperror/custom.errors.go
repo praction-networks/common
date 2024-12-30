@@ -53,7 +53,7 @@ const (
 
 // AppError defines the structure of a standardized application error.
 type AppError interface {
-	Error() string     // Returns the error message.
+	Message() string   // Returns the error message.
 	ErrorCode() int    // Returns the unique error code.
 	ErrorType() string // Returns the error type (e.g., "database", "validation").
 	Layer() string     // Returns the layer where the error originated.
@@ -69,7 +69,7 @@ type appErrorImpl struct {
 }
 
 // Error returns the error message.
-func (e *appErrorImpl) Error() string {
+func (e *appErrorImpl) Message() string {
 	return e.message
 }
 
@@ -120,6 +120,11 @@ func NewRepositoryError(message string, errorCode int, errorType string, cause e
 // NewServiceError creates an AppError for the service layer.
 func NewServiceError(message string, errorCode int, errorType string, cause error) AppError {
 	return newAppError(message, errorCode, errorType, "service", cause)
+}
+
+// NewServiceError creates an AppError for the service layer.
+func NewUtilsError(message string, errorCode int, errorType string, cause error) AppError {
+	return newAppError(message, errorCode, errorType, "utils", cause)
 }
 
 // AsAppError converts a generic error into an AppError if possible.
