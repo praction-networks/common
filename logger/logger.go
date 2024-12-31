@@ -376,10 +376,10 @@ func withFields(args []interface{}) []zap.Field {
 			case string:
 				fields = append(fields, zap.Any(key, args[i+1]))
 			default:
-				logInstance.Warn("Invalid key in arguments passed to logger", zap.Any("invalid_key", key))
+				logInstance.WithOptions(zap.AddCallerSkip(3)).Warn("Invalid key in arguments passed to logger", zap.Any("invalid_key", key))
 			}
 		} else {
-			logInstance.Warn("Missing value for key in arguments passed to logger", zap.Any("key", args[i]))
+			logInstance.WithOptions(zap.AddCallerSkip(3)).Warn("Missing value for key in arguments passed to logger", zap.Any("key", args[i]))
 		}
 	}
 

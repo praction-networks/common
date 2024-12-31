@@ -53,14 +53,12 @@ const (
 	ErrorCodeGatewayTimeout      = 5509 // Gateway timeout
 	ErrorCodeInsufficientStorage = 5510 // Insufficient storage
 	ErrorCodeUnknown             = 5599 // Unknown server error
-)
 
-// Predefined error types
-const (
 	ErrorTypeValidation = "validation"
 	ErrorTypeDatabase   = "database"
 	ErrorTypeService    = "service"
 	ErrorTypeUtils      = "utils"
+	ErrorTypeMiddleware = "middleware"
 )
 
 // Predefined error codes (unchanged for brevity)
