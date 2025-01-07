@@ -55,14 +55,14 @@ func (c *CasbinLogger) IsEnabled() bool {
 // LogModel logs Casbin model details
 func (c *CasbinLogger) LogModel(model [][]string) {
 	if c.IsEnabled() {
-		Debug("Casbin Model", model)
+		Debug("Casbin Model", "Model", model)
 	}
 }
 
 // LogPolicy logs Casbin policy details
 func (c *CasbinLogger) LogPolicy(policy map[string][][]string) {
 	if c.IsEnabled() {
-		Debug("Casbin Policy", policy)
+		Debug("Casbin Policy", "Policy", policy)
 	}
 }
 
@@ -379,7 +379,7 @@ func withFields(args []interface{}) []zap.Field {
 				logInstance.WithOptions(zap.AddCallerSkip(3)).Warn("Invalid key in arguments passed to logger", zap.Any("invalid_key", key))
 			}
 		} else {
-			logInstance.WithOptions(zap.AddCallerSkip(3)).Warn("Missing value for key in arguments passed to logger", zap.Any("key", args[i]))
+			logInstance.WithOptions(zap.AddCallerSkip(4)).Warn("Missing value for key in arguments passed to logger", zap.Any("key", args[i]))
 		}
 	}
 
