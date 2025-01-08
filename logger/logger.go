@@ -35,8 +35,11 @@ type CasbinLogger struct {
 	enabled bool
 }
 
-// NewCasbinLogger creates a new CasbinLogger instance
+// NewCasbinLogger creates a new CasbinLogger instance// NewCasbinLogger creates a new CasbinLogger instance
 func NewCasbinLogger() *CasbinLogger {
+	// Adjust caller skip to avoid redundant logging frames
+	logInstance = logInstance.WithOptions(zap.AddCallerSkip(2))
+
 	return &CasbinLogger{
 		enabled: true, // Enable logging by default
 	}
