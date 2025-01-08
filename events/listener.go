@@ -8,6 +8,7 @@ import (
 
 	"github.com/nats-io/nats.go"
 	"github.com/praction-networks/common/logger"
+	"github.com/praction-networks/common/metrics"
 )
 
 type ListenerType int
@@ -28,6 +29,7 @@ type Listener[T any] struct {
 	OnMessageFunc func(data T, msg *nats.Msg) error
 	stopCh        chan struct{}
 	Subscription  *nats.Subscription
+	Metrics       *metrics.Metrics
 }
 
 // Constructor for Listener
@@ -39,6 +41,7 @@ func NewListener[T any](
 	maxRetries int,
 	listenerType ListenerType,
 	onMessage func(data T, msg *nats.Msg) error,
+	metrics *metrics.Metrics,
 ) *Listener[T] {
 	return &Listener[T]{
 		Subject:       subject,
@@ -49,6 +52,7 @@ func NewListener[T any](
 		Type:          listenerType,
 		OnMessageFunc: onMessage,
 		stopCh:        make(chan struct{}),
+		Metrics:       metrics,
 	}
 }
 
@@ -58,26 +62,18 @@ func (l *Listener[T]) Listen(config StreamConfig) error {
 		return fmt.Errorf("failed to ensure stream: %w", err)
 	}
 
-	if l.Type == OneTime {
+	switch l.Type {
+	case OneTime:
 		return l.setupOneTimeListener(config)
+	default:
+		return l.setupBufferedListener(config)
 	}
-	return l.setupBufferedListener(config)
 }
 
 // Setup for One-Time Listeners
 func (l *Listener[T]) setupOneTimeListener(config StreamConfig) error {
 	sub, err := l.StreamManager.Client.QueueSubscribe(string(l.Subject), l.DurableName, func(msg *nats.Msg) {
-		var event Event[T]
-		if err := json.Unmarshal(msg.Data, &event); err != nil {
-			logger.Error("Failed to unmarshal message", err)
-			msg.Nak()
-			return
-		}
-
-		if err := l.OnMessageFunc(event.Data, msg); err != nil {
-			logger.Error("Error processing one-time message:", err)
-		}
-		msg.Ack()
+		l.processMessage(config.Name, msg)
 	}, nats.ManualAck(), nats.AckWait(l.AckWait), nats.Bind(config.Name, l.DurableName))
 
 	if err != nil {
@@ -107,35 +103,20 @@ func (l *Listener[T]) setupBufferedListener(config StreamConfig) error {
 	}
 
 	l.Subscription = sub
-	go l.processMessages(msgCh)
+	go l.processMessages(config.Name, msgCh)
 
 	logger.Info("Listening to subject:", "Subject", l.Subject, "Durable:", l.DurableName)
 	return nil
 }
 
 // Message processing logic
-func (l *Listener[T]) processMessages(msgCh chan *nats.Msg) {
+func (l *Listener[T]) processMessages(streamName string, msgCh chan *nats.Msg) {
 	defer close(msgCh)
 
 	for {
 		select {
 		case msg := <-msgCh:
-			start := time.Now()
-			var event Event[T]
-			if err := json.Unmarshal(msg.Data, &event); err != nil {
-				logger.Error("Failed to unmarshal message", err)
-				msg.Nak()
-				continue
-			}
-
-			switch l.Type {
-			case Critical:
-				l.handleCriticalMessage(event.Data, msg)
-			case Retryable:
-				l.handleRetryableMessage(event.Data, msg)
-			}
-
-			logger.Info("Processed message", "Subject", l.Subject, "Duration", time.Since(start))
+			l.processMessage(streamName, msg)
 		case <-l.stopCh:
 			logger.Info(fmt.Sprintf("Stopping listener for subject: %s", l.Subject))
 			return
@@ -143,14 +124,51 @@ func (l *Listener[T]) processMessages(msgCh chan *nats.Msg) {
 	}
 }
 
+// Process a single message
+func (l *Listener[T]) processMessage(streamName string, msg *nats.Msg) {
+	start := time.Now()
+	var event Event[T]
+	if err := json.Unmarshal(msg.Data, &event); err != nil {
+		if l.Metrics != nil {
+			l.Metrics.FailedMessages.WithLabelValues(streamName, string(l.Subject)).Inc()
+		}
+		logger.Error("Failed to unmarshal message", "error", err)
+		msg.Nak()
+		return
+	}
+
+	switch l.Type {
+	case Critical:
+		l.handleCriticalMessage(streamName, event.Data, msg)
+	case Retryable:
+		l.handleRetryableMessage(streamName, event.Data, msg)
+	default:
+		if err := l.OnMessageFunc(event.Data, msg); err != nil {
+			if l.Metrics != nil {
+				l.Metrics.FailedMessages.WithLabelValues(streamName, string(l.Subject)).Inc()
+			}
+			logger.Error("Error processing message:", err)
+		} else if l.Metrics != nil {
+			l.Metrics.ProcessedMessages.WithLabelValues(streamName, string(l.Subject)).Inc()
+		}
+		msg.Ack()
+	}
+
+	logger.Info("Processed message", "Subject", l.Subject, "Duration", time.Since(start))
+}
+
 // Handle Critical messages with retries and DLQ
-func (l *Listener[T]) handleCriticalMessage(data T, msg *nats.Msg) {
+func (l *Listener[T]) handleCriticalMessage(streamName string, data T, msg *nats.Msg) {
 	retries := 0
 	backoff := time.Second
 
 	for {
 		if err := l.OnMessageFunc(data, msg); err != nil {
 			retries++
+			if l.Metrics != nil {
+				l.Metrics.FailedMessages.WithLabelValues(streamName, string(l.Subject)).Inc()
+			}
+
 			if retries > l.MaxRetries {
 				dlqSubject := fmt.Sprintf("%s.dlq", string(l.Subject))
 				l.StreamManager.Client.Publish(dlqSubject, msg.Data)
@@ -167,17 +185,23 @@ func (l *Listener[T]) handleCriticalMessage(data T, msg *nats.Msg) {
 			}
 			continue
 		}
+		if l.Metrics != nil {
+			l.Metrics.ProcessedMessages.WithLabelValues(streamName, string(l.Subject)).Inc()
+		}
 		msg.Ack()
 		break
 	}
 }
 
 // Handle Retryable messages with limited retries
-func (l *Listener[T]) handleRetryableMessage(data T, msg *nats.Msg) {
+func (l *Listener[T]) handleRetryableMessage(streamName string, data T, msg *nats.Msg) {
 	retries := 0
 	for {
 		if err := l.OnMessageFunc(data, msg); err != nil {
 			retries++
+			if l.Metrics != nil {
+				l.Metrics.FailedMessages.WithLabelValues(streamName, string(l.Subject)).Inc()
+			}
 			if retries > l.MaxRetries {
 				logger.Warn("Retryable message dropped after max retries", "Subject", l.Subject, "Data", data)
 				msg.Term()
@@ -185,6 +209,9 @@ func (l *Listener[T]) handleRetryableMessage(data T, msg *nats.Msg) {
 			}
 			time.Sleep(time.Second * 2)
 			continue
+		}
+		if l.Metrics != nil {
+			l.Metrics.ProcessedMessages.WithLabelValues(streamName, string(l.Subject)).Inc()
 		}
 		msg.Ack()
 		break

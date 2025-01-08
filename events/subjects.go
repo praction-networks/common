@@ -6,6 +6,6 @@ const (
 	// Domain
 	DomainCreated Subjects = "domain.created"
 
-	// Add more as needed
+	// Postal
 	PostalServerCreated Subjects = "postalserver.created"
 )
