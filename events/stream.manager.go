@@ -10,10 +10,18 @@ import (
 
 type StreamManager struct {
 	Client nats.JetStreamContext
+	Conn   *nats.Conn
 }
 
-func NewStreamManager(client nats.JetStreamContext) *StreamManager {
-	return &StreamManager{Client: client}
+func NewStreamManager(conn *nats.Conn) (*StreamManager, error) {
+	js, err := conn.JetStream()
+	if err != nil {
+		return nil, fmt.Errorf("failed to initialize JetStream context: %w", err)
+	}
+	return &StreamManager{
+		Client: js,
+		Conn:   conn,
+	}, nil
 }
 
 type StreamConfig struct {
