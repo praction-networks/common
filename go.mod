@@ -4,7 +4,7 @@ go 1.23.2
 
 require (
 	github.com/nats-io/nats.go v1.38.0
-	go.mongodb.org/mongo-driver v1.17.1
+	go.mongodb.org/mongo-driver v1.17.2
 	go.uber.org/zap v1.27.0
 )
 

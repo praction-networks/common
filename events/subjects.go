@@ -3,8 +3,9 @@ package events
 type Subjects string
 
 const (
-	// Zone
+	// Domain
 	DomainCreated Subjects = "domain.created"
 
 	// Add more as needed
+	PostalServerCreated Subjects = "postalserver.created"
 )
