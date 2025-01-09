@@ -1,4 +1,4 @@
-package eventSubjects
+package eventsubjects
 
 type Subjects string
 
