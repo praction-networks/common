@@ -5,23 +5,16 @@ import (
 	"time"
 
 	"github.com/nats-io/nats.go"
+	eventSubjects "github.com/praction-networks/common/events/eventsubjects"
 	"github.com/praction-networks/common/logger"
 )
 
 type StreamManager struct {
 	Client nats.JetStreamContext
-	Conn   *nats.Conn
 }
 
-func NewStreamManager(conn *nats.Conn) (*StreamManager, error) {
-	js, err := conn.JetStream()
-	if err != nil {
-		return nil, fmt.Errorf("failed to initialize JetStream context: %w", err)
-	}
-	return &StreamManager{
-		Client: js,
-		Conn:   conn,
-	}, nil
+func NewStreamManager(client nats.JetStreamContext) *StreamManager {
+	return &StreamManager{Client: client}
 }
 
 type StreamConfig struct {
@@ -82,4 +75,13 @@ func contains(slice []string, item string) bool {
 		}
 	}
 	return false
+}
+
+// ConvertSubjectsToStrings converts an array of Subjects to strings
+func ConvertSubjectsToStrings(subjects []eventSubjects.Subjects) []string {
+	strSubjects := make([]string, len(subjects))
+	for i, subj := range subjects {
+		strSubjects[i] = string(subj)
+	}
+	return strSubjects
 }

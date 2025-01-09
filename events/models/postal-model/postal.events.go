@@ -1,4 +1,4 @@
-package postalmodel
+package postalEvenetModel
 
 import "go.mongodb.org/mongo-driver/bson/primitive"
 
