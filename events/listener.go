@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/nats-io/nats.go"
-	eventSubjects "github.com/praction-networks/common/events/eventsubjects"
+	"github.com/praction-networks/common/events/eventsubjects"
 	"github.com/praction-networks/common/logger"
 	"github.com/praction-networks/common/metrics"
 )
@@ -21,7 +21,7 @@ const (
 )
 
 type Listener[T any] struct {
-	Subject       eventSubjects.Subjects
+	Subject       eventsubjects.Subjects
 	StreamManager *StreamManager
 	DurableName   string
 	AckWait       time.Duration
@@ -35,7 +35,7 @@ type Listener[T any] struct {
 
 // Constructor for Listener
 func NewListener[T any](
-	subject eventSubjects.Subjects,
+	subject eventsubjects.Subjects,
 	streamManager *StreamManager,
 	durableName string,
 	ackWait time.Duration,

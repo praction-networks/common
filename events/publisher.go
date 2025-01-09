@@ -6,19 +6,19 @@ import (
 	"time"
 
 	"github.com/nats-io/nats.go"
-	eventSubjects "github.com/praction-networks/common/events/eventsubjects"
+	"github.com/praction-networks/common/events/eventsubjects"
 	"github.com/praction-networks/common/logger"
 	"github.com/praction-networks/common/metrics"
 )
 
 type Publisher[T any] struct {
-	Subject       eventSubjects.Subjects
+	Subject       eventsubjects.Subjects
 	StreamManager *StreamManager
 	EnableDedup   bool
 	Metrics       *metrics.Metrics
 }
 
-func NewPublisher[T any](subject eventSubjects.Subjects, streamManager *StreamManager, enableDedup bool, metrics *metrics.Metrics) *Publisher[T] {
+func NewPublisher[T any](subject eventsubjects.Subjects, streamManager *StreamManager, enableDedup bool, metrics *metrics.Metrics) *Publisher[T] {
 	return &Publisher[T]{
 		Subject:       subject,
 		StreamManager: streamManager,

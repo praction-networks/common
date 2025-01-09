@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/nats-io/nats.go"
-	eventSubjects "github.com/praction-networks/common/events/eventsubjects"
+	"github.com/praction-networks/common/events/eventsubjects"
 	"github.com/praction-networks/common/logger"
 )
 
@@ -78,7 +78,7 @@ func contains(slice []string, item string) bool {
 }
 
 // ConvertSubjectsToStrings converts an array of Subjects to strings
-func ConvertSubjectsToStrings(subjects []eventSubjects.Subjects) []string {
+func ConvertSubjectsToStrings(subjects []eventsubjects.Subjects) []string {
 	strSubjects := make([]string, len(subjects))
 	for i, subj := range subjects {
 		strSubjects[i] = string(subj)
