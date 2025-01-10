@@ -88,12 +88,3 @@ func contains(slice []string, item string) bool {
 	}
 	return false
 }
-
-// ConvertSubjectsToStrings converts an array of Subjects to strings
-func ConvertSubjectsToStrings(subjects []Subjects) []string {
-	strSubjects := make([]string, len(subjects))
-	for i, subj := range subjects {
-		strSubjects[i] = string(subj)
-	}
-	return strSubjects
-}

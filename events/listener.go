@@ -21,7 +21,7 @@ const (
 )
 
 type Listener[T any] struct {
-	Subject       Subjects
+	Subject       string
 	StreamManager *StreamManager
 	DeliverGroup  string
 	ConsumerName  string
@@ -36,7 +36,7 @@ type Listener[T any] struct {
 
 // Constructor for Listener
 func NewListener[T any](
-	subject Subjects,
+	subject string,
 	streamManager *StreamManager,
 	deliverGroup string,
 	ackWait time.Duration,

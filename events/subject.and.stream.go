@@ -1,36 +1,42 @@
 package events
 
-type Subjects string
+// Stream names as constants
+const (
+	DomainStream       = "DomainStream"
+	PostalServerStream = "PostalServerStream"
+	DomainUserStream   = "DomainUserStream"
+)
+
+// Subjects defines the NATS subjects for different events
 
 const (
-	// Domain-related subjects
-	DomainEvenet       Subjects = "domain.*"
-	PostalServerEvenet Subjects = "postalserver.*"
-	DomainUserEveent   Subjects = "domainuser.*"
+	DomainEvent       = "domain.*"
+	PostalServerEvent = "postalserver.*"
+	DomainUserEvent   = "domainuser.*"
 )
 
 // StreamMetadata defines metadata for streams
 type StreamMetadata struct {
 	Name        string
 	Description string
-	Subjects    Subjects
+	Subjects    string
 }
 
 // Predefined stream configurations
 var Streams = map[string]StreamMetadata{
-	"DomainStream": {
-		Name:        "DomainStream",
-		Description: "Stream for domain related events",
-		Subjects:    Subjects(DomainEvenet),
+	DomainStream: {
+		Name:        DomainStream,
+		Description: "Stream for domain-related events",
+		Subjects:    DomainEvent,
 	},
-	"DomainUserStream": {
-		Name:        "DomainUserStream",
-		Description: "Stream for domain user related events",
-		Subjects:    Subjects(DomainUserEveent),
+	PostalServerStream: {
+		Name:        PostalServerStream,
+		Description: "Stream for postal server-related events",
+		Subjects:    PostalServerEvent,
 	},
-	"PostalStream": {
-		Name:        "PostalStream",
-		Description: "Stream for postal server related events",
-		Subjects:    Subjects(PostalServerEvenet),
+	DomainUserStream: {
+		Name:        DomainUserStream,
+		Description: "Stream for domain user-related events",
+		Subjects:    DomainUserEvent,
 	},
 }

@@ -11,13 +11,13 @@ import (
 )
 
 type Publisher[T any] struct {
-	Subject       Subjects
+	Subject       string
 	StreamManager *StreamManager
 	EnableDedup   bool
 	Metrics       *metrics.Metrics
 }
 
-func NewPublisher[T any](subject Subjects, streamManager *StreamManager, enableDedup bool, metrics *metrics.Metrics) *Publisher[T] {
+func NewPublisher[T any](subject string, streamManager *StreamManager, enableDedup bool, metrics *metrics.Metrics) *Publisher[T] {
 	return &Publisher[T]{
 		Subject:       subject,
 		StreamManager: streamManager,
