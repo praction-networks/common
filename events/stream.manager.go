@@ -35,13 +35,26 @@ type StreamConfig struct {
 func (sm *StreamManager) CreateOrUpdateStream(config StreamConfig) error {
 	streamInfo, err := sm.Client.StreamInfo(config.Name)
 	if err == nil && streamInfo != nil {
-		// Validate the existing stream configuration
+		// Check if the existing stream contains all the necessary subjects
+		missingSubjects := []string{}
 		for _, subject := range config.Subjects {
 			if !contains(streamInfo.Config.Subjects, subject) {
-				return fmt.Errorf("stream %s exists but does not contain subject %s", config.Name, subject)
+				missingSubjects = append(missingSubjects, subject)
 			}
 		}
-		logger.Info(fmt.Sprintf("Stream %s already exists and is valid.\n", config.Name))
+
+		if len(missingSubjects) == 0 {
+			logger.Info("Stream already exists and is valid", "streamName", config.Name)
+			return nil
+		}
+
+		// Update the stream with the missing subjects
+		streamInfo.Config.Subjects = append(streamInfo.Config.Subjects, missingSubjects...)
+		if _, err := sm.Client.UpdateStream(&streamInfo.Config); err != nil {
+			return fmt.Errorf("failed to update stream %s: %w", config.Name, err)
+		}
+
+		logger.Info("Stream updated with new subjects", "streamName", config.Name, "newSubjects", missingSubjects)
 		return nil
 	}
 
