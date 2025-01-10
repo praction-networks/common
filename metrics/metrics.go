@@ -1,15 +1,18 @@
 package metrics
 
-import "github.com/prometheus/client_golang/prometheus"
+import (
+	"github.com/prometheus/client_golang/prometheus"
+)
 
 // Metrics defines Prometheus metrics with support for labeled metrics.
 type Metrics struct {
 	PublishedEvents   *prometheus.CounterVec
 	ProcessedMessages *prometheus.CounterVec
 	FailedMessages    *prometheus.CounterVec
+	Duration          *prometheus.HistogramVec // Added duration metric
 }
 
-// NewMetrics initializes and returns a new Metrics instance with labeled counters.
+// NewMetrics initializes and returns a new Metrics instance with labeled counters and histograms.
 func NewMetrics() *Metrics {
 	return &Metrics{
 		PublishedEvents: prometheus.NewCounterVec(
@@ -33,6 +36,14 @@ func NewMetrics() *Metrics {
 			},
 			[]string{"stream", "event"}, // Labels: stream and event
 		),
+		Duration: prometheus.NewHistogramVec(
+			prometheus.HistogramOpts{
+				Name:    "nats_message_processing_duration_seconds",
+				Help:    "Histogram of message processing durations in seconds, labeled by stream and event",
+				Buckets: prometheus.DefBuckets, // Default histogram buckets
+			},
+			[]string{"stream", "event"}, // Labels: stream and event
+		),
 	}
 }
 
@@ -41,4 +52,5 @@ func (m *Metrics) Register() {
 	prometheus.MustRegister(m.PublishedEvents)
 	prometheus.MustRegister(m.ProcessedMessages)
 	prometheus.MustRegister(m.FailedMessages)
+	prometheus.MustRegister(m.Duration) // Register the duration metric
 }

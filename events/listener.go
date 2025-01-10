@@ -9,6 +9,7 @@ import (
 	"github.com/nats-io/nats.go"
 	"github.com/praction-networks/common/logger"
 	"github.com/praction-networks/common/metrics"
+	"github.com/prometheus/client_golang/prometheus"
 )
 
 type ListenerType int
@@ -22,7 +23,8 @@ const (
 type Listener[T any] struct {
 	Subject       Subjects
 	StreamManager *StreamManager
-	DurableName   string
+	DeliverGroup  string
+	ConsumerName  string
 	AckWait       time.Duration
 	MaxRetries    int
 	Type          ListenerType
@@ -32,11 +34,11 @@ type Listener[T any] struct {
 	Metrics       *metrics.Metrics
 }
 
-// NewListener constructor
+// Constructor for Listener
 func NewListener[T any](
 	subject Subjects,
 	streamManager *StreamManager,
-	durableName string,
+	deliverGroup string,
 	ackWait time.Duration,
 	maxRetries int,
 	listenerType ListenerType,
@@ -46,7 +48,7 @@ func NewListener[T any](
 	return &Listener[T]{
 		Subject:       subject,
 		StreamManager: streamManager,
-		DurableName:   durableName,
+		DeliverGroup:  deliverGroup,
 		AckWait:       ackWait,
 		MaxRetries:    maxRetries,
 		Type:          listenerType,
@@ -56,23 +58,32 @@ func NewListener[T any](
 	}
 }
 
-// Listen method
+// Listen Method
 func (l *Listener[T]) Listen(streamName string) error {
-	// Validate stream existence
+	// Ensure stream exists
 	if err := l.waitForStream(streamName); err != nil {
 		return fmt.Errorf("stream validation failed: %w", err)
 	}
 
-	// Subscribe based on listener type
-	switch l.Type {
-	case OneTime:
-		return l.setupOneTimeListener(streamName)
-	default:
-		return l.setupBufferedListener(streamName)
+	// Validate or create consumer
+	if err := l.ensureConsumer(streamName); err != nil {
+		return fmt.Errorf("consumer validation failed: %w", err)
 	}
+
+	// Subscribe to the subject
+	sub, err := l.StreamManager.Client.QueueSubscribe(string(l.Subject), l.DeliverGroup, func(msg *nats.Msg) {
+		l.processMessage(streamName, msg)
+	}, nats.ManualAck(), nats.AckWait(l.AckWait))
+	if err != nil {
+		return fmt.Errorf("failed to subscribe to subject %s: %w", l.Subject, err)
+	}
+
+	l.Subscription = sub
+	logger.Info("Listening to subject:", "Subject", l.Subject, "DeliverGroup", l.DeliverGroup)
+	return nil
 }
 
-// waitForStream checks if the stream exists and waits until it becomes available
+// Wait for Stream
 func (l *Listener[T]) waitForStream(streamName string) error {
 	for {
 		_, err := l.StreamManager.Client.StreamInfo(streamName)
@@ -81,63 +92,52 @@ func (l *Listener[T]) waitForStream(streamName string) error {
 			return nil
 		}
 
-		logger.Warn("Stream not available. Waiting...", "stream", streamName, "error", err)
-		time.Sleep(5 * time.Second) // Wait before retrying
+		logger.Warn("Stream not available. Retrying...", "stream", streamName, "error", err)
+		time.Sleep(5 * time.Second)
 	}
 }
 
-// One-Time Listener Setup
-func (l *Listener[T]) setupOneTimeListener(streamName string) error {
-	sub, err := l.StreamManager.Client.QueueSubscribe(string(l.Subject), l.DurableName, func(msg *nats.Msg) {
-		l.processMessage(streamName, msg)
-	}, nats.ManualAck(), nats.AckWait(l.AckWait), nats.Bind(streamName, l.DurableName))
+// Ensure Consumer Exists
+func (l *Listener[T]) ensureConsumer(streamName string) error {
+	consumerName := l.ConsumerName
+	if consumerName == "" {
+		consumerName = fmt.Sprintf("%s-consumer", l.DeliverGroup)
+	}
 
+	// Check if consumer already exists
+	consumerInfo, err := l.StreamManager.Client.ConsumerInfo(streamName, consumerName)
 	if err != nil {
-		return fmt.Errorf("failed to subscribe to subject %s: %w", l.Subject, err)
-	}
+		if err == nats.ErrConsumerNotFound {
+			// Create consumer if it doesn't exist
+			consumerConfig := &nats.ConsumerConfig{
+				Durable:        consumerName,
+				DeliverGroup:   l.DeliverGroup,
+				AckPolicy:      nats.AckExplicitPolicy,
+				FilterSubject:  string(l.Subject),
+				DeliverSubject: fmt.Sprintf("%s.deliver", consumerName),
+			}
 
-	l.Subscription = sub
-	logger.Info("Listening to subject (One-Time):", "Subject", l.Subject, "Durable:", l.DurableName)
-	return nil
-}
+			_, err = l.StreamManager.Client.AddConsumer(streamName, consumerConfig)
+			if err != nil {
+				return fmt.Errorf("failed to create consumer: %w", err)
+			}
 
-// Buffered Listener Setup
-func (l *Listener[T]) setupBufferedListener(streamName string) error {
-	msgCh := make(chan *nats.Msg, 1024)
-
-	sub, err := l.StreamManager.Client.QueueSubscribe(string(l.Subject), l.DurableName, func(msg *nats.Msg) {
-		select {
-		case msgCh <- msg:
-		default:
-			logger.Warn(fmt.Sprintf("Message dropped: %s", msg.Subject))
-			msg.Term()
+			logger.Info("Consumer created successfully", "consumer", consumerName)
+			return nil
 		}
-	}, nats.ManualAck(), nats.AckWait(l.AckWait), nats.Bind(streamName, l.DurableName))
-
-	if err != nil {
-		return fmt.Errorf("failed to subscribe to subject %s: %w", l.Subject, err)
+		// Return other errors
+		return err
 	}
 
-	l.Subscription = sub
-	go l.processMessages(streamName, msgCh)
-
-	logger.Info("Listening to subject:", "Subject", l.Subject, "Durable:", l.DurableName)
-	return nil
-}
-
-// Process Messages
-func (l *Listener[T]) processMessages(streamName string, msgCh chan *nats.Msg) {
-	defer close(msgCh)
-
-	for {
-		select {
-		case msg := <-msgCh:
-			l.processMessage(streamName, msg)
-		case <-l.stopCh:
-			logger.Info(fmt.Sprintf("Stopping listener for subject: %s", l.Subject))
-			return
+	// Validate consumer config if it exists
+	if consumerInfo != nil {
+		if consumerInfo.Config.DeliverGroup != l.DeliverGroup {
+			return fmt.Errorf("existing consumer has a different deliver group: %s", consumerInfo.Config.DeliverGroup)
 		}
+		logger.Info("Consumer exists and is valid", "consumer", consumerName)
 	}
+
+	return nil
 }
 
 // Process Single Message
@@ -145,28 +145,43 @@ func (l *Listener[T]) processMessage(streamName string, msg *nats.Msg) {
 	start := time.Now()
 	var event Event[T]
 	if err := json.Unmarshal(msg.Data, &event); err != nil {
-		if l.Metrics != nil {
-			l.Metrics.FailedMessages.WithLabelValues(streamName, string(l.Subject)).Inc()
-		}
-		logger.Error("Failed to unmarshal message", "error", err)
+		l.incrementMetric(l.Metrics.FailedMessages, streamName, err)
 		msg.Nak()
 		return
 	}
 
 	if err := l.OnMessageFunc(event.Data, msg); err != nil {
-		if l.Metrics != nil {
-			l.Metrics.FailedMessages.WithLabelValues(streamName, string(l.Subject)).Inc()
-		}
-		logger.Error("Error processing message:", err)
-	} else if l.Metrics != nil {
-		l.Metrics.ProcessedMessages.WithLabelValues(streamName, string(l.Subject)).Inc()
+		l.incrementMetric(l.Metrics.FailedMessages, streamName, err)
+	} else {
+		l.incrementMetric(l.Metrics.ProcessedMessages, streamName, nil)
+		msg.Ack()
 	}
-	msg.Ack()
-	logger.Info("Processed message", "Subject", l.Subject, "Duration", time.Since(start))
+
+	duration := time.Since(start).Seconds()
+	l.incrementDurationMetric(streamName, duration)
+	logger.Info("Processed message", "Subject", l.Subject, "Duration", duration)
+}
+
+// Increment Metrics
+func (l *Listener[T]) incrementMetric(metric *prometheus.CounterVec, streamName string, err error) {
+	if l.Metrics != nil && metric != nil {
+		metric.WithLabelValues(streamName, string(l.Subject)).Inc()
+		if err != nil {
+			logger.Error("Metric increment due to error", err, "stream", streamName, "subject", l.Subject)
+		}
+	}
+}
+
+// Increment Duration Metrics
+func (l *Listener[T]) incrementDurationMetric(streamName string, duration float64) {
+	if l.Metrics != nil && l.Metrics.Duration != nil {
+		l.Metrics.Duration.WithLabelValues(streamName, string(l.Subject)).Observe(duration)
+	}
 }
 
 // Stop Listener
 func (l *Listener[T]) Stop(ctx context.Context) error {
+	logger.Info("Stopping listener", "Subject", l.Subject, "DeliverGroup", l.DeliverGroup)
 	close(l.stopCh)
 
 	if l.Subscription != nil {
@@ -174,7 +189,7 @@ func (l *Listener[T]) Stop(ctx context.Context) error {
 			logger.Error("Failed to unsubscribe from subject:", err)
 			return fmt.Errorf("failed to unsubscribe: %w", err)
 		}
-		logger.Info(fmt.Sprintf("Unsubscribed from subject: %s", l.Subject))
+		logger.Info("Unsubscribed from subject", "Subject", l.Subject)
 	}
 
 	select {
