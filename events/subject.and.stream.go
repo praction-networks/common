@@ -10,9 +10,9 @@ const (
 // Subjects defines the NATS subjects for different events
 
 const (
-	DomainEvent       = "domain.*"
-	PostalServerEvent = "postalserver.*"
-	DomainUserEvent   = "domainuser.*"
+	DomainSubject       = "domain.*"
+	PostalServerSubject = "postalserver.*"
+	DomainUserSubject   = "domainuser.*"
 )
 
 // StreamMetadata defines metadata for streams
@@ -27,16 +27,16 @@ var Streams = map[string]StreamMetadata{
 	DomainStream: {
 		Name:        DomainStream,
 		Description: "Stream for domain-related events",
-		Subjects:    DomainEvent,
+		Subjects:    DomainSubject,
 	},
 	PostalServerStream: {
 		Name:        PostalServerStream,
 		Description: "Stream for postal server-related events",
-		Subjects:    PostalServerEvent,
+		Subjects:    PostalServerSubject,
 	},
 	DomainUserStream: {
 		Name:        DomainUserStream,
 		Description: "Stream for domain user-related events",
-		Subjects:    DomainUserEvent,
+		Subjects:    DomainUserSubject,
 	},
 }
