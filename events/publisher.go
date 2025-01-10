@@ -26,14 +26,15 @@ func NewPublisher[T any](subject Subjects, streamManager *StreamManager, enableD
 	}
 }
 
-func (p *Publisher[T]) Publish(data T, config StreamConfig) error {
+func (p *Publisher[T]) Publish(data T) error {
 	// Ensure the stream exists
-	if err := p.StreamManager.CreateOrUpdateStream(config); err != nil {
+	streamInfo, err := p.StreamManager.Client.StreamInfo(string(p.Subject))
+	if err != nil || streamInfo == nil {
 		if p.Metrics != nil {
-			p.Metrics.FailedMessages.WithLabelValues(config.Name, string(p.Subject)).Inc()
+			p.Metrics.FailedMessages.WithLabelValues("unknown", string(p.Subject)).Inc()
 		}
-		logger.Error("Failed to create or update stream", "stream", config.Name, "error", err)
-		return fmt.Errorf("failed to ensure stream: %w", err)
+		logger.Error("Stream not found for subject", err, "subject", p.Subject)
+		return fmt.Errorf("stream not found for subject %s: %w", p.Subject, err)
 	}
 
 	// Create event payload
@@ -46,9 +47,9 @@ func (p *Publisher[T]) Publish(data T, config StreamConfig) error {
 	payload, err := json.Marshal(event)
 	if err != nil {
 		if p.Metrics != nil {
-			p.Metrics.FailedMessages.WithLabelValues(config.Name, string(p.Subject)).Inc()
+			p.Metrics.FailedMessages.WithLabelValues(streamInfo.Config.Name, string(p.Subject)).Inc()
 		}
-		logger.Error("Failed to marshal event", "subject", p.Subject, "error", err)
+		logger.Error("Failed to marshal event", err, "subject", p.Subject)
 		return fmt.Errorf("failed to marshal event: %w", err)
 	}
 
@@ -63,14 +64,14 @@ func (p *Publisher[T]) Publish(data T, config StreamConfig) error {
 	ack, err := p.StreamManager.Client.Publish(string(p.Subject), payload, options...)
 	if err != nil {
 		if p.Metrics != nil {
-			p.Metrics.FailedMessages.WithLabelValues(config.Name, string(p.Subject)).Inc()
+			p.Metrics.FailedMessages.WithLabelValues(streamInfo.Config.Name, string(p.Subject)).Inc()
 		}
 		logger.Error("Failed to publish event", "subject", p.Subject, "error", err)
 		return fmt.Errorf("failed to publish event to subject %s: %w", p.Subject, err)
 	}
 
 	if p.Metrics != nil {
-		p.Metrics.PublishedEvents.WithLabelValues(config.Name, string(p.Subject)).Inc()
+		p.Metrics.PublishedEvents.WithLabelValues(streamInfo.Config.Name, string(p.Subject)).Inc()
 	}
 	logger.Info("Published event successfully", "subject", p.Subject, "Ack", ack)
 	return nil
