@@ -39,7 +39,6 @@ func (p *Publisher[T]) Publish(data T) error {
 
 	// Create event payload
 	event := Event[T]{
-		Version: 1,
 		Subject: p.Subject,
 		Data:    data,
 	}
