@@ -2,7 +2,6 @@ package events
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"time"
 
@@ -20,8 +19,8 @@ type Listener[T any] struct {
 	FilterSubject  *string
 	FilterSubjects []string
 	StreamManager  *JsStreamManager
+	OnMessageFunc  func(ctx context.Context, data []byte, msg jetstream.Msg) error // Application-specific handler
 	stopCh         chan struct{}
-	OnMessageFunc  func(ctx context.Context, data T, msg jetstream.Msg) error // Application-specific handler
 }
 
 // Constructor for Listener
@@ -34,7 +33,7 @@ func NewListener[T any](
 	filterSubject *string,
 	filterSubjects []string,
 	streamManager *JsStreamManager,
-	onMessageFunc func(ctx context.Context, data T, msg jetstream.Msg) error,
+	onMessageFunc func(ctx context.Context, data []byte, msg jetstream.Msg) error,
 ) *Listener[T] {
 	return &Listener[T]{
 		StreamName:     streamName,
@@ -115,19 +114,11 @@ func (l *Listener[T]) Listen(ctx context.Context) error {
 func (l *Listener[T]) processMessage(ctx context.Context, msg jetstream.Msg) {
 	logger.Info("Processing message", "StreamName", l.StreamName, "Subject", msg.Subject())
 
-	// Parse message data into the expected type
-	var data T
-	if err := json.Unmarshal(msg.Data(), &data); err != nil {
-		logger.Error("Failed to unmarshal message", "error", err, "FilterSubject", l.FilterSubject)
-		msg.Nak()
-		return
-	}
-
 	// Call the application-defined message handler
 	if l.OnMessageFunc != nil {
-		err := l.OnMessageFunc(ctx, data, msg)
+		err := l.OnMessageFunc(ctx, msg.Data(), msg)
 		if err != nil {
-			logger.Error("Error in OnMessageFunc", "error", err, "FilterSubject", l.FilterSubject)
+			logger.Error("Error in OnMessageFunc", err, "FilterSubject", l.FilterSubject)
 			msg.Nak()
 			return
 		}
@@ -135,7 +126,7 @@ func (l *Listener[T]) processMessage(ctx context.Context, msg jetstream.Msg) {
 
 	// Acknowledge the message
 	if err := msg.Ack(); err != nil {
-		logger.Error("Failed to acknowledge message", "error", err, "StreamName", l.StreamName)
+		logger.Error("Failed to acknowledge message", err, "StreamName", l.StreamName)
 	}
 }
 
