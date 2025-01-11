@@ -6,196 +6,145 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/nats-io/nats.go"
+	"github.com/nats-io/nats.go/jetstream"
 	"github.com/praction-networks/common/logger"
 	"github.com/praction-networks/common/metrics"
-	"github.com/prometheus/client_golang/prometheus"
 )
 
-type ListenerType int
-
-const (
-	Critical ListenerType = iota
-	Retryable
-	OneTime
-)
-
+// Listener represents a JetStream consumer with custom message handling logic.
 type Listener[T any] struct {
-	Subject       string
-	StreamManager *StreamManager
-	DeliverGroup  string
-	ConsumerName  string
-	AckWait       time.Duration
-	MaxRetries    int
-	Type          ListenerType
-	OnMessageFunc func(data T, msg *nats.Msg) error
-	stopCh        chan struct{}
-	Subscription  *nats.Subscription
-	Metrics       *metrics.Metrics
+	StreamName     string
+	Durable        string
+	Description    string
+	DeliverPolicy  jetstream.DeliverPolicy
+	AckPolicy      jetstream.AckPolicy
+	AckWait        time.Duration
+	MaxDeliver     int
+	BackOff        []time.Duration
+	ReplayPolicy   jetstream.ReplayPolicy
+	RateLimit      uint64
+	HeadersOnly    bool
+	FilterSubject  string
+	FilterSubjects []string
+	StreamManager  *JsStreamManager
+	OnMessageFunc  func(data T, msg jetstream.Msg) error
+	Metrics        *metrics.Metrics
+	stopCh         chan struct{}
 }
 
-// Constructor for Listener
 func NewListener[T any](
-	subject string,
-	streamManager *StreamManager,
-	deliverGroup string,
+	streamName string,
+	durable string,
+	description string,
+	deliverPolicy jetstream.DeliverPolicy,
+	ackPolicy jetstream.AckPolicy,
 	ackWait time.Duration,
-	maxRetries int,
-	listenerType ListenerType,
-	onMessage func(data T, msg *nats.Msg) error,
+	maxDeliver int,
+	backOff []time.Duration,
+	replayPolicy jetstream.ReplayPolicy,
+	rateLimit uint64,
+	headersOnly bool,
+	filterSubject string,
+	filterSubjects []string,
+	streamManager *JsStreamManager,
+	onMessage func(data T, msg jetstream.Msg) error,
 	metrics *metrics.Metrics,
 ) *Listener[T] {
 	return &Listener[T]{
-		Subject:       subject,
-		StreamManager: streamManager,
-		DeliverGroup:  deliverGroup,
-		AckWait:       ackWait,
-		MaxRetries:    maxRetries,
-		Type:          listenerType,
-		OnMessageFunc: onMessage,
-		stopCh:        make(chan struct{}),
-		Metrics:       metrics,
+		StreamName:     streamName,
+		Durable:        durable,
+		Description:    description,
+		DeliverPolicy:  deliverPolicy,
+		AckPolicy:      ackPolicy,
+		AckWait:        ackWait,
+		MaxDeliver:     maxDeliver,
+		BackOff:        backOff,
+		ReplayPolicy:   replayPolicy,
+		RateLimit:      rateLimit,
+		HeadersOnly:    headersOnly,
+		FilterSubject:  filterSubject,
+		FilterSubjects: filterSubjects,
+		StreamManager:  streamManager,
+		OnMessageFunc:  onMessage,
+		Metrics:        metrics,
+		stopCh:         make(chan struct{}),
 	}
 }
 
-// Listen Method
-func (l *Listener[T]) Listen(streamName string) error {
+func (l *Listener[T]) Listen(ctx context.Context) error {
 	// Ensure stream exists
-	if err := l.waitForStream(streamName); err != nil {
-		return fmt.Errorf("stream validation failed: %w", err)
-	}
-
-	// Validate or create consumer
-	if err := l.ensureConsumer(streamName); err != nil {
-		return fmt.Errorf("consumer validation failed: %w", err)
-	}
-
-	// Subscribe to the subject
-	sub, err := l.StreamManager.Client.QueueSubscribe(string(l.Subject), l.DeliverGroup, func(msg *nats.Msg) {
-		l.processMessage(streamName, msg)
-	}, nats.ManualAck(), nats.AckWait(l.AckWait))
+	_, err := l.StreamManager.JsClient.Stream(ctx, l.StreamName)
 	if err != nil {
-		return fmt.Errorf("failed to subscribe to subject %s: %w", l.Subject, err)
+		if err == jetstream.ErrStreamNotFound {
+			return fmt.Errorf("stream not found for Name %s: %w", l.StreamName, err)
+		}
+	}
+	if err != nil {
+		logger.Error("Stream not found for stream", err, "StreamName", l.StreamName)
+		return fmt.Errorf("stream not found for stream %s: %w", l.StreamName, err)
 	}
 
-	l.Subscription = sub
-	logger.Info("Listening to subject:", "Subject", l.Subject, "DeliverGroup", l.DeliverGroup)
+	// Create or update the consumer
+	consumer, err := l.StreamManager.JsClient.CreateOrUpdateConsumer(ctx, l.StreamName, jetstream.ConsumerConfig{
+		Durable:        l.Durable,
+		DeliverPolicy:  l.DeliverPolicy,
+		AckPolicy:      l.AckPolicy,
+		AckWait:        l.AckWait,
+		MaxDeliver:     l.MaxDeliver,
+		BackOff:        l.BackOff,
+		ReplayPolicy:   l.ReplayPolicy,
+		RateLimit:      l.RateLimit,
+		HeadersOnly:    l.HeadersOnly,
+		FilterSubject:  l.FilterSubject,
+		FilterSubjects: l.FilterSubjects,
+	})
+	if err != nil {
+		return fmt.Errorf("failed to create or update consumer: %w", err)
+	}
+
+	// Consume messages
+	_, err = consumer.Consume(func(msg jetstream.Msg) {
+		select {
+		case <-l.stopCh:
+			logger.Info("Listener stopped, skipping message processing", "FilterSubject", l.FilterSubject)
+			return
+		default:
+			l.processMessage(msg)
+		}
+	})
+	if err != nil {
+		return fmt.Errorf("failed to subscribe to subject %s: %w", l.FilterSubject, err)
+	}
+
+	logger.Info("Listening to subject", "FilterSubject", l.FilterSubject)
 	return nil
 }
 
-// Wait for Stream
-func (l *Listener[T]) waitForStream(streamName string) error {
-	for {
-		_, err := l.StreamManager.Client.StreamInfo(streamName)
-		if err == nil {
-			logger.Info("Stream is available", "stream", streamName)
-			return nil
-		}
-
-		logger.Warn("Stream not available. Retrying...", "stream", streamName, "error", err)
-		time.Sleep(5 * time.Second)
-	}
-}
-
-// Ensure Consumer Exists
-func (l *Listener[T]) ensureConsumer(streamName string) error {
-	consumerName := l.ConsumerName
-	if consumerName == "" {
-		consumerName = fmt.Sprintf("%s-consumer", l.DeliverGroup)
-	}
-
-	// Check if consumer already exists
-	consumerInfo, err := l.StreamManager.Client.ConsumerInfo(streamName, consumerName)
-	if err != nil {
-		if err == nats.ErrConsumerNotFound {
-			// Create consumer if it doesn't exist
-			consumerConfig := &nats.ConsumerConfig{
-				Durable:        consumerName,
-				DeliverGroup:   l.DeliverGroup,
-				AckPolicy:      nats.AckExplicitPolicy,
-				FilterSubject:  string(l.Subject),
-				DeliverSubject: fmt.Sprintf("%s.deliver", consumerName),
-			}
-
-			_, err = l.StreamManager.Client.AddConsumer(streamName, consumerConfig)
-			if err != nil {
-				return fmt.Errorf("failed to create consumer: %w", err)
-			}
-
-			logger.Info("Consumer created successfully", "consumer", consumerName)
-			return nil
-		}
-		// Return other errors
-		return err
-	}
-
-	// Validate consumer config if it exists
-	if consumerInfo != nil {
-		if consumerInfo.Config.DeliverGroup != l.DeliverGroup {
-			return fmt.Errorf("existing consumer has a different deliver group: %s", consumerInfo.Config.DeliverGroup)
-		}
-		logger.Info("Consumer exists and is valid", "consumer", consumerName)
-	}
-
-	return nil
-}
-
-// Process Single Message
-func (l *Listener[T]) processMessage(streamName string, msg *nats.Msg) {
+func (l *Listener[T]) processMessage(msg jetstream.Msg) {
 	start := time.Now()
-	var event Event[T]
-	if err := json.Unmarshal(msg.Data, &event); err != nil {
-		l.incrementMetric(l.Metrics.FailedMessages, streamName, err)
+	var event struct {
+		Data T `json:"data"`
+	}
+	if err := json.Unmarshal(msg.Data(), &event); err != nil {
+		logger.Error("Failed to unmarshal message", "error", err, "FilterSubject", l.FilterSubject)
 		msg.Nak()
 		return
 	}
 
 	if err := l.OnMessageFunc(event.Data, msg); err != nil {
-		l.incrementMetric(l.Metrics.FailedMessages, streamName, err)
+		logger.Error("Error processing message", "error", err, "FilterSubject", l.FilterSubject)
 	} else {
-		l.incrementMetric(l.Metrics.ProcessedMessages, streamName, nil)
 		msg.Ack()
+		logger.Info("Message processed successfully", "FilterSubject", l.FilterSubject)
 	}
-
 	duration := time.Since(start).Seconds()
-	l.incrementDurationMetric(streamName, duration)
-	logger.Info("Processed message", "Subject", l.Subject, "Duration", duration)
-}
-
-// Increment Metrics
-func (l *Listener[T]) incrementMetric(metric *prometheus.CounterVec, streamName string, err error) {
-	if l.Metrics != nil && metric != nil {
-		metric.WithLabelValues(streamName, string(l.Subject)).Inc()
-		if err != nil {
-			logger.Error("Metric increment due to error", err, "stream", streamName, "subject", l.Subject)
-		}
-	}
-}
-
-// Increment Duration Metrics
-func (l *Listener[T]) incrementDurationMetric(streamName string, duration float64) {
 	if l.Metrics != nil && l.Metrics.Duration != nil {
-		l.Metrics.Duration.WithLabelValues(streamName, string(l.Subject)).Observe(duration)
+		l.Metrics.Duration.WithLabelValues(l.FilterSubject).Observe(duration)
 	}
 }
 
-// Stop Listener
 func (l *Listener[T]) Stop(ctx context.Context) error {
-	logger.Info("Stopping listener", "Subject", l.Subject, "DeliverGroup", l.DeliverGroup)
+	logger.Info("Stopping listener", "FilterSubject", l.FilterSubject)
 	close(l.stopCh)
-
-	if l.Subscription != nil {
-		if err := l.Subscription.Unsubscribe(); err != nil {
-			logger.Error("Failed to unsubscribe from subject:", err)
-			return fmt.Errorf("failed to unsubscribe: %w", err)
-		}
-		logger.Info("Unsubscribed from subject", "Subject", l.Subject)
-	}
-
-	select {
-	case <-ctx.Done():
-		return ctx.Err()
-	default:
-		return nil
-	}
+	return nil
 }
