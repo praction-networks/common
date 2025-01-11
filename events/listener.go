@@ -24,7 +24,7 @@ type Listener[T any] struct {
 	ReplayPolicy   jetstream.ReplayPolicy
 	RateLimit      uint64
 	HeadersOnly    bool
-	FilterSubject  string
+	FilterSubject  *string
 	FilterSubjects []string
 	StreamManager  *JsStreamManager
 	OnMessageFunc  func(data T, msg jetstream.Msg) error
@@ -44,7 +44,7 @@ func NewListener[T any](
 	replayPolicy jetstream.ReplayPolicy,
 	rateLimit uint64,
 	headersOnly bool,
-	filterSubject string,
+	filterSubject *string,
 	filterSubjects []string,
 	streamManager *JsStreamManager,
 	onMessage func(data T, msg jetstream.Msg) error,
@@ -73,19 +73,32 @@ func NewListener[T any](
 
 func (l *Listener[T]) Listen(ctx context.Context) error {
 	// Ensure stream exists
-	_, err := l.StreamManager.JsClient.Stream(ctx, l.StreamName)
-	if err != nil {
-		if err == jetstream.ErrStreamNotFound {
-			return fmt.Errorf("stream not found for Name %s: %w", l.StreamName, err)
+	stream, err := l.StreamManager.JsClient.Stream(ctx, l.StreamName)
+	if err == jetstream.ErrStreamNotFound {
+		logger.Warn("Stream not found, attempting to create it", "streamName", l.StreamName)
+		streamConfig := jetstream.StreamConfig{
+			Name:      l.StreamName,
+			Subjects:  l.FilterSubjects,
+			Retention: jetstream.LimitsPolicy, // Default retention policy
+			Storage:   jetstream.FileStorage,  // Default storage type
+			MaxMsgs:   -1,                     // Unlimited messages
+			MaxBytes:  -1,                     // Unlimited size
+			MaxAge:    0,                      // Unlimited age
 		}
+		stream, err = l.StreamManager.JsClient.CreateStream(ctx, streamConfig)
+		if err != nil {
+			logger.Error("Failed to create stream", err, "streamName", l.StreamName)
+			return fmt.Errorf("failed to create stream %s: %w", l.StreamName, err)
+		}
+		logger.Info("Stream created successfully", "streamName", l.StreamName)
 	}
 	if err != nil {
-		logger.Error("Stream not found for stream", err, "StreamName", l.StreamName)
+		logger.Error("Stream not found for subject", err, "StreamName", l.StreamName)
 		return fmt.Errorf("stream not found for stream %s: %w", l.StreamName, err)
 	}
 
 	// Create or update the consumer
-	consumer, err := l.StreamManager.JsClient.CreateOrUpdateConsumer(ctx, l.StreamName, jetstream.ConsumerConfig{
+	consumerConfig := jetstream.ConsumerConfig{
 		Durable:        l.Durable,
 		DeliverPolicy:  l.DeliverPolicy,
 		AckPolicy:      l.AckPolicy,
@@ -95,9 +108,13 @@ func (l *Listener[T]) Listen(ctx context.Context) error {
 		ReplayPolicy:   l.ReplayPolicy,
 		RateLimit:      l.RateLimit,
 		HeadersOnly:    l.HeadersOnly,
-		FilterSubject:  l.FilterSubject,
 		FilterSubjects: l.FilterSubjects,
-	})
+	}
+	if l.FilterSubject != nil {
+		consumerConfig.FilterSubject = *l.FilterSubject
+	}
+
+	consumer, err := stream.CreateOrUpdateConsumer(ctx, consumerConfig)
 	if err != nil {
 		return fmt.Errorf("failed to create or update consumer: %w", err)
 	}
@@ -106,14 +123,14 @@ func (l *Listener[T]) Listen(ctx context.Context) error {
 	_, err = consumer.Consume(func(msg jetstream.Msg) {
 		select {
 		case <-l.stopCh:
-			logger.Info("Listener stopped, skipping message processing", "FilterSubject", l.FilterSubject)
+			logger.Info("Listener stopped, skipping message processing", "StreamName", l.StreamName)
 			return
 		default:
 			l.processMessage(msg)
 		}
 	})
 	if err != nil {
-		return fmt.Errorf("failed to subscribe to subject %s: %w", l.FilterSubject, err)
+		return fmt.Errorf("failed to subscribe to subject %s: %w", *l.FilterSubject, err)
 	}
 
 	logger.Info("Listening to subject", "FilterSubject", l.FilterSubject)
@@ -126,20 +143,20 @@ func (l *Listener[T]) processMessage(msg jetstream.Msg) {
 		Data T `json:"data"`
 	}
 	if err := json.Unmarshal(msg.Data(), &event); err != nil {
-		logger.Error("Failed to unmarshal message", "error", err, "FilterSubject", l.FilterSubject)
+		logger.Error("Failed to unmarshal message", err, "FilterSubject", l.FilterSubject)
 		msg.Nak()
 		return
 	}
 
 	if err := l.OnMessageFunc(event.Data, msg); err != nil {
-		logger.Error("Error processing message", "error", err, "FilterSubject", l.FilterSubject)
+		logger.Error("Error processing message", err, "FilterSubject", l.FilterSubject)
 	} else {
 		msg.Ack()
 		logger.Info("Message processed successfully", "FilterSubject", l.FilterSubject)
 	}
 	duration := time.Since(start).Seconds()
 	if l.Metrics != nil && l.Metrics.Duration != nil {
-		l.Metrics.Duration.WithLabelValues(l.FilterSubject).Observe(duration)
+		l.Metrics.Duration.WithLabelValues(l.StreamName).Observe(duration)
 	}
 }
 
