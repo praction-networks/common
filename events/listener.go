@@ -14,6 +14,7 @@ import (
 // Listener represents a JetStream consumer with custom message handling logic.
 type Listener[T any] struct {
 	StreamName     string
+	Name           string
 	Durable        string
 	Description    string
 	DeliverPolicy  jetstream.DeliverPolicy
@@ -34,6 +35,7 @@ type Listener[T any] struct {
 
 func NewListener[T any](
 	streamName string,
+	name string,
 	durable string,
 	description string,
 	deliverPolicy jetstream.DeliverPolicy,
@@ -52,6 +54,7 @@ func NewListener[T any](
 ) *Listener[T] {
 	return &Listener[T]{
 		StreamName:     streamName,
+		Name:           name,
 		Durable:        durable,
 		Description:    description,
 		DeliverPolicy:  deliverPolicy,
@@ -99,6 +102,7 @@ func (l *Listener[T]) Listen(ctx context.Context) error {
 
 	// Create or update the consumer
 	consumerConfig := jetstream.ConsumerConfig{
+		Name:           l.Name,
 		Durable:        l.Durable,
 		DeliverPolicy:  l.DeliverPolicy,
 		AckPolicy:      l.AckPolicy,
