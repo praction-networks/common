@@ -8,7 +8,6 @@ import (
 
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/praction-networks/common/logger"
-	"github.com/praction-networks/common/metrics"
 )
 
 // Listener represents a JetStream consumer with custom message handling logic.
@@ -21,9 +20,8 @@ type Listener[T any] struct {
 	FilterSubject  *string
 	FilterSubjects []string
 	StreamManager  *JsStreamManager
-	OnMessageFunc  func(data T, msg jetstream.Msg) error
-	Metrics        *metrics.Metrics
 	stopCh         chan struct{}
+	OnMessageFunc  func(ctx context.Context, data T, msg jetstream.Msg) error // Application-specific handler
 }
 
 // Constructor for Listener
@@ -36,8 +34,7 @@ func NewListener[T any](
 	filterSubject *string,
 	filterSubjects []string,
 	streamManager *JsStreamManager,
-	onMessage func(data T, msg jetstream.Msg) error,
-	metrics *metrics.Metrics,
+	onMessageFunc func(ctx context.Context, data T, msg jetstream.Msg) error,
 ) *Listener[T] {
 	return &Listener[T]{
 		StreamName:     streamName,
@@ -48,8 +45,7 @@ func NewListener[T any](
 		FilterSubject:  filterSubject,
 		FilterSubjects: filterSubjects,
 		StreamManager:  streamManager,
-		OnMessageFunc:  onMessage,
-		Metrics:        metrics,
+		OnMessageFunc:  onMessageFunc,
 		stopCh:         make(chan struct{}),
 	}
 }
@@ -88,44 +84,58 @@ func (l *Listener[T]) Listen(ctx context.Context) error {
 	}
 
 	// Consume messages
-	_, err = consumer.Consume(func(msg jetstream.Msg) {
+	subscription, err := consumer.Consume(func(msg jetstream.Msg) {
 		select {
 		case <-l.stopCh:
 			logger.Info("Listener stopped, skipping message processing", "StreamName", l.StreamName)
 			return
 		default:
-			l.processMessage(msg)
+			l.processMessage(ctx, msg)
 		}
 	})
 	if err != nil {
 		return fmt.Errorf("failed to subscribe to subject: %w", err)
 	}
+	defer subscription.Stop()
 
 	logger.Info("Listening to subject(s)", "FilterSubjects", l.FilterSubjects, "FilterSubject", l.FilterSubject)
+
+	// Wait for context cancellation or stop signal
+	select {
+	case <-ctx.Done():
+		logger.Info("Context cancelled, stopping listener")
+	case <-l.stopCh:
+		logger.Info("Stop signal received, stopping listener")
+	}
+
 	return nil
 }
 
 // processMessage processes a single message.
-func (l *Listener[T]) processMessage(msg jetstream.Msg) {
-	start := time.Now()
-	var event struct {
-		Data T `json:"data"`
-	}
-	if err := json.Unmarshal(msg.Data(), &event); err != nil {
-		logger.Error("Failed to unmarshal message", err, "FilterSubject", l.FilterSubject)
+func (l *Listener[T]) processMessage(ctx context.Context, msg jetstream.Msg) {
+	logger.Info("Processing message", "StreamName", l.StreamName, "Subject", msg.Subject())
+
+	// Parse message data into the expected type
+	var data T
+	if err := json.Unmarshal(msg.Data(), &data); err != nil {
+		logger.Error("Failed to unmarshal message", "error", err, "FilterSubject", l.FilterSubject)
 		msg.Nak()
 		return
 	}
 
-	if err := l.OnMessageFunc(event.Data, msg); err != nil {
-		logger.Error("Error processing message", err, "FilterSubject", l.FilterSubject)
-	} else {
-		msg.Ack()
-		logger.Info("Message processed successfully", "FilterSubject", l.FilterSubject)
+	// Call the application-defined message handler
+	if l.OnMessageFunc != nil {
+		err := l.OnMessageFunc(ctx, data, msg)
+		if err != nil {
+			logger.Error("Error in OnMessageFunc", "error", err, "FilterSubject", l.FilterSubject)
+			msg.Nak()
+			return
+		}
 	}
-	duration := time.Since(start).Seconds()
-	if l.Metrics != nil && l.Metrics.Duration != nil {
-		l.Metrics.Duration.WithLabelValues(l.StreamName).Observe(duration)
+
+	// Acknowledge the message
+	if err := msg.Ack(); err != nil {
+		logger.Error("Failed to acknowledge message", "error", err, "StreamName", l.StreamName)
 	}
 }
 
