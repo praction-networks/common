@@ -15,15 +15,9 @@ import (
 type Listener[T any] struct {
 	StreamName     string
 	Durable        string
-	Description    string
 	DeliverPolicy  jetstream.DeliverPolicy
 	AckPolicy      jetstream.AckPolicy
 	AckWait        time.Duration
-	MaxDeliver     int
-	BackOff        []time.Duration
-	ReplayPolicy   jetstream.ReplayPolicy
-	RateLimit      uint64
-	HeadersOnly    bool
 	FilterSubject  *string
 	FilterSubjects []string
 	StreamManager  *JsStreamManager
@@ -32,18 +26,13 @@ type Listener[T any] struct {
 	stopCh         chan struct{}
 }
 
+// Constructor for Listener
 func NewListener[T any](
 	streamName string,
 	durable string,
-	description string,
 	deliverPolicy jetstream.DeliverPolicy,
 	ackPolicy jetstream.AckPolicy,
 	ackWait time.Duration,
-	maxDeliver int,
-	backOff []time.Duration,
-	replayPolicy jetstream.ReplayPolicy,
-	rateLimit uint64,
-	headersOnly bool,
 	filterSubject *string,
 	filterSubjects []string,
 	streamManager *JsStreamManager,
@@ -53,15 +42,9 @@ func NewListener[T any](
 	return &Listener[T]{
 		StreamName:     streamName,
 		Durable:        durable,
-		Description:    description,
 		DeliverPolicy:  deliverPolicy,
 		AckPolicy:      ackPolicy,
 		AckWait:        ackWait,
-		MaxDeliver:     maxDeliver,
-		BackOff:        backOff,
-		ReplayPolicy:   replayPolicy,
-		RateLimit:      rateLimit,
-		HeadersOnly:    headersOnly,
 		FilterSubject:  filterSubject,
 		FilterSubjects: filterSubjects,
 		StreamManager:  streamManager,
@@ -71,52 +54,36 @@ func NewListener[T any](
 	}
 }
 
+// Listen initializes the consumer and starts message processing.
 func (l *Listener[T]) Listen(ctx context.Context) error {
 	// Ensure stream exists
 	stream, err := l.StreamManager.JsClient.Stream(ctx, l.StreamName)
 	if err == jetstream.ErrStreamNotFound {
-		logger.Warn("Stream not found, attempting to create it", "streamName", l.StreamName)
-		streamConfig := jetstream.StreamConfig{
-			Name:      l.StreamName,
-			Subjects:  l.FilterSubjects,
-			Retention: jetstream.LimitsPolicy, // Default retention policy
-			Storage:   jetstream.FileStorage,  // Default storage type
-			MaxMsgs:   -1,                     // Unlimited messages
-			MaxBytes:  -1,                     // Unlimited size
-			MaxAge:    0,                      // Unlimited age
-		}
-		stream, err = l.StreamManager.JsClient.CreateStream(ctx, streamConfig)
-		if err != nil {
-			logger.Error("Failed to create stream", err, "streamName", l.StreamName)
-			return fmt.Errorf("failed to create stream %s: %w", l.StreamName, err)
-		}
-		logger.Info("Stream created successfully", "streamName", l.StreamName)
+		logger.Error("Stream not found", "streamName", l.StreamName)
+		return fmt.Errorf("stream %s not found: %w", l.StreamName, err)
 	}
 	if err != nil {
-		logger.Error("Stream not found for subject", err, "StreamName", l.StreamName)
-		return fmt.Errorf("stream not found for stream %s: %w", l.StreamName, err)
+		logger.Error("Error fetching stream", err, "streamName", l.StreamName)
+		return fmt.Errorf("error fetching stream %s: %w", l.StreamName, err)
 	}
 
 	// Create or update the consumer
 	consumerConfig := jetstream.ConsumerConfig{
-		Name:           l.Durable,
-		Durable:        l.Durable,
-		DeliverPolicy:  l.DeliverPolicy,
-		AckPolicy:      l.AckPolicy,
-		AckWait:        l.AckWait,
-		MaxDeliver:     l.MaxDeliver,
-		BackOff:        l.BackOff,
-		ReplayPolicy:   l.ReplayPolicy,
-		RateLimit:      l.RateLimit,
-		HeadersOnly:    l.HeadersOnly,
-		FilterSubjects: l.FilterSubjects,
+		Name:          l.Durable,
+		Durable:       l.Durable,
+		DeliverPolicy: l.DeliverPolicy,
+		AckPolicy:     l.AckPolicy,
+		AckWait:       l.AckWait,
 	}
 	if l.FilterSubject != nil {
 		consumerConfig.FilterSubject = *l.FilterSubject
+	} else if len(l.FilterSubjects) > 0 {
+		consumerConfig.FilterSubjects = l.FilterSubjects
 	}
 
 	consumer, err := stream.CreateOrUpdateConsumer(ctx, consumerConfig)
 	if err != nil {
+		logger.Error("Failed to create or update consumer", err, "streamName", l.StreamName)
 		return fmt.Errorf("failed to create or update consumer: %w", err)
 	}
 
@@ -131,13 +98,14 @@ func (l *Listener[T]) Listen(ctx context.Context) error {
 		}
 	})
 	if err != nil {
-		return fmt.Errorf("failed to subscribe to subject %s: %w", *l.FilterSubject, err)
+		return fmt.Errorf("failed to subscribe to subject: %w", err)
 	}
 
-	logger.Info("Listening to subject", "FilterSubject", l.FilterSubject)
+	logger.Info("Listening to subject(s)", "FilterSubjects", l.FilterSubjects, "FilterSubject", l.FilterSubject)
 	return nil
 }
 
+// processMessage processes a single message.
 func (l *Listener[T]) processMessage(msg jetstream.Msg) {
 	start := time.Now()
 	var event struct {
@@ -161,6 +129,7 @@ func (l *Listener[T]) processMessage(msg jetstream.Msg) {
 	}
 }
 
+// Stop gracefully stops the listener.
 func (l *Listener[T]) Stop(ctx context.Context) error {
 	logger.Info("Stopping listener", "FilterSubject", l.FilterSubject)
 	close(l.stopCh)
