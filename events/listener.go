@@ -11,7 +11,7 @@ import (
 )
 
 // Listener represents a JetStream consumer with custom message handling logic.
-type Listener[T any] struct {
+type Listener struct {
 	StreamName     StreamName
 	Durable        string
 	DeliverPolicy  jetstream.DeliverPolicy
@@ -20,12 +20,12 @@ type Listener[T any] struct {
 	FilterSubject  *Subject
 	FilterSubjects []Subject
 	StreamManager  *JsStreamManager
-	OnMessageFunc  func(ctx context.Context, event Event[T], msg jetstream.Msg) error // Application-specific handler
+	OnMessageFunc  func(ctx context.Context, msg Event[json.RawMessage]) error // Application-specific handler
 	stopCh         chan struct{}
 }
 
 // Constructor for Listener
-func NewListener[T any](
+func NewListener(
 	streamName StreamName,
 	durable string,
 	deliverPolicy jetstream.DeliverPolicy,
@@ -34,9 +34,9 @@ func NewListener[T any](
 	filterSubject *Subject,
 	filterSubjects []Subject,
 	streamManager *JsStreamManager,
-	onMessageFunc func(ctx context.Context, event Event[T], msg jetstream.Msg) error,
-) *Listener[T] {
-	return &Listener[T]{
+	onMessageFunc func(ctx context.Context, msg Event[json.RawMessage]) error,
+) *Listener {
+	return &Listener{
 		StreamName:     streamName,
 		Durable:        durable,
 		DeliverPolicy:  deliverPolicy,
@@ -51,11 +51,11 @@ func NewListener[T any](
 }
 
 // Listen initializes the consumer and starts message processing.
-func (l *Listener[T]) Listen(ctx context.Context) error {
+func (l *Listener) Listen(ctx context.Context) error {
 	// Ensure stream exists
 	stream, err := l.StreamManager.JsClient.Stream(ctx, string(l.StreamName))
 	if err == jetstream.ErrStreamNotFound {
-		logger.Error("Stream not found", err, "streamName", l.StreamName)
+		logger.Error("Stream not found", "streamName", l.StreamName)
 		return fmt.Errorf("stream %s not found: %w", l.StreamName, err)
 	}
 	if err != nil {
@@ -63,7 +63,6 @@ func (l *Listener[T]) Listen(ctx context.Context) error {
 		return fmt.Errorf("error fetching stream %s: %w", l.StreamName, err)
 	}
 
-	// Create or update the consumer
 	// Create or update the consumer
 	consumerConfig := jetstream.ConsumerConfig{
 		Name:          l.Durable,
@@ -75,11 +74,11 @@ func (l *Listener[T]) Listen(ctx context.Context) error {
 	if l.FilterSubject != nil {
 		consumerConfig.FilterSubject = string(*l.FilterSubject)
 	} else if len(l.FilterSubjects) > 0 {
-		filterSubjects := make([]string, len(l.FilterSubjects))
-		for i, subj := range l.FilterSubjects {
-			filterSubjects[i] = string(subj)
+		subjects := make([]string, len(l.FilterSubjects))
+		for i, s := range l.FilterSubjects {
+			subjects[i] = string(s)
 		}
-		consumerConfig.FilterSubjects = filterSubjects
+		consumerConfig.FilterSubjects = subjects
 	}
 
 	consumer, err := stream.CreateOrUpdateConsumer(ctx, consumerConfig)
@@ -117,23 +116,22 @@ func (l *Listener[T]) Listen(ctx context.Context) error {
 }
 
 // processMessage processes a single message.
-// processMessage processes a single message.
-func (l *Listener[T]) processMessage(ctx context.Context, msg jetstream.Msg) {
+func (l *Listener) processMessage(ctx context.Context, msg jetstream.Msg) {
 	logger.Info("Processing message", "StreamName", l.StreamName, "Subject", msg.Subject())
 
-	// Parse message into Event[T]
-	var event Event[T]
+	// Parse the message into a generic event wrapper
+	var event Event[json.RawMessage]
 	if err := json.Unmarshal(msg.Data(), &event); err != nil {
-		logger.Error("Failed to unmarshal message", "error", err, "StreamName", l.StreamName, "Subject", msg.Subject())
+		logger.Error("Failed to unmarshal message", "error", err, "Subject", msg.Subject())
 		msg.Nak()
 		return
 	}
 
 	// Call the application-defined message handler
 	if l.OnMessageFunc != nil {
-		err := l.OnMessageFunc(ctx, event, msg)
+		err := l.OnMessageFunc(ctx, event)
 		if err != nil {
-			logger.Error("Error in OnMessageFunc", err, "FilterSubject", l.FilterSubject)
+			logger.Error("Error in OnMessageFunc", err, "Subject", event.Subject)
 			msg.Nak()
 			return
 		}
@@ -141,13 +139,13 @@ func (l *Listener[T]) processMessage(ctx context.Context, msg jetstream.Msg) {
 
 	// Acknowledge the message
 	if err := msg.Ack(); err != nil {
-		logger.Error("Failed to acknowledge message", err, "StreamName", l.StreamName)
+		logger.Error("Failed to acknowledge message", "error", err, "StreamName", l.StreamName)
 	}
 }
 
 // Stop gracefully stops the listener.
-func (l *Listener[T]) Stop(ctx context.Context) error {
-	logger.Info("Stopping listener", "FilterSubject", l.FilterSubject)
+func (l *Listener) Stop(ctx context.Context) error {
+	logger.Info("Stopping listener", "StreamName", l.StreamName)
 	close(l.stopCh)
 	return nil
 }
