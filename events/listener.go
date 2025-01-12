@@ -8,6 +8,7 @@ import (
 
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/praction-networks/common/logger"
+	"github.com/praction-networks/common/metrics"
 )
 
 // Listener represents a JetStream consumer with custom message handling logic.
@@ -53,14 +54,10 @@ func NewListener(
 // Listen initializes the consumer and starts message processing.
 func (l *Listener) Listen(ctx context.Context) error {
 	// Ensure stream exists
-	stream, err := l.StreamManager.JsClient.Stream(ctx, string(l.StreamName))
-	if err == jetstream.ErrStreamNotFound {
-		logger.Error("Stream not found", "streamName", l.StreamName)
-		return fmt.Errorf("stream %s not found: %w", l.StreamName, err)
-	}
+	stream, err := waitForStream(ctx, l.StreamManager, string(l.StreamName))
 	if err != nil {
-		logger.Error("Error fetching stream", err, "streamName", l.StreamName)
-		return fmt.Errorf("error fetching stream %s: %w", l.StreamName, err)
+		logger.Error("Failed to fetch or wait for stream", err, "streamName", l.StreamName)
+		return fmt.Errorf("failed to fetch or wait for stream %s: %w", l.StreamName, err)
 	}
 
 	// Create or update the consumer
@@ -122,7 +119,8 @@ func (l *Listener) processMessage(ctx context.Context, msg jetstream.Msg) {
 	// Parse the message into a generic event wrapper
 	var event Event[json.RawMessage]
 	if err := json.Unmarshal(msg.Data(), &event); err != nil {
-		logger.Error("Failed to unmarshal message", "error", err, "Subject", msg.Subject())
+		logger.Error("Failed to unmarshal message", err, "Subject", msg.Subject())
+		metrics.NewMetrics().FailedMessages.WithLabelValues(string(l.StreamName), msg.Subject()).Inc()
 		msg.Nak()
 		return
 	}
@@ -132,6 +130,7 @@ func (l *Listener) processMessage(ctx context.Context, msg jetstream.Msg) {
 		err := l.OnMessageFunc(ctx, event)
 		if err != nil {
 			logger.Error("Error in OnMessageFunc", err, "Subject", event.Subject)
+			metrics.NewMetrics().FailedMessages.WithLabelValues(string(l.StreamName), msg.Subject()).Inc()
 			msg.Nak()
 			return
 		}
@@ -139,8 +138,17 @@ func (l *Listener) processMessage(ctx context.Context, msg jetstream.Msg) {
 
 	// Acknowledge the message
 	if err := msg.Ack(); err != nil {
-		logger.Error("Failed to acknowledge message", "error", err, "StreamName", l.StreamName)
+		logger.Error("Failed to acknowledge message", err, "StreamName", l.StreamName)
 	}
+
+	metadata, err := msg.Metadata()
+
+	if err != nil {
+		logger.Error("Failed to get message metadata", err, "StreamName", l.StreamName)
+	}
+	metrics.NewMetrics().ProcessedMessages.WithLabelValues(string(l.StreamName), msg.Subject()).Inc()
+
+	logger.Info("Message processed", "StreamName", l.StreamName, "Subject", msg.Subject(), "Sequence", metadata.Sequence)
 }
 
 // Stop gracefully stops the listener.
@@ -148,4 +156,32 @@ func (l *Listener) Stop(ctx context.Context) error {
 	logger.Info("Stopping listener", "StreamName", l.StreamName)
 	close(l.stopCh)
 	return nil
+}
+
+func waitForStream(ctx context.Context, streamManager *JsStreamManager, streamName string) (jetstream.Stream, error) {
+	// Define a maximum wait time
+	const maxRetries = 20
+	const retryInterval = 2 * time.Second
+
+	for i := 0; i < maxRetries; i++ {
+		stream, err := streamManager.JsClient.Stream(ctx, streamName)
+		if err == nil {
+			// Stream found
+			return stream, nil
+		}
+		if err == jetstream.ErrStreamNotFound {
+			logger.Warn("Stream not found, retrying...", "streamName", streamName, "attempt", i+1)
+			select {
+			case <-time.After(retryInterval): // Wait before retrying
+				continue
+			case <-ctx.Done(): // Context cancelled
+				return nil, fmt.Errorf("context cancelled while waiting for stream %s", streamName)
+			}
+		} else {
+			// Other error
+			return nil, fmt.Errorf("error fetching stream %s: %w", streamName, err)
+		}
+	}
+
+	return nil, fmt.Errorf("stream %s not found after %d retries", streamName, maxRetries)
 }
