@@ -1,42 +1,51 @@
 package events
 
+type StreamName string
+
 // Stream names as constants
 const (
-	DomainStream       = "DomainStream"
-	PostalServerStream = "PostalServerStream"
-	DomainUserStream   = "DomainUserStream"
+	DomainStream       StreamName = "DomainStream"
+	PostalServerStream StreamName = "PostalServerStream"
+	DomainUserStream   StreamName = "DomainUserStream"
 )
 
-// Subjects defines the NATS subjects for different events
+// Subjects defines the NATS Subjects for different events
+type Subject string
 
 const (
-	DomainSubject       = "domain.*"
-	PostalServerSubject = "postalserver.*"
-	DomainUserSubject   = "domainuser.*"
+	DomainCreatedSubject     Subject = "domain.created"
+	DomainUpdatedSubject     Subject = "domain.updated"
+	DomainDeletedSubject     Subject = "domain.deleted"
+	PostalCreatedSubject     Subject = "postal.created"
+	PostalUpdatedSubject     Subject = "postal.updated"
+	PostalDeletedSubject     Subject = "postal.deleted"
+	DomainUserCreatedSubject Subject = "domainuser.created"
+	DomainUserUpdatedSubject Subject = "domainuser.updated"
+	DomainUserDeletedSubject Subject = "domainuser.deleted"
 )
 
 // StreamMetadata defines metadata for streams
 type StreamMetadata struct {
-	Name        string
+	Name        StreamName
 	Description string
-	Subjects    string
+	Subjects    []Subject
 }
 
 // Predefined stream configurations
-var Streams = map[string]StreamMetadata{
+var Streams = map[StreamName]StreamMetadata{
 	DomainStream: {
 		Name:        DomainStream,
 		Description: "Stream for domain-related events",
-		Subjects:    DomainSubject,
+		Subjects:    []Subject{DomainCreatedSubject, DomainUpdatedSubject, DomainDeletedSubject},
 	},
 	PostalServerStream: {
 		Name:        PostalServerStream,
 		Description: "Stream for postal server-related events",
-		Subjects:    PostalServerSubject,
+		Subjects:    []Subject{PostalCreatedSubject, PostalUpdatedSubject, PostalDeletedSubject},
 	},
 	DomainUserStream: {
 		Name:        DomainUserStream,
 		Description: "Stream for domain user-related events",
-		Subjects:    DomainUserSubject,
+		Subjects:    []Subject{DomainUserCreatedSubject, DomainUserUpdatedSubject, DomainUserDeletedSubject},
 	},
 }

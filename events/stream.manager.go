@@ -18,55 +18,44 @@ func NewStreamManager(jsClient jetstream.JetStream) *JsStreamManager {
 }
 
 type StreamConfig struct {
-	Name              string                     // Name of the stream
-	Description       string                     // Optional description
-	Subjects          []string                   // Subjects associated with the stream
-	Retention         jetstream.RetentionPolicy  // Retention policy
-	MaxConsumers      int                        // Max consumers
-	MaxMsgs           int64                      // Max messages
-	MaxBytes          int64                      // Max size in bytes
-	MaxAge            time.Duration              // Max age of messages
-	Discard           jetstream.DiscardPolicy    // Discard policy
-	Storage           jetstream.StorageType      // Storage type (FileStorage or MemoryStorage)
-	Replicas          int                        // Replication factor
-	NoAck             bool                       // Disable acknowledgment
-	Duplicates        time.Duration              // Duplicate tracking window
-	MaxMsgsPerSubject int64                      // Max messages per subject
-	MaxMsgSize        int32                      // Maximum size of a single message
-	AllowRollup       bool                       // Allow rollup headers
-	Compression       jetstream.StoreCompression // Compression algorithm
-	Sealed            bool                       // Whether the stream is sealed
-	DenyDelete        bool                       // Restrict ability to delete messages
-	DenyPurge         bool                       // Restrict ability to purge messages
-	AllowDirect       bool                       // Enable direct access to individual messages
-	MirrorDirect      bool                       // Enable direct access for mirrored streams
+	Name         StreamName                 // Name of the stream
+	Description  string                     // Optional description
+	Subjects     []Subject                  // Subjects associated with the stream
+	Retention    jetstream.RetentionPolicy  // Retention policy
+	MaxConsumers int                        // Max consumers
+	MaxMsgs      int64                      // Max number of messages
+	MaxAge       time.Duration              // Max age of messages
+	Discard      jetstream.DiscardPolicy    // Discard policy
+	Storage      jetstream.StorageType      // Storage type (FileStorage or MemoryStorage)
+	Replicas     int                        // Replication factor
+	NoAck        bool                       // Disable acknowledgment
+	Compression  jetstream.StoreCompression // Compression algorithm
+}
+
+// ToJetStreamSubjects converts the subjects to their string representations
+func (sc *StreamConfig) ToJetStreamSubjects() []string {
+	subjects := make([]string, len(sc.Subjects))
+	for i, s := range sc.Subjects {
+		subjects[i] = string(s)
+	}
+	return subjects
 }
 
 // CreateOrUpdateStream ensures the stream exists or updates it if necessary.
 func (jsm *JsStreamManager) CreateOrUpdateStream(ctx context.Context, config StreamConfig) error {
 	_, err := jsm.JsClient.CreateOrUpdateStream(ctx, jetstream.StreamConfig{
-		Name:              config.Name,
-		Description:       config.Description,
-		Subjects:          config.Subjects,
-		Retention:         config.Retention,
-		MaxConsumers:      config.MaxConsumers,
-		MaxMsgs:           config.MaxMsgs,
-		MaxBytes:          config.MaxBytes,
-		MaxAge:            config.MaxAge,
-		Discard:           config.Discard,
-		Storage:           config.Storage,
-		Replicas:          config.Replicas,
-		NoAck:             config.NoAck,
-		Duplicates:        config.Duplicates,
-		MaxMsgsPerSubject: config.MaxMsgsPerSubject,
-		MaxMsgSize:        config.MaxMsgSize,
-		AllowRollup:       config.AllowRollup,
-		Compression:       config.Compression,
-		Sealed:            config.Sealed,
-		DenyDelete:        config.DenyDelete,
-		DenyPurge:         config.DenyPurge,
-		AllowDirect:       config.AllowDirect,
-		MirrorDirect:      config.MirrorDirect,
+		Name:         string(config.Name),
+		Description:  config.Description,
+		Subjects:     config.ToJetStreamSubjects(),
+		Retention:    config.Retention,
+		MaxConsumers: config.MaxConsumers,
+		MaxMsgs:      config.MaxMsgs,
+		MaxAge:       config.MaxAge,
+		Discard:      config.Discard,
+		Storage:      config.Storage,
+		Replicas:     config.Replicas,
+		NoAck:        config.NoAck,
+		Compression:  config.Compression,
 	})
 	if err != nil {
 		return fmt.Errorf("failed to create or update stream %s: %w", config.Name, err)
