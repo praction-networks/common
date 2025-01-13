@@ -65,8 +65,9 @@ func (l *Listener) Listen(ctx context.Context) error {
 		Name:          l.Durable,
 		Durable:       l.Durable,
 		DeliverPolicy: l.DeliverPolicy,
-		AckPolicy:     l.AckPolicy,
-		AckWait:       l.AckWait,
+
+		AckPolicy: l.AckPolicy,
+		AckWait:   l.AckWait,
 	}
 	if l.FilterSubject != nil {
 		consumerConfig.FilterSubject = string(*l.FilterSubject)
@@ -114,7 +115,15 @@ func (l *Listener) Listen(ctx context.Context) error {
 
 // processMessage processes a single message.
 func (l *Listener) processMessage(ctx context.Context, msg jetstream.Msg) {
-	logger.Info("Processing message", "StreamName", l.StreamName, "Subject", msg.Subject())
+
+	msgMetaData, err := msg.Metadata()
+	if err != nil {
+		logger.Error("Failed to get message metadata", err, "StreamName", l.StreamName)
+		metrics.NewMetrics().FailedMessages.WithLabelValues(string(l.StreamName), msg.Subject()).Inc()
+		msg.Nak()
+		return
+	}
+	logger.Info("Processing message", "StreamName", l.StreamName, "Subject", msg.Subject(), "Sequence", msgMetaData.Sequence, "Timestamp", msgMetaData.Timestamp, "Consumer", msgMetaData.Consumer, "Data", string(msg.Data()))
 
 	// Parse the message into a generic event wrapper
 	var event Event[json.RawMessage]
@@ -141,14 +150,9 @@ func (l *Listener) processMessage(ctx context.Context, msg jetstream.Msg) {
 		logger.Error("Failed to acknowledge message", err, "StreamName", l.StreamName)
 	}
 
-	metadata, err := msg.Metadata()
-
-	if err != nil {
-		logger.Error("Failed to get message metadata", err, "StreamName", l.StreamName)
-	}
 	metrics.NewMetrics().ProcessedMessages.WithLabelValues(string(l.StreamName), msg.Subject()).Inc()
 
-	logger.Info("Message processed", "StreamName", l.StreamName, "Subject", msg.Subject(), "Sequence", metadata.Sequence)
+	logger.Info("Message processed", "StreamName", l.StreamName, "Subject", msg.Subject(), "Sequence", msgMetaData.Sequence, "Timestamp", msgMetaData.Timestamp, "Consumer", msgMetaData.Consumer)
 }
 
 // Stop gracefully stops the listener.

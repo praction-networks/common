@@ -13,6 +13,7 @@ import (
 
 // Publisher represents a generic publisher for JetStream.
 type Publisher[T any] struct {
+	Stream        StreamName
 	Subject       Subject
 	StreamManager *JsStreamManager
 	EnableDedup   bool
@@ -20,8 +21,9 @@ type Publisher[T any] struct {
 }
 
 // NewPublisher creates a new publisher.
-func NewPublisher[T any](subject Subject, streamManager *JsStreamManager, enableDedup bool, metrics *metrics.Metrics) *Publisher[T] {
+func NewPublisher[T any](stream StreamName, subject Subject, streamManager *JsStreamManager, enableDedup bool, metrics *metrics.Metrics) *Publisher[T] {
 	return &Publisher[T]{
+		Stream:        stream,
 		Subject:       subject,
 		StreamManager: streamManager,
 		EnableDedup:   enableDedup,
@@ -32,13 +34,13 @@ func NewPublisher[T any](subject Subject, streamManager *JsStreamManager, enable
 // Publish publishes an event to JetStream.
 func (p *Publisher[T]) Publish(ctx context.Context, data T) error {
 	// Ensure the stream exists
-	streamInfo, err := p.StreamManager.Stream(ctx, string(p.Subject))
+	streamInfo, err := p.StreamManager.Stream(ctx, string(p.Stream))
 	if err != nil {
 		if p.Metrics != nil {
-			p.Metrics.FailedMessages.WithLabelValues("unknown", string(p.Subject)).Inc()
+			p.Metrics.FailedMessages.WithLabelValues("unknown", string(p.Stream)).Inc()
 		}
-		logger.Error("Stream not found for subject", err, "subject", p.Subject)
-		return fmt.Errorf("stream not found for subject %s: %w", p.Subject, err)
+		logger.Error("Stream not found for subject", err, "Stream", p.Stream, "Subject", p.Subject)
+		return fmt.Errorf("stream %s not found for subject %s: %w", p.Stream, p.Subject, err)
 	}
 
 	// Create the event payload
