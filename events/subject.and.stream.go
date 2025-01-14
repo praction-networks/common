@@ -31,7 +31,6 @@ const (
 	DomainUserChangeEmailNotificationSubject    Subject = "domainuser.change.email.notification"
 	DomainUserChangeMobileNotificationSubject   Subject = "domainuser.change.mobile.notification"
 	DomainUserChangeWhatsappNotificationSubject Subject = "domainuser.change.whatsapp.notification"
-	DomainUserInformationNotificationSubject    Subject = "domainuser.change.information.notification"
 )
 
 // StreamMetadata defines metadata for streams
