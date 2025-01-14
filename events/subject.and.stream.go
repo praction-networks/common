@@ -4,9 +4,10 @@ type StreamName string
 
 // Stream names as constants
 const (
-	DomainStream       StreamName = "DomainStream"
-	PostalServerStream StreamName = "PostalServerStream"
-	DomainUserStream   StreamName = "DomainUserStream"
+	DomainStream                 StreamName = "DomainStream"
+	PostalServerStream           StreamName = "PostalServerStream"
+	DomainUserStream             StreamName = "DomainUserStream"
+	DomainUserNotificationStream StreamName = "DomainUserNotificationStream"
 )
 
 // Subjects defines the NATS Subjects for different events
@@ -22,6 +23,15 @@ const (
 	DomainUserCreatedSubject Subject = "domainuser.created"
 	DomainUserUpdatedSubject Subject = "domainuser.updated"
 	DomainUserDeletedSubject Subject = "domainuser.deleted"
+
+	DomainaUserCreatedNotificationSubject       Subject = "domainuser.created.notification"
+	DomainUserForgetPasswordNotificationSubject Subject = "domainuser.forget.password.notification"
+	DomainUserResetPasswordNotificationSubject  Subject = "domainuser.reset.password.notification"
+	DomainUserChangePasswordNotificationSubject Subject = "domainuser.change.password.notification"
+	DomainUserChangeEmailNotificationSubject    Subject = "domainuser.change.email.notification"
+	DomainUserChangeMobileNotificationSubject   Subject = "domainuser.change.mobile.notification"
+	DomainUserChangeWhatsappNotificationSubject Subject = "domainuser.change.whatsapp.notification"
+	DomainUserInformationNotificationSubject    Subject = "domainuser.change.information.notification"
 )
 
 // StreamMetadata defines metadata for streams
@@ -47,5 +57,10 @@ var Streams = map[StreamName]StreamMetadata{
 		Name:        DomainUserStream,
 		Description: "Stream for domain user-related events",
 		Subjects:    []Subject{DomainUserCreatedSubject, DomainUserUpdatedSubject, DomainUserDeletedSubject},
+	},
+	DomainUserNotificationStream: {
+		Name:        DomainUserNotificationStream,
+		Description: "Stream for domain user notification events",
+		Subjects:    []Subject{DomainaUserCreatedNotificationSubject},
 	},
 }
