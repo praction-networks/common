@@ -21,8 +21,5 @@ type PostalUpdate struct {
 }
 
 type PostalDelete struct {
-	ID      primitive.ObjectID `json:"id" bson:"_id"`
-	UUID    string             `json:"uuid" bson:"uuid"`
-	Name    string             `json:"name" bson:"name"`
-	Version int                `json:"version" bson:"version"`
+	ID primitive.ObjectID `json:"id" bson:"_id"`
 }
