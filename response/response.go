@@ -145,6 +145,10 @@ func SendCustomError(w http.ResponseWriter, message string, errors []ErrorDetail
 	sendError(w, message, errors, statusCode)
 }
 
+func SendCustomResponse(w http.ResponseWriter, errors []ErrorDetail, statusCode int) {
+	sendError(w, "err", errors, statusCode)
+}
+
 // calculateCount calculates the count for the data field
 func calculateCount(data interface{}) *int {
 	switch v := data.(type) {
