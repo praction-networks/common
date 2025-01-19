@@ -323,7 +323,7 @@ func logWithLevel(level string, msg string, args ...interface{}) {
 	// Call the appropriate log method based on the level
 	switch level {
 	case "info":
-		logInstance.WithOptions(zap.AddCallerSkip(3)).Info(msg, fields...)
+		logInstance.WithOptions(zap.AddCallerSkip(2)).Info(msg, fields...)
 	case "warn":
 		logInstance.WithOptions(zap.AddCallerSkip(2)).Warn(msg, fields...)
 	case "error":
