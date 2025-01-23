@@ -159,8 +159,8 @@ func InitializeLogger(config LoggerConfig) error {
 			StacktraceKey:  "Stacktrace",
 			EncodeTime:     zapcore.RFC3339TimeEncoder,
 			EncodeLevel:    zapcore.CapitalColorLevelEncoder,
-			EncodeCaller:   zapcore.ShortCallerEncoder,
-			EncodeDuration: zapcore.StringDurationEncoder,
+			EncodeCaller:   zapcore.FullCallerEncoder,
+			EncodeDuration: zapcore.SecondsDurationEncoder,
 		})
 
 		textCore := zapcore.NewCore(textEncoder, zapcore.AddSync(zapcore.Lock(os.Stdout)), logLevel)
@@ -281,33 +281,21 @@ func logWithLevel(level string, msg string, args ...interface{}) {
 		return len(s) == 36 && s[8] == '-' && s[13] == '-' && s[18] == '-' && s[23] == '-'
 	}
 
-	if len(args) > 1 {
-		switch v := args[1].(type) {
+	// Check the first two arguments for UUID v4 or error
+	for i := 0; i < len(args) && i < 2; i++ {
+		switch v := args[i].(type) {
 		case string:
 			if isUUIDv4(v) {
-				reqID := v
-				fields = append(fields, zap.String("Request_id", reqID))
-				args = append(args[:1], args[2:]...)
+				fields = append(fields, zap.String("Request_id", v))
+				// Remove this argument after processing
+				args = append(args[:i], args[i+1:]...)
+				i-- // Adjust index after slice modification
 			}
 		case error:
-			err := v
-			fields = append(fields, zap.String(`Error`, err.Error()))
-			args = append(args[:1], args[2:]...)
-		}
-	}
-
-	if len(args) > 0 {
-		switch v := args[0].(type) {
-		case string:
-			if isUUIDv4(v) {
-				reqID := v
-				fields = append(fields, zap.String("Request_id", reqID))
-				args = args[1:]
-			}
-		case error:
-			err := v
-			fields = append(fields, zap.String(`Error`, err.Error()))
-			args = args[1:]
+			fields = append(fields, zap.String("Error", v.Error()))
+			// Remove this argument after processing
+			args = append(args[:i], args[i+1:]...)
+			i-- // Adjust index after slice modification
 		}
 	}
 

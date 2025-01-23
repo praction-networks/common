@@ -5,11 +5,16 @@ import (
 	"net/http"
 )
 
-type APIResponse struct {
+type APIResponseSuccess struct {
+	Status  string      `json:"status"`
+	Message string      `json:"message,omitempty"`
+	Count   *int        `json:"count,omitempty"`
+	Data    interface{} `json:"data,omitempty"`
+}
+
+type APIResponseError struct {
 	Status  string        `json:"status"`
 	Message string        `json:"message,omitempty"`
-	Count   *int          `json:"count,omitempty"`
-	Data    interface{}   `json:"data,omitempty"`
 	Errors  []ErrorDetail `json:"errors,omitempty"`
 }
 
@@ -19,17 +24,31 @@ type ErrorDetail struct {
 }
 
 // writeResponse is a generic utility for writing responses
-func writeResponse(w http.ResponseWriter, status string, message string, data interface{}, errors []ErrorDetail, statusCode int) {
+func writeResponseSuccess(w http.ResponseWriter, status string, message string, data interface{}, statusCode int) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(statusCode)
 
 	count := calculateCount(data)
 
-	response := APIResponse{
+	response := APIResponseSuccess{
 		Status:  status,
 		Message: message,
 		Count:   count,
 		Data:    data,
+	}
+
+	if err := json.NewEncoder(w).Encode(response); err != nil {
+		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+	}
+}
+
+func writeResponseError(w http.ResponseWriter, status string, message string, errors []ErrorDetail, statusCode int) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(statusCode)
+
+	response := APIResponseError{
+		Status:  status,
+		Message: message,
 		Errors:  errors,
 	}
 
@@ -39,28 +58,28 @@ func writeResponse(w http.ResponseWriter, status string, message string, data in
 }
 
 func sendError(w http.ResponseWriter, message string, errors []ErrorDetail, statusCode int) {
-	writeResponse(w, "error", message, nil, errors, statusCode)
+	writeResponseError(w, "error", message, errors, statusCode)
 }
 
 func sendSuccess(w http.ResponseWriter, message string, data interface{}, statusCode int) {
-	writeResponse(w, "success", message, data, nil, statusCode)
+	writeResponseSuccess(w, "success", message, data, statusCode)
 }
 
 // Informational responses
 func Send100Continue(w http.ResponseWriter, message string) {
-	writeResponse(w, "info", message, nil, nil, http.StatusContinue)
+	writeResponseSuccess(w, "info", message, nil, http.StatusContinue)
 }
 
 func Send101SwitchingProtocols(w http.ResponseWriter, message string) {
-	writeResponse(w, "info", message, nil, nil, http.StatusSwitchingProtocols)
+	writeResponseSuccess(w, "info", message, nil, http.StatusSwitchingProtocols)
 }
 
 func Send102Processing(w http.ResponseWriter, message string) {
-	writeResponse(w, "info", message, nil, nil, http.StatusProcessing)
+	writeResponseSuccess(w, "info", message, nil, http.StatusProcessing)
 }
 
 func Send103EarlyHints(w http.ResponseWriter, message string) {
-	writeResponse(w, "info", message, nil, nil, http.StatusEarlyHints)
+	writeResponseSuccess(w, "info", message, nil, http.StatusEarlyHints)
 }
 
 // Success responses
@@ -81,11 +100,11 @@ func Send203NonAuthoritativeInfo(w http.ResponseWriter, message string, data int
 }
 
 func Send204NoContent(w http.ResponseWriter) {
-	writeResponse(w, "success", "No Content", nil, nil, http.StatusNoContent)
+	writeResponseSuccess(w, "success", "No Content", nil, http.StatusNoContent)
 }
 
 func Send205ResetContent(w http.ResponseWriter, message string) {
-	writeResponse(w, "success", message, nil, nil, http.StatusResetContent)
+	writeResponseSuccess(w, "success", message, nil, http.StatusResetContent)
 }
 
 func Send206PartialContent(w http.ResponseWriter, message string, data interface{}) {
