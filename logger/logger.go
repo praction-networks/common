@@ -15,10 +15,12 @@ import (
 
 // Global logger instance
 var (
-	logInstance *zap.Logger
-	logLevel    = zap.NewAtomicLevel()
-	initOnce    sync.Once
-	errInit     error
+	logInstance         *zap.Logger
+	logLevel            = zap.NewAtomicLevel()
+	initOnce            sync.Once
+	errInit             error
+	requestScopedLogger *zap.Logger // Request-specific logger
+	mu                  sync.Mutex  // Mutex to protect the request logger
 )
 
 // LoggerConfig defines the configuration for the logger
@@ -198,6 +200,35 @@ func InitializeLogger(config LoggerConfig) error {
 	return errInit
 }
 
+// GetGlobalLogger returns the global logger instance.
+func GetGlobalLogger() *zap.Logger {
+	return logInstance
+}
+
+// SetDefaultRequestLogger sets a logger specific to the current request lifecycle.
+func SetDefaultRequestLogger(fields ...zap.Field) {
+	mu.Lock()
+	defer mu.Unlock()
+	requestScopedLogger = logInstance.With(fields...)
+}
+
+// ClearDefaultRequestLogger clears the request-specific logger.
+func ClearDefaultRequestLogger() {
+	mu.Lock()
+	defer mu.Unlock()
+	requestScopedLogger = nil
+}
+
+// getDefaultLogger returns the request-specific logger if set, or the global logger.
+func getDefaultLogger() *zap.Logger {
+	mu.Lock()
+	defer mu.Unlock()
+	if requestScopedLogger != nil {
+		return requestScopedLogger
+	}
+	return logInstance
+}
+
 // addIfNotEmpty adds a field to the defaultFields slice if the value is not empty.
 func addIfNotEmpty(fields *[]zap.Field, key, value string) {
 	if value != "" {
@@ -275,31 +306,18 @@ func addEnvironmentFields(fields *[]zap.Field) {
 func logWithLevel(level string, msg string, args ...interface{}) {
 	ensureInitialized()
 
+	logger := getDefaultLogger() // Use request-specific or global logger
 	fields := []zap.Field{}
 
-	isUUIDv4 := func(s string) bool {
-		return len(s) == 36 && s[8] == '-' && s[13] == '-' && s[18] == '-' && s[23] == '-'
-	}
-
-	// Check the first two arguments for UUID v4 or error
-	for i := 0; i < len(args) && i < 2; i++ {
-		switch v := args[i].(type) {
-		case string:
-			if isUUIDv4(v) {
-				fields = append(fields, zap.String("Request_id", v))
-				// Remove this argument after processing
-				args = append(args[:i], args[i+1:]...)
-				i-- // Adjust index after slice modification
-			}
-		case error:
-			fields = append(fields, zap.String("Error", v.Error()))
-			// Remove this argument after processing
-			args = append(args[:i], args[i+1:]...)
-			i-- // Adjust index after slice modification
+	// Check for error and add as a field
+	if len(args) > 0 {
+		if err, ok := args[0].(error); ok {
+			fields = append(fields, zap.String("Error", err.Error()))
+			args = args[1:] // Remove the error from args
 		}
 	}
 
-	// Process remaining arguments as key-value pairs
+	// // Process remaining arguments as key-value pairs
 	fields = append(fields, withFields(args)...) // Add remaining arguments as fields
 	fields = append(fields, logLevelField(level))
 
@@ -311,17 +329,17 @@ func logWithLevel(level string, msg string, args ...interface{}) {
 	// Call the appropriate log method based on the level
 	switch level {
 	case "info":
-		logInstance.WithOptions(zap.AddCallerSkip(2)).Info(msg, fields...)
+		logger.WithOptions(zap.AddCallerSkip(2)).Info(msg, fields...)
 	case "warn":
-		logInstance.WithOptions(zap.AddCallerSkip(2)).Warn(msg, fields...)
+		logger.WithOptions(zap.AddCallerSkip(2)).Warn(msg, fields...)
 	case "error":
-		logInstance.WithOptions(zap.AddCallerSkip(2)).Error(msg, fields...)
+		logger.WithOptions(zap.AddCallerSkip(2)).Error(msg, fields...)
 	case "debug":
-		logInstance.WithOptions(zap.AddCallerSkip(2)).Debug(msg, fields...)
+		logger.WithOptions(zap.AddCallerSkip(2)).Debug(msg, fields...)
 	case "fatal":
-		logInstance.WithOptions(zap.AddCallerSkip(2)).Fatal(msg, fields...)
+		logger.WithOptions(zap.AddCallerSkip(2)).Fatal(msg, fields...)
 	case "panic":
-		logInstance.WithOptions(zap.AddCallerSkip(2)).Panic(msg, fields...)
+		logger.WithOptions(zap.AddCallerSkip(2)).Panic(msg, fields...)
 	}
 }
 
