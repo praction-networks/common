@@ -67,7 +67,7 @@ func (fq *PaginatedFeedQuery) Parse(r *http.Request) error {
 	// Parse dynamic filters
 	fq.Filters = make(map[string]map[string]string)
 	for key, values := range qs {
-		if len(values) > 0 && key != "limit" && key != "offset" && key != "sort" {
+		if len(values) > 0 && key != "limit" && key != "offset" && key != "sort" && key != "pagination_meta" {
 			if strings.Contains(key, "[") && strings.Contains(key, "]") {
 				field := key[:strings.Index(key, "[")]
 				operator := key[strings.Index(key, "[")+1 : strings.Index(key, "]")]
