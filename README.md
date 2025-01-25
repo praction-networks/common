@@ -6,7 +6,8 @@ A shared library for Go microservices, including:
 - **Response**: Standardized HTTP response utilities.
 - **Events**: Tools for event-driven communication.
 - **AppError**: AppSpecifc Error Return.
+- **HelperFunction**: Helper function for all apps.
 
 ## Installation
 ```bash
-go get github.com/praction-networks/common
+go get github.com/praction-networks/common@latest
