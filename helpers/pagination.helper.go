@@ -9,19 +9,30 @@ import (
 )
 
 type PaginatedFeedQuery struct {
-	Limit          int                          `json:"limit" validate:"gte=1, lte=5000"`
-	Offset         int                          `json:"offset" validate:"gte=0"`
-	Sort           map[string]string            `json:"sort"`            // Dynamic sorting: field -> order (asc/desc)
-	Filters        map[string]map[string]string `json:"filters"`         // Dynamic search: field -> operator -> value
-	IncludeFields  []string                     `json:"include_fields"`  // Fields to include in response
-	ExcludeFields  []string                     `json:"exclude_fields"`  // Fields to exclude in response
-	PaginationMeta bool                         `json:"pagination_meta"` // Return pagination metadata
-	DistinctField  string                       `json:"distinct_field"`  // Field for distinct results
+	Limit          int                          `json:"limit" validate:"gte=1, lte=5000"` // Maximum items per page
+	Offset         int                          `json:"offset" validate:"gte=0"`          // Offset for pagination
+	Sort           map[string]string            `json:"sort"`                             // Dynamic sorting: field -> order (asc/desc)
+	Filters        map[string]map[string]string `json:"filters"`                          // Dynamic search: field -> operator -> value
+	IncludeFields  []string                     `json:"include_fields"`                   // Fields to include in response
+	ExcludeFields  []string                     `json:"exclude_fields"`                   // Fields to exclude in response
+	PaginationMeta bool                         `json:"pagination_meta"`                  // Return pagination metadata
+	DistinctField  string                       `json:"distinct_field"`                   // Field for distinct results
 }
 
 // Parse parses query parameters into the PaginatedFeedQuery struct.
 func (fq *PaginatedFeedQuery) Parse(r *http.Request) error {
 	qs := r.URL.Query()
+
+	// Valid parameter keys for non-filter fields
+	validParams := map[string]bool{
+		"limit":           true,
+		"offset":          true,
+		"sort":            true,
+		"pagination_meta": true,
+		"include":         true,
+		"exclude":         true,
+		"distinct":        true,
+	}
 
 	// Parse limit with default value
 	if limit := qs.Get("limit"); limit != "" {
@@ -67,7 +78,13 @@ func (fq *PaginatedFeedQuery) Parse(r *http.Request) error {
 	// Parse dynamic filters
 	fq.Filters = make(map[string]map[string]string)
 	for key, values := range qs {
-		if len(values) > 0 && key != "limit" && key != "offset" && key != "sort" && key != "pagination_meta" {
+		// Skip explicitly whitelisted non-filter parameters
+		if validParams[key] {
+			continue
+		}
+
+		// Process valid filters
+		if len(values) > 0 {
 			if strings.Contains(key, "[") && strings.Contains(key, "]") {
 				field := key[:strings.Index(key, "[")]
 				operator := key[strings.Index(key, "[")+1 : strings.Index(key, "]")]
