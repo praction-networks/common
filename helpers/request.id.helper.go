@@ -69,8 +69,8 @@ func IsUUIDv4(s string) bool {
 	return uuidV4Regex.MatchString(s)
 }
 
-func GetRequestID(r *http.Request) string {
-	reqID, ok := r.Context().Value(RequestIDKey).(string)
+func GetRequestID(ctx context.Context) string {
+	reqID, ok := ctx.Value(RequestIDKey).(string)
 
 	if !ok {
 		logger.Warn("Request ID is not a string or missing in context")
