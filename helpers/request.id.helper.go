@@ -41,9 +41,14 @@ func RequestLoggerMiddleware(next http.Handler) http.Handler {
 
 		// Create a logger with RequestID
 		// Set the request logger
-		logger.SetDefaultRequestLogger(zap.String("Request-ID", reqID))
+
 		if id != "" {
-			logger.SetDefaultRequestLogger(zap.String("Object-ID", id))
+			logger.SetDefaultRequestLogger(
+				zap.String("Request-ID", reqID),
+				zap.String("Object-ID", id),
+			)
+		} else {
+			logger.SetDefaultRequestLogger(zap.String("Request-ID", reqID))
 		}
 
 		// Clean up the logger at the end of the request
