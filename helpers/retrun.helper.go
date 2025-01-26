@@ -21,18 +21,18 @@ func HandleAppError(w http.ResponseWriter, err error) {
 	}
 }
 
-func ParseRequestBodyAndRespond(r *http.Request, w http.ResponseWriter, reqID string, dest interface{}) bool {
+func ParseRequestBodyAndRespond(r *http.Request, w http.ResponseWriter, dest interface{}) bool {
 	if err := json.NewDecoder(r.Body).Decode(dest); err != nil {
-		logger.Error("Error parsing request body", reqID, err)
+		logger.Error("Error parsing request body", err)
 		response.Send400BadRequest(w, "Invalid request body: "+err.Error())
 		return false
 	}
 	return true
 }
 
-func ValidateRequestAndRespond(w http.ResponseWriter, reqID string, validationErrors []response.ErrorDetail, logMessage string) bool {
+func ValidateRequestAndRespond(w http.ResponseWriter, validationErrors []response.ErrorDetail, logMessage string) bool {
 	if len(validationErrors) > 0 {
-		logger.Warn(logMessage, reqID, "validationErrors", validationErrors)
+		logger.Warn(logMessage, "validationErrors", validationErrors)
 		response.SendCustomError(w, "Validation failed", validationErrors, http.StatusBadRequest)
 		return false
 	}
