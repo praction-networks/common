@@ -4,7 +4,6 @@ import (
 	"context"
 	"net/http"
 	"regexp"
-	"sync"
 	"time"
 
 	"github.com/google/uuid"
@@ -15,8 +14,6 @@ import (
 type contextKey string
 
 const RequestIDKey contextKey = "request_id"
-
-var globalRequestLoggers sync.Map
 
 // RequestLoggerMiddleware logs details about each HTTP request and response, including a unique request ID.
 func RequestLoggerMiddleware(next http.Handler) http.Handler {
@@ -38,7 +35,7 @@ func RequestLoggerMiddleware(next http.Handler) http.Handler {
 
 		// Create a logger with RequestID
 		// Set the request logger
-		logger.SetDefaultRequestLogger(zap.String("RequestID", reqID))
+		logger.SetDefaultRequestLogger(zap.String("Request-ID", reqID))
 
 		// Clean up the logger at the end of the request
 		defer logger.ClearDefaultRequestLogger()
@@ -52,7 +49,7 @@ func RequestLoggerMiddleware(next http.Handler) http.Handler {
 		next.ServeHTTP(wrappedWriter, r)
 
 		// Log the request details
-		logger.Info("HTTP request", reqID, "method", r.Method, "path", r.URL.Path, "size", wrappedWriter.size, "duration", time.Since(start), "client_ip", r.RemoteAddr, "user_agent", r.UserAgent(), "status_Code", wrappedWriter.status)
+		logger.Info("HTTP request", "method", r.Method, "path", r.URL.Path, "size", wrappedWriter.size, "duration", time.Since(start), "client_ip", r.RemoteAddr, "user_agent", r.UserAgent(), "status_Code", wrappedWriter.status)
 	})
 }
 
