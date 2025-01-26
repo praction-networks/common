@@ -13,7 +13,10 @@ import (
 
 type contextKey string
 
-const RequestIDKey contextKey = "request_id"
+const (
+	RequestIDKey contextKey = "request_id"
+	URLIDKey     contextKey = "object_id"
+)
 
 // RequestLoggerMiddleware logs details about each HTTP request and response, including a unique request ID.
 func RequestLoggerMiddleware(next http.Handler) http.Handler {
@@ -27,15 +30,21 @@ func RequestLoggerMiddleware(next http.Handler) http.Handler {
 			// Add the generated request ID to the request header
 			r.Header.Set("X-Request-ID", reqID)
 		}
+		// Extract `{id}` from the URL if present
+		id := extractIDFromURL(r.URL.Path)
 
 		// Set the request ID into the context
 		ctx := context.WithValue(r.Context(), RequestIDKey, reqID)
+		ctx = context.WithValue(ctx, URLIDKey, id)
 
 		r = r.WithContext(ctx)
 
 		// Create a logger with RequestID
 		// Set the request logger
 		logger.SetDefaultRequestLogger(zap.String("Request-ID", reqID))
+		if id != "" {
+			logger.SetDefaultRequestLogger(zap.String("Object-ID", id))
+		}
 
 		// Clean up the logger at the end of the request
 		defer logger.ClearDefaultRequestLogger()
@@ -51,6 +60,18 @@ func RequestLoggerMiddleware(next http.Handler) http.Handler {
 		// Log the request details
 		logger.Info("HTTP request", "method", r.Method, "path", r.URL.Path, "size", wrappedWriter.size, "duration", time.Since(start), "client_ip", r.RemoteAddr, "user_agent", r.UserAgent(), "status_Code", wrappedWriter.status)
 	})
+}
+
+// extractIDFromURL extracts the `{id}` parameter from the URL path if present.
+// Assumes that `{id}` is a numeric or alphanumeric segment.
+func extractIDFromURL(path string) string {
+	// Example regex to capture numeric IDs: `/resource/{id}`
+	re := regexp.MustCompile(`/([^/]+)/?`)
+	matches := re.FindAllStringSubmatch(path, -1)
+	if len(matches) > 0 {
+		return matches[len(matches)-1][1] // Get the last segment, assuming it's the ID
+	}
+	return ""
 }
 
 // responseWriter wraps http.ResponseWriter to capture the status and size of the response
@@ -85,4 +106,13 @@ func GetRequestID(ctx context.Context) string {
 		return ""
 	}
 	return reqID
+}
+
+func GetURLID(ctx context.Context) string {
+	id, ok := ctx.Value(URLIDKey).(string)
+	if !ok {
+		logger.Warn("ID is not found in context")
+		return ""
+	}
+	return id
 }
