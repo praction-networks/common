@@ -8,21 +8,30 @@ const (
 	PostalServerStream           StreamName = "PostalServerStream"
 	DomainUserStream             StreamName = "DomainUserStream"
 	DomainUserNotificationStream StreamName = "DomainUserNotificationStream"
+	RolesStream                  StreamName = "RolesStream"
+	PolicyStream                 StreamName = "PolicyStream"
 )
 
 // Subjects defines the NATS Subjects for different events
 type Subject string
 
 const (
-	DomainCreatedSubject     Subject = "domain.created"
-	DomainUpdatedSubject     Subject = "domain.updated"
-	DomainDeletedSubject     Subject = "domain.deleted"
-	PostalCreatedSubject     Subject = "postal.created"
-	PostalUpdatedSubject     Subject = "postal.updated"
-	PostalDeletedSubject     Subject = "postal.deleted"
+	DomainCreatedSubject Subject = "domain.created"
+	DomainUpdatedSubject Subject = "domain.updated"
+	DomainDeletedSubject Subject = "domain.deleted"
+	PostalCreatedSubject Subject = "postal.created"
+	PostalUpdatedSubject Subject = "postal.updated"
+	PostalDeletedSubject Subject = "postal.deleted"
+
 	DomainUserCreatedSubject Subject = "domainuser.created"
 	DomainUserUpdatedSubject Subject = "domainuser.updated"
 	DomainUserDeletedSubject Subject = "domainuser.deleted"
+
+	RoleCreatedSubject Subject = "role.created"
+	RoleUpdatedSubject Subject = "role.updated"
+	RoleDeletedSubject Subject = "role.deleted"
+
+	PolicyCreatedSubject Subject = "policy.created"
 
 	DomainaUserCreatedNotificationSubject       Subject = "domainuser.created.notification"
 	DomainUserForgetPasswordNotificationSubject Subject = "domainuser.forget.password.notification"
@@ -57,9 +66,27 @@ var Streams = map[StreamName]StreamMetadata{
 		Description: "Stream for domain user-related events",
 		Subjects:    []Subject{DomainUserCreatedSubject, DomainUserUpdatedSubject, DomainUserDeletedSubject},
 	},
+	PolicyStream: {
+		Name:        PolicyStream,
+		Description: "Policy events for auth services",
+		Subjects:    []Subject{PolicyCreatedSubject},
+	},
+	RolesStream: {
+		Name:        RolesStream,
+		Description: "Role events for auth services",
+		Subjects:    []Subject{RoleCreatedSubject, RoleUpdatedSubject, RoleDeletedSubject},
+	},
 	DomainUserNotificationStream: {
 		Name:        DomainUserNotificationStream,
 		Description: "Stream for domain user notification events",
-		Subjects:    []Subject{DomainaUserCreatedNotificationSubject},
+		Subjects: []Subject{
+			DomainaUserCreatedNotificationSubject,
+			DomainUserForgetPasswordNotificationSubject,
+			DomainUserResetPasswordNotificationSubject,
+			DomainUserChangePasswordNotificationSubject,
+			DomainUserChangeEmailNotificationSubject,
+			DomainUserChangeMobileNotificationSubject,
+			DomainUserChangeWhatsappNotificationSubject,
+		},
 	},
 }

@@ -63,7 +63,19 @@ func RequestLoggerMiddleware(next http.Handler) http.Handler {
 		next.ServeHTTP(wrappedWriter, r)
 
 		// Log the request details
-		logger.Info("HTTP request", "method", r.Method, "path", r.URL.Path, "size", wrappedWriter.size, "duration", time.Since(start), "client_ip", r.RemoteAddr, "user_agent", r.UserAgent(), "status_Code", wrappedWriter.status)
+		logger.Info("HTTP request",
+			"method", r.Method,
+			"path", r.URL.Path,
+			"size", wrappedWriter.size,
+			"request_body_size", r.ContentLength,
+			"duration", time.Since(start),
+			"client_ip", r.RemoteAddr,
+			"user_agent", r.UserAgent(),
+			"referer", r.Referer(),
+			"protocol", r.Proto,
+			"status_code", wrappedWriter.status,
+			"status_description", http.StatusText(wrappedWriter.status),
+		)
 	})
 }
 
