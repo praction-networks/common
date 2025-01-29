@@ -2,6 +2,32 @@ package domainUserEventModdel
 
 import "go.mongodb.org/mongo-driver/bson/primitive"
 
+type UserAccess struct {
+	Domain string `json:"domain" bson:"domain"`
+	Role   string `json:"role" bson:"role"`
+}
+
+type UserDepartment struct {
+	Domain     string `json:"domain" bson:"domain"`
+	Department string `json:"department" bson:"department"`
+}
+
+// Department represents a department entity with parent-child hierarchy
+type Department struct {
+	ID          primitive.ObjectID  `json:"id" bson:"_id,omitempty"`
+	UUID        string              `json:"uuid" bson:"uuid,omitempty"`
+	Name        string              `json:"name" bson:"name,omitempty"`
+	SystemName  string              `json:"systemName" bson:"systemName,omitempty"`
+	ParentRefID *primitive.ObjectID `json:"parentRefId,omitempty" bson:"parentRefId,omitempty"` // Nullable parent reference
+}
+
+type Domain struct {
+	ID          primitive.ObjectID  `json:"id" bson:"_id,omitempty"`
+	UUID        string              `json:"uuid" bson:"uuid,omitempty"`
+	Name        string              `json:"name" bson:"name,omitempty"`
+	SystemName  string              `json:"systemName" bson:"systemName,omitempty"`
+	ParentRefID *primitive.ObjectID `json:"parentRefId,omitempty" bson:"parentRefId,omitempty"` // Nullable parent reference
+}
 type DomainUserCreateEvent struct {
 	ID             primitive.ObjectID `json:"id" bson:"_id"`
 	UUID           string             `json:"uuid,omitempty"`
@@ -14,10 +40,7 @@ type DomainUserCreateEvent struct {
 	IsActive       bool               `json:"isActive" bson:"isActive"`
 }
 
-type UserDepartment struct {
-	Domain     string `json:"domain"`
-	Department string `json:"department"`
-}
+// Domain represents a domain entity with parent-child hierarchy
 
 type DomainUserUpdateEvent struct {
 	ID             primitive.ObjectID `json:"id" bson:"_id"`
@@ -33,11 +56,6 @@ type DomainUserUpdateEvent struct {
 
 type DomainUserDeleteEvent struct {
 	ID primitive.ObjectID `json:"id" bson:"_id"`
-}
-
-type UserAccess struct {
-	Domain string `json:"domain" bson:"domain" example:"550e8400-e29b-41d4-a716-446655440000"`
-	Role   string `json:"role"  bson:"role" example:"550e8400-e29b-41d4-a716-446655440000"`
 }
 
 type RoleInitEventModel struct {
