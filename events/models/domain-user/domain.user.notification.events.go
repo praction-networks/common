@@ -59,17 +59,19 @@ type DomainUserDeleteEvent struct {
 }
 
 type RoleInitEventModel struct {
-	ID       primitive.ObjectID   `json:"id" bson:"_id"`
-	UUID     string               `json:"uuid" bson:"uuid"`
-	Policies []primitive.ObjectID `json:"policies" bson:"policies"`
-	Version  int                  `json:"version" bson:"version"`
+	ID          primitive.ObjectID    `json:"id" bson:"_id"`
+	UUID        string                `json:"uuid" bson:"uuid"`
+	Policies    []*primitive.ObjectID `json:"policies,omitempty" bson:"policies,omitempty"`
+	SystemName  string                `json:"systemName" bson:"systemName,omitempty"`
+	ParentRefID *primitive.ObjectID   `json:"parentRefId,omitempty" bson:"parentRefId,omitempty"`
+	Version     int                   `json:"version" bson:"version"`
 }
 
 type RoleUpdateEventModel struct {
-	ID       primitive.ObjectID   `json:"id" bson:"_id"`
-	UUID     string               `json:"uuid" bson:"uuid"`
-	Policies []primitive.ObjectID `json:"policies" bson:"policies"`
-	Version  int                  `json:"version" bson:"version"`
+	ID       primitive.ObjectID    `json:"id" bson:"_id"`
+	UUID     string                `json:"uuid" bson:"uuid"`
+	Policies []*primitive.ObjectID `json:"policies" bson:"policies"`
+	Version  int                   `json:"version" bson:"version"`
 }
 
 type RoleDeleteEvenetModel struct {
