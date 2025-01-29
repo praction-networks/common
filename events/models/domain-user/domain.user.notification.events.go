@@ -19,6 +19,7 @@ type Department struct {
 	Name        string              `json:"name" bson:"name,omitempty"`
 	SystemName  string              `json:"systemName" bson:"systemName,omitempty"`
 	ParentRefID *primitive.ObjectID `json:"parentRefId,omitempty" bson:"parentRefId,omitempty"` // Nullable parent reference
+	Version     int                 `json:"version" bson:"version"`
 }
 
 type Domain struct {
@@ -27,6 +28,7 @@ type Domain struct {
 	Name        string              `json:"name" bson:"name,omitempty"`
 	SystemName  string              `json:"systemName" bson:"systemName,omitempty"`
 	ParentRefID *primitive.ObjectID `json:"parentRefId,omitempty" bson:"parentRefId,omitempty"` // Nullable parent reference
+	Version     int                 `json:"version" bson:"version"`
 }
 type DomainUserCreateEvent struct {
 	ID             primitive.ObjectID `json:"id" bson:"_id"`
@@ -38,6 +40,7 @@ type DomainUserCreateEvent struct {
 	UserDepartment []UserDepartment   `json:"userDepartment"`
 	OnLeave        bool               `json:"onLeave" bson:"onLeave"`
 	IsActive       bool               `json:"isActive" bson:"isActive"`
+	Version        int                `json:"version" bson:"version"`
 }
 
 // Domain represents a domain entity with parent-child hierarchy
@@ -52,6 +55,7 @@ type DomainUserUpdateEvent struct {
 	UserDepartment []UserDepartment   `json:"userDepartment"`
 	OnLeave        bool               `json:"onLeave" bson:"onLeave"`
 	IsActive       bool               `json:"isActive" bson:"isActive"`
+	Version        int                `json:"version" bson:"version"`
 }
 
 type DomainUserDeleteEvent struct {
