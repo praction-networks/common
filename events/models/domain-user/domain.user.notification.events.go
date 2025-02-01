@@ -43,7 +43,7 @@ type RoleInitEventModel struct {
 	UUID        string               `json:"uuid" bson:"uuid"`
 	Policies    []primitive.ObjectID `json:"policies,omitempty" bson:"policies,omitempty"`
 	SystemName  string               `json:"systemName" bson:"systemName,omitempty"`
-	ParentRefID *primitive.ObjectID  `json:"parentRefId,omitempty" bson:"parentRefId,omitempty"`
+	ParentRefID primitive.ObjectID   `json:"parentRefId,omitempty" bson:"parentRefId,omitempty"`
 	Version     int                  `json:"version" bson:"version"`
 }
 
