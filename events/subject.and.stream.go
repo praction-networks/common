@@ -16,9 +16,13 @@ const (
 type Subject string
 
 const (
-	DomainCreatedSubject Subject = "domain.created"
-	DomainUpdatedSubject Subject = "domain.updated"
-	DomainDeletedSubject Subject = "domain.deleted"
+	DomainCreatedSubject     Subject = "domain.created"
+	DomainUpdatedSubject     Subject = "domain.updated"
+	DomainDeletedSubject     Subject = "domain.deleted"
+	DepartmentCreatedSubject Subject = "department.created"
+	DepartmentUpdateSubject  Subject = "department.updated"
+	DepartmentDeleteSubject  Subject = "department.delete"
+
 	PostalCreatedSubject Subject = "postal.created"
 	PostalUpdatedSubject Subject = "postal.updated"
 	PostalDeletedSubject Subject = "postal.deleted"
@@ -54,7 +58,13 @@ var Streams = map[StreamName]StreamMetadata{
 	DomainStream: {
 		Name:        DomainStream,
 		Description: "Stream for domain-related events",
-		Subjects:    []Subject{DomainCreatedSubject, DomainUpdatedSubject, DomainDeletedSubject},
+		Subjects: []Subject{DomainCreatedSubject,
+			DomainUpdatedSubject,
+			DomainDeletedSubject,
+			DepartmentCreatedSubject,
+			DepartmentUpdateSubject,
+			DepartmentDeleteSubject,
+		},
 	},
 	PostalServerStream: {
 		Name:        PostalServerStream,
