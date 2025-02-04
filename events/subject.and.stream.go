@@ -4,6 +4,7 @@ type StreamName string
 
 // Stream names as constants
 const (
+	SeedAppStream                StreamName = "SeedAppStream"
 	DomainStream                 StreamName = "DomainStream"
 	PostalServerStream           StreamName = "PostalServerStream"
 	DomainUserStream             StreamName = "DomainUserStream"
@@ -27,15 +28,19 @@ const (
 	PostalUpdatedSubject Subject = "postal.updated"
 	PostalDeletedSubject Subject = "postal.deleted"
 
-	DomainUserCreatedSubject Subject = "domainuser.created"
-	DomainUserUpdatedSubject Subject = "domainuser.updated"
-	DomainUserDeletedSubject Subject = "domainuser.deleted"
+	SeedDomainUserCreatedSubject Subject = "seed.domainuser.created"
+	DomainUserCreatedSubject     Subject = "domainuser.created"
+	DomainUserUpdatedSubject     Subject = "domainuser.updated"
+	DomainUserDeletedSubject     Subject = "domainuser.deleted"
 
-	RoleCreatedSubject Subject = "role.created"
-	RoleUpdatedSubject Subject = "role.updated"
-	RoleDeletedSubject Subject = "role.deleted"
+	SeedRoleCreatedSubject Subject = "seed.role.created"
+	RoleCreatedSubject     Subject = "role.created"
+	RoleUpdatedSubject     Subject = "role.updated"
+	RoleDeletedSubject     Subject = "role.deleted"
 
-	PolicyCreatedSubject Subject = "policy.created"
+	SeedPolicyCreatedSubject Subject = "seed.policy.created"
+	PolicyCreatedSubject     Subject = "policy.created"
+	PolicyDeletedSubject     Subject = "policy.deleted"
 
 	DomainaUserCreatedNotificationSubject       Subject = "domainuser.created.notification"
 	DomainUserForgetPasswordNotificationSubject Subject = "domainuser.forget.password.notification"
@@ -79,7 +84,12 @@ var Streams = map[StreamName]StreamMetadata{
 	PolicyStream: {
 		Name:        PolicyStream,
 		Description: "Policy events for auth services",
-		Subjects:    []Subject{PolicyCreatedSubject},
+		Subjects:    []Subject{PostalCreatedSubject, PolicyDeletedSubject},
+	},
+	SeedAppStream: {
+		Name:        SeedAppStream,
+		Description: "Init Stream for seed inital seeding",
+		Subjects:    []Subject{SeedDomainUserCreatedSubject, SeedRoleCreatedSubject, SeedPolicyCreatedSubject},
 	},
 	RolesStream: {
 		Name:        RolesStream,
