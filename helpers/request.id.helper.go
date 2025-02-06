@@ -82,12 +82,25 @@ func RequestLoggerMiddleware(next http.Handler) http.Handler {
 // extractIDFromURL extracts the `{id}` parameter from the URL path if present.
 // Assumes that `{id}` is a numeric or alphanumeric segment.
 func extractIDFromURL(path string) string {
-	// Example regex to capture numeric IDs: `/resource/{id}`
-	re := regexp.MustCompile(`/([^/]+)/?`)
-	matches := re.FindAllStringSubmatch(path, -1)
-	if len(matches) > 0 {
-		return matches[len(matches)-1][1] // Get the last segment, assuming it's the ID
+
+	// ObjectID regex (MongoDB, 24 hex characters)
+	var objectIDRegex = regexp.MustCompile(`\b[0-9a-fA-F]{24}\b`)
+
+	// UUID v4 regex (Valid UUID format)
+	var uuidRegex = regexp.MustCompile(`\b[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\b`)
+	// Check for ObjectID in full path
+	objectIDMatch := objectIDRegex.FindString(path)
+	if objectIDMatch != "" {
+		return objectIDMatch
 	}
+
+	// Check for UUID v4 in full path
+	uuidMatch := uuidRegex.FindString(path)
+	if uuidMatch != "" {
+		return uuidMatch
+	}
+
+	// Return empty string if no valid ID is found
 	return ""
 }
 
