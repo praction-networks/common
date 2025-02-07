@@ -3,7 +3,7 @@ module github.com/praction-networks/common
 go 1.23.2
 
 require (
-	github.com/google/uuid v1.6.0
+	github.com/lucsky/cuid v1.2.1
 	github.com/nats-io/nats.go v1.38.0
 	github.com/prometheus/client_golang v1.20.5
 	go.mongodb.org/mongo-driver v1.17.2

@@ -6,7 +6,6 @@ import (
 	"regexp"
 	"time"
 
-	"github.com/google/uuid"
 	"github.com/praction-networks/common/logger"
 	"go.uber.org/zap"
 )
@@ -25,11 +24,7 @@ func RequestLoggerMiddleware(next http.Handler) http.Handler {
 
 		// Extract or generate a unique request ID
 		reqID := r.Header.Get("X-Request-ID")
-		if reqID == "" || !IsUUIDv4(reqID) {
-			reqID = uuid.New().String()
-			// Add the generated request ID to the request header
-			r.Header.Set("X-Request-ID", reqID)
-		}
+
 		// Extract `{id}` from the URL if present
 		id := extractIDFromURL(r.URL.Path)
 
@@ -87,17 +82,10 @@ func extractIDFromURL(path string) string {
 	var objectIDRegex = regexp.MustCompile(`\b[0-9a-fA-F]{24}\b`)
 
 	// UUID v4 regex (Valid UUID format)
-	var uuidRegex = regexp.MustCompile(`\b[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\b`)
 	// Check for ObjectID in full path
 	objectIDMatch := objectIDRegex.FindString(path)
 	if objectIDMatch != "" {
 		return objectIDMatch
-	}
-
-	// Check for UUID v4 in full path
-	uuidMatch := uuidRegex.FindString(path)
-	if uuidMatch != "" {
-		return uuidMatch
 	}
 
 	// Return empty string if no valid ID is found
@@ -120,12 +108,6 @@ func (rw *responseWriter) Write(data []byte) (int, error) {
 	size, err := rw.ResponseWriter.Write(data)
 	rw.size += size
 	return size, err
-}
-
-func IsUUIDv4(s string) bool {
-	// Regular expression for UUID v4
-	uuidV4Regex := regexp.MustCompile(`^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[89aAbB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}$`)
-	return uuidV4Regex.MatchString(s)
 }
 
 func GetRequestID(ctx context.Context) string {
