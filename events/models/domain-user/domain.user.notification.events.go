@@ -42,7 +42,6 @@ type DomainUserDeleteEvent struct {
 
 type RoleInitEventModel struct {
 	ID          string   `json:"id" bson:"_id"`
-	UUID        string   `json:"uuid" bson:"uuid"`
 	Policies    []string `json:"policies,omitempty" bson:"policies,omitempty"`
 	SystemName  string   `json:"systemName" bson:"systemName,omitempty"`
 	CreatedBy   string   `json:"createdBy" bson:"createdBy"`
@@ -52,7 +51,6 @@ type RoleInitEventModel struct {
 
 type RoleUpdateEventModel struct {
 	ID          string   `json:"id" bson:"_id"`
-	UUID        string   `json:"uuid" bson:"uuid"`
 	Policies    []string `json:"policies" bson:"policies"`
 	SystemName  string   `json:"systemName" bson:"systemName,omitempty"`
 	CreatedBy   string   `json:"createdBy" bson:"createdBy"`
@@ -67,14 +65,13 @@ type RoleDeleteEvenetModel struct {
 
 type PolicyInitEventModel struct {
 	ID      string `json:"id" bson:"_id"`
-	UUID    string `json:"uuid" bson:"uuid"`
 	Object  string `json:"object" bson:"object"`
 	Action  string `json:"action" bson:"action"`
 	Version int    `json:"version" bson:"version"`
 }
 
 type DomainaUserCreatedNotification struct {
-	UUID                string `json:"uuid,omitempty" bson:"uuid,omitempty"`
+	ID                  string `json:"id" bson:"_id"`
 	ReqID               string `json:"reqID,omitempty" bson:"reqID,omitempty"`
 	FirstName           string `json:"firstName" bson:"firstName" validate:"required,oneword"`
 	Mobile              string `json:"mobile" bson:"mobile" validate:"required,e164"`
@@ -84,7 +81,7 @@ type DomainaUserCreatedNotification struct {
 }
 
 type DomainaUserForgetPasswordNotification struct {
-	UUID                string `json:"uuid,omitempty" bson:"uuid,omitempty"`
+	ID                  string `json:"id" bson:"_id"`
 	ReqID               string `json:"reqID,omitempty" bson:"reqID,omitempty"`
 	FirstName           string `json:"firstName" bson:"firstName" validate:"required,oneword"`
 	Mobile              string `json:"mobile" bson:"mobile" validate:"required,e164"`
@@ -94,7 +91,7 @@ type DomainaUserForgetPasswordNotification struct {
 }
 
 type DomainaUserResetPasswordNotification struct {
-	UUID               string `json:"uuid,omitempty" bson:"uuid,omitempty"`
+	ID                 string `json:"id" bson:"_id"`
 	ReqID              string `json:"reqID,omitempty" bson:"reqID,omitempty"`
 	FirstName          string `json:"firstName" bson:"firstName" validate:"required"`
 	Mobile             string `json:"mobile" bson:"mobile" validate:"required,e164"`
@@ -104,7 +101,7 @@ type DomainaUserResetPasswordNotification struct {
 }
 
 type DomainUserChangeEmailNotification struct {
-	UUID      string `json:"uuid,omitempty" bson:"uuid,omitempty"`
+	ID        string `json:"id" bson:"_id"`
 	ReqID     string `json:"reqID,omitempty" bson:"reqID,omitempty"`
 	FirstName string `json:"firstName" bson:"firstName" validate:"required,oneword"`
 	Mobile    string `json:"mobile" bson:"mobile" validate:"required,e164"`
@@ -113,7 +110,7 @@ type DomainUserChangeEmailNotification struct {
 }
 
 type DomainUserChangeMobileNotification struct {
-	UUID      string `json:"uuid,omitempty" bson:"uuid,omitempty"`
+	ID        string `json:"id" bson:"_id"`
 	ReqID     string `json:"reqID,omitempty" bson:"reqID,omitempty"`
 	FirstName string `json:"firstName" bson:"firstName" validate:"required,oneword"`
 	Mobile    string `json:"mobile" bson:"mobile" validate:"required,e164"`
@@ -122,7 +119,7 @@ type DomainUserChangeMobileNotification struct {
 }
 
 type DomainUserChangeWhatsappNotification struct {
-	UUID      string `json:"uuid,omitempty" bson:"uuid,omitempty"`
+	ID        string `json:"id" bson:"_id"`
 	ReqID     string `json:"reqID,omitempty" bson:"reqID,omitempty"`
 	FirstName string `json:"firstName" bson:"firstName" validate:"required,oneword"`
 	Mobile    string `json:"mobile" bson:"mobile" validate:"required,e164"`
