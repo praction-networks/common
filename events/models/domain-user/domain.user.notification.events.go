@@ -2,8 +2,6 @@ package domainUserEventModel
 
 import (
 	"time"
-
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type UserAccess struct {
@@ -13,68 +11,66 @@ type UserAccess struct {
 }
 
 type DomainUserCreateEvent struct {
-	ID                primitive.ObjectID `json:"id" bson:"_id"`
-	UUID              string             `json:"uuid,omitempty"`
-	Mobile            string             `json:"mobile"`
-	Whatsapp          string             `json:"whatsapp"`
-	Email             string             `json:"email"`
-	PasswordChangedAt *time.Time         `json:"passwordChangedAt,omitempty" bson:"passwordChangedAt,omitempty"`
-	UserAccess        []UserAccess       `json:"userAccess"`
-	OnLeave           bool               `json:"onLeave" bson:"onLeave"`
-	IsActive          bool               `json:"isActive" bson:"isActive"`
-	Version           int                `json:"version" bson:"version"`
+	ID                string       `json:"id" bson:"_id"`
+	Mobile            string       `json:"mobile"`
+	Whatsapp          string       `json:"whatsapp"`
+	Email             string       `json:"email"`
+	PasswordChangedAt *time.Time   `json:"passwordChangedAt,omitempty" bson:"passwordChangedAt,omitempty"`
+	UserAccess        []UserAccess `json:"userAccess"`
+	OnLeave           bool         `json:"onLeave" bson:"onLeave"`
+	IsActive          bool         `json:"isActive" bson:"isActive"`
+	Version           int          `json:"version" bson:"version"`
 }
 
 // Domain represents a domain entity with parent-child hierarchy
 
 type DomainUserUpdateEvent struct {
-	ID                primitive.ObjectID `json:"id" bson:"_id"`
-	UUID              string             `json:"uuid,omitempty"`
-	Mobile            string             `json:"mobile"`
-	Whatsapp          string             `json:"whatsapp"`
-	Email             string             `json:"email"`
-	PasswordChangedAt *time.Time         `json:"passwordChangedAt,omitempty" bson:"passwordChangedAt,omitempty"`
-	UserAccess        []UserAccess       `json:"userAccess"`
-	OnLeave           bool               `json:"onLeave" bson:"onLeave"`
-	IsActive          bool               `json:"isActive" bson:"isActive"`
-	Version           int                `json:"version" bson:"version"`
+	ID                string       `json:"id" bson:"_id"`
+	Mobile            string       `json:"mobile"`
+	Whatsapp          string       `json:"whatsapp"`
+	Email             string       `json:"email"`
+	PasswordChangedAt *time.Time   `json:"passwordChangedAt,omitempty" bson:"passwordChangedAt,omitempty"`
+	UserAccess        []UserAccess `json:"userAccess"`
+	OnLeave           bool         `json:"onLeave" bson:"onLeave"`
+	IsActive          bool         `json:"isActive" bson:"isActive"`
+	Version           int          `json:"version" bson:"version"`
 }
 
 type DomainUserDeleteEvent struct {
-	ID primitive.ObjectID `json:"id" bson:"_id"`
+	ID string `json:"id" bson:"_id"`
 }
 
 type RoleInitEventModel struct {
-	ID          primitive.ObjectID   `json:"id" bson:"_id"`
-	UUID        string               `json:"uuid" bson:"uuid"`
-	Policies    []primitive.ObjectID `json:"policies,omitempty" bson:"policies,omitempty"`
-	SystemName  string               `json:"systemName" bson:"systemName,omitempty"`
-	CreatedBy   string               `json:"createdBy" bson:"createdBy"`
-	ParentRefID primitive.ObjectID   `json:"parentRefId,omitempty" bson:"parentRefId,omitempty"`
-	Version     int                  `json:"version" bson:"version"`
+	ID          string   `json:"id" bson:"_id"`
+	UUID        string   `json:"uuid" bson:"uuid"`
+	Policies    []string `json:"policies,omitempty" bson:"policies,omitempty"`
+	SystemName  string   `json:"systemName" bson:"systemName,omitempty"`
+	CreatedBy   string   `json:"createdBy" bson:"createdBy"`
+	ParentRefID string   `json:"parentRefId,omitempty" bson:"parentRefId,omitempty"`
+	Version     int      `json:"version" bson:"version"`
 }
 
 type RoleUpdateEventModel struct {
-	ID          primitive.ObjectID   `json:"id" bson:"_id"`
-	UUID        string               `json:"uuid" bson:"uuid"`
-	Policies    []primitive.ObjectID `json:"policies" bson:"policies"`
-	SystemName  string               `json:"systemName" bson:"systemName,omitempty"`
-	CreatedBy   string               `json:"createdBy" bson:"createdBy"`
-	ParentRefID primitive.ObjectID   `json:"parentRefId,omitempty" bson:"parentRefId,omitempty"`
-	Version     int                  `json:"version" bson:"version"`
+	ID          string   `json:"id" bson:"_id"`
+	UUID        string   `json:"uuid" bson:"uuid"`
+	Policies    []string `json:"policies" bson:"policies"`
+	SystemName  string   `json:"systemName" bson:"systemName,omitempty"`
+	CreatedBy   string   `json:"createdBy" bson:"createdBy"`
+	ParentRefID string   `json:"parentRefId,omitempty" bson:"parentRefId,omitempty"`
+	Version     int      `json:"version" bson:"version"`
 }
 
 type RoleDeleteEvenetModel struct {
-	ID      primitive.ObjectID `json:"id" bson:"_id"`
-	Version int                `json:"version" bson:"version"`
+	ID      string `json:"id" bson:"_id"`
+	Version int    `json:"version" bson:"version"`
 }
 
 type PolicyInitEventModel struct {
-	ID      primitive.ObjectID `json:"id" bson:"_id"`
-	UUID    string             `json:"uuid" bson:"uuid"`
-	Object  string             `json:"object" bson:"object"`
-	Action  string             `json:"action" bson:"action"`
-	Version int                `json:"version" bson:"version"`
+	ID      string `json:"id" bson:"_id"`
+	UUID    string `json:"uuid" bson:"uuid"`
+	Object  string `json:"object" bson:"object"`
+	Action  string `json:"action" bson:"action"`
+	Version int    `json:"version" bson:"version"`
 }
 
 type DomainaUserCreatedNotification struct {
