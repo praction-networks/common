@@ -1,6 +1,10 @@
 package domainUserEventModel
 
-import "go.mongodb.org/mongo-driver/bson/primitive"
+import (
+	"time"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
 
 type UserAccess struct {
 	Domain     string `json:"domain" bson:"domain"`
@@ -9,29 +13,31 @@ type UserAccess struct {
 }
 
 type DomainUserCreateEvent struct {
-	ID         primitive.ObjectID `json:"id" bson:"_id"`
-	UUID       string             `json:"uuid,omitempty"`
-	Mobile     string             `json:"mobile"`
-	Whatsapp   string             `json:"whatsapp"`
-	Email      string             `json:"email"`
-	UserAccess []UserAccess       `json:"userAccess"`
-	OnLeave    bool               `json:"onLeave" bson:"onLeave"`
-	IsActive   bool               `json:"isActive" bson:"isActive"`
-	Version    int                `json:"version" bson:"version"`
+	ID                primitive.ObjectID `json:"id" bson:"_id"`
+	UUID              string             `json:"uuid,omitempty"`
+	Mobile            string             `json:"mobile"`
+	Whatsapp          string             `json:"whatsapp"`
+	Email             string             `json:"email"`
+	PasswordChangedAt *time.Time         `json:"passwordChangedAt,omitempty" bson:"passwordChangedAt,omitempty"`
+	UserAccess        []UserAccess       `json:"userAccess"`
+	OnLeave           bool               `json:"onLeave" bson:"onLeave"`
+	IsActive          bool               `json:"isActive" bson:"isActive"`
+	Version           int                `json:"version" bson:"version"`
 }
 
 // Domain represents a domain entity with parent-child hierarchy
 
 type DomainUserUpdateEvent struct {
-	ID         primitive.ObjectID `json:"id" bson:"_id"`
-	UUID       string             `json:"uuid,omitempty"`
-	Mobile     string             `json:"mobile"`
-	Whatsapp   string             `json:"whatsapp"`
-	Email      string             `json:"email"`
-	UserAccess []UserAccess       `json:"userAccess"`
-	OnLeave    bool               `json:"onLeave" bson:"onLeave"`
-	IsActive   bool               `json:"isActive" bson:"isActive"`
-	Version    int                `json:"version" bson:"version"`
+	ID                primitive.ObjectID `json:"id" bson:"_id"`
+	UUID              string             `json:"uuid,omitempty"`
+	Mobile            string             `json:"mobile"`
+	Whatsapp          string             `json:"whatsapp"`
+	Email             string             `json:"email"`
+	PasswordChangedAt *time.Time         `json:"passwordChangedAt,omitempty" bson:"passwordChangedAt,omitempty"`
+	UserAccess        []UserAccess       `json:"userAccess"`
+	OnLeave           bool               `json:"onLeave" bson:"onLeave"`
+	IsActive          bool               `json:"isActive" bson:"isActive"`
+	Version           int                `json:"version" bson:"version"`
 }
 
 type DomainUserDeleteEvent struct {

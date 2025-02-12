@@ -197,6 +197,7 @@ func InitializeLogger(config LoggerConfig) error {
 			zap.Bool("logstash_enabled", config.LogstashEnabled),
 		)
 	})
+
 	return errInit
 }
 
