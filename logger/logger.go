@@ -203,6 +203,9 @@ func InitializeLogger(config LoggerConfig) (*zap.Logger, error) {
 
 // GetGlobalLogger returns the global logger instance.
 func GetGlobalLogger() *zap.Logger {
+	if logInstance == nil {
+		panic("Logger not initialized")
+	}
 	return logInstance
 }
 
