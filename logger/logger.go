@@ -113,7 +113,7 @@ type logstashWriter struct {
 }
 
 // InitializeLogger initializes the logger with default log level INFO.
-func InitializeLogger(config LoggerConfig) (*zap.Logger, error) {
+func InitializeLogger(config LoggerConfig) error {
 
 	initOnce.Do(func() {
 		if config.LogstashEnabled && (config.LogstashHost == "" || config.LogstashPort == 0) {
@@ -198,7 +198,7 @@ func InitializeLogger(config LoggerConfig) (*zap.Logger, error) {
 		)
 	})
 
-	return logInstance, errInit
+	return errInit
 }
 
 // GetGlobalLogger returns the global logger instance.
