@@ -66,13 +66,6 @@ var (
 		},
 	)
 
-	goGoroutines = prometheus.NewGauge(
-		prometheus.GaugeOpts{
-			Name: "go_goroutines",
-			Help: "Number of goroutines",
-		},
-	)
-
 	cpuUsage = prometheus.NewGauge(
 		prometheus.GaugeOpts{
 			Name: "process_cpu_usage_percent",
@@ -112,7 +105,6 @@ func init() {
 	prometheus.MustRegister(httpRequestLatencySummary)
 	prometheus.MustRegister(goMemStatsAlloc)
 	prometheus.MustRegister(goMemStatsSys)
-	prometheus.MustRegister(goGoroutines)
 	prometheus.MustRegister(cpuUsage)
 	prometheus.MustRegister(memoryUsage)
 	prometheus.MustRegister(diskUsage)
