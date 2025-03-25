@@ -116,11 +116,13 @@ func (l *Listener) Listen(ctx context.Context) error {
 // processMessage processes a single message.
 func (l *Listener) processMessage(ctx context.Context, msg jetstream.Msg) {
 
+	start := time.Now()
 	msgMetaData, err := msg.Metadata()
 	if err != nil {
-		logger.Error("Failed to get message metadata", err, "StreamName", l.StreamName)
 		metrics.FailedMessages.WithLabelValues(string(l.StreamName), msg.Subject()).Inc()
-		msg.Nak()
+		if err := msg.Nak(); err != nil {
+			logger.Error("Failed to NAK message", err, "Subject", msg.Subject())
+		}
 		return
 	}
 	logger.Info("Processing message", "StreamName", l.StreamName, "Subject", msg.Subject(), "Sequence", msgMetaData.Sequence, "Timestamp", msgMetaData.Timestamp, "Consumer", msgMetaData.Consumer, "Data", string(msg.Data()))
@@ -130,7 +132,9 @@ func (l *Listener) processMessage(ctx context.Context, msg jetstream.Msg) {
 	if err := json.Unmarshal(msg.Data(), &event); err != nil {
 		logger.Error("Failed to unmarshal message", err, "Subject", msg.Subject())
 		metrics.FailedMessages.WithLabelValues(string(l.StreamName), msg.Subject()).Inc()
-		msg.Nak()
+		if err := msg.Nak(); err != nil {
+			logger.Error("Failed to NAK message", err, "Subject", msg.Subject())
+		}
 		return
 	}
 
@@ -140,7 +144,9 @@ func (l *Listener) processMessage(ctx context.Context, msg jetstream.Msg) {
 		if err != nil {
 			logger.Error("Error in OnMessageFunc", err, "Subject", event.Subject)
 			metrics.FailedMessages.WithLabelValues(string(l.StreamName), msg.Subject()).Inc()
-			msg.Nak()
+			if err := msg.Nak(); err != nil {
+				logger.Error("Failed to NAK message", err, "Subject", msg.Subject())
+			}
 			return
 		}
 	}
@@ -148,9 +154,13 @@ func (l *Listener) processMessage(ctx context.Context, msg jetstream.Msg) {
 	// Acknowledge the message
 	if err := msg.Ack(); err != nil {
 		logger.Error("Failed to acknowledge message", err, "StreamName", l.StreamName)
+		metrics.FailedMessages.WithLabelValues(string(l.StreamName), msg.Subject()).Inc()
 	}
 
 	metrics.ProcessedMessages.WithLabelValues(string(l.StreamName), msg.Subject()).Inc()
+
+	duration := time.Since(start).Seconds()
+	metrics.Duration.WithLabelValues(string(l.StreamName), msg.Subject()).Observe(duration)
 
 	logger.Info("Message processed", "StreamName", l.StreamName, "Subject", msg.Subject(), "Sequence", msgMetaData.Sequence, "Timestamp", msgMetaData.Timestamp, "Consumer", msgMetaData.Consumer)
 }
