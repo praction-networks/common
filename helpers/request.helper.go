@@ -3,10 +3,14 @@ package helpers
 import (
 	"context"
 	"net/http"
+	"os"
+	"strconv"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/praction-networks/common/logger"
+	"github.com/praction-networks/common/metrics"
+	"github.com/prometheus/client_golang/prometheus"
 )
 
 type contextKey string
@@ -45,6 +49,28 @@ func RequestLoggerMiddleware(next http.Handler) http.Handler {
 
 		// Call the next handler
 		next.ServeHTTP(wrappedWriter, r)
+
+		duration := time.Since(start).Seconds()
+
+		labels := prometheus.Labels{
+			"method":       r.Method,
+			"path":         r.URL.Path,
+			"status":       strconv.Itoa(wrappedWriter.status),
+			"size":         strconv.Itoa(wrappedWriter.size),
+			"pod":          os.Getenv("POD_NAME"),
+			"deployment":   os.Getenv("DEPLOYMENT_NAME"),
+			"namespace":    os.Getenv("POD_NAMESPACE"),
+			"node":         os.Getenv("NODE_NAME"),
+			"content_type": r.Header.Get("Content-Type"),
+			"client_ip":    r.RemoteAddr,
+			"user_agent":   r.UserAgent(),
+			"protocol":     r.Proto,
+		}
+
+		// Record Prometheus metrics
+		metrics.HTTPRequestsTotal.With(labels).Inc()
+		metrics.HTTPRequestDuration.With(labels).Observe(duration)
+		metrics.HTTPRequestLatencySummary.With(labels).Observe(duration)
 
 		// Log the request details
 		logger.Info("HTTP request",
