@@ -119,7 +119,7 @@ func (l *Listener) processMessage(ctx context.Context, msg jetstream.Msg) {
 	msgMetaData, err := msg.Metadata()
 	if err != nil {
 		logger.Error("Failed to get message metadata", err, "StreamName", l.StreamName)
-		metrics.NewMetrics().FailedMessages.WithLabelValues(string(l.StreamName), msg.Subject()).Inc()
+		metrics.FailedMessages.WithLabelValues(string(l.StreamName), msg.Subject()).Inc()
 		msg.Nak()
 		return
 	}
@@ -129,7 +129,7 @@ func (l *Listener) processMessage(ctx context.Context, msg jetstream.Msg) {
 	var event Event[json.RawMessage]
 	if err := json.Unmarshal(msg.Data(), &event); err != nil {
 		logger.Error("Failed to unmarshal message", err, "Subject", msg.Subject())
-		metrics.NewMetrics().FailedMessages.WithLabelValues(string(l.StreamName), msg.Subject()).Inc()
+		metrics.FailedMessages.WithLabelValues(string(l.StreamName), msg.Subject()).Inc()
 		msg.Nak()
 		return
 	}
@@ -139,7 +139,7 @@ func (l *Listener) processMessage(ctx context.Context, msg jetstream.Msg) {
 		err := l.OnMessageFunc(ctx, event)
 		if err != nil {
 			logger.Error("Error in OnMessageFunc", err, "Subject", event.Subject)
-			metrics.NewMetrics().FailedMessages.WithLabelValues(string(l.StreamName), msg.Subject()).Inc()
+			metrics.FailedMessages.WithLabelValues(string(l.StreamName), msg.Subject()).Inc()
 			msg.Nak()
 			return
 		}
@@ -150,7 +150,7 @@ func (l *Listener) processMessage(ctx context.Context, msg jetstream.Msg) {
 		logger.Error("Failed to acknowledge message", err, "StreamName", l.StreamName)
 	}
 
-	metrics.NewMetrics().ProcessedMessages.WithLabelValues(string(l.StreamName), msg.Subject()).Inc()
+	metrics.ProcessedMessages.WithLabelValues(string(l.StreamName), msg.Subject()).Inc()
 
 	logger.Info("Message processed", "StreamName", l.StreamName, "Subject", msg.Subject(), "Sequence", msgMetaData.Sequence, "Timestamp", msgMetaData.Timestamp, "Consumer", msgMetaData.Consumer)
 }
