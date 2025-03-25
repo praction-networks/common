@@ -206,7 +206,6 @@ func collectGoRuntimeMetrics() {
 		runtime.ReadMemStats(&m)
 		goMemStatsAlloc.Set(float64(m.Alloc))
 		goMemStatsSys.Set(float64(m.Sys))
-		goGoroutines.Set(float64(runtime.NumGoroutine()))
 
 		if cpuPercent, err := proc.CPUPercent(); err == nil {
 			cpuUsage.Set(cpuPercent)
