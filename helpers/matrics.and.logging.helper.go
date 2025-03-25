@@ -12,6 +12,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/praction-networks/common/logger"
 	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/collectors"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/shirou/gopsutil/disk"
 	"github.com/shirou/gopsutil/process"
@@ -30,7 +31,7 @@ var (
 			Name: "http_requests_total",
 			Help: "Total HTTP requests processed",
 		},
-		[]string{"method", "path", "status", "user_id", "pod", "deployment"},
+		[]string{"method", "path", "status", "pod", "deployment"},
 	)
 
 	httpRequestDuration = prometheus.NewHistogramVec(
@@ -39,7 +40,7 @@ var (
 			Help:    "Histogram of response time for handler",
 			Buckets: prometheus.DefBuckets,
 		},
-		[]string{"method", "path", "status", "user_id", "pod", "deployment"},
+		[]string{"method", "path", "status", "pod", "deployment"},
 	)
 
 	httpRequestLatencySummary = prometheus.NewSummaryVec(
@@ -48,7 +49,7 @@ var (
 			Help:       "Summary of HTTP request latency in seconds",
 			Objectives: map[float64]float64{0.5: 0.05, 0.9: 0.01, 0.99: 0.001},
 		},
-		[]string{"method", "path", "status", "user_id", "pod", "deployment"},
+		[]string{"method", "path", "status", "pod", "deployment"},
 	)
 
 	goMemStatsAlloc = prometheus.NewGauge(
@@ -117,6 +118,11 @@ func init() {
 	prometheus.MustRegister(diskUsage)
 	prometheus.MustRegister(diskReadBytes)
 	prometheus.MustRegister(diskWriteBytes)
+
+	// Use modern collectors
+	prometheus.MustRegister(collectors.NewGoCollector())
+	prometheus.MustRegister(collectors.NewProcessCollector(collectors.ProcessCollectorOpts{}))
+
 	go collectGoRuntimeMetrics()
 }
 
@@ -144,9 +150,9 @@ func RequestLoggerMiddleware(next http.Handler) http.Handler {
 		pod := os.Getenv("POD_NAME")
 		deployment := os.Getenv("DEPLOYMENT_NAME")
 
-		httpRequestsTotal.WithLabelValues(r.Method, r.URL.Path, status, userID, pod, deployment).Inc()
-		httpRequestDuration.WithLabelValues(r.Method, r.URL.Path, status, userID, pod, deployment).Observe(duration)
-		httpRequestLatencySummary.WithLabelValues(r.Method, r.URL.Path, status, userID, pod, deployment).Observe(duration)
+		httpRequestsTotal.WithLabelValues(r.Method, r.URL.Path, status, pod, deployment).Inc()
+		httpRequestDuration.WithLabelValues(r.Method, r.URL.Path, status, pod, deployment).Observe(duration)
+		httpRequestLatencySummary.WithLabelValues(r.Method, r.URL.Path, status, pod, deployment).Observe(duration)
 
 		logger.Info("HTTP request",
 			"reqID", reqID,
