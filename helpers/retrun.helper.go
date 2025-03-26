@@ -21,7 +21,7 @@ func HandleAppError(w http.ResponseWriter, err error) {
 	}
 }
 
-func ParseRequestBodyAndRespond(r *http.Request, w http.ResponseWriter, dest interface{}) bool {
+func ParseRequestBodyAndRespond(r *http.Request, w http.ResponseWriter, dest any) bool {
 	if err := json.NewDecoder(r.Body).Decode(dest); err != nil {
 		logger.Error("Error parsing request body", err)
 		response.Send400BadRequest(w, "Invalid request body: "+err.Error())

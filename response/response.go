@@ -6,25 +6,17 @@ import (
 )
 
 type APIResponseSuccess struct {
-	Status      string     `json:"status"`
-	StatusCode  int        `json:"statusCode" example:"200"`
-	Message     string     `json:"message,omitempty"`
-	IsArray     bool       `json:"isArray" example:"true"`
-	IsPaginated bool       `json:"isPaginated" example:"true"`
-	Meta        *MetaModel `json:"paginationMeta,omitempty"`
-	Data        any        `json:"data"`
-}
-
-type MetaModel struct {
-	Total  int `json:"total,omitempty" example:"100"`
-	Limit  int `json:"limit,omitempty" example:"10"`
-	Offset int `json:"offset,omitempty" example:"0"`
+	Status     string `json:"status"`
+	StatusCode int    `json:"status_code"`
+	Message    string `json:"message,omitempty"`
+	Data       any    `json:"data,omitempty"`
 }
 
 type APIResponseError struct {
-	Status  string        `json:"status"`
-	Message string        `json:"message,omitempty"`
-	Errors  []ErrorDetail `json:"errors,omitempty"`
+	Status     string        `json:"status"`
+	StatusCode int           `json:"status_code"`
+	Message    string        `json:"message,omitempty"`
+	Errors     []ErrorDetail `json:"errors,omitempty"`
 }
 
 type ErrorDetail struct {
@@ -32,13 +24,19 @@ type ErrorDetail struct {
 	Message string `json:"message"`
 }
 
-// --- Core Response Writers ---
-
-func writeResponseSuccess(w http.ResponseWriter, data APIResponseSuccess) {
+// writeResponse is a generic utility for writing responses
+func writeResponseSuccess(w http.ResponseWriter, status string, message string, data any, statusCode int) {
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(data.StatusCode)
+	w.WriteHeader(statusCode)
 
-	if err := json.NewEncoder(w).Encode(data); err != nil {
+	response := APIResponseSuccess{
+		Status:     status,
+		Message:    message,
+		StatusCode: statusCode,
+		Data:       data,
+	}
+
+	if err := json.NewEncoder(w).Encode(response); err != nil {
 		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
 	}
 }
@@ -48,9 +46,10 @@ func writeResponseError(w http.ResponseWriter, status string, message string, er
 	w.WriteHeader(statusCode)
 
 	response := APIResponseError{
-		Status:  status,
-		Message: message,
-		Errors:  errors,
+		Status:     status,
+		StatusCode: statusCode,
+		Message:    message,
+		Errors:     errors,
 	}
 
 	if err := json.NewEncoder(w).Encode(response); err != nil {
@@ -58,136 +57,72 @@ func writeResponseError(w http.ResponseWriter, status string, message string, er
 	}
 }
 
-func sendSuccess(w http.ResponseWriter, res APIResponseSuccess) {
-	writeResponseSuccess(w, res)
-}
-
 func sendError(w http.ResponseWriter, message string, errors []ErrorDetail, statusCode int) {
 	writeResponseError(w, "error", message, errors, statusCode)
 }
 
-// --- Informational Responses ---
+func sendSuccess(w http.ResponseWriter, message string, data any, statusCode int) {
+	writeResponseSuccess(w, "success", message, data, statusCode)
+}
 
+// Informational responses
 func Send100Continue(w http.ResponseWriter, message string) {
-	sendSuccess(w, APIResponseSuccess{Status: "info", StatusCode: http.StatusContinue, Message: message})
+	writeResponseSuccess(w, "info", message, nil, http.StatusContinue)
 }
 
 func Send101SwitchingProtocols(w http.ResponseWriter, message string) {
-	sendSuccess(w, APIResponseSuccess{Status: "info", StatusCode: http.StatusSwitchingProtocols, Message: message})
+	writeResponseSuccess(w, "info", message, nil, http.StatusSwitchingProtocols)
 }
 
 func Send102Processing(w http.ResponseWriter, message string) {
-	sendSuccess(w, APIResponseSuccess{Status: "info", StatusCode: http.StatusProcessing, Message: message})
+	writeResponseSuccess(w, "info", message, nil, http.StatusProcessing)
 }
 
 func Send103EarlyHints(w http.ResponseWriter, message string) {
-	sendSuccess(w, APIResponseSuccess{Status: "info", StatusCode: http.StatusEarlyHints, Message: message})
+	writeResponseSuccess(w, "info", message, nil, http.StatusEarlyHints)
 }
 
-// --- Success Responses ---
-
-func Send200OK(w http.ResponseWriter, message string, data any, isArray bool, isPaginated bool, meta *MetaModel) {
-	sendSuccess(w, APIResponseSuccess{
-		Status:      "success",
-		StatusCode:  http.StatusOK,
-		Message:     message,
-		IsArray:     isArray,
-		IsPaginated: isPaginated,
-		Meta:        meta,
-		Data:        data,
-	})
+// Success responses
+func Send200OK(w http.ResponseWriter, message string, data any) {
+	sendSuccess(w, message, data, http.StatusOK)
 }
 
-func Send201Created(w http.ResponseWriter, message string, data any, isArray bool, isPaginated bool, meta *MetaModel) {
-	sendSuccess(w, APIResponseSuccess{
-		Status:      "success",
-		StatusCode:  http.StatusCreated,
-		Message:     message,
-		IsArray:     isArray,
-		IsPaginated: isPaginated,
-		Meta:        meta,
-		Data:        data,
-	})
+func Send201Created(w http.ResponseWriter, message string, data any) {
+	sendSuccess(w, message, data, http.StatusCreated)
 }
 
-func Send202Accepted(w http.ResponseWriter, message string, data any, isArray bool, isPaginated bool, meta *MetaModel) {
-	sendSuccess(w, APIResponseSuccess{
-		Status:      "success",
-		StatusCode:  http.StatusAccepted,
-		Message:     message,
-		IsArray:     isArray,
-		IsPaginated: isPaginated,
-		Meta:        meta,
-		Data:        data,
-	})
+func Send202Accepted(w http.ResponseWriter, message string) {
+	sendSuccess(w, message, "", http.StatusAccepted)
 }
 
-func Send203NonAuthoritativeInfo(w http.ResponseWriter, message string, data any, isArray bool, isPaginated bool, meta *MetaModel) {
-	sendSuccess(w, APIResponseSuccess{
-		Status:      "success",
-		StatusCode:  http.StatusNonAuthoritativeInfo,
-		Message:     message,
-		IsArray:     isArray,
-		IsPaginated: isPaginated,
-		Meta:        meta,
-		Data:        data,
-	})
+func Send203NonAuthoritativeInfo(w http.ResponseWriter, message string) {
+	sendSuccess(w, message, "", http.StatusNonAuthoritativeInfo)
 }
 
 func Send204NoContent(w http.ResponseWriter) {
-	sendSuccess(w, APIResponseSuccess{
-		Status:     "success",
-		StatusCode: http.StatusNoContent,
-		Message:    "No Content",
-	})
+	writeResponseSuccess(w, "success", "No Content", nil, http.StatusNoContent)
 }
 
 func Send205ResetContent(w http.ResponseWriter, message string) {
-	sendSuccess(w, APIResponseSuccess{
-		Status:     "success",
-		StatusCode: http.StatusResetContent,
-		Message:    message,
-	})
+	writeResponseSuccess(w, "success", message, nil, http.StatusResetContent)
 }
 
-func Send206PartialContent(w http.ResponseWriter, message string, data any, isArray bool, isPaginated bool, meta *MetaModel) {
-	sendSuccess(w, APIResponseSuccess{
-		Status:      "success",
-		StatusCode:  http.StatusPartialContent,
-		Message:     message,
-		IsArray:     isArray,
-		IsPaginated: isPaginated,
-		Meta:        meta,
-		Data:        data,
-	})
+func Send206PartialContent(w http.ResponseWriter, message string, data interface{}) {
+	sendSuccess(w, message, data, http.StatusPartialContent)
 }
 
-func Send207MultiStatus(w http.ResponseWriter, message string, data any, isArray bool, isPaginated bool, meta *MetaModel) {
-	sendSuccess(w, APIResponseSuccess{
-		Status:      "success",
-		StatusCode:  http.StatusMultiStatus,
-		Message:     message,
-		IsArray:     isArray,
-		IsPaginated: isPaginated,
-		Meta:        meta,
-		Data:        data,
-	})
+func Send207MultiStatus(w http.ResponseWriter, message string, data interface{}) {
+	sendSuccess(w, message, data, http.StatusMultiStatus)
 }
 
-func Send208AlreadyReported(w http.ResponseWriter, message string, data any, isArray bool, isPaginated bool, meta *MetaModel) {
-	sendSuccess(w, APIResponseSuccess{
-		Status:      "success",
-		StatusCode:  http.StatusAlreadyReported,
-		Message:     message,
-		IsArray:     isArray,
-		IsPaginated: isPaginated,
-		Meta:        meta,
-		Data:        data,
-	})
+func Send208AlreadyReported(w http.ResponseWriter, message string, data interface{}) {
+	sendSuccess(w, message, data, http.StatusAlreadyReported)
 }
 
-// --- Error Responses ---
+// Redirection responses
+// Add similar handlers here for 300-series responses if needed
 
+// Client error responses
 func Send400BadRequest(w http.ResponseWriter, message string) {
 	sendError(w, message, []ErrorDetail{{Field: "request", Message: message}}, http.StatusBadRequest)
 }
@@ -204,18 +139,19 @@ func Send404NotFound(w http.ResponseWriter, message string) {
 	sendError(w, message, []ErrorDetail{{Field: "resource", Message: message}}, http.StatusNotFound)
 }
 
-func Send409Conflict(w http.ResponseWriter, message string) {
-	sendError(w, message, []ErrorDetail{{Field: "conflict", Message: message}}, http.StatusConflict)
-}
-
 func Send410Gone(w http.ResponseWriter, message string) {
 	sendError(w, message, []ErrorDetail{{Field: "resource", Message: message}}, http.StatusGone)
+}
+
+func Send409Conflict(w http.ResponseWriter, message string) {
+	sendError(w, message, []ErrorDetail{{Field: "conflict", Message: message}}, http.StatusConflict)
 }
 
 func Send415UnsupportedMediaType(w http.ResponseWriter, message string) {
 	sendError(w, message, []ErrorDetail{{Field: "media_type", Message: message}}, http.StatusUnsupportedMediaType)
 }
 
+// Server error responses
 func Send500InternalServerError(w http.ResponseWriter, message string) {
 	sendError(w, message, []ErrorDetail{{Field: "server", Message: message}}, http.StatusInternalServerError)
 }
