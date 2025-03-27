@@ -214,7 +214,7 @@ func logWithLevel(level string, msg string, args ...interface{}) {
 	}
 
 	fields = append(fields, withFields(args)...)
-	fields = append(fields, logLevelField(level))
+	// fields = append(fields, logLevelField(level))
 
 	if level == "debug" || level == "fatal" || level == "panic" {
 		fields = append(fields, stackTraceField())
@@ -243,9 +243,9 @@ func Debug(msg string, args ...interface{}) { logWithLevel("debug", msg, args...
 func Fatal(msg string, args ...interface{}) { logWithLevel("fatal", msg, args...) }
 func Panic(msg string, args ...interface{}) { logWithLevel("panic", msg, args...) }
 
-func logLevelField(level string) zap.Field {
-	return zap.String("loglevel", level)
-}
+// func logLevelField(level string) zap.Field {
+// 	return zap.String("loglevel", level)
+// }
 
 func stackTraceField() zap.Field {
 	return zap.String("stacktrace", string(debug.Stack()))
