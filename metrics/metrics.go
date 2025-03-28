@@ -132,6 +132,31 @@ var (
 			return float64(runtime.NumGoroutine())
 		},
 	)
+
+	CPUUsage = prometheus.NewGauge(prometheus.GaugeOpts{
+		Name: "system_cpu_usage_manual_percent",
+		Help: "Manual CPU usage percent (polled every 10s)",
+	})
+
+	MemoryUsage = prometheus.NewGauge(prometheus.GaugeOpts{
+		Name: "system_memory_usage_bytes_manual",
+		Help: "Manual memory usage in bytes (polled every 10s)",
+	})
+
+	DiskUsagePercent = prometheus.NewGauge(prometheus.GaugeOpts{
+		Name: "system_disk_usage_percent",
+		Help: "Disk usage percent on root /",
+	})
+
+	DiskReadBytes = prometheus.NewGauge(prometheus.GaugeOpts{
+		Name: "system_disk_read_bytes",
+		Help: "Disk read bytes",
+	})
+
+	DiskWriteBytes = prometheus.NewGauge(prometheus.GaugeOpts{
+		Name: "system_disk_write_bytes",
+		Help: "Disk write bytes",
+	})
 )
 
 // Business Metrics
