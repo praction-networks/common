@@ -114,55 +114,50 @@ func (l *Listener) Listen(ctx context.Context) error {
 }
 
 // processMessage processes a single message.
+// processMessage processes a single message.
 func (l *Listener) processMessage(ctx context.Context, msg jetstream.Msg) {
+	subject := msg.Subject()
+	streamName := string(l.StreamName)
+
+	metrics.IncNATSInflight(streamName, subject)
+	defer metrics.DecNATSInflight(streamName, subject)
 
 	start := time.Now()
+
 	msgMetaData, err := msg.Metadata()
 	if err != nil {
-		metrics.FailedMessages.WithLabelValues(string(l.StreamName), msg.Subject()).Inc()
-		if err := msg.Nak(); err != nil {
-			logger.Error("Failed to NAK message", err, "Subject", msg.Subject())
-		}
+		logger.Error("Failed to get message metadata", err, "Subject", subject)
+		metrics.RecordNATSFailure(streamName, subject, err)
+		msg.Nak()
 		return
 	}
-	logger.Info("Processing message", "StreamName", l.StreamName, "Subject", msg.Subject(), "Sequence", msgMetaData.Sequence, "Timestamp", msgMetaData.Timestamp, "Consumer", msgMetaData.Consumer, "Data", string(msg.Data()))
 
-	// Parse the message into a generic event wrapper
 	var event Event[json.RawMessage]
 	if err := json.Unmarshal(msg.Data(), &event); err != nil {
-		logger.Error("Failed to unmarshal message", err, "Subject", msg.Subject())
-		metrics.FailedMessages.WithLabelValues(string(l.StreamName), msg.Subject()).Inc()
-		if err := msg.Nak(); err != nil {
-			logger.Error("Failed to NAK message", err, "Subject", msg.Subject())
-		}
+		logger.Error("Failed to unmarshal message", err, "Subject", subject)
+		metrics.RecordNATSFailure(streamName, subject, err)
+		msg.Nak()
 		return
 	}
 
-	// Call the application-defined message handler
-	if l.OnMessageFunc != nil {
-		err := l.OnMessageFunc(ctx, event)
-		if err != nil {
-			logger.Error("Error in OnMessageFunc", err, "Subject", event.Subject)
-			metrics.FailedMessages.WithLabelValues(string(l.StreamName), msg.Subject()).Inc()
-			if err := msg.Nak(); err != nil {
-				logger.Error("Failed to NAK message", err, "Subject", msg.Subject())
-			}
-			return
-		}
+	if err := l.OnMessageFunc(ctx, event); err != nil {
+		logger.Error("OnMessageFunc returned error", err, "Subject", subject)
+		metrics.RecordNATSFailure(streamName, subject, err)
+		msg.Nak()
+		return
 	}
 
-	// Acknowledge the message
 	if err := msg.Ack(); err != nil {
-		logger.Error("Failed to acknowledge message", err, "StreamName", l.StreamName)
-		metrics.FailedMessages.WithLabelValues(string(l.StreamName), msg.Subject()).Inc()
+		logger.Error("Failed to acknowledge message", err, "Subject", subject)
+		metrics.RecordNATSFailure(streamName, subject, err)
+		return
 	}
 
-	metrics.ProcessedMessages.WithLabelValues(string(l.StreamName), msg.Subject()).Inc()
+	metrics.RecordNATSPublished(streamName, subject)
+	duration := time.Since(start)
+	metrics.RecordNATSProcessingTime(streamName, subject, duration)
 
-	duration := time.Since(start).Seconds()
-	metrics.Duration.WithLabelValues(string(l.StreamName), msg.Subject()).Observe(duration)
-
-	logger.Info("Message processed", "StreamName", l.StreamName, "Subject", msg.Subject(), "Sequence", msgMetaData.Sequence, "Timestamp", msgMetaData.Timestamp, "Consumer", msgMetaData.Consumer)
+	logger.Info("Processed message successfully", "Stream", streamName, "Subject", subject, "Sequence", msgMetaData.Sequence, "Duration", duration)
 }
 
 // Stop gracefully stops the listener.

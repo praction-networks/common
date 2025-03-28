@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/nats-io/nats.go/jetstream"
@@ -31,12 +32,23 @@ func NewPublisher[T any](stream StreamName, subject Subject, streamManager *JsSt
 
 // Publish publishes an event to JetStream.
 func (p *Publisher[T]) Publish(ctx context.Context, data T) error {
+
+	start := time.Now()
+	var success bool
+
+	defer func() {
+		// Record duration metric for all publish attempts
+		metrics.NATSPublishDuration.WithLabelValues(
+			string(p.Stream),
+			string(p.Subject),
+			strconv.FormatBool(success),
+		).Observe(time.Since(start).Seconds())
+	}()
 	// Ensure the stream exists
 	streamInfo, err := p.StreamManager.Stream(ctx, string(p.Stream))
 	if err != nil {
 
-		metrics.FailedMessages.WithLabelValues("unknown", string(p.Stream)).Inc()
-
+		metrics.RecordNATSFailure("unknown", string(p.Stream), err)
 		logger.Error("Stream not found for subject", err, "Stream", p.Stream, "Subject", p.Subject)
 		return fmt.Errorf("stream %s not found for subject %s: %w", p.Stream, p.Subject, err)
 	}
@@ -49,7 +61,7 @@ func (p *Publisher[T]) Publish(ctx context.Context, data T) error {
 
 	payload, err := json.Marshal(event)
 	if err != nil {
-		metrics.FailedMessages.WithLabelValues(streamInfo.Config.Name, string(p.Subject)).Inc()
+		metrics.RecordNATSFailure(streamInfo.Config.Name, string(p.Subject), err)
 		logger.Error("Failed to marshal event", err, "subject", p.Subject)
 		return fmt.Errorf("failed to marshal event: %w", err)
 	}
@@ -64,12 +76,13 @@ func (p *Publisher[T]) Publish(ctx context.Context, data T) error {
 	// Publish message
 	ack, err := p.StreamManager.JsClient.Publish(ctx, string(p.Subject), payload, options...)
 	if err != nil {
-		metrics.FailedMessages.WithLabelValues(streamInfo.Config.Name, string(p.Subject)).Inc()
+		metrics.RecordNATSFailure(streamInfo.Config.Name, string(p.Subject), err)
 		logger.Error("Failed to publish event", "subject", p.Subject, "error", err)
 		return fmt.Errorf("failed to publish event to subject %s: %w", p.Subject, err)
 	}
 
-	metrics.PublishedEvents.WithLabelValues(streamInfo.Config.Name, string(p.Subject)).Inc()
+	success = true
+	metrics.RecordNATSPublished(streamInfo.Config.Name, string(p.Subject))
 	logger.Info("Published event successfully", "subject", p.Subject, "Ack", ack)
 	return nil
 }
