@@ -8,7 +8,6 @@ import (
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/collectors"
-	"github.com/shirou/gopsutil/cpu"
 )
 
 var registry = prometheus.NewRegistry()
@@ -97,32 +96,6 @@ var (
 
 // System Metrics
 var (
-	SystemCPUUsage = prometheus.NewGaugeFunc(
-		prometheus.GaugeOpts{
-			Name: "system_cpu_usage_percent",
-			Help: "Current system CPU usage percentage",
-		},
-		func() float64 {
-			percentages, err := cpu.Percent(0, false)
-			if err != nil || len(percentages) == 0 {
-				return 0.0
-			}
-			return percentages[0]
-		},
-	)
-
-	ProcessMemoryUsage = prometheus.NewGaugeFunc(
-		prometheus.GaugeOpts{
-			Name: "process_memory_usage_bytes",
-			Help: "Current process memory usage",
-		},
-		func() float64 {
-			var m runtime.MemStats
-			runtime.ReadMemStats(&m)
-			return float64(m.Alloc)
-		},
-	)
-
 	GoroutinesCount = prometheus.NewGaugeFunc(
 		prometheus.GaugeOpts{
 			Name: "goroutines_total",
@@ -224,8 +197,11 @@ func RegisterAllMetrics() {
 		NATSPublishDuration,
 
 		// System metrics
-		SystemCPUUsage,
-		ProcessMemoryUsage,
+		CPUUsage,
+		MemoryUsage,
+		DiskUsagePercent,
+		DiskReadBytes,
+		DiskWriteBytes,
 		GoroutinesCount,
 
 		// Business metrics

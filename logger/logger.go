@@ -187,11 +187,11 @@ func ensureInitialized() {
 }
 
 func addEnvironmentFields(fields *[]zap.Field) {
-	addIfNotEmpty(fields, "pod", os.Getenv("POD_NAME"))
-	addIfNotEmpty(fields, "namespace", os.Getenv("POD_NAMESPACE"))
-	addIfNotEmpty(fields, "service", os.Getenv("DEPLOYMENT_NAME"))
-	addIfNotEmpty(fields, "node", os.Getenv("NODE_NAME"))
-	addIfNotEmpty(fields, "pod_uuid", os.Getenv("POD_UID"))
+	// addIfNotEmpty(fields, "pod", os.Getenv("POD_NAME"))
+	// addIfNotEmpty(fields, "namespace", os.Getenv("POD_NAMESPACE"))
+	// addIfNotEmpty(fields, "service", os.Getenv("DEPLOYMENT_NAME"))
+	// addIfNotEmpty(fields, "node", os.Getenv("NODE_NAME"))
+	// addIfNotEmpty(fields, "pod_uuid", os.Getenv("POD_UID"))
 	addIfNotEmpty(fields, "env", os.Getenv("ENVIRONMENT"))
 }
 
