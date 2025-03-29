@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"runtime/debug"
+	"strings"
 	"sync"
 
 	"go.uber.org/zap"
@@ -18,6 +19,9 @@ var (
 	requestScopedLogger *zap.Logger
 	mu                  sync.Mutex
 )
+
+var sensitiveKeys = []string{"password", "secret", "token", "apikey", "otp", "pan", "aadhaar", "mobile", "phone", "wifi", "wifi_password"}
+var personalKeys = []string{"email", "phone", "mobile", "username"}
 
 type LoggerConfig struct {
 	LogLevel string
@@ -206,14 +210,23 @@ func logWithLevel(level string, msg string, args ...interface{}) {
 	logger := getDefaultLogger()
 	fields := []zap.Field{}
 
-	if len(args) > 0 {
-		if err, ok := args[0].(error); ok {
-			fields = append(fields, zap.String("error", err.Error()))
-			args = args[1:]
+	errorCount := 0
+	cleanedArgs := []interface{}{}
+
+	for _, arg := range args {
+		if err, ok := arg.(error); ok {
+			key := "error"
+			if errorCount > 0 {
+				key = fmt.Sprintf("error_%d", errorCount+1)
+			}
+			fields = append(fields, zap.String(key, err.Error()))
+			errorCount++
+		} else {
+			cleanedArgs = append(cleanedArgs, arg)
 		}
 	}
 
-	fields = append(fields, withFields(args)...)
+	fields = append(fields, withFields(cleanedArgs)...)
 	// fields = append(fields, logLevelField(level))
 
 	if level == "debug" || level == "fatal" || level == "panic" {
@@ -257,7 +270,20 @@ func withFields(args []interface{}) []zap.Field {
 		if i+1 < len(args) {
 			switch key := args[i].(type) {
 			case string:
-				fields = append(fields, zap.Any(key, args[i+1]))
+				value := args[i+1]
+				keyLower := strings.ToLower(key)
+
+				if strVal, ok := value.(string); ok {
+					if contains(sensitiveKeys, keyLower) {
+						fields = append(fields, zap.String(key, "REDACTED"))
+					} else if contains(personalKeys, keyLower) {
+						fields = append(fields, zap.String(key, mask(strVal)))
+					} else {
+						fields = append(fields, zap.String(key, strVal))
+					}
+				} else {
+					fields = append(fields, zap.Any(key, value))
+				}
 			default:
 				logInstance.WithOptions(zap.AddCallerSkip(3)).Warn("Invalid key in arguments passed to logger", zap.Any("invalid_key", key))
 			}
@@ -266,4 +292,20 @@ func withFields(args []interface{}) []zap.Field {
 		}
 	}
 	return fields
+}
+
+func contains(slice []string, item string) bool {
+	for _, s := range slice {
+		if strings.Contains(item, s) {
+			return true
+		}
+	}
+	return false
+}
+
+func mask(input string) string {
+	if len(input) <= 2 {
+		return "**"
+	}
+	return input[:1] + strings.Repeat("*", len(input)-2) + input[len(input)-1:]
 }

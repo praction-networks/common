@@ -12,6 +12,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/praction-networks/common/logger"
 	"github.com/praction-networks/common/metrics"
+	"go.uber.org/zap"
 )
 
 type contextKey struct{ name string }
@@ -86,13 +87,21 @@ func LoggingMiddleware(next http.Handler) http.Handler {
 		start := time.Now()
 		rw := metrics.NewResponseWriter(w)
 
+		reqID := GetRequestID(r.Context())
+		userID := r.Header.Get("X-User-ID")
+
+		// Set default request logger with context fields
+		logger.SetDefaultRequestLogger(
+			zap.String("reqID", reqID),
+			zap.String("userId", userID),
+		)
+		defer logger.ClearDefaultRequestLogger()
+
 		next.ServeHTTP(rw, r)
 
 		duration := time.Since(start)
 		status := rw.Status()
 		size := rw.Size()
-		reqID := GetRequestID(r.Context())
-		userID := r.Header.Get("X-User-ID")
 
 		fields := []interface{}{
 			"reqID", reqID,
