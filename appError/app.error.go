@@ -104,4 +104,7 @@ const (
 	MissingRequiredField ErrorCode = "MISSING_REQUIRED_FIELD" // A required field is missing in the input
 	UnsupportedOperation ErrorCode = "UNSUPPORTED_OPERATION"  // Operation is not supported
 	InvalidOperation     ErrorCode = "INVALID_OPERATION"      // Operation is invalid
+
+	// Event Errors
+	VersionMismatch ErrorCode = "VERSION_MISMATCH_ERROR" // Event version mismatch
 )
