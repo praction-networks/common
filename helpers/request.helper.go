@@ -105,7 +105,6 @@ func LoggingMiddleware(next http.Handler) http.Handler {
 
 		fields := []interface{}{
 			"reqID", reqID,
-			"userID", userID,
 			"method", r.Method,
 			"path", r.URL.Path,
 			"size", size,
