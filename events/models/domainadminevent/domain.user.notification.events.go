@@ -1,4 +1,4 @@
-package domainUserEventModel
+package domainadminevent
 
 import (
 	"time"

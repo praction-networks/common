@@ -17,31 +17,45 @@ const (
 type Subject string
 
 const (
-	DomainCreatedSubject     Subject = "domain.created"
-	DomainUpdatedSubject     Subject = "domain.updated"
-	DomainDeletedSubject     Subject = "domain.deleted"
-	DepartmentCreatedSubject Subject = "department.created"
-	DepartmentUpdateSubject  Subject = "department.updated"
-	DepartmentDeleteSubject  Subject = "department.delete"
 
-	PostalCreatedSubject Subject = "postal.created"
-	PostalUpdatedSubject Subject = "postal.updated"
-	PostalDeletedSubject Subject = "postal.deleted"
+	//Domain Service Event Initialization
+	DomainCreatedSubject         Subject = "domain.created"
+	DomainUpdatedSubject         Subject = "domain.updated"
+	DomainDeletedSubject         Subject = "domain.deleted"
+	DepartmentCreatedSubject     Subject = "department.created"
+	DepartmentUpdateSubject      Subject = "department.updated"
+	DepartmentDeleteSubject      Subject = "department.delete"
+	AppMessangerCreateSubject    Subject = "appmessanger.created"
+	AppMessangerUpdateSubject    Subject = "appmessanger.updated"
+	AppMessangerDeleteSubject    Subject = "appmessanger.deleted"
+	KYCGatewayCreatedSubject     Subject = "kycgateway.created"
+	KYCGatewayUpdateSubject      Subject = "kycgateway.updated"
+	KYCGatewayDeleteSubject      Subject = "kycgateway.deleted"
+	MailServerCreatedSubject     Subject = "mailserver.created"
+	MailServerUpdateSubject      Subject = "mailserver.updated"
+	MailServerDeleteSubject      Subject = "mailserver.deleted"
+	PaymentGatewayCreatedSubject Subject = "paymentgateway.created"
+	PaymentGatewayUpdateSubject  Subject = "paymentgateway.updated"
+	PaymentGatewayDeleteSubject  Subject = "paymentgateway.deleted"
+	ExternalRadiusCreatedSubject Subject = "externalradius.created"
+	ExternalRadiusUpdateSubject  Subject = "externalradius.updated"
+	ExternalRadiusDeleteSubject  Subject = "externalradius.deleted"
+	SMSGatewayCreatedSubject     Subject = "smsgateway.created"
+	SMSGatewayUpdateSubject      Subject = "smsgateway.updated"
+	SMSGatewayDeleteSubject      Subject = "smsgateway.deleted"
 
-	SeedDomainUserCreatedSubject Subject = "seed.domainuser.created"
-	DomainUserCreatedSubject     Subject = "domainuser.created"
-	DomainUserUpdatedSubject     Subject = "domainuser.updated"
-	DomainUserDeletedSubject     Subject = "domainuser.deleted"
-
-	SeedRoleCreatedSubject Subject = "seed.role.created"
-	RoleCreatedSubject     Subject = "role.created"
-	RoleUpdatedSubject     Subject = "role.updated"
-	RoleDeletedSubject     Subject = "role.deleted"
-
-	SeedPolicyCreatedSubject Subject = "seed.policy.created"
-	PolicyCreatedSubject     Subject = "policy.created"
-	PolicyDeletedSubject     Subject = "policy.deleted"
-
+	//Domain User Service Event Initialization
+	SeedDomainUserCreatedSubject                Subject = "seed.domainuser.created"
+	DomainUserCreatedSubject                    Subject = "domainuser.created"
+	DomainUserUpdatedSubject                    Subject = "domainuser.updated"
+	DomainUserDeletedSubject                    Subject = "domainuser.deleted"
+	SeedRoleCreatedSubject                      Subject = "seed.role.created"
+	RoleCreatedSubject                          Subject = "role.created"
+	RoleUpdatedSubject                          Subject = "role.updated"
+	RoleDeletedSubject                          Subject = "role.deleted"
+	SeedPolicyCreatedSubject                    Subject = "seed.policy.created"
+	PolicyCreatedSubject                        Subject = "policy.created"
+	PolicyDeletedSubject                        Subject = "policy.deleted"
 	DomainaUserCreatedNotificationSubject       Subject = "domainuser.created.notification"
 	DomainUserForgetPasswordNotificationSubject Subject = "domainuser.forget.password.notification"
 	DomainUserResetPasswordNotificationSubject  Subject = "domainuser.reset.password.notification"
@@ -69,12 +83,25 @@ var Streams = map[StreamName]StreamMetadata{
 			DepartmentCreatedSubject,
 			DepartmentUpdateSubject,
 			DepartmentDeleteSubject,
+			AppMessangerCreateSubject,
+			AppMessangerUpdateSubject,
+			AppMessangerDeleteSubject,
+			KYCGatewayCreatedSubject,
+			KYCGatewayUpdateSubject,
+			KYCGatewayDeleteSubject,
+			MailServerCreatedSubject,
+			MailServerUpdateSubject,
+			MailServerDeleteSubject,
+			PaymentGatewayCreatedSubject,
+			PaymentGatewayUpdateSubject,
+			PaymentGatewayDeleteSubject,
+			ExternalRadiusCreatedSubject,
+			ExternalRadiusUpdateSubject,
+			ExternalRadiusDeleteSubject,
+			SMSGatewayCreatedSubject,
+			SMSGatewayUpdateSubject,
+			SMSGatewayDeleteSubject,
 		},
-	},
-	PostalServerStream: {
-		Name:        PostalServerStream,
-		Description: "Stream for postal server-related events",
-		Subjects:    []Subject{PostalCreatedSubject, PostalUpdatedSubject, PostalDeletedSubject},
 	},
 	DomainUserStream: {
 		Name:        DomainUserStream,
@@ -84,7 +111,7 @@ var Streams = map[StreamName]StreamMetadata{
 	PolicyStream: {
 		Name:        PolicyStream,
 		Description: "Policy events for auth services",
-		Subjects:    []Subject{PostalCreatedSubject, PolicyDeletedSubject},
+		Subjects:    []Subject{PolicyCreatedSubject, PolicyDeletedSubject},
 	},
 	SeedAppStream: {
 		Name:        SeedAppStream,
