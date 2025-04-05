@@ -1,6 +1,6 @@
 package domainevent
 
-type AppMessangerInsertEventModel struct {
+type AppMessaegerInsertEventModel struct {
 	ID       string         `json:"id"`
 	Provider string         `json:"provider"`
 	Metadata map[string]any `json:"metadata,omitempty"`
@@ -8,7 +8,7 @@ type AppMessangerInsertEventModel struct {
 	Version  int            `json:"version"`
 }
 
-type AppMessangerUpdateEventModel struct {
+type AppMessaegerUpdateEventModel struct {
 	ID         string         `json:"id"`
 	Provider   string         `json:"provider"`
 	AssignedTo []string       `json:"assignedTo"`
@@ -17,6 +17,6 @@ type AppMessangerUpdateEventModel struct {
 	Version    int            `json:"version"`
 }
 
-type AppMessangerDeleteEventModel struct {
+type AppMessengerDeleteEventModel struct {
 	ID string `json:"id"`
 }
