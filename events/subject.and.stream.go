@@ -25,9 +25,9 @@ const (
 	DepartmentCreatedSubject     Subject = "department.created"
 	DepartmentUpdateSubject      Subject = "department.updated"
 	DepartmentDeleteSubject      Subject = "department.delete"
-	AppMessangerCreateSubject    Subject = "appmessanger.created"
-	AppMessangerUpdateSubject    Subject = "appmessanger.updated"
-	AppMessangerDeleteSubject    Subject = "appmessanger.deleted"
+	AppMessengerCreateSubject    Subject = "appmessenger.created"
+	AppMessengerUpdateSubject    Subject = "appmessenger.updated"
+	AppMessengerDeleteSubject    Subject = "appmessenger.deleted"
 	KYCGatewayCreatedSubject     Subject = "kycgateway.created"
 	KYCGatewayUpdateSubject      Subject = "kycgateway.updated"
 	KYCGatewayDeleteSubject      Subject = "kycgateway.deleted"
@@ -83,9 +83,9 @@ var Streams = map[StreamName]StreamMetadata{
 			DepartmentCreatedSubject,
 			DepartmentUpdateSubject,
 			DepartmentDeleteSubject,
-			AppMessangerCreateSubject,
-			AppMessangerUpdateSubject,
-			AppMessangerDeleteSubject,
+			AppMessengerCreateSubject,
+			AppMessengerUpdateSubject,
+			AppMessengerDeleteSubject,
 			KYCGatewayCreatedSubject,
 			KYCGatewayUpdateSubject,
 			KYCGatewayDeleteSubject,
