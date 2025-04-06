@@ -10,23 +10,26 @@ import (
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/praction-networks/common/logger"
 	"github.com/praction-networks/common/metrics"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 // Publisher represents a generic publisher for JetStream.
 type Publisher[T any] struct {
-	Stream        StreamName
-	Subject       Subject
-	StreamManager *JsStreamManager
-	EnableDedup   bool
+	Stream          StreamName
+	Subject         Subject
+	StreamManager   *JsStreamManager
+	EnableDedup     bool
+	FallbackStorage *mongo.Collection
 }
 
 // NewPublisher creates a new publisher.
-func NewPublisher[T any](stream StreamName, subject Subject, streamManager *JsStreamManager, enableDedup bool) *Publisher[T] {
+func NewPublisher[T any](stream StreamName, subject Subject, streamManager *JsStreamManager, enableDedup bool, fallback *mongo.Collection) *Publisher[T] {
 	return &Publisher[T]{
-		Stream:        stream,
-		Subject:       subject,
-		StreamManager: streamManager,
-		EnableDedup:   enableDedup,
+		Stream:          stream,
+		Subject:         subject,
+		StreamManager:   streamManager,
+		EnableDedup:     enableDedup,
+		FallbackStorage: fallback,
 	}
 }
 
@@ -113,6 +116,25 @@ func (p *Publisher[T]) Publish(ctx context.Context,
 		logger.Error("Failed to publish event", "subject", p.Subject, "attempt", attempt, "error", err)
 
 		if retry.Attempts > 0 && attempt >= retry.Attempts {
+			logger.Warn("Retry limit reached", "subject", p.Subject, "msgID", msgID)
+
+			if p.FallbackStorage != nil && attempt >= 10 {
+				fallbackDoc := FailedNATSEvent{
+					StreamName: string(p.Stream),
+					Subject:    string(p.Subject),
+					MsgID:      msgID,
+					Payload:    payload,
+					Attempts:   attempt,
+					Timestamp:  time.Now(),
+				}
+				_, err := p.FallbackStorage.InsertOne(ctx, fallbackDoc)
+				if err != nil {
+					logger.Error("Failed to store undelivered event to fallback MongoDB", err)
+				} else {
+					logger.Warn("Undelivered event stored in MongoDB fallback store", "subject", p.Subject)
+				}
+			}
+
 			return fmt.Errorf("failed to publish event after %d attempts: %w", attempt, err)
 		}
 
