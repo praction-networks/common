@@ -30,8 +30,18 @@ func NewPublisher[T any](stream StreamName, subject Subject, streamManager *JsSt
 	}
 }
 
+type RetryConfig struct {
+	Enabled       bool
+	Attempts      int
+	RetryInterval time.Duration
+}
+
 // Publish publishes an event to JetStream.
-func (p *Publisher[T]) Publish(ctx context.Context, data T) error {
+func (p *Publisher[T]) Publish(ctx context.Context,
+	data T,
+	msgID string,
+	retry RetryConfig,
+) error {
 
 	start := time.Now()
 	var success bool
@@ -67,22 +77,49 @@ func (p *Publisher[T]) Publish(ctx context.Context, data T) error {
 	}
 
 	// Deduplication logic
-	options := []jetstream.PublishOpt{}
+	// Deduplication logic
+	opts := []jetstream.PublishOpt{}
 	if p.EnableDedup {
-		msgID := fmt.Sprintf("%s-%d", p.Subject, time.Now().UnixNano())
-		options = append(options, jetstream.WithMsgID(msgID))
+		if msgID == "" {
+			msgID = fmt.Sprintf("%s-%d", p.Subject, time.Now().UnixNano())
+		}
+		opts = append(opts, jetstream.WithMsgID(msgID))
 	}
 
-	// Publish message
-	ack, err := p.StreamManager.JsClient.Publish(ctx, string(p.Subject), payload, options...)
-	if err != nil {
+	if !retry.Enabled {
+		ack, err := p.StreamManager.JsClient.Publish(ctx, string(p.Subject), payload, opts...)
+		if err != nil {
+			metrics.RecordNATSFailure(streamInfo.Config.Name, string(p.Subject), err)
+			logger.Error("Failed to publish event (no retry)", "subject", p.Subject, err)
+			return fmt.Errorf("failed to publish event: %w", err)
+		}
+		success = true
+		metrics.RecordNATSPublished(streamInfo.Config.Name, string(p.Subject))
+		logger.Info("Published event successfully (no retry)", "subject", p.Subject, "ack", ack)
+		return nil
+	}
+
+	// Retry mode
+	for attempt := 1; ; attempt++ {
+		ack, err := p.StreamManager.JsClient.Publish(ctx, string(p.Subject), payload, opts...)
+		if err == nil {
+			success = true
+			metrics.RecordNATSPublished(streamInfo.Config.Name, string(p.Subject))
+			logger.Info("Published event successfully (with retry)", "subject", p.Subject, "ack", ack)
+			return nil
+		}
+
 		metrics.RecordNATSFailure(streamInfo.Config.Name, string(p.Subject), err)
-		logger.Error("Failed to publish event", "subject", p.Subject, "error", err)
-		return fmt.Errorf("failed to publish event to subject %s: %w", p.Subject, err)
-	}
+		logger.Error("Failed to publish event", "subject", p.Subject, "attempt", attempt, "error", err)
 
-	success = true
-	metrics.RecordNATSPublished(streamInfo.Config.Name, string(p.Subject))
-	logger.Info("Published event successfully", "subject", p.Subject, "Ack", ack)
-	return nil
+		if retry.Attempts > 0 && attempt >= retry.Attempts {
+			return fmt.Errorf("failed to publish event after %d attempts: %w", attempt, err)
+		}
+
+		select {
+		case <-time.After(retry.RetryInterval):
+		case <-ctx.Done():
+			return fmt.Errorf("publish cancelled: %w", ctx.Err())
+		}
+	}
 }
