@@ -8,7 +8,7 @@ type AppMessaegerInsertEventModel struct {
 	Version  int            `json:"version"`
 }
 
-type AppMessaegerUpdateEventModel struct {
+type AppMessengerUpdateEventModel struct {
 	ID         string         `json:"id"`
 	Provider   string         `json:"provider"`
 	AssignedTo []string       `json:"assignedTo"`
