@@ -11,6 +11,7 @@ const (
 	DomainUserNotificationStream StreamName = "DomainUserNotificationStream"
 	RolesStream                  StreamName = "RolesStream"
 	PolicyStream                 StreamName = "PolicyStream"
+	InventoryStream              StreamName = "InventoryStream"
 )
 
 // Subjects defines the NATS Subjects for different events
@@ -63,6 +64,9 @@ const (
 	DomainUserChangeEmailNotificationSubject    Subject = "domainuser.change.email.notification"
 	DomainUserChangeMobileNotificationSubject   Subject = "domainuser.change.mobile.notification"
 	DomainUserChangeWhatsappNotificationSubject Subject = "domainuser.change.whatsapp.notification"
+
+	//Inventory Service Event Initialization
+	DeviceCreatedSubject Subject = "device.created"
 )
 
 // StreamMetadata defines metadata for streams
@@ -74,6 +78,11 @@ type StreamMetadata struct {
 
 // Predefined stream configurations
 var Streams = map[StreamName]StreamMetadata{
+	InventoryStream: {
+		Name:        InventoryStream,
+		Description: "Stream for inventory-related events",
+		Subjects:    []Subject{DeviceCreatedSubject},
+	},
 	DomainStream: {
 		Name:        DomainStream,
 		Description: "Stream for domain-related events",
