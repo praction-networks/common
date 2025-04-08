@@ -123,3 +123,22 @@ func (fq *PaginatedFeedQuery) Parse(r *http.Request) error {
 
 	return nil
 }
+
+// Offset returns the parsed offset if set, otherwise 0.
+func (fq PaginatedFeedQuery) OffsetValue() int {
+	if fq.Offset < 0 {
+		return 0
+	}
+	return fq.Offset
+}
+
+func (fq PaginatedFeedQuery) Page() int {
+	if fq.Limit == 0 {
+		return 1
+	}
+	return (fq.Offset / fq.Limit) + 1
+}
+
+func (fq PaginatedFeedQuery) PageSize() int {
+	return fq.Limit
+}
