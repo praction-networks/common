@@ -1,6 +1,7 @@
 package appError
 
 import (
+	"errors"
 	"fmt"
 )
 
@@ -25,8 +26,33 @@ func (e *AppError) Unwrap() error {
 	return e.Err
 }
 
+func HasCode(err error, code ErrorCode) bool {
+	if ae, ok := err.(*AppError); ok {
+		return ae.Code == code
+	}
+	return false
+}
+
+// Mapping error codes to sentinel errors
+var errorCodeToSentinel = map[string]error{
+	"ENTITY_NOT_FOUND":       ErrEntityNotFound,
+	"DUPLICATE_ENTITY_FOUND": ErrDuplicateEntityFound,
+	"VALIDATION_FAILED":      ErrValidationFailed,
+	"UNAUTHORIZED_ACCESS":    ErrUnauthorizedAccess,
+	"RATE_LIMIT_EXCEEDED":    ErrRateLimitExceeded,
+	"INVALID_CREDENTIALS":    ErrInvalidCredentials,
+	"TOKEN_EXPIRED":          ErrTokenExpired,
+	"ACCESS_DENIED":          ErrAccessDenied,
+	"FILE_NOT_FOUND":         ErrFileNotFound,
+}
+
 // New creates a new AppError with a code, message, HTTP status, and optional wrapped error.
 func New(code ErrorCode, message string, httpCode int, err error) *AppError {
+	if err == nil {
+		if sentinel, ok := errorCodeToSentinel[string(code)]; ok {
+			err = sentinel
+		}
+	}
 	return &AppError{
 		Code:     code,
 		Message:  message,
@@ -34,6 +60,18 @@ func New(code ErrorCode, message string, httpCode int, err error) *AppError {
 		Err:      err,
 	}
 }
+
+var (
+	ErrEntityNotFound       = errors.New("entity not found")
+	ErrDuplicateEntityFound = errors.New("duplicate entity found")
+	ErrValidationFailed     = errors.New("validation failed")
+	ErrUnauthorizedAccess   = errors.New("unauthorized access")
+	ErrRateLimitExceeded    = errors.New("rate limit exceeded")
+	ErrInvalidCredentials   = errors.New("invalid credentials")
+	ErrTokenExpired         = errors.New("token expired")
+	ErrAccessDenied         = errors.New("access denied")
+	ErrFileNotFound         = errors.New("file not found")
+)
 
 // Predefined error codes for common scenarios
 
