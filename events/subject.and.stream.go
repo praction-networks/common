@@ -9,6 +9,7 @@ const (
 	PostalServerStream           StreamName = "PostalServerStream"
 	DomainUserStream             StreamName = "DomainUserStream"
 	DomainUserNotificationStream StreamName = "DomainUserNotificationStream"
+	TenantUserStream             StreamName = "TenantUserStream"
 	RolesStream                  StreamName = "RolesStream"
 	PolicyStream                 StreamName = "PolicyStream"
 	InventoryStream              StreamName = "InventoryStream"
@@ -46,27 +47,24 @@ const (
 	SMSGatewayDeleteSubject      Subject = "smsgateway.deleted"
 
 	//Domain User Service Event Initialization
-	SeedDomainUserCreatedSubject                Subject = "seed.domainuser.created"
-	DomainUserCreatedSubject                    Subject = "domainuser.created"
-	DomainUserUpdatedSubject                    Subject = "domainuser.updated"
-	DomainUserDeletedSubject                    Subject = "domainuser.deleted"
-	SeedRoleCreatedSubject                      Subject = "seed.role.created"
-	RoleCreatedSubject                          Subject = "role.created"
-	RoleUpdatedSubject                          Subject = "role.updated"
-	RoleDeletedSubject                          Subject = "role.deleted"
-	SeedPolicyCreatedSubject                    Subject = "seed.policy.created"
-	PolicyCreatedSubject                        Subject = "policy.created"
-	PolicyDeletedSubject                        Subject = "policy.deleted"
-	DomainaUserCreatedNotificationSubject       Subject = "domainuser.created.notification"
-	DomainUserForgetPasswordNotificationSubject Subject = "domainuser.forget.password.notification"
-	DomainUserResetPasswordNotificationSubject  Subject = "domainuser.reset.password.notification"
-	DomainUserChangePasswordNotificationSubject Subject = "domainuser.change.password.notification"
-	DomainUserChangeEmailNotificationSubject    Subject = "domainuser.change.email.notification"
-	DomainUserChangeMobileNotificationSubject   Subject = "domainuser.change.mobile.notification"
-	DomainUserChangeWhatsappNotificationSubject Subject = "domainuser.change.whatsapp.notification"
+	SeedDomainUserCreatedSubject Subject = "seed.domainuser.created"
+	DomainUserCreatedSubject     Subject = "domainuser.created"
+	DomainUserUpdatedSubject     Subject = "domainuser.updated"
+	DomainUserDeletedSubject     Subject = "domainuser.deleted"
 
-	//Inventory Service Event Initialization
-	DeviceCreatedSubject Subject = "device.created"
+	// Tenant User Assignment Events
+	TenantUserAssignmentCreatedSubject Subject = "tenantuser.assignment.created"
+	TenantUserAssignmentUpdatedSubject Subject = "tenantuser.assignment.updated"
+	TenantUserAssignmentDeletedSubject Subject = "tenantuser.assignment.deleted"
+
+	// Tenant User Activity Events
+	TenantUserActivityCreatedSubject Subject = "tenantuser.activity.created"
+	TenantUserActivityUpdatedSubject Subject = "tenantuser.activity.updated"
+	TenantUserActivityDeletedSubject Subject = "tenantuser.activity.deleted"
+
+	// Business-Specific Notification Events
+	DomainUserProfileUpdateNotificationSubject Subject = "domainuser.profile.update.notification"
+	TenantUserAssignmentNotificationSubject    Subject = "tenantuser.assignment.notification"
 )
 
 // StreamMetadata defines metadata for streams
@@ -78,11 +76,7 @@ type StreamMetadata struct {
 
 // Predefined stream configurations
 var Streams = map[StreamName]StreamMetadata{
-	InventoryStream: {
-		Name:        InventoryStream,
-		Description: "Stream for inventory-related events",
-		Subjects:    []Subject{DeviceCreatedSubject},
-	},
+
 	DomainStream: {
 		Name:        DomainStream,
 		Description: "Stream for domain-related events",
@@ -112,37 +106,30 @@ var Streams = map[StreamName]StreamMetadata{
 			SMSGatewayDeleteSubject,
 		},
 	},
-	DomainUserStream: {
-		Name:        DomainUserStream,
-		Description: "Stream for domain user-related events",
-		Subjects:    []Subject{DomainUserCreatedSubject, DomainUserUpdatedSubject, DomainUserDeletedSubject},
-	},
-	PolicyStream: {
-		Name:        PolicyStream,
-		Description: "Policy events for auth services",
-		Subjects:    []Subject{PolicyCreatedSubject, PolicyDeletedSubject},
-	},
-	SeedAppStream: {
-		Name:        SeedAppStream,
-		Description: "Init Stream for seed inital seeding",
-		Subjects:    []Subject{SeedDomainUserCreatedSubject, SeedRoleCreatedSubject, SeedPolicyCreatedSubject},
-	},
-	RolesStream: {
-		Name:        RolesStream,
-		Description: "Role events for auth services",
-		Subjects:    []Subject{RoleCreatedSubject, RoleUpdatedSubject, RoleDeletedSubject},
-	},
-	DomainUserNotificationStream: {
-		Name:        DomainUserNotificationStream,
-		Description: "Stream for domain user notification events",
+
+	TenantUserStream: {
+		Name:        TenantUserStream,
+		Description: "Stream for tenant user service events",
 		Subjects: []Subject{
-			DomainaUserCreatedNotificationSubject,
-			DomainUserForgetPasswordNotificationSubject,
-			DomainUserResetPasswordNotificationSubject,
-			DomainUserChangePasswordNotificationSubject,
-			DomainUserChangeEmailNotificationSubject,
-			DomainUserChangeMobileNotificationSubject,
-			DomainUserChangeWhatsappNotificationSubject,
+			// Domain User Events (Extended Profiles)
+			SeedDomainUserCreatedSubject,
+			DomainUserCreatedSubject,
+			DomainUserUpdatedSubject,
+			DomainUserDeletedSubject,
+
+			// Tenant User Assignment Events
+			TenantUserAssignmentCreatedSubject,
+			TenantUserAssignmentUpdatedSubject,
+			TenantUserAssignmentDeletedSubject,
+
+			// Tenant User Activity Events
+			TenantUserActivityCreatedSubject,
+			TenantUserActivityUpdatedSubject,
+			TenantUserActivityDeletedSubject,
+
+			// Business-Specific Notification Events
+			DomainUserProfileUpdateNotificationSubject,
+			TenantUserAssignmentNotificationSubject,
 		},
 	},
 }
