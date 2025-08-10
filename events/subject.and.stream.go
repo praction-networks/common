@@ -4,12 +4,11 @@ type StreamName string
 
 // Stream names as constants
 const (
-	SeedAppStream          StreamName = "SeedAppStream"
-	TenantStream           StreamName = "TenantStream"
-	TenantUserStream       StreamName = "TenantUserStream"
-	TenantUserRoleStream   StreamName = "TenantUserRoleStream"
-	TenantUserPolicyStream StreamName = "TenantUserPolicyStream"
-	InventoryStream        StreamName = "InventoryStream"
+	SeedAppStream    StreamName = "SeedAppStream"
+	AuthStream       StreamName = "AuthStream"
+	TenantStream     StreamName = "TenantStream"
+	TenantUserStream StreamName = "TenantUserStream"
+	InventoryStream  StreamName = "InventoryStream"
 )
 
 // Subjects defines the NATS Subjects for different events
@@ -44,22 +43,19 @@ const (
 	SMSGatewayDeleteSubject      Subject = "smsgateway.deleted"
 
 	//Domain User Service Event Initialization
-	SeedTenantUserCreatedSubject Subject = "seed.tenantuser.created"
-	TenantUserCreatedSubject     Subject = "tenantuser.created"
-	TenantUserUpdatedSubject     Subject = "tenantuser.updated"
-	TenantUserDeletedSubject     Subject = "tenantuser.deleted"
+	TenantUserCreatedSubject Subject = "tenantuser.created"
+	TenantUserUpdatedSubject Subject = "tenantuser.updated"
+	TenantUserDeletedSubject Subject = "tenantuser.deleted"
 
-	// Tenant User Role Service Event Initialization
-	SeedTenantUserRoleCreatedSubject Subject = "seed.tenantuserrole.created"
-	TenantUserRoleCreatedSubject     Subject = "tenantuserrole.created"
-	TenantUserRoleUpdatedSubject     Subject = "tenantuserrole.updated"
-	TenantUserRoleDeletedSubject     Subject = "tenantuserrole.deleted"
+	// Tenant Auth Role Event Initialization
+	TenantUserRoleCreatedSubject Subject = "tenantuserrole.created"
+	TenantUserRoleUpdatedSubject Subject = "tenantuserrole.updated"
+	TenantUserRoleDeletedSubject Subject = "tenantuserrole.deleted"
 
-	// Tenant User Policy Service Event Initialization
-	SeedTenantUserPolicyCreatedSubject Subject = "seed.tenantuserpolicy.created"
-	TenantUserPolicyCreatedSubject     Subject = "tenantuserpolicy.created"
-	TenantUserPolicyUpdatedSubject     Subject = "tenantuserpolicy.updated"
-	TenantUserPolicyDeletedSubject     Subject = "tenantuserpolicy.deleted"
+	// Auth Service Event Initialization
+	AuthUserCreatedSubject Subject = "auth.user.created"
+	AuthUserUpdatedSubject Subject = "auth.user.updated"
+	AuthUserDeletedSubject Subject = "auth.user.deleted"
 )
 
 // StreamMetadata defines metadata for streams
@@ -107,22 +103,23 @@ var Streams = map[StreamName]StreamMetadata{
 		Description: "Stream for tenant user service events",
 		Subjects: []Subject{
 			// Tenant User Events (Extended Profiles)
-			SeedTenantUserCreatedSubject,
 			TenantUserCreatedSubject,
 			TenantUserUpdatedSubject,
 			TenantUserDeletedSubject,
+		},
+	},
+	AuthStream: {
+		Name:        AuthStream,
+		Description: "Stream for auth service events",
+		Subjects: []Subject{
+			AuthUserCreatedSubject,
+			AuthUserUpdatedSubject,
+			AuthUserDeletedSubject,
 
 			// Tenant User Role Events
-			SeedTenantUserRoleCreatedSubject,
 			TenantUserRoleCreatedSubject,
 			TenantUserRoleUpdatedSubject,
 			TenantUserRoleDeletedSubject,
-
-			// Tenant User Policy Events
-			SeedTenantUserPolicyCreatedSubject,
-			TenantUserPolicyCreatedSubject,
-			TenantUserPolicyUpdatedSubject,
-			TenantUserPolicyDeletedSubject,
 		},
 	},
 }
