@@ -88,15 +88,18 @@ const (
 	ResourceConflict                 ErrorCode = "RESOURCE_CONFLICT"        // Resource conflict occurred (e.g., version mismatch)
 	RateLimitExceeded                ErrorCode = "RATE_LIMIT_EXCEEDED"      // Rate limit exceeded for API or service
 	InternalServerError              ErrorCode = "INTERNAL_SERVER_ERROR"    // Generic server error
+	RequestCanceled                  ErrorCode = "REQUEST_CANCELED"         // Request canceled by client/upstream
 
 	// Database Errors
-	DBConnectionError   ErrorCode = "DB_CONNECTION_ERROR"   // Failed to connect to the database
-	DBConnectionTimeOut ErrorCode = "DB_CONNECTION_TIMEOUT" // Database connection timeout
-	DBFetchError        ErrorCode = "DB_FETCH_ERROR"        // Error while fetching data from the database
-	DBInsertError       ErrorCode = "DB_INSERT_ERROR"       // Error while inserting data into the database
-	DBUpdateError       ErrorCode = "DB_UPDATE_ERROR"       // Error while updating data in the database
-	DBDeleteError       ErrorCode = "DB_DELETE_ERROR"       // Error while deleting data from the database
-	DBTransactionError  ErrorCode = "DB_TRANSACTION_ERROR"  // Error during a database transaction
+	DBConnectionError   ErrorCode = "DB_CONNECTION_ERROR"    // Failed to connect to the database
+	DBConnectionTimeOut ErrorCode = "DB_CONNECTION_TIMEOUT"  // Database connection timeout
+	DBFetchError        ErrorCode = "DB_FETCH_ERROR"         // Error while fetching data from the database
+	DBInsertError       ErrorCode = "DB_INSERT_ERROR"        // Error while inserting data into the database
+	DBUpdateError       ErrorCode = "DB_UPDATE_ERROR"        // Error while updating data in the database
+	DBDeleteError       ErrorCode = "DB_DELETE_ERROR"        // Error while deleting data from the database
+	DBTransactionError  ErrorCode = "DB_TRANSACTION_ERROR"   // Error during a database transaction
+	DBWriteConcernError ErrorCode = "DB_WRITE_CONCERN_ERROR" // Write concern not satisfied
+	DBRetryableError    ErrorCode = "DB_RETRYABLE_ERROR"     // Temporary/retryable database error
 
 	// NATS (Messaging System) Errors
 	NATSConnectionError   ErrorCode = "NATS_CONNECTION_ERROR"   // Failed to connect to NATS
@@ -114,11 +117,18 @@ const (
 	RedisTransactionError           ErrorCode = "REDIS_TRANSACTION_ERROR"  // Error during a Redis transaction
 
 	// Authentication & Authorization Errors
-	InvalidCredentials ErrorCode = "INVALID_CREDENTIALS" // Provided credentials are invalid
-	TokenExpired       ErrorCode = "TOKEN_EXPIRED"       // Token has expired
-	TokenInvalid       ErrorCode = "TOKEN_INVALID"       // Token is invalid
-	AccessDenied       ErrorCode = "ACCESS_DENIED"       // Access is denied to the requested resource
-	SessionExpired     ErrorCode = "SESSION_EXPIRED"     // User session has expired
+	InvalidCredentials ErrorCode = "INVALID_CREDENTIALS"      // Provided credentials are invalid
+	TokenExpired       ErrorCode = "TOKEN_EXPIRED"            // Token has expired
+	TokenInvalid       ErrorCode = "TOKEN_INVALID"            // Token is invalid
+	AccessDenied       ErrorCode = "ACCESS_DENIED"            // Access is denied to the requested resource
+	SessionExpired     ErrorCode = "SESSION_EXPIRED"          // User session has expired
+	MfaRequired        ErrorCode = "MFA_REQUIRED"             // MFA step-up required
+	InvalidMfaCode     ErrorCode = "INVALID_MFA_CODE"         // Provided MFA code is invalid
+	AccountLocked      ErrorCode = "ACCOUNT_LOCKED"           // Account is locked
+	PasswordExpired    ErrorCode = "PASSWORD_EXPIRED"         // Password has expired
+	PasswordReuseError ErrorCode = "PASSWORD_REUSE_FORBIDDEN" // Password reuse not allowed
+	TokenRevoked       ErrorCode = "TOKEN_REVOKED"            // Token has been revoked
+	SessionNotFound    ErrorCode = "SESSION_NOT_FOUND"        // Session not found
 
 	// File Handling Errors
 	FileNotFound      ErrorCode = "FILE_NOT_FOUND"      // File not found
@@ -138,11 +148,20 @@ const (
 	ConfigValidationError ErrorCode = "CONFIG_VALIDATION_ERROR" // Configuration validation failed
 
 	// User Input Errors
-	InvalidInputError    ErrorCode = "INVALID_INPUT_ERROR"    // User input is invalid
-	MissingRequiredField ErrorCode = "MISSING_REQUIRED_FIELD" // A required field is missing in the input
-	UnsupportedOperation ErrorCode = "UNSUPPORTED_OPERATION"  // Operation is not supported
-	InvalidOperation     ErrorCode = "INVALID_OPERATION"      // Operation is invalid
+	InvalidInputError    ErrorCode = "INVALID_INPUT_ERROR"      // User input is invalid
+	MissingRequiredField ErrorCode = "MISSING_REQUIRED_FIELD"   // A required field is missing in the input
+	UnsupportedOperation ErrorCode = "UNSUPPORTED_OPERATION"    // Operation is not supported
+	InvalidOperation     ErrorCode = "INVALID_OPERATION"        // Operation is invalid
+	UnsupportedMediaType ErrorCode = "UNSUPPORTED_MEDIA_TYPE"   // Content-Type not supported
+	PayloadTooLarge      ErrorCode = "PAYLOAD_TOO_LARGE"        // Request entity too large
+	PreconditionFailed   ErrorCode = "PRECONDITION_FAILED"      // Preconditions not met
+	IdempotencyConflict  ErrorCode = "IDEMPOTENCY_KEY_CONFLICT" // Idempotency key conflict
 
 	// Event Errors
 	VersionMismatch ErrorCode = "VERSION_MISMATCH_ERROR" // Event version mismatch
+
+	// WebAuthn / Passkey Errors
+	WebAuthnRegistrationError ErrorCode = "WEBAUTHN_REGISTRATION_ERROR" // Error during WebAuthn registration
+	WebAuthnAssertionError    ErrorCode = "WEBAUTHN_ASSERTION_ERROR"    // Error during WebAuthn assertion
+	DeviceNotTrusted          ErrorCode = "DEVICE_NOT_TRUSTED"          // Device not trusted/recognized
 )
