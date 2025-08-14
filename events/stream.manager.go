@@ -18,18 +18,21 @@ func NewStreamManager(jsClient jetstream.JetStream) *JsStreamManager {
 }
 
 type StreamConfig struct {
-	Name         StreamName                 // Name of the stream
-	Description  string                     // Optional description
-	Subjects     []Subject                  // Subjects associated with the stream
-	Retention    jetstream.RetentionPolicy  // Retention policy
-	MaxConsumers int                        // Max consumers
-	MaxMsgs      int64                      // Max number of messages
-	MaxAge       time.Duration              // Max age of messages
-	Discard      jetstream.DiscardPolicy    // Discard policy
-	Storage      jetstream.StorageType      // Storage type (FileStorage or MemoryStorage)
-	Replicas     int                        // Replication factor
-	NoAck        bool                       // Disable acknowledgment
-	Compression  jetstream.StoreCompression // Compression algorithm
+	Name         StreamName
+	Description  string
+	Subjects     []Subject
+	Retention    jetstream.RetentionPolicy
+	MaxConsumers int
+	MaxMsgs      int64
+	MaxBytes     int64 // NEW
+	MaxAge       time.Duration
+	Discard      jetstream.DiscardPolicy
+	Storage      jetstream.StorageType
+	Replicas     int
+	NoAck        bool
+	Compression  jetstream.StoreCompression
+	Duplicates   time.Duration // NEW
+	MaxMsgSize   int32         // NEW
 }
 
 // ToJetStreamSubjects converts the subjects to their string representations
@@ -50,12 +53,15 @@ func (jsm *JsStreamManager) CreateOrUpdateStream(ctx context.Context, config Str
 		Retention:    config.Retention,
 		MaxConsumers: config.MaxConsumers,
 		MaxMsgs:      config.MaxMsgs,
+		MaxBytes:     config.MaxBytes, // NEW
 		MaxAge:       config.MaxAge,
 		Discard:      config.Discard,
 		Storage:      config.Storage,
 		Replicas:     config.Replicas,
 		NoAck:        config.NoAck,
 		Compression:  config.Compression,
+		Duplicates:   config.Duplicates, // NEW
+		MaxMsgSize:   config.MaxMsgSize, // NEW
 	})
 	if err != nil {
 		return fmt.Errorf("failed to create or update stream %s: %w", config.Name, err)

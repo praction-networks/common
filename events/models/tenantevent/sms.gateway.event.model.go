@@ -1,6 +1,6 @@
-package domainevent
+package tenantevent
 
-type KYCProvideInsertEventModel struct {
+type SMSProviderInsertEventModel struct {
 	ID       string         `json:"id"`
 	Provider string         `json:"provider"`
 	Metadata map[string]any `json:"metadata"`
@@ -8,7 +8,7 @@ type KYCProvideInsertEventModel struct {
 	Version  int            `json:"version"`
 }
 
-type KYCProvideUpdateEventModel struct {
+type SMSProviderUpdateEventModel struct {
 	ID         string         `json:"id"`
 	Provider   string         `json:"provider"`
 	AssignedTo []string       `json:"assignedTo"`
@@ -17,6 +17,6 @@ type KYCProvideUpdateEventModel struct {
 	Version    int            `json:"version"`
 }
 
-type KYCProvideDeleteEventModel struct {
+type SMSProviderDeleteEventModel struct {
 	ID string `json:"id"`
 }

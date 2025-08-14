@@ -20,9 +20,6 @@ const (
 	TenantCreatedSubject         Subject = "tenant.created"
 	TenantUpdatedSubject         Subject = "tenant.updated"
 	TenantDeletedSubject         Subject = "tenant.deleted"
-	DepartmentCreatedSubject     Subject = "department.created"
-	DepartmentUpdateSubject      Subject = "department.updated"
-	DepartmentDeleteSubject      Subject = "department.delete"
 	AppMessengerCreateSubject    Subject = "appmessenger.created"
 	AppMessengerUpdateSubject    Subject = "appmessenger.updated"
 	AppMessengerDeleteSubject    Subject = "appmessenger.deleted"
@@ -74,9 +71,6 @@ var Streams = map[StreamName]StreamMetadata{
 		Subjects: []Subject{TenantCreatedSubject,
 			TenantUpdatedSubject,
 			TenantDeletedSubject,
-			DepartmentCreatedSubject,
-			DepartmentUpdateSubject,
-			DepartmentDeleteSubject,
 			AppMessengerCreateSubject,
 			AppMessengerUpdateSubject,
 			AppMessengerDeleteSubject,

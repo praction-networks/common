@@ -1,22 +1,22 @@
-package domainevent
+package tenantevent
 
-type SMSProviderInsertEventModel struct {
+type AppMessaegerInsertEventModel struct {
 	ID       string         `json:"id"`
 	Provider string         `json:"provider"`
-	Metadata map[string]any `json:"metadata"`
+	Metadata map[string]any `json:"metadata,omitempty"`
 	IsActive bool           `json:"isActive"`
 	Version  int            `json:"version"`
 }
 
-type SMSProviderUpdateEventModel struct {
+type AppMessengerUpdateEventModel struct {
 	ID         string         `json:"id"`
 	Provider   string         `json:"provider"`
 	AssignedTo []string       `json:"assignedTo"`
-	Metadata   map[string]any `json:"metadata"`
+	Metadata   map[string]any `json:"metadata,omitempty"`
 	IsActive   bool           `json:"isActive"`
 	Version    int            `json:"version"`
 }
 
-type SMSProviderDeleteEventModel struct {
+type AppMessengerDeleteEventModel struct {
 	ID string `json:"id"`
 }

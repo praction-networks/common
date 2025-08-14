@@ -6,11 +6,10 @@ import (
 
 // UserAccess represents user access permissions for a specific zone/department combination
 type UserAccess struct {
-	Zone       string `json:"zone" bson:"zone"`
-	Department string `json:"department" bson:"department"`
-	Role       string `json:"role" bson:"role"`
-	IsPrimary  bool   `json:"isPrimary" bson:"isPrimary"` // Primary assignment for this user
-	IsActive   bool   `json:"isActive" bson:"isActive"`   // Active assignment
+	TenantID  string `json:"tenantId" bson:"tenantId"`
+	RoleID    string `json:"roleId" bson:"roleId"`
+	IsPrimary bool   `json:"isPrimary" bson:"isPrimary"` // Primary assignment for this user
+	IsActive  bool   `json:"isActive" bson:"isActive"`   // Active assignment
 }
 
 // Domain User Events (Extended Profiles)
@@ -41,9 +40,11 @@ type DomainUserUpdateEvent struct {
 	UserAccess []UserAccess `json:"userAccess" bson:"userAccess"` // Updated assignments
 	OnLeave    bool         `json:"onLeave" bson:"onLeave"`
 	IsActive   bool         `json:"isActive" bson:"isActive"`
+	Version    int          `json:"version" bson:"version"`
 }
 
 type DomainUserDeleteEvent struct {
 	ID        string    `json:"id" bson:"_id"`
 	DeletedAt time.Time `json:"deletedAt" bson:"deletedAt"`
+	Version   int       `json:"version" bson:"version"`
 }

@@ -1,4 +1,4 @@
-package domainevent
+package tenantevent
 
 type MailServerInsertEventModel struct {
 	ID              string           `json:"id"`

@@ -1,22 +1,22 @@
-package domainevent
+package tenantevent
 
-type PaymentGatewayInsertEventModel struct {
+type KYCProvideInsertEventModel struct {
 	ID       string         `json:"id"`
-	Gateway  string         `json:"gateway"`
-	IsActive bool           `json:"isActive"`
+	Provider string         `json:"provider"`
 	Metadata map[string]any `json:"metadata"`
+	IsActive bool           `json:"isActive"`
 	Version  int            `json:"version"`
 }
 
-type PaymentGatewayUpdateEventModel struct {
+type KYCProvideUpdateEventModel struct {
 	ID         string         `json:"id"`
-	Gateway    string         `json:"gateway"`
+	Provider   string         `json:"provider"`
 	AssignedTo []string       `json:"assignedTo"`
-	IsActive   bool           `json:"isActive"`
 	Metadata   map[string]any `json:"metadata"`
+	IsActive   bool           `json:"isActive"`
 	Version    int            `json:"version"`
 }
 
-type PaymentGatewayDeleteEventModel struct {
+type KYCProvideDeleteEventModel struct {
 	ID string `json:"id"`
 }

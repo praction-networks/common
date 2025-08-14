@@ -1,4 +1,4 @@
-package domainevent
+package tenantevent
 
 // AddressModel represents an address structure
 // @swagger:model AddressModel

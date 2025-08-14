@@ -1,11 +1,11 @@
-package domainevent
+package tenantevent
 
 import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-type DomainInsertEventModel struct {
+type TenantInsertEventModel struct {
 	ID               string       `json:"id"`
 	Name             string       `json:"name"`
 	Code             string       `json:"code"`
@@ -22,7 +22,7 @@ type DomainInsertEventModel struct {
 	Version          int          `json:"version,omitempty"`
 }
 
-type DomainUpdateEventModel struct {
+type TenantUpdateEventModel struct {
 	ID                     string                  `json:"id"`
 	Name                   string                  `json:"name"`
 	Code                   string                  `json:"code"`
@@ -48,7 +48,7 @@ type DomainUpdateEventModel struct {
 	Version                int                     `json:"version,omitempty"`
 }
 
-type DomainDeleteEventModel struct {
+type TenantDeleteEventModel struct {
 	ID string `json:"id"`
 }
 
@@ -88,7 +88,7 @@ type ISPSettings struct {
 	DeviceIDs        []string `json:"deviceIDs,omitempty" bson:"deviceIDs,omitempty"`
 }
 
-type DomainUpdate struct {
+type TenantUpdate struct {
 	ID          primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	UUID        string             `json:"uuid" bson:"uuid,omitempty"`
 	Name        string             `json:"name" bson:"name,omitempty"`
@@ -97,28 +97,6 @@ type DomainUpdate struct {
 	Version     int                `json:"version" bson:"version"`
 }
 
-type DomainDelete struct {
-	ID primitive.ObjectID `json:"id" bson:"_id,omitempty"`
-}
-
-type DepartmentCreate struct {
-	ID          primitive.ObjectID `json:"id" bson:"_id,omitempty"`
-	UUID        string             `json:"uuid" bson:"uuid,omitempty"`
-	Name        string             `json:"name" bson:"name,omitempty"`
-	SystemName  string             `json:"systemName" bson:"systemName,omitempty"`
-	ParentRefID primitive.ObjectID `json:"parentRefId,omitempty" bson:"parentRefId,omitempty"` // Nullable parent reference
-	Version     int                `json:"version" bson:"version"`
-}
-
-type DepartmentUpdate struct {
-	ID          primitive.ObjectID `json:"id" bson:"_id,omitempty"`
-	UUID        string             `json:"uuid" bson:"uuid,omitempty"`
-	Name        string             `json:"name" bson:"name,omitempty"`
-	SystemName  string             `json:"systemName" bson:"systemName,omitempty"`
-	ParentRefID primitive.ObjectID `json:"parentRefId,omitempty" bson:"parentRefId,omitempty"` // Nullable parent reference
-	Version     int                `json:"version" bson:"version"`
-}
-
-type DepartmentDelete struct {
+type TenantDelete struct {
 	ID primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 }

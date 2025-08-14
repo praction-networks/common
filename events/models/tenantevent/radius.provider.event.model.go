@@ -1,4 +1,4 @@
-package domainevent
+package tenantevent
 
 type RadiusProviderInsertEventModel struct {
 	ID       string         `json:"id"`
