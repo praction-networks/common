@@ -2,6 +2,8 @@ package events
 
 import (
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"math/rand"
@@ -42,37 +44,76 @@ type RetryConfig struct {
 	RetryInterval time.Duration
 }
 
+// -----------------------------------------------------------------------------
+// Delivery modes
+// -----------------------------------------------------------------------------
+
+type DeliveryGuarantee int
+
+const (
+	// Strict at-least-once: retries + early Mongo fallback + dedupe + expect-stream guard
+	DeliveryGuaranteed DeliveryGuarantee = iota + 1
+	// A few retries, no fallback. Good default for non-critical events.
+	DeliveryPreferred
+	// Single try, no fallback, no dedupe. Good for high-volume logs/metrics where drops are OK.
+	DeliveryBestEffort
+)
+
+// -----------------------------------------------------------------------------
+// Back-compat entry point (kept as-is)
+// -----------------------------------------------------------------------------
+
 // Publish keeps your original signature but internally uses PublishWithOptions.
-// Prefer calling PublishWithOptions for fine-grained control.
+// Prefer calling PublishWithOptions (or the helpers below) for fine-grained control.
 func (p *Publisher[T]) Publish(ctx context.Context, data T, msgID string, retry RetryConfig) error {
 	opts := PublishOptions{
-		// Dedupe / Expectation
-		// EnableDedup: nil => will default to p.EnableDedup below
-		MsgID: msgID,
-
-		// Retry/backoff (mapped from the legacy shape)
+		Guarantee:     DeliveryPreferred,
+		MsgID:         msgID,
 		RetryEnabled:  retry.Enabled,
 		RetryAttempts: retry.Attempts,
-		BaseBackoff:   retry.RetryInterval, // if not set, defaults are applied later
+		BaseBackoff:   retry.RetryInterval,
 		MaxBackoff:    retry.RetryInterval,
-		Jitter:        retry.RetryInterval / 10, // small jitter
-
-		// Fallback
+		Jitter:        retry.RetryInterval / 10,
+		// FallbackAfterAttempts is ignored unless FallbackEnabled is true
 		FallbackAfterAttempts: 10,
 	}
 	_, err := p.PublishWithOptions(ctx, data, opts)
 	return err
 }
 
-// -----------------------------
-// New options-rich publish API
-// -----------------------------
+// Convenience helpers
+func (p *Publisher[T]) PublishGuaranteed(ctx context.Context, data T, msgID string) (*jetstream.PubAck, error) {
+	return p.PublishWithOptions(ctx, data, PublishOptions{
+		Guarantee: DeliveryGuaranteed,
+		MsgID:     msgID,
+	})
+}
+func (p *Publisher[T]) PublishPreferred(ctx context.Context, data T, msgID string) (*jetstream.PubAck, error) {
+	return p.PublishWithOptions(ctx, data, PublishOptions{
+		Guarantee: DeliveryPreferred,
+		MsgID:     msgID,
+	})
+}
+func (p *Publisher[T]) PublishBestEffort(ctx context.Context, data T) (*jetstream.PubAck, error) {
+	return p.PublishWithOptions(ctx, data, PublishOptions{
+		Guarantee: DeliveryBestEffort,
+		// no MsgID on purpose
+	})
+}
+
+// -----------------------------------------------------------------------------
+// Options-rich publish API
+// -----------------------------------------------------------------------------
 
 type PublishOptions struct {
+	// Mode
+	Guarantee DeliveryGuarantee
+
 	// Dedupe / expectations
-	EnableDedup      *bool  // nil => default from Publisher.EnableDedup
+	EnableDedup      *bool  // nil => defaults from mode / publisher
 	MsgID            string // stable id for dedupe; generated if empty and dedupe enabled
 	ExpectStreamName string // if empty, defaults to publisher's Stream
+	UseExpectStream  *bool  // nil => defaults from mode
 
 	// Retry & backoff
 	RetryEnabled  bool
@@ -81,34 +122,117 @@ type PublishOptions struct {
 	MaxBackoff    time.Duration // e.g., 5s
 	Jitter        time.Duration // e.g., 200ms
 
-	// Fallback
-	FallbackAfterAttempts int // upsert to Mongo after this many tries (default: 10)
+	// Fallback (Mongo)
+	FallbackEnabled       *bool // nil => defaults from mode (true for Guaranteed if fallback configured)
+	FallbackAfterAttempts int   // upsert to Mongo after this many tries (when enabled)
 
-	// Optional payload guard if your stream uses MaxMsgSize
-	MaxMsgSize int // 0 = disabled
+	// Optional payload guard if your stream uses MaxMsgSize (defaults to 2MB)
+	MaxMsgSize int // 0 = use default (2MB)
 }
 
 func (o *PublishOptions) withDefaults(pub *Publisher[any]) PublishOptions {
 	cp := *o
-	if cp.EnableDedup == nil {
-		v := pub.EnableDedup
-		cp.EnableDedup = &v
+
+	// Defaults by delivery mode
+	switch cp.Guarantee {
+	case DeliveryBestEffort:
+		// fire-and-forget-ish (still JetStream)
+		if cp.EnableDedup == nil {
+			v := false
+			cp.EnableDedup = &v
+		}
+		if !cp.RetryEnabled {
+			cp.RetryAttempts = 1
+		}
+		if cp.UseExpectStream == nil {
+			v := false // permissive; caller can enable
+			cp.UseExpectStream = &v
+		}
+		if cp.FallbackEnabled == nil {
+			v := false
+			cp.FallbackEnabled = &v
+		}
+	case DeliveryPreferred:
+		// a few retries, no fallback
+		if cp.EnableDedup == nil {
+			v := pub.EnableDedup // inherit from publisher
+			cp.EnableDedup = &v
+		}
+		if !cp.RetryEnabled {
+			cp.RetryEnabled = true
+			if cp.RetryAttempts <= 0 {
+				cp.RetryAttempts = 5
+			}
+			if cp.BaseBackoff == 0 {
+				cp.BaseBackoff = 200 * time.Millisecond
+			}
+			if cp.MaxBackoff == 0 {
+				cp.MaxBackoff = 5 * time.Second
+			}
+			if cp.Jitter == 0 {
+				cp.Jitter = 200 * time.Millisecond
+			}
+		}
+		if cp.UseExpectStream == nil {
+			v := true
+			cp.UseExpectStream = &v
+		}
+		if cp.FallbackEnabled == nil {
+			v := false
+			cp.FallbackEnabled = &v
+		}
+	default: // DeliveryGuaranteed
+		if cp.EnableDedup == nil {
+			v := true
+			cp.EnableDedup = &v
+		}
+		if !cp.RetryEnabled {
+			cp.RetryEnabled = true
+			if cp.RetryAttempts <= 0 {
+				cp.RetryAttempts = 12
+			}
+			if cp.BaseBackoff == 0 {
+				cp.BaseBackoff = 200 * time.Millisecond
+			}
+			if cp.MaxBackoff == 0 {
+				cp.MaxBackoff = 5 * time.Second
+			}
+			if cp.Jitter == 0 {
+				cp.Jitter = 200 * time.Millisecond
+			}
+		}
+		if cp.UseExpectStream == nil {
+			v := true
+			cp.UseExpectStream = &v
+		}
+		if cp.FallbackEnabled == nil {
+			// Enable fallback by default if wired
+			v := pub.FallbackStorage != nil
+			cp.FallbackEnabled = &v
+		}
+		if cp.FallbackAfterAttempts <= 0 {
+			cp.FallbackAfterAttempts = 3
+		}
 	}
-	if !cp.RetryEnabled {
-		cp.RetryAttempts = 1
+
+	// General defaults
+	if cp.MaxBackoff == 0 {
+		cp.MaxBackoff = 5 * time.Second
 	}
 	if cp.BaseBackoff == 0 {
 		cp.BaseBackoff = 200 * time.Millisecond
 	}
-	if cp.MaxBackoff == 0 {
-		cp.MaxBackoff = 5 * time.Second
-	}
 	if cp.Jitter < 0 {
 		cp.Jitter = 0
 	}
-	if cp.FallbackAfterAttempts <= 0 {
-		cp.FallbackAfterAttempts = 10
+	if cp.RetryEnabled && cp.RetryAttempts <= 0 {
+		cp.RetryAttempts = int(^uint(0) >> 1) // int max
 	}
+	if cp.MaxMsgSize == 0 {
+		// Default 2 MB JSON guard (tune to your StreamConfig.MaxMsgSize if set)
+		cp.MaxMsgSize = 2 * 1024 * 1024
+	}
+
 	return cp
 }
 
@@ -119,7 +243,7 @@ func nextBackoff(base, max, jitter time.Duration, attempt int) time.Duration {
 		backoff = max
 	}
 	if jitter > 0 {
-		// #nosec G404 (non-crypto jitter is fine here)
+		// Go 1.20+: no need to Seed; default Source is fine
 		backoff += time.Duration(rand.Int63n(int64(jitter)))
 	}
 	return backoff
@@ -145,10 +269,7 @@ func (p *Publisher[T]) PublishWithOptions(ctx context.Context, data T, userOpts 
 	}
 
 	// Prepare payload (carry your generic Event[T])
-	event := Event[T]{
-		Subject: p.Subject,
-		Data:    data,
-	}
+	event := Event[T]{Subject: p.Subject, Data: data}
 	payload, err := json.Marshal(event)
 	if err != nil {
 		metrics.RecordNATSFailure(streamInfo.Config.Name, string(p.Subject), err)
@@ -175,12 +296,16 @@ func (p *Publisher[T]) PublishWithOptions(ctx context.Context, data T, userOpts 
 	if expectStream == "" {
 		expectStream = string(p.Stream)
 	}
-	jsOpts = append(jsOpts, jetstream.WithExpectStream(expectStream))
+	if opts.UseExpectStream != nil && *opts.UseExpectStream {
+		jsOpts = append(jsOpts, jetstream.WithExpectStream(expectStream))
+	}
 
-	// Dedupe (also force dedupe if fallback is configured)
-	if *opts.EnableDedup || p.FallbackStorage != nil {
+	// Dedupe (generate MsgID from payload bytes if empty)
+	if opts.EnableDedup != nil && *opts.EnableDedup {
 		if opts.MsgID == "" {
-			opts.MsgID = fmt.Sprintf("%s-%d", p.Subject, time.Now().UnixNano())
+			sum := sha256.Sum256(payload)
+			trunc := sum[:16] // 16 bytes (32 hex chars) is plenty
+			opts.MsgID = fmt.Sprintf("%s:%s", p.Subject, hex.EncodeToString(trunc))
 		}
 		jsOpts = append(jsOpts, jetstream.WithMsgID(opts.MsgID))
 	}
@@ -201,12 +326,11 @@ func (p *Publisher[T]) PublishWithOptions(ctx context.Context, data T, userOpts 
 
 	// Retry path (exponential backoff + jitter; honor ctx)
 	attempts := opts.RetryAttempts
-	if attempts <= 0 {
-		attempts = int(^uint(0) >> 1) // effectively unbounded
-	}
-
 	var lastErr error
+	actualAttempts := 0
+
 	for attempt := 1; attempt <= attempts; attempt++ {
+		actualAttempts = attempt
 		ack, err := p.StreamManager.JsClient.Publish(ctx, string(p.Subject), payload, jsOpts...)
 		if err == nil {
 			success = true
@@ -235,17 +359,27 @@ func (p *Publisher[T]) PublishWithOptions(ctx context.Context, data T, userOpts 
 		}
 	}
 
-	// Fallback (idempotent upsert) after threshold
-	if p.FallbackStorage != nil && attempts >= opts.FallbackAfterAttempts {
-		filter := bson.M{"msg_id": opts.MsgID}
+	// Fallback (idempotent upsert) after threshold (only when enabled)
+	if p.FallbackStorage != nil && opts.FallbackEnabled != nil && *opts.FallbackEnabled && actualAttempts >= opts.FallbackAfterAttempts {
+		docID := fmt.Sprintf("%s|%s", p.Stream, opts.MsgID)
+		lastErrStr := "publish failed"
+		if lastErr != nil {
+			lastErrStr = lastErr.Error()
+		}
+
+		filter := bson.M{"_id": docID}
 		update := bson.M{
-			"$set": bson.M{
+			"$setOnInsert": bson.M{
 				"stream_name": string(p.Stream),
 				"subject":     string(p.Subject),
-				"payload":     payload,
-				"timestamp":   time.Now(),
+				"payload":     payload, // keep original payload on first insert
+				"attempts":    0,
 			},
-			"$inc": bson.M{"attempts": attempts},
+			"$set": bson.M{
+				"timestamp":  time.Now(), // last attempt time
+				"last_error": lastErrStr,
+			},
+			"$inc": bson.M{"attempts": actualAttempts}, // record how many we already tried here
 		}
 		_, ferr := p.FallbackStorage.UpdateOne(ctx, filter, update, mopt.Update().SetUpsert(true))
 		if ferr != nil {
@@ -258,7 +392,7 @@ func (p *Publisher[T]) PublishWithOptions(ctx context.Context, data T, userOpts 
 	if lastErr == nil {
 		lastErr = fmt.Errorf("publish failed without specific error")
 	}
-	return nil, fmt.Errorf("failed to publish after %d attempts: %w", attempts, lastErr)
+	return nil, fmt.Errorf("failed to publish after %d attempts: %w", actualAttempts, lastErr)
 }
 
 // EnsureFallbackIndexes creates helpful indexes for the fallback collection.
@@ -269,13 +403,10 @@ func EnsureFallbackIndexes(ctx context.Context, coll *mongo.Collection) error {
 	}
 	models := []mongo.IndexModel{
 		{
-			Keys:    bson.D{{Key: "msg_id", Value: 1}},
-			Options: mopt.Index().SetUnique(true).SetName("uniq_msg_id"),
-		},
-		{
 			Keys:    bson.D{{Key: "timestamp", Value: 1}},
 			Options: mopt.Index().SetName("ts_idx"),
 		},
+		// _id is unique by default (we use "<Stream>|<MsgID>")
 	}
 	_, err := coll.Indexes().CreateMany(ctx, models)
 	return err
