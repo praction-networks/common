@@ -4,6 +4,16 @@ import (
 	"time"
 )
 
+const (
+	FailedNATSFieldID         = "_id"
+	FailedNATSFieldStreamName = "stream_name"
+	FailedNATSFieldSubject    = "subject"
+	FailedNATSFieldPayload    = "payload"
+	FailedNATSFieldAttempts   = "attempts"
+	FailedNATSFieldTimestamp  = "timestamp"
+	FailedNATSFieldLastError  = "last_error"
+)
+
 type FailedNATSEvent struct {
 	ID         string    `bson:"_id"`
 	StreamName string    `bson:"stream_name"`
