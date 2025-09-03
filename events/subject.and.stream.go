@@ -53,6 +53,11 @@ const (
 	AuthUserCreatedSubject Subject = "auth.user.created"
 	AuthUserUpdatedSubject Subject = "auth.user.updated"
 	AuthUserDeletedSubject Subject = "auth.user.deleted"
+
+	// OTP Events
+	TenantUserOTPSentSubject     Subject = "tenantuser.otp.sent"
+	TenantUserOTPVerifiedSubject Subject = "tenantuser.otp.verified"
+	TenantUserOTPExpiredSubject  Subject = "tenantuser.otp.expired"
 )
 
 // StreamMetadata defines metadata for streams
@@ -100,6 +105,11 @@ var Streams = map[StreamName]StreamMetadata{
 			TenantUserCreatedSubject,
 			TenantUserUpdatedSubject,
 			TenantUserDeletedSubject,
+
+			//OTP Events
+			TenantUserOTPSentSubject,
+			TenantUserOTPVerifiedSubject,
+			TenantUserOTPExpiredSubject,
 		},
 	},
 	AuthStream: {
