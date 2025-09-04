@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/praction-networks/common/appError"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type PaginatedFeedQuery struct {
@@ -141,4 +142,46 @@ func (fq PaginatedFeedQuery) Page() int {
 
 func (fq PaginatedFeedQuery) PageSize() int {
 	return fq.Limit
+}
+
+// BuildMongoFilter builds MongoDB filter from dynamic filters
+// This is a generic utility function that converts PaginatedFeedQuery filters
+// into MongoDB query filters for use across all repositories
+func BuildMongoFilter(filters map[string]map[string]string) bson.M {
+	query := bson.M{}
+	for field, ops := range filters {
+		if len(ops) == 1 && ops["eq"] != "" {
+			query[field] = ops["eq"]
+			continue
+		}
+		sub := bson.M{}
+		for op, val := range ops {
+			switch op {
+			case "eq":
+				sub["$eq"] = val
+			case "ne":
+				sub["$ne"] = val
+			case "gt":
+				sub["$gt"] = val
+			case "gte":
+				sub["$gte"] = val
+			case "lt":
+				sub["$lt"] = val
+			case "lte":
+				sub["$lte"] = val
+			case "in":
+				sub["$in"] = strings.Split(val, ",")
+			case "nin":
+				sub["$nin"] = strings.Split(val, ",")
+			case "regex":
+				sub["$regex"] = val
+			case "exists":
+				sub["$exists"] = val == "true"
+			}
+		}
+		if len(sub) > 0 {
+			query[field] = sub
+		}
+	}
+	return query
 }
