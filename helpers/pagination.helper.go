@@ -12,17 +12,17 @@ import (
 )
 
 type PaginatedFeedQuery struct {
-	Limit          int                          `json:"limit" validate:"gte=1, lte=5000"` // Maximum items per page
-	Offset         int                          `json:"offset" validate:"gte=0"`          // Offset for pagination
-	Sort           map[string]string            `json:"sort"`                             // Dynamic sorting: field -> order (asc/desc)
-	Filters        map[string]map[string]string `json:"filters"`                          // Dynamic search: field -> operator -> value
-	IncludeFields  []string                     `json:"include_fields"`                   // Fields to include in response
-	ExcludeFields  []string                     `json:"exclude_fields"`                   // Fields to exclude in response
-	PaginationMeta bool                         `json:"pagination_meta"`                  // Return pagination metadata
-	DistinctField  string                       `json:"distinct_field"`                   // Field for distinct results
-	Search         string                       `json:"search"`                           // Full-text search query
-	DateFrom       *time.Time                   `json:"date_from"`                        // Date range filter - from
-	DateTo         *time.Time                   `json:"date_to"`                          // Date range filter - to
+	Limit          int                          `json:"limit" validate:"gte=1, lte=10000"` // Maximum items per page
+	Offset         int                          `json:"offset" validate:"gte=0"`           // Offset for pagination
+	Sort           map[string]string            `json:"sort"`                              // Dynamic sorting: field -> order (asc/desc)
+	Filters        map[string]map[string]string `json:"filters"`                           // Dynamic search: field -> operator -> value
+	IncludeFields  []string                     `json:"include_fields"`                    // Fields to include in response
+	ExcludeFields  []string                     `json:"exclude_fields"`                    // Fields to exclude in response
+	PaginationMeta bool                         `json:"pagination_meta"`                   // Return pagination metadata
+	DistinctField  string                       `json:"distinct_field"`                    // Field for distinct results
+	Search         string                       `json:"search"`                            // Full-text search query
+	DateFrom       *time.Time                   `json:"date_from"`                         // Date range filter - from
+	DateTo         *time.Time                   `json:"date_to"`                           // Date range filter - to
 }
 
 // PaginationConfig holds configuration for pagination behavior
@@ -38,8 +38,8 @@ type PaginationConfig struct {
 // DefaultPaginationConfig returns a sensible default configuration
 func DefaultPaginationConfig() *PaginationConfig {
 	return &PaginationConfig{
-		MaxLimit:            5000,
-		DefaultLimit:        100,
+		MaxLimit:            1000,
+		DefaultLimit:        50,
 		AllowedSortFields:   []string{"createdAt", "updatedAt", "name", "id"},
 		AllowedFilterFields: []string{"isActive", "type", "environment", "status"},
 		DateField:           "createdAt",
@@ -94,6 +94,10 @@ func (fq *PaginatedFeedQuery) ParseWithConfig(r *http.Request, config *Paginatio
 		o, err := strconv.Atoi(offset)
 		if err != nil {
 			return appError.New(appError.InvalidInputError, "invalid 'offset' parameter, must be an integer", http.StatusBadRequest, err)
+		}
+		if o < 0 {
+			return appError.New(appError.InvalidInputError,
+				"offset must be greater than or equal to 0", http.StatusBadRequest, nil)
 		}
 		fq.Offset = o
 	} else {
