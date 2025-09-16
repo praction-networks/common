@@ -14,14 +14,14 @@ type MailServerInsertEventModel struct {
 
 type MailServerUpdateEventModel struct {
 	ID              string           `json:"id"`
-	SortCode        string           `json:"sort_code"`
+	SortCode        *string          `json:"sort_code"`
 	SMTPConfig      *SMTPConfig      `json:"smtp"`
 	SendGridConfig  *SendGridConfig  `json:"sendgrid"`
 	MailgunConfig   *MailgunConfig   `json:"mailgun"`
 	PostalConfig    *PostalConfig    `json:"postal"`
 	MailchimpConfig *MailchimpConfig `json:"mailchimp"`
-	IsActive        bool             `json:"isActive"`
-	AssignTo        []string         `json:"assignedTo"`
+	IsActive        *bool            `json:"isActive"`
+	AssignTo        *[]string        `json:"assignedTo"`
 	Version         int              `json:"version"`
 }
 
