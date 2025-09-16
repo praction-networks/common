@@ -3,6 +3,7 @@ package tenantevent
 type MailServerInsertEventModel struct {
 	ID              string           `json:"id"`
 	SortCode        string           `json:"sort_code"`
+	AssignedTo      []string         `json:"assignedTo"`
 	SMTPConfig      *SMTPConfig      `json:"smtp"`
 	SendGridConfig  *SendGridConfig  `json:"sendgrid"`
 	MailgunConfig   *MailgunConfig   `json:"mailgun"`
@@ -14,14 +15,14 @@ type MailServerInsertEventModel struct {
 
 type MailServerUpdateEventModel struct {
 	ID              string           `json:"id"`
-	SortCode        *string          `json:"sort_code"`
+	SortCode        string           `json:"sort_code"`
+	AssignedTo      []string         `json:"assignedTo"`
 	SMTPConfig      *SMTPConfig      `json:"smtp"`
 	SendGridConfig  *SendGridConfig  `json:"sendgrid"`
 	MailgunConfig   *MailgunConfig   `json:"mailgun"`
 	PostalConfig    *PostalConfig    `json:"postal"`
 	MailchimpConfig *MailchimpConfig `json:"mailchimp"`
-	IsActive        *bool            `json:"isActive"`
-	AssignTo        *[]string        `json:"assignedTo"`
+	IsActive        bool             `json:"isActive"`
 	Version         int              `json:"version"`
 }
 
