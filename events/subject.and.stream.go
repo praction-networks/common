@@ -53,6 +53,8 @@ const (
 	AuthUserCreatedSubject Subject = "auth.user.created"
 	AuthUserUpdatedSubject Subject = "auth.user.updated"
 	AuthUserDeletedSubject Subject = "auth.user.deleted"
+	AuthUserLoginSubject   Subject = "auth.user.login"
+	AuthUserLogoutSubject  Subject = "auth.user.logout"
 
 	// OTP Events
 	TenantUserOTPSentSubject     Subject = "tenantuser.otp.sent"
@@ -119,6 +121,8 @@ var Streams = map[StreamName]StreamMetadata{
 			AuthUserCreatedSubject,
 			AuthUserUpdatedSubject,
 			AuthUserDeletedSubject,
+			AuthUserLoginSubject,
+			AuthUserLogoutSubject,
 
 			// Tenant User Role Events
 			TenantUserRoleCreatedSubject,
