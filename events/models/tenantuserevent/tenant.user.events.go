@@ -1,9 +1,5 @@
 package tenantuserevent
 
-import (
-	"time"
-)
-
 // UserAccess represents user access permissions for a specific zone/department combination
 type UserAccess struct {
 	TenantID  string `json:"tenantId" bson:"tenantId"`
@@ -52,7 +48,7 @@ type TenantUserUpdateEvent struct {
 }
 
 type TenantUserDeleteEvent struct {
-	ID        string    `json:"id" bson:"_id"`
-	DeletedAt time.Time `json:"deletedAt" bson:"deletedAt"`
-	Version   int       `json:"version" bson:"version"`
+	ID         string       `json:"id" bson:"_id"`
+	UserAccess []UserAccess `json:"userAccess" bson:"userAccess"` // Updated assignments
+	Version    int          `json:"version" bson:"version"`
 }
