@@ -13,10 +13,11 @@ type UserAccess struct {
 }
 
 // Domain User Events (Extended Profiles)
-type DomainUserCreateEvent struct {
+type TenantUserCreateEvent struct {
 	ID                 string       `json:"id" bson:"_id"`
 	FirstName          string       `json:"firstName" bson:"firstName"`
 	LastName           string       `json:"lastName" bson:"lastName"`
+	UserName           string       `json:"userName" bson:"userName"`
 	Mobile             string       `json:"mobile" bson:"mobile"`
 	IsMobileVerified   bool         `json:"isMobileVerified" bson:"isMobileVerified"`
 	Whatsapp           string       `json:"whatsapp" bson:"whatsapp"`
@@ -27,11 +28,12 @@ type DomainUserCreateEvent struct {
 	DOB                string       `json:"dob" bson:"dob"`
 	UserAccess         []UserAccess `json:"userAccess" bson:"userAccess"` // Multiple zone/department assignments
 	OnLeave            bool         `json:"onLeave" bson:"onLeave"`
+	IsSuspended        bool         `json:"isSuspended" bson:"isSuspended"`
 	IsActive           bool         `json:"isActive" bson:"isActive"`
 	Version            int          `json:"version" bson:"version"`
 }
 
-type DomainUserUpdateEvent struct {
+type TenantUserUpdateEvent struct {
 	ID                 string       `json:"id" bson:"_id"`
 	FirstName          string       `json:"firstName" bson:"firstName"`
 	LastName           string       `json:"lastName" bson:"lastName"`
@@ -49,7 +51,7 @@ type DomainUserUpdateEvent struct {
 	Version            int          `json:"version" bson:"version"`
 }
 
-type DomainUserDeleteEvent struct {
+type TenantUserDeleteEvent struct {
 	ID        string    `json:"id" bson:"_id"`
 	DeletedAt time.Time `json:"deletedAt" bson:"deletedAt"`
 	Version   int       `json:"version" bson:"version"`
