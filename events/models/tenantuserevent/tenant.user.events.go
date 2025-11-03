@@ -17,7 +17,6 @@ type TenantUserCreateEvent struct {
 	ID                 string       `json:"id" bson:"_id"`
 	FirstName          string       `json:"firstName" bson:"firstName"`
 	LastName           string       `json:"lastName" bson:"lastName"`
-	UserName           string       `json:"userName" bson:"userName"`
 	Mobile             string       `json:"mobile" bson:"mobile"`
 	IsMobileVerified   bool         `json:"isMobileVerified" bson:"isMobileVerified"`
 	Whatsapp           string       `json:"whatsapp" bson:"whatsapp"`
@@ -46,6 +45,7 @@ type TenantUserUpdateEvent struct {
 	Gender             string       `json:"gender" bson:"gender"`
 	DOB                string       `json:"dob" bson:"dob"`
 	UserAccess         []UserAccess `json:"userAccess" bson:"userAccess"` // Updated assignments
+	IsSuspended        bool         `json:"isSuspended" bson:"isSuspended"`
 	OnLeave            bool         `json:"onLeave" bson:"onLeave"`
 	IsActive           bool         `json:"isActive" bson:"isActive"`
 	Version            int          `json:"version" bson:"version"`
