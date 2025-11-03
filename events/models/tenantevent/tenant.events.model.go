@@ -122,20 +122,77 @@ type ExternalRadiusSettings struct {
 	IPACTID string `json:"ipactEnabled,omitempty"`
 }
 
+// EnabledFeatures defines all feature toggles for a Domain/Tenant.
+// NOTE: Flat structure maintained for backward-compatibility with existing JSON/BSON.
 type EnabledFeatures struct {
-	IsOnlinePaymentEnabled            bool `json:"isOnlinePaymentEnabled"`
-	IsUserPortalEnabled               bool `json:"isUserPortalEnabled"`
-	IsUserMailNotificationEnabled     bool `json:"isUserMailNotificationEnabled"`
-	IsUserWhatsappNotificationEnabled bool `json:"isUserWhatsappNotificationEnabled"`
-	IsUserTelegramNotificationEnabled bool `json:"isUserTelegramNotificationEnabled"`
-	IsUserSMSNotificationEnabled      bool `json:"isUserSMSNotificationEnabled"`
-	IsUserKYCEnabled                  bool `json:"isUserKYCEnabled"`
-	IsJazeeraRadiusProviderEnabled    bool `json:"isJazeeraRadiusProviderEnabled"`
-	IsIPACTRadiusProviderEnabled      bool `json:"isIPACTRadiusProviderEnabled"`
-	IsFreeRadiusProviderEnabled       bool `json:"isFreeRadiusProviderEnabled"`
-	IsIPTVEnabled                     bool `json:"isIPTVEnabled"`
-	IsOTTEnabled                      bool `json:"isOTTEnabled"`
-	IsVoiceServiceEnabled             bool `json:"isVoiceServiceEnabled"`
+	// ===== Core User Experience =====
+	IsUserPortalEnabled    bool `json:"isUserPortalEnabled" bson:"isUserPortalEnabled"`       // Enable user portal
+	IsUserKYCEnabled       bool `json:"isUserKYCEnabled" bson:"isUserKYCEnabled"`             // Enable KYC for users
+	IsOnlinePaymentEnabled bool `json:"isOnlinePaymentEnabled" bson:"isOnlinePaymentEnabled"` // Enable online payment
+
+	// ===== Notifications & Messaging =====
+	IsUserMailNotificationEnabled     bool `json:"isUserMailNotificationEnabled" bson:"isUserMailNotificationEnabled"`         // Email notifications
+	IsUserSMSNotificationEnabled      bool `json:"isUserSMSNotificationEnabled" bson:"isUserSMSNotificationEnabled"`           // SMS notifications
+	IsUserWhatsappNotificationEnabled bool `json:"isUserWhatsappNotificationEnabled" bson:"isUserWhatsappNotificationEnabled"` // WhatsApp notifications
+	IsUserTelegramNotificationEnabled bool `json:"isUserTelegramNotificationEnabled" bson:"isUserTelegramNotificationEnabled"` // Telegram notifications
+	IsPushNotificationEnabled         bool `json:"isPushNotificationEnabled" bson:"isPushNotificationEnabled"`                 // Mobile push notifications
+	IsInAppBannerEnabled              bool `json:"isInAppBannerEnabled" bson:"isInAppBannerEnabled"`                           // In-app banner/announcement bar
+
+	// ===== Access / RADIUS Providers =====
+	IsJazeeraRadiusProviderEnabled bool `json:"isJazeeraRadiusProviderEnabled" bson:"isJazeeraRadiusProviderEnabled"` // Jazeera RADIUS
+	IsIPACTRadiusProviderEnabled   bool `json:"isIPACTRadiusProviderEnabled" bson:"isIPACTRadiusProviderEnabled"`     // IPACT RADIUS
+	IsFreeRadiusProviderEnabled    bool `json:"isFreeRadiusProviderEnabled" bson:"isFreeRadiusProviderEnabled"`       // FreeRADIUS
+
+	// ===== Value-Added Services (VAS) =====
+	IsIPTVEnabled            bool `json:"isIPTVEnabled" bson:"isIPTVEnabled"`                       // IPTV
+	IsOTTEnabled             bool `json:"isOTTEnabled" bson:"isOTTEnabled"`                         // OTT bundles
+	IsVoiceServiceEnabled    bool `json:"isVoiceServiceEnabled" bson:"isVoiceServiceEnabled"`       // VoIP/Voice
+	IsVPNEnabled             bool `json:"isVPNEnabled" bson:"isVPNEnabled"`                         // Managed VPN
+	IsCloudBackupEnabled     bool `json:"isCloudBackupEnabled" bson:"isCloudBackupEnabled"`         // Cloud backup for users
+	IsFirewallServiceEnabled bool `json:"isFirewallServiceEnabled" bson:"isFirewallServiceEnabled"` // Managed firewall
+	IsDNSFilteringEnabled    bool `json:"isDNSFilteringEnabled" bson:"isDNSFilteringEnabled"`       // DNS filtering / parental control
+	IsHotspotLoginEnabled    bool `json:"isHotspotLoginEnabled" bson:"isHotspotLoginEnabled"`       // Captive portal / hotspot
+	IsRoamingEnabled         bool `json:"isRoamingEnabled" bson:"isRoamingEnabled"`                 // Wi-Fi roaming across zones
+
+	// ===== Marketing, Campaigns & Retention =====
+	IsCampaginServiceEnabled     bool `json:"isCampaginServiceEnabled" bson:"isCampaginServiceEnabled"`         // (legacy) Campaign service
+	IsPromoCampaignEnabled       bool `json:"isPromoCampaignEnabled" bson:"isPromoCampaignEnabled"`             // Promotional campaigns (generic)
+	IsEmailCampaignEnabled       bool `json:"isEmailCampaignEnabled" bson:"isEmailCampaignEnabled"`             // Email campaigns
+	IsSMSCampaignEnabled         bool `json:"isSMSCampaignEnabled" bson:"isSMSCampaignEnabled"`                 // SMS campaigns
+	IsMarketingAutomationEnabled bool `json:"isMarketingAutomationEnabled" bson:"isMarketingAutomationEnabled"` // Marketing automation workflows
+	IsCouponsEnabled             bool `json:"isCouponsEnabled" bson:"isCouponsEnabled"`                         // Discount coupons
+	IsLoyaltyProgramEnabled      bool `json:"isLoyaltyProgramEnabled" bson:"isLoyaltyProgramEnabled"`           // Loyalty/reward points
+	IsReferralProgramEnabled     bool `json:"isReferralProgramEnabled" bson:"isReferralProgramEnabled"`         // Referral program
+
+	// ===== Billing & Collections =====
+	IsInvoiceAutoReminderEnabled bool `json:"isInvoiceAutoReminderEnabled" bson:"isInvoiceAutoReminderEnabled"` // Auto invoice/payment reminders
+	IsPaymentSplitEnabled        bool `json:"isPaymentSplitEnabled" bson:"isPaymentSplitEnabled"`               // Split payments (partners/vendors)
+
+	// ===== Operations & Integrations =====
+	IsTicketingEnabled      bool `json:"isTicketingEnabled" bson:"isTicketingEnabled"`           // Helpdesk/ticketing
+	IsCRMIntegrationEnabled bool `json:"isCRMIntegrationEnabled" bson:"isCRMIntegrationEnabled"` // CRM integration (Zoho/HubSpot/etc.)
+	IsERPIntegrationEnabled bool `json:"isERPIntegrationEnabled" bson:"isERPIntegrationEnabled"` // ERP integration
+	IsInventorySyncEnabled  bool `json:"isInventorySyncEnabled" bson:"isInventorySyncEnabled"`   // Inventory sync with ERP
+	IsPartnerPortalEnabled  bool `json:"isPartnerPortalEnabled" bson:"isPartnerPortalEnabled"`   // Partner/reseller portal
+
+	// ===== Analytics & Feedback =====
+	IsUsageAnalyticsEnabled   bool `json:"isUsageAnalyticsEnabled" bson:"isUsageAnalyticsEnabled"`     // User behavior/usage analytics
+	IsRevenueAnalyticsEnabled bool `json:"isRevenueAnalyticsEnabled" bson:"isRevenueAnalyticsEnabled"` // Revenue analytics
+	IsNetworkAnalyticsEnabled bool `json:"isNetworkAnalyticsEnabled" bson:"isNetworkAnalyticsEnabled"` // Network performance analytics
+	IsCustomerFeedbackEnabled bool `json:"isCustomerFeedbackEnabled" bson:"isCustomerFeedbackEnabled"` // Surveys/feedback
+	IsChurnPredictionEnabled  bool `json:"isChurnPredictionEnabled" bson:"isChurnPredictionEnabled"`   // AI churn prediction
+
+	// ===== Security & Compliance =====
+	Is2FAEnabled                 bool `json:"is2FAEnabled" bson:"is2FAEnabled"`                                 // Two-factor auth (2FA)
+	IsAuditLoggingEnabled        bool `json:"isAuditLoggingEnabled" bson:"isAuditLoggingEnabled"`               // Audit logs
+	IsDataRetentionPolicyEnabled bool `json:"isDataRetentionPolicyEnabled" bson:"isDataRetentionPolicyEnabled"` // Data retention enforcement
+	IsGDPRComplianceEnabled      bool `json:"isGDPRComplianceEnabled" bson:"isGDPRComplianceEnabled"`           // GDPR/DPDP controls (toggle gates UI/flows)
+
+	// ===== AI & Automation =====
+	IsAIAssistantEnabled           bool `json:"isAIAssistantEnabled" bson:"isAIAssistantEnabled"`                     // AI assistant in portal/app
+	IsAIBasedSupportEnabled        bool `json:"isAIBasedSupportEnabled" bson:"isAIBasedSupportEnabled"`               // AI chat/agent for support
+	IsNetworkOptimizationAIEnabled bool `json:"isNetworkOptimizationAIEnabled" bson:"isNetworkOptimizationAIEnabled"` // AI-driven network tuning
+	IsPredictiveMaintenanceEnabled bool `json:"isPredictiveMaintenanceEnabled" bson:"isPredictiveMaintenanceEnabled"` // Predictive maintenance alerts
 }
 
 type ISPSettings struct {
