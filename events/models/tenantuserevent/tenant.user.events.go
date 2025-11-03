@@ -14,33 +14,39 @@ type UserAccess struct {
 
 // Domain User Events (Extended Profiles)
 type DomainUserCreateEvent struct {
-	ID         string       `json:"id" bson:"_id"`
-	FirstName  string       `json:"firstName" bson:"firstName"`
-	LastName   string       `json:"lastName" bson:"lastName"`
-	Mobile     string       `json:"mobile" bson:"mobile"`
-	Whatsapp   string       `json:"whatsapp" bson:"whatsapp"`
-	Email      string       `json:"email" bson:"email"`
-	Gender     string       `json:"gender" bson:"gender"`
-	DOB        string       `json:"dob" bson:"dob"`
-	UserAccess []UserAccess `json:"userAccess" bson:"userAccess"` // Multiple zone/department assignments
-	OnLeave    bool         `json:"onLeave" bson:"onLeave"`
-	IsActive   bool         `json:"isActive" bson:"isActive"`
-	Version    int          `json:"version" bson:"version"`
+	ID                 string       `json:"id" bson:"_id"`
+	FirstName          string       `json:"firstName" bson:"firstName"`
+	LastName           string       `json:"lastName" bson:"lastName"`
+	Mobile             string       `json:"mobile" bson:"mobile"`
+	IsMobileVerified   bool         `json:"isMobileVerified" bson:"isMobileVerified"`
+	Whatsapp           string       `json:"whatsapp" bson:"whatsapp"`
+	IsWhatsappVerified bool         `json:"isWhatsappVerified" bson:"isWhatsappVerified"`
+	Email              string       `json:"email" bson:"email"`
+	IsEmailVerified    bool         `json:"isEmailVerified" bson:"isEmailVerified"`
+	Gender             string       `json:"gender" bson:"gender"`
+	DOB                string       `json:"dob" bson:"dob"`
+	UserAccess         []UserAccess `json:"userAccess" bson:"userAccess"` // Multiple zone/department assignments
+	OnLeave            bool         `json:"onLeave" bson:"onLeave"`
+	IsActive           bool         `json:"isActive" bson:"isActive"`
+	Version            int          `json:"version" bson:"version"`
 }
 
 type DomainUserUpdateEvent struct {
-	ID         string       `json:"id" bson:"_id"`
-	FirstName  string       `json:"firstName" bson:"firstName"`
-	LastName   string       `json:"lastName" bson:"lastName"`
-	Mobile     string       `json:"mobile" bson:"mobile"`
-	Whatsapp   string       `json:"whatsapp" bson:"whatsapp"`
-	Email      string       `json:"email" bson:"email"`
-	Gender     string       `json:"gender" bson:"gender"`
-	DOB        string       `json:"dob" bson:"dob"`
-	UserAccess []UserAccess `json:"userAccess" bson:"userAccess"` // Updated assignments
-	OnLeave    bool         `json:"onLeave" bson:"onLeave"`
-	IsActive   bool         `json:"isActive" bson:"isActive"`
-	Version    int          `json:"version" bson:"version"`
+	ID                 string       `json:"id" bson:"_id"`
+	FirstName          string       `json:"firstName" bson:"firstName"`
+	LastName           string       `json:"lastName" bson:"lastName"`
+	Mobile             string       `json:"mobile" bson:"mobile"`
+	IsMobileVerified   bool         `json:"isMobileVerified" bson:"isMobileVerified"`
+	Whatsapp           string       `json:"whatsapp" bson:"whatsapp"`
+	IsWhatsappVerified bool         `json:"isWhatsappVerified" bson:"isWhatsappVerified"`
+	Email              string       `json:"email" bson:"email"`
+	IsEmailVerified    bool         `json:"isEmailVerified" bson:"isEmailVerified"`
+	Gender             string       `json:"gender" bson:"gender"`
+	DOB                string       `json:"dob" bson:"dob"`
+	UserAccess         []UserAccess `json:"userAccess" bson:"userAccess"` // Updated assignments
+	OnLeave            bool         `json:"onLeave" bson:"onLeave"`
+	IsActive           bool         `json:"isActive" bson:"isActive"`
+	Version            int          `json:"version" bson:"version"`
 }
 
 type DomainUserDeleteEvent struct {
