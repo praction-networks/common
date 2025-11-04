@@ -1,7 +1,7 @@
 package inventoryevent
 
 type DeviceInsertEventModel struct {
-	ID       string         `json:"id"`
-	Metadata map[string]any `json:"metadata"`
-	IsActive bool           `json:"isActive"`
+	ID       string         `bson:"_id" json:"id"`
+	Metadata map[string]any `bson:"metadata" json:"metadata"`
+	IsActive bool           `bson:"isActive" json:"isActive"`
 }

@@ -1,23 +1,23 @@
 package tenantevent
 
 type KYCProvideInsertEventModel struct {
-	ID         string         `json:"id"`
-	Provider   string         `json:"provider"`
-	AssignedTo []string       `json:"assignedTo"`
-	Metadata   map[string]any `json:"metadata"`
-	IsActive   bool           `json:"isActive"`
-	Version    int            `json:"version"`
+	ID         string         `bson:"_id" json:"id"`
+	Provider   string         `bson:"provider" json:"provider"`
+	AssignedTo []string       `bson:"assignedTo" json:"assignedTo"`
+	Metadata   map[string]any `bson:"metadata,omitempty" json:"metadata"`
+	IsActive   bool           `bson:"isActive" json:"isActive"`
+	Version    int            `bson:"version" json:"version"`
 }
 
 type KYCProvideUpdateEventModel struct {
-	ID         string         `json:"id"`
-	Provider   string         `json:"provider"`
+	ID         string         `bson:"_id" json:"id"`
+	Provider   string         `bson:"provider" json:"provider"`
 	AssignedTo []string       `json:"assignedTo"`
-	Metadata   map[string]any `json:"metadata"`
-	IsActive   bool           `json:"isActive"`
-	Version    int            `json:"version"`
+	Metadata   map[string]any `bson:"metadata,omitempty" json:"metadata"`
+	IsActive   bool           `bson:"isActive" json:"isActive"`
+	Version    int            `bson:"version" json:"version"`
 }
 
 type KYCProvideDeleteEventModel struct {
-	ID string `json:"id"`
+	ID string `bson:"_id" json:"id"`
 }

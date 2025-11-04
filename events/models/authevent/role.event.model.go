@@ -1,20 +1,20 @@
 package authevent
 
 type RoleCreateEventModel struct {
-	ID       string `json:"id"`
-	IsSystem bool   `json:"isSystem"`
-	IsActive bool   `json:"isActive"`
-	Version  int    `json:"version"`
+	ID       string `bson:"_id" json:"id"`
+	IsSystem bool   `bson:"isSystem" json:"isSystem"`
+	IsActive bool   `bson:"isActive" json:"isActive"`
+	Version  int    `bson:"version" json:"version"`
 }
 
 type RoleUpdateEventModel struct {
-	ID         string   `json:"id"`
-	IsSystem   bool     `json:"isSystem"`
-	IsActive   bool     `json:"isActive"`
-	AssignedTo []string `json:"assignedTo"`
-	Version    int      `json:"version"`
+	ID         string   `bson:"_id" json:"id"`
+	IsSystem   bool     `bson:"isSystem" json:"isSystem"`
+	IsActive   bool     `bson:"isActive" json:"isActive"`
+	AssignedTo []string `bson:"assignedTo" json:"assignedTo"`
+	Version    int      `bson:"version" json:"version"`
 }
 
 type RoleDeleteEventModel struct {
-	ID string `json:"id"`
+	ID string `bson:"_id" json:"id"`
 }

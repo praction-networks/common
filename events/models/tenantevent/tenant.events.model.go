@@ -8,127 +8,127 @@ import (
 )
 
 type TenantInsertEventModel struct {
-	ID               string                         `json:"id"`
-	Name             string                         `json:"name"`
-	Code             string                         `json:"code"`
-	Type             string                         `json:"type"`
-	Fqdn             string                         `json:"fqdn,omitempty"`
-	Environment      string                         `json:"environment,omitempty"`
-	EntType          string                         `json:"entType,omitempty"`
-	ParentTenantID   string                         `json:"parentTenantID,omitempty"`
-	DefaultEmail     string                         `json:"defaultEmail"`
-	DefaultPhone     string                         `json:"defaultPhone"`
-	PermanentAddress AddressModel                   `json:"permanentAddress"`
-	CurrentAddress   AddressModel                   `json:"currentAddress"`
-	TenantGST        []GSTModel                     `json:"tenantGST"`
-	TenantPAN        PANModel                       `json:"tenantPAN"`
-	TenantTAN        TANModel                       `json:"tenantTAN"`
-	TenantCIN        CINModel                       `json:"tenantCIN"`
-	EnabledFeatures  EnabledFeatures                `json:"enabledFeatures,omitempty"`
-	OLTs             []string                       `json:"olts,omitempty"`
-	KYCProvider      ProvidersModel                 `json:"kycProvider,omitempty"`
-	PaymentGateway   ProvidersModel                 `json:"paymentGateway,omitempty"`
-	SMSProvider      ProvidersModel                 `json:"smsProvider,omitempty"`
-	MailProvider     ProvidersModel                 `json:"mailProvider,omitempty"`
-	AppsMessanger    []AppMessagingProvidersModel   `json:"appsMessanger,omitempty"`
-	ExternalRadius   []ExternalRadiusProvidersModel `json:"externalRadius,omitempty"`
-	IsActive         bool                           `json:"isActive"`
-	Version          int                            `json:"version,omitempty"`
+	ID               string                         `bson:"_id" json:"id"`
+	Name             string                         `bson:"name" json:"name"`
+	Code             string                         `bson:"code" json:"code"`
+	Type             string                         `bson:"type" json:"type"`
+	Fqdn             string                         `bson:"fqdn,omitempty" json:"fqdn,omitempty"`
+	Environment      string                         `bson:"environment,omitempty" json:"environment,omitempty"`
+	EntType          string                         `bson:"entType,omitempty" json:"entType,omitempty"`
+	ParentTenantID   string                         `bson:"parentTenantID,omitempty" json:"parentTenantID,omitempty"`
+	DefaultEmail     string                         `bson:"defaultEmail" json:"defaultEmail"`
+	DefaultPhone     string                         `bson:"defaultPhone" json:"defaultPhone"`
+	PermanentAddress AddressModel                   `bson:"permanentAddress" json:"permanentAddress"`
+	CurrentAddress   AddressModel                   `bson:"currentAddress" json:"currentAddress"`
+	TenantGST        []GSTModel                     `bson:"tenantGST" json:"tenantGST"`
+	TenantPAN        PANModel                       `bson:"tenantPAN" json:"tenantPAN"`
+	TenantTAN        TANModel                       `bson:"tenantTAN" json:"tenantTAN"`
+	TenantCIN        CINModel                       `bson:"tenantCIN" json:"tenantCIN"`
+	EnabledFeatures  EnabledFeatures                `bson:"enabledFeatures,omitempty" json:"enabledFeatures,omitempty"`
+	OLTs             []string                       `bson:"olts,omitempty" json:"olts,omitempty"`
+	KYCProvider      ProvidersModel                 `bson:"kycProvider,omitempty" json:"kycProvider,omitempty"`
+	PaymentGateway   ProvidersModel                 `bson:"paymentGateway,omitempty" json:"paymentGateway,omitempty"`
+	SMSProvider      ProvidersModel                 `bson:"smsProvider,omitempty" json:"smsProvider,omitempty"`
+	MailProvider     ProvidersModel                 `bson:"mailProvider,omitempty" json:"mailProvider,omitempty"`
+	AppsMessanger    []AppMessagingProvidersModel   `bson:"appsMessanger,omitempty" json:"appsMessanger,omitempty"`
+	ExternalRadius   []ExternalRadiusProvidersModel `bson:"externalRadius,omitempty" json:"externalRadius,omitempty"`
+	IsActive         bool                           `bson:"isActive" json:"isActive"`
+	Version          int                            `bson:"version,omitempty" json:"version,omitempty"`
 }
 
 type TenantUpdateEventModel struct {
-	ID               string                         `json:"id"`
-	Name             string                         `json:"name"`
-	Code             string                         `json:"code"`
-	Type             string                         `json:"type"`
-	Fqdn             string                         `json:"fqdn,omitempty"`
-	Environment      string                         `json:"environment,omitempty"`
-	EntType          string                         `json:"entType,omitempty"`
-	ParentTenantID   string                         `json:"parentTenantID,omitempty"`
-	ChildIDs         []string                       `json:"childIDs,omitempty"`
-	DefaultEmail     string                         `json:"defaultEmail"`
-	DefaultPhone     string                         `json:"defaultPhone"`
-	PermanentAddress AddressModel                   `json:"permanentAddress"`
-	CurrentAddress   AddressModel                   `json:"currentAddress"`
-	TenantGST        []GSTModel                     `json:"tenantGST"`
-	TenantPAN        PANModel                       `json:"tenantPAN"`
-	TenantTAN        TANModel                       `json:"tenantTAN"`
-	TenantCIN        CINModel                       `json:"tenantCIN"`
-	EnabledFeatures  EnabledFeatures                `json:"enabledFeatures,omitempty"`
-	OLTs             []string                       `json:"olts,omitempty"`
-	KYCProvider      ProvidersModel                 `json:"kycProvider,omitempty"`
-	PaymentGateway   ProvidersModel                 `json:"paymentGateway,omitempty"`
-	SMSProvider      ProvidersModel                 `json:"smsProvider,omitempty"`
-	MailProvider     ProvidersModel                 `json:"mailProvider,omitempty"`
-	AppsMessanger    []AppMessagingProvidersModel   `json:"appsMessanger,omitempty"`
-	ExternalRadius   []ExternalRadiusProvidersModel `json:"externalRadius,omitempty"`
-	IsActive         bool                           `json:"isActive"`
-	Version          int                            `json:"version,omitempty"`
+	ID               string                         `bson:"_id" json:"id"`
+	Name             string                         `bson:"name" json:"name"`
+	Code             string                         `bson:"code" json:"code"`
+	Type             string                         `bson:"type" json:"type"`
+	Fqdn             string                         `bson:"fqdn,omitempty" json:"fqdn,omitempty"`
+	Environment      string                         `bson:"environment,omitempty" json:"environment,omitempty"`
+	EntType          string                         `bson:"entType,omitempty" json:"entType,omitempty"`
+	ParentTenantID   string                         `bson:"parentTenantID,omitempty" json:"parentTenantID,omitempty"`
+	ChildIDs         []string                       `bson:"childIDs,omitempty" json:"childIDs,omitempty"`
+	DefaultEmail     string                         `bson:"defaultEmail" json:"defaultEmail"`
+	DefaultPhone     string                         `bson:"defaultPhone" json:"defaultPhone"`
+	PermanentAddress AddressModel                   `bson:"permanentAddress" json:"permanentAddress"`
+	CurrentAddress   AddressModel                   `bson:"currentAddress" json:"currentAddress"`
+	TenantGST        []GSTModel                     `bson:"tenantGST" json:"tenantGST"`
+	TenantPAN        PANModel                       `bson:"tenantPAN" json:"tenantPAN"`
+	TenantTAN        TANModel                       `bson:"tenantTAN" json:"tenantTAN"`
+	TenantCIN        CINModel                       `bson:"tenantCIN" json:"tenantCIN"`
+	EnabledFeatures  EnabledFeatures                `bson:"enabledFeatures,omitempty" json:"enabledFeatures,omitempty"`
+	OLTs             []string                       `bson:"olts,omitempty" json:"olts,omitempty"`
+	KYCProvider      ProvidersModel                 `bson:"kycProvider,omitempty" json:"kycProvider,omitempty"`
+	PaymentGateway   ProvidersModel                 `bson:"paymentGateway,omitempty" json:"paymentGateway,omitempty"`
+	SMSProvider      ProvidersModel                 `bson:"smsProvider,omitempty" json:"smsProvider,omitempty"`
+	MailProvider     ProvidersModel                 `bson:"mailProvider,omitempty" json:"mailProvider,omitempty"`
+	AppsMessanger    []AppMessagingProvidersModel   `bson:"appsMessanger,omitempty" json:"appsMessanger,omitempty"`
+	ExternalRadius   []ExternalRadiusProvidersModel `bson:"externalRadius,omitempty" json:"externalRadius,omitempty"`
+	IsActive         bool                           `bson:"isActive" json:"isActive"`
+	Version          int                            `bson:"version,omitempty" json:"version,omitempty"`
 }
 
 type GSTModel struct {
-	State      string    `json:"state,omitempty"`
-	GSTIN      string    `json:"gstin,omitempty"`
-	IsVerified bool      `json:"isVerified,omitempty"`
-	VerifiedAt time.Time `json:"verifiedAt,omitempty"`
+	State      string    `bson:"state,omitempty" json:"state,omitempty"`
+	GSTIN      string    `bson:"gstin,omitempty" json:"gstin,omitempty"`
+	IsVerified bool      `bson:"isVerified,omitempty" json:"isVerified,omitempty"`
+	VerifiedAt time.Time `bson:"verifiedAt,omitempty" json:"verifiedAt,omitempty"`
 }
 
 type TenantDeleteEventModel struct {
-	ID string `json:"id"`
+	ID string `bson:"_id" json:"id"`
 }
 
 type ProvidersModel struct {
-	DefaultProviderID string   `json:"defaultProviderID,omitempty"`
-	Providers         []string `json:"providers,omitempty"`
+	DefaultProviderID string   `bson:"defaultProviderID,omitempty" json:"defaultProviderID,omitempty"`
+	Providers         []string `bson:"providers,omitempty" json:"providers,omitempty"`
 }
 
 type AppMessagingProvidersModel struct {
-	MessageProviderID string `json:"messageProviderID,omitempty"`
-	MessageProvider   string `json:"messageProvider,omitempty"`
+	MessageProviderID string `bson:"messageProviderID,omitempty" json:"messageProviderID,omitempty"`
+	MessageProvider   string `bson:"messageProvider,omitempty" json:"messageProvider,omitempty"`
 }
 
 type ExternalRadiusProvidersModel struct {
-	ExternalRadiusProviderID string   `json:"externalRadiusProviderID,omitempty"`
-	ExternalRadiusProviders  []string `json:"externalRadiusProviders,omitempty"`
+	ExternalRadiusProviderID string   `bson:"externalRadiusProviderID,omitempty" json:"externalRadiusProviderID,omitempty"`
+	ExternalRadiusProviders  []string `bson:"externalRadiusProviders,omitempty" json:"externalRadiusProviders,omitempty"`
 }
 
 type PANModel struct {
-	PAN        string    `json:"pan,omitempty"`
-	IsVerified bool      `json:"isVerified,omitempty"`
-	VerifiedAt time.Time `json:"verifiedAt,omitempty"`
+	PAN        string    `bson:"pan,omitempty" json:"pan,omitempty"`
+	IsVerified bool      `bson:"isVerified,omitempty" json:"isVerified,omitempty"`
+	VerifiedAt time.Time `bson:"verifiedAt,omitempty" json:"verifiedAt,omitempty"`
 }
 
 type TANModel struct {
-	TAN        string    `json:"tan,omitempty"`
-	IsVerified bool      `json:"isVerified,omitempty"`
-	VerifiedAt time.Time `json:"verifiedAt,omitempty"`
+	TAN        string    `bson:"tan,omitempty" json:"tan,omitempty"`
+	IsVerified bool      `bson:"isVerified,omitempty" json:"isVerified,omitempty"`
+	VerifiedAt time.Time `bson:"verifiedAt,omitempty" json:"verifiedAt,omitempty"`
 }
 
 type CINModel struct {
-	CIN        string    `json:"cin,omitempty"`
-	IsVerified bool      `json:"isVerified,omitempty"`
-	VerifiedAt time.Time `json:"verifiedAt,omitempty"`
+	CIN        string    `bson:"cin,omitempty" json:"cin,omitempty"`
+	IsVerified bool      `bson:"isVerified,omitempty" json:"isVerified,omitempty"`
+	VerifiedAt time.Time `bson:"verifiedAt,omitempty" json:"verifiedAt,omitempty"`
 }
 
 type NotificationGateways struct {
-	SMS      []string `json:"sms,omitempty"`
-	Mail     []string `json:"mail,omitempty"`
-	WhatsApp []string `json:"whatsapp,omitempty"`
-	Telegram []string `json:"telegram,omitempty"`
+	SMS      []string `bson:"sms,omitempty" json:"sms,omitempty"`
+	Mail     []string `bson:"mail,omitempty" json:"mail,omitempty"`
+	WhatsApp []string `bson:"whatsapp,omitempty" json:"whatsapp,omitempty"`
+	Telegram []string `bson:"telegram,omitempty" json:"telegram,omitempty"`
 }
 
 type ExternalRadiusSettings struct {
-	JazeID  string `json:"jazeEnabled,omitempty"`
-	IPACTID string `json:"ipactEnabled,omitempty"`
+	JazeID  string `bson:"jazeEnabled,omitempty" json:"jazeEnabled,omitempty"`
+	IPACTID string `bson:"ipactEnabled,omitempty" json:"ipactEnabled,omitempty"`
 }
 
 // EnabledFeatures defines all feature toggles for a Domain/Tenant.
 // NOTE: Flat structure maintained for backward-compatibility with existing JSON/BSON.
 type EnabledFeatures struct {
 	// ===== Core User Experience =====
-	IsUserPortalEnabled    bool `json:"isUserPortalEnabled" bson:"isUserPortalEnabled"`       // Enable user portal
-	IsUserKYCEnabled       bool `json:"isUserKYCEnabled" bson:"isUserKYCEnabled"`             // Enable KYC for users
-	IsOnlinePaymentEnabled bool `json:"isOnlinePaymentEnabled" bson:"isOnlinePaymentEnabled"` // Enable online payment
+	IsUserPortalEnabled    bool `bson:"isUserPortalEnabled" json:"isUserPortalEnabled"`       // Enable user portal
+	IsUserKYCEnabled       bool `bson:"isUserKYCEnabled" json:"isUserKYCEnabled"`             // Enable KYC for users
+	IsOnlinePaymentEnabled bool `bson:"isOnlinePaymentEnabled" json:"isOnlinePaymentEnabled"` // Enable online payment
 
 	// ===== Notifications & Messaging =====
 	IsUserMailNotificationEnabled     bool `json:"isUserMailNotificationEnabled" bson:"isUserMailNotificationEnabled"`         // Email notifications
