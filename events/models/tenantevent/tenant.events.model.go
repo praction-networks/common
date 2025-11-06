@@ -34,6 +34,18 @@ type TenantInsertEventModel struct {
 	ExternalRadius   []ExternalRadiusProvidersModel `bson:"externalRadius,omitempty" json:"externalRadius,omitempty"`
 	IsActive         bool                           `bson:"isActive" json:"isActive"`
 	Version          int                            `bson:"version,omitempty" json:"version,omitempty"`
+
+	// ==================== HIERARCHY FIELDS (NEW) ====================
+	// These fields enable other services to understand tenant relationships
+	Path              string   `bson:"path,omitempty" json:"path,omitempty"`                           // Materialized path: "/isp_abc/reseller_xyz/dist_123"
+	PathDepth         int      `bson:"pathDepth,omitempty" json:"pathDepth,omitempty"`                 // Depth of path (number of segments)
+	Ancestors         []string `bson:"ancestors,omitempty" json:"ancestors,omitempty"`                 // All ancestor IDs from root to parent
+	Level             int      `bson:"level,omitempty" json:"level,omitempty"`                         // Hierarchy level (0=root, 1=child, etc.)
+	IsLeaf            bool     `bson:"isLeaf,omitempty" json:"isLeaf,omitempty"`                       // True if has no children
+	ChildrenCount     int      `bson:"childrenCount,omitempty" json:"childrenCount,omitempty"`         // Count of direct children
+	ChildIDs          []string `bson:"childIDs,omitempty" json:"childIDs,omitempty"`                   // Direct child tenant IDs
+	AllowedChildTypes []string `bson:"allowedChildTypes,omitempty" json:"allowedChildTypes,omitempty"` // Permitted child types
+	MaxDepth          int      `bson:"maxDepth,omitempty" json:"maxDepth,omitempty"`                   // Maximum allowed descendant depth
 }
 
 type TenantUpdateEventModel struct {
@@ -64,6 +76,17 @@ type TenantUpdateEventModel struct {
 	ExternalRadius   []ExternalRadiusProvidersModel `bson:"externalRadius,omitempty" json:"externalRadius,omitempty"`
 	IsActive         bool                           `bson:"isActive" json:"isActive"`
 	Version          int                            `bson:"version,omitempty" json:"version,omitempty"`
+
+	// ==================== HIERARCHY FIELDS (NEW) ====================
+	// These fields enable other services to understand tenant relationships
+	Path              string   `bson:"path,omitempty" json:"path,omitempty"`                           // Materialized path: "/isp_abc/reseller_xyz/dist_123"
+	PathDepth         int      `bson:"pathDepth,omitempty" json:"pathDepth,omitempty"`                 // Depth of path (number of segments)
+	Ancestors         []string `bson:"ancestors,omitempty" json:"ancestors,omitempty"`                 // All ancestor IDs from root to parent
+	Level             int      `bson:"level,omitempty" json:"level,omitempty"`                         // Hierarchy level (0=root, 1=child, etc.)
+	IsLeaf            bool     `bson:"isLeaf,omitempty" json:"isLeaf,omitempty"`                       // True if has no children
+	ChildrenCount     int      `bson:"childrenCount,omitempty" json:"childrenCount,omitempty"`         // Count of direct children
+	AllowedChildTypes []string `bson:"allowedChildTypes,omitempty" json:"allowedChildTypes,omitempty"` // Permitted child types
+	MaxDepth          int      `bson:"maxDepth,omitempty" json:"maxDepth,omitempty"`                   // Maximum allowed descendant depth
 }
 
 type GSTModel struct {
@@ -74,7 +97,65 @@ type GSTModel struct {
 }
 
 type TenantDeleteEventModel struct {
-	ID string `bson:"_id" json:"id"`
+	ID             string   `bson:"_id" json:"id"`
+	ParentTenantID string   `bson:"parentTenantID,omitempty" json:"parentTenantID,omitempty"` // Parent needs to update childrenCount
+	Path           string   `bson:"path,omitempty" json:"path,omitempty"`                     // For cascade delete checks
+	Ancestors      []string `bson:"ancestors,omitempty" json:"ancestors,omitempty"`           // Notify all ancestors
+}
+
+// ==================== NEW HIERARCHY-SPECIFIC EVENTS ====================
+
+// TenantParentChangedEventModel - Published when tenant's parent relationship changes
+// Other services use this to update hierarchy-dependent data (permissions, quotas, aggregations)
+type TenantParentChangedEventModel struct {
+	TenantID     string    `bson:"tenantID" json:"tenantID"`                             // Tenant whose parent changed
+	OldParentID  string    `bson:"oldParentID,omitempty" json:"oldParentID,omitempty"`   // Previous parent (empty if was root)
+	NewParentID  string    `bson:"newParentID,omitempty" json:"newParentID,omitempty"`   // New parent (empty if becoming root)
+	OldPath      string    `bson:"oldPath" json:"oldPath"`                               // Previous path
+	NewPath      string    `bson:"newPath" json:"newPath"`                               // New path
+	OldAncestors []string  `bson:"oldAncestors,omitempty" json:"oldAncestors,omitempty"` // Previous ancestors
+	NewAncestors []string  `bson:"newAncestors,omitempty" json:"newAncestors,omitempty"` // New ancestors
+	OldLevel     int       `bson:"oldLevel" json:"oldLevel"`                             // Previous level
+	NewLevel     int       `bson:"newLevel" json:"newLevel"`                             // New level
+	ChangedAt    time.Time `bson:"changedAt" json:"changedAt"`                           // When change occurred
+	ChangedBy    string    `bson:"changedBy,omitempty" json:"changedBy,omitempty"`       // User who made change
+}
+
+// TenantChildAddedEventModel - Published when a child is added to a tenant
+// Used to update aggregate counts, permissions inheritance, etc.
+type TenantChildAddedEventModel struct {
+	ParentID      string    `bson:"parentID" json:"parentID"`                   // Parent tenant ID
+	ChildID       string    `bson:"childID" json:"childID"`                     // Newly added child ID
+	ChildType     string    `bson:"childType" json:"childType"`                 // Type of child (Reseller, Distributor, etc.)
+	ChildPath     string    `bson:"childPath" json:"childPath"`                 // Child's path
+	ParentPath    string    `bson:"parentPath" json:"parentPath"`               // Parent's path
+	NewChildCount int       `bson:"newChildCount" json:"newChildCount"`         // Updated children count
+	AddedAt       time.Time `bson:"addedAt" json:"addedAt"`                     // When child was added
+	AddedBy       string    `bson:"addedBy,omitempty" json:"addedBy,omitempty"` // User who added child
+}
+
+// TenantChildRemovedEventModel - Published when a child is removed from a tenant
+// Used to update aggregate counts, cleanup permissions, etc.
+type TenantChildRemovedEventModel struct {
+	ParentID      string    `bson:"parentID" json:"parentID"`                       // Parent tenant ID
+	ChildID       string    `bson:"childID" json:"childID"`                         // Removed child ID
+	ChildType     string    `bson:"childType" json:"childType"`                     // Type of removed child
+	NewChildCount int       `bson:"newChildCount" json:"newChildCount"`             // Updated children count
+	IsNowLeaf     bool      `bson:"isNowLeaf" json:"isNowLeaf"`                     // True if parent has no more children
+	RemovedAt     time.Time `bson:"removedAt" json:"removedAt"`                     // When child was removed
+	RemovedBy     string    `bson:"removedBy,omitempty" json:"removedBy,omitempty"` // User who removed child
+}
+
+// TenantHierarchyRecomputedEventModel - Published when hierarchy fields are recalculated
+// Used to sync hierarchy data across services
+type TenantHierarchyRecomputedEventModel struct {
+	TenantID     string    `bson:"tenantID" json:"tenantID"`                 // Tenant whose hierarchy was recomputed
+	Path         string    `bson:"path" json:"path"`                         // New path
+	PathDepth    int       `bson:"pathDepth" json:"pathDepth"`               // New depth
+	Ancestors    []string  `bson:"ancestors" json:"ancestors"`               // New ancestors
+	Level        int       `bson:"level" json:"level"`                       // New level
+	RecomputedAt time.Time `bson:"recomputedAt" json:"recomputedAt"`         // When recomputation occurred
+	Reason       string    `bson:"reason,omitempty" json:"reason,omitempty"` // Why recomputation happened (parent_changed, migration, etc.)
 }
 
 type ProvidersModel struct {
