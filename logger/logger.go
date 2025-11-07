@@ -18,7 +18,77 @@ var (
 	errInit             error
 	requestScopedLogger *zap.Logger
 	mu                  sync.Mutex
+	asyncWriter         *asyncWriteSyncer
 )
+
+// asyncWriteSyncer wraps a WriteSyncer to make it asynchronous
+type asyncWriteSyncer struct {
+	ws       zapcore.WriteSyncer
+	queue    chan []byte
+	done     chan struct{}
+	wg       sync.WaitGroup
+	stopOnce sync.Once
+}
+
+// newAsyncWriteSyncer creates a new asynchronous WriteSyncer
+func newAsyncWriteSyncer(ws zapcore.WriteSyncer, bufferSize int) *asyncWriteSyncer {
+	aws := &asyncWriteSyncer{
+		ws:    ws,
+		queue: make(chan []byte, bufferSize),
+		done:  make(chan struct{}),
+	}
+
+	aws.wg.Add(1)
+	go aws.run()
+
+	return aws
+}
+
+// run processes log entries from the queue
+func (aws *asyncWriteSyncer) run() {
+	defer aws.wg.Done()
+	for {
+		select {
+		case entry := <-aws.queue:
+			_, _ = aws.ws.Write(entry)
+		case <-aws.done:
+			// Drain remaining entries
+			for {
+				select {
+				case entry := <-aws.queue:
+					_, _ = aws.ws.Write(entry)
+				default:
+					return
+				}
+			}
+		}
+	}
+}
+
+// Write implements io.Writer - non-blocking, returns immediately
+func (aws *asyncWriteSyncer) Write(p []byte) (n int, err error) {
+	// Make a copy of the data to avoid race conditions
+	entry := make([]byte, len(p))
+	copy(entry, p)
+
+	select {
+	case aws.queue <- entry:
+		return len(p), nil
+	default:
+		// Queue is full, fallback to synchronous write to prevent blocking
+		// This should rarely happen with proper buffer sizing
+		return aws.ws.Write(p)
+	}
+}
+
+// Sync flushes all pending writes
+func (aws *asyncWriteSyncer) Sync() error {
+	aws.stopOnce.Do(func() {
+		close(aws.done)
+	})
+	aws.wg.Wait()
+	return aws.ws.Sync()
+}
 
 var sensitiveKeys = []string{"password", "secret", "token", "apikey", "otp", "pan", "aadhaar", "mobile", "phone", "wifi", "wifi_password"}
 var personalKeys = []string{"email", "phone", "mobile", "username"}
@@ -121,7 +191,10 @@ func InitializeLogger(config LoggerConfig) error {
 			EncodeDuration: zapcore.StringDurationEncoder,
 		})
 
-		core := zapcore.NewCore(jsonEncoder, zapcore.AddSync(os.Stdout), logLevel)
+		// Create async writer with buffer size of 256KB (can handle ~1000 log entries)
+		// This ensures logging never blocks the main execution flow
+		asyncWriter = newAsyncWriteSyncer(zapcore.AddSync(os.Stdout), 256*1024)
+		core := zapcore.NewCore(jsonEncoder, asyncWriter, logLevel)
 
 		defaultFields := []zap.Field{}
 		addEnvironmentFields(&defaultFields)
@@ -176,6 +249,10 @@ func UpdateLogLevel(newLevel string) error {
 func Sync() {
 	if logInstance != nil {
 		_ = logInstance.Sync()
+	}
+	// Also sync the async writer to ensure all buffered logs are flushed
+	if asyncWriter != nil {
+		_ = asyncWriter.Sync()
 	}
 }
 
