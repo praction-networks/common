@@ -2,7 +2,7 @@ package tenantevent
 
 type MailServerInsertEventModel struct {
 	ID              string           `bson:"_id" json:"id"`
-	SortCode        string           `json:"sort_code"`
+	SortCode        string           `bson:"sort_code" json:"sort_code"`
 	AssignedTo      []string         `bson:"assignedTo" json:"assignedTo"`
 	SMTPConfig      *SMTPConfig      `bson:"smtp" json:"smtp"`
 	SendGridConfig  *SendGridConfig  `bson:"sendgrid" json:"sendgrid"`
