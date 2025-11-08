@@ -17,27 +17,30 @@ type Subject string
 const (
 
 	//Domain Service Event Initialization
-	TenantCreatedSubject         Subject = "tenant.created"
-	TenantUpdatedSubject         Subject = "tenant.updated"
-	TenantDeletedSubject         Subject = "tenant.deleted"
-	AppMessengerCreateSubject    Subject = "appmessenger.created"
-	AppMessengerUpdateSubject    Subject = "appmessenger.updated"
-	AppMessengerDeleteSubject    Subject = "appmessenger.deleted"
-	KYCGatewayCreatedSubject     Subject = "kycgateway.created"
-	KYCGatewayUpdateSubject      Subject = "kycgateway.updated"
-	KYCGatewayDeleteSubject      Subject = "kycgateway.deleted"
-	MailServerCreatedSubject     Subject = "mailserver.created"
-	MailServerUpdateSubject      Subject = "mailserver.updated"
-	MailServerDeleteSubject      Subject = "mailserver.deleted"
-	PaymentGatewayCreatedSubject Subject = "paymentgateway.created"
-	PaymentGatewayUpdateSubject  Subject = "paymentgateway.updated"
-	PaymentGatewayDeleteSubject  Subject = "paymentgateway.deleted"
-	ExternalRadiusCreatedSubject Subject = "externalradius.created"
-	ExternalRadiusUpdateSubject  Subject = "externalradius.updated"
-	ExternalRadiusDeleteSubject  Subject = "externalradius.deleted"
-	SMSGatewayCreatedSubject     Subject = "smsgateway.created"
-	SMSGatewayUpdateSubject      Subject = "smsgateway.updated"
-	SMSGatewayDeleteSubject      Subject = "smsgateway.deleted"
+	TenantCreatedSubject            Subject = "tenant.created"
+	TenantUpdatedSubject            Subject = "tenant.updated"
+	TenantDeletedSubject            Subject = "tenant.deleted"
+	AppMessengerCreateSubject       Subject = "appmessenger.created"
+	AppMessengerUpdateSubject       Subject = "appmessenger.updated"
+	AppMessengerDeleteSubject       Subject = "appmessenger.deleted"
+	KYCGatewayCreatedSubject        Subject = "kycgateway.created"
+	KYCGatewayUpdateSubject         Subject = "kycgateway.updated"
+	KYCGatewayDeleteSubject         Subject = "kycgateway.deleted"
+	MailServerCreatedSubject        Subject = "mailserver.created"
+	MailServerUpdateSubject         Subject = "mailserver.updated"
+	MailServerDeleteSubject         Subject = "mailserver.deleted"
+	PaymentGatewayCreatedSubject    Subject = "paymentgateway.created"
+	PaymentGatewayUpdateSubject     Subject = "paymentgateway.updated"
+	PaymentGatewayDeleteSubject     Subject = "paymentgateway.deleted"
+	ExternalRadiusCreatedSubject    Subject = "externalradius.created"
+	ExternalRadiusUpdateSubject     Subject = "externalradius.updated"
+	ExternalRadiusDeleteSubject     Subject = "externalradius.deleted"
+	SMSGatewayCreatedSubject        Subject = "smsgateway.created"
+	SMSGatewayUpdateSubject         Subject = "smsgateway.updated"
+	SMSGatewayDeleteSubject         Subject = "smsgateway.deleted"
+	MessagingTemplateCreatedSubject Subject = "messagingtemplate.created"
+	MessagingTemplateUpdateSubject  Subject = "messagingtemplate.updated"
+	MessagingTemplateDeleteSubject  Subject = "messagingtemplate.deleted"
 
 	//Domain User Service Event Initialization
 	TenantUserCreatedSubject Subject = "tenantuser.created"
@@ -94,6 +97,9 @@ var Streams = map[StreamName]StreamMetadata{
 			SMSGatewayCreatedSubject,
 			SMSGatewayUpdateSubject,
 			SMSGatewayDeleteSubject,
+			MessagingTemplateCreatedSubject,
+			MessagingTemplateUpdateSubject,
+			MessagingTemplateDeleteSubject,
 		},
 	},
 
