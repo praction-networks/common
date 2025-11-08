@@ -1,5 +1,7 @@
 package tenantevent
 
+import "time"
+
 // MessagingTemplateInsertEventModel represents a messaging template creation event
 type MessagingTemplateInsertEventModel struct {
 	ID           string                      `bson:"_id" json:"id"`
@@ -49,7 +51,8 @@ type MessagingTemplateUpdateEventModel struct {
 	TelegramParseMode string                     `bson:"telegram_parse_mode,omitempty" json:"telegram_parse_mode,omitempty"`
 	WhatsApp          *MessagingWhatsAppTemplate `bson:"whatsapp,omitempty" json:"whatsapp,omitempty"`
 
-	Version int `bson:"version" json:"version"`
+	Version   int        `bson:"version" json:"version"`
+	DeletedAt *time.Time `bson:"deletedAt,omitempty" json:"deletedAt,omitempty"` // Soft delete timestamp
 }
 
 // MessagingTemplateDeleteEventModel represents a messaging template deletion event
