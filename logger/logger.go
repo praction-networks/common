@@ -6,6 +6,7 @@ import (
 	"runtime/debug"
 	"strings"
 	"sync"
+	"time"
 
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -348,9 +349,21 @@ func withFields(args []interface{}) []zap.Field {
 			switch key := args[i].(type) {
 			case string:
 				value := args[i+1]
+
+				// Skip nil values to avoid invalid key warnings
+				if value == nil {
+					continue
+				}
+
 				keyLower := strings.ToLower(key)
 
 				if strVal, ok := value.(string); ok {
+					// Skip empty strings for optional fields (like userId) to reduce noise
+					// But keep empty strings for required fields
+					if strVal == "" && (keyLower == "userid" || keyLower == "user_id") {
+						continue
+					}
+
 					if contains(sensitiveKeys, keyLower) {
 						fields = append(fields, zap.String(key, "REDACTED"))
 					} else if contains(personalKeys, keyLower) {
@@ -359,13 +372,30 @@ func withFields(args []interface{}) []zap.Field {
 						fields = append(fields, zap.String(key, strVal))
 					}
 				} else {
-					fields = append(fields, zap.Any(key, value))
+					// Handle time.Duration and time.Time properly
+					switch v := value.(type) {
+					case time.Duration:
+						fields = append(fields, zap.String(key, v.String()))
+					case time.Time:
+						fields = append(fields, zap.Time(key, v))
+					default:
+						fields = append(fields, zap.Any(key, value))
+					}
 				}
 			default:
-				logInstance.WithOptions(zap.AddCallerSkip(3)).Warn("Invalid key in arguments passed to logger", zap.Any("invalid_key", key))
+				// Only warn if the key is not nil and not a known type that might be passed incorrectly
+				if key != nil {
+					logInstance.WithOptions(zap.AddCallerSkip(3)).Warn("Invalid key in arguments passed to logger", zap.Any("invalid_key", key))
+				}
 			}
 		} else {
-			logInstance.WithOptions(zap.AddCallerSkip(4)).Warn("Missing value for key in arguments passed to logger", zap.Any("key", args[i]))
+			// Only warn if the key is a string (actual key), not a time value or other type
+			if key, ok := args[i].(string); ok {
+				logInstance.WithOptions(zap.AddCallerSkip(4)).Warn("Missing value for key in arguments passed to logger", zap.String("key", key))
+			} else {
+				// If it's not a string, it might be a value without a key - skip silently
+				continue
+			}
 		}
 	}
 	return fields

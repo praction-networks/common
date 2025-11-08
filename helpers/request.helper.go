@@ -90,12 +90,18 @@ func LoggingMiddleware(next http.Handler) http.Handler {
 		reqID := GetRequestID(r.Context())
 		userID := r.Header.Get("X-User-ID")
 
-		// Set default request logger with context fields
-		logger.SetDefaultRequestLogger(
-			zap.String("reqID", reqID),
-			zap.String("userId", userID),
-		)
-		defer logger.ClearDefaultRequestLogger()
+		// Set default request logger with context fields (only if not empty)
+		requestLoggerFields := []zap.Field{}
+		if reqID != "" {
+			requestLoggerFields = append(requestLoggerFields, zap.String("reqID", reqID))
+		}
+		if userID != "" {
+			requestLoggerFields = append(requestLoggerFields, zap.String("userId", userID))
+		}
+		if len(requestLoggerFields) > 0 {
+			logger.SetDefaultRequestLogger(requestLoggerFields...)
+			defer logger.ClearDefaultRequestLogger()
+		}
 
 		next.ServeHTTP(rw, r)
 
