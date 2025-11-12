@@ -23,12 +23,23 @@ var (
 )
 
 var (
-	chromeRegex  = regexp.MustCompile(`Chrome/([\d\.]+)`)
-	firefoxRegex = regexp.MustCompile(`Firefox/([\d\.]+)`)
-	safariRegex  = regexp.MustCompile(`Version/([\d\.]+).*Safari`)
-	curlRegex    = regexp.MustCompile(`curl/([\d\.]+)`)
-	goHTTPRegex  = regexp.MustCompile(`Go-http-client/([\d\.]+)`)
-	postmanRegex = regexp.MustCompile(`PostmanRuntime/([\d\.]+)`)
+	chromeRegex         = regexp.MustCompile(`Chrome/([\d\.]+)`)
+	firefoxRegex        = regexp.MustCompile(`Firefox/([\d\.]+)`)
+	safariRegex         = regexp.MustCompile(`Version/([\d\.]+).*Safari`)
+	edgeRegex           = regexp.MustCompile(`Edg(?:e|A)/([\d\.]+)`)
+	operaRegex          = regexp.MustCompile(`OPR/([\d\.]+)`)
+	ieRegex             = regexp.MustCompile(`MSIE ([\d\.]+)`)
+	curlRegex           = regexp.MustCompile(`curl/([\d\.]+)`)
+	wgetRegex           = regexp.MustCompile(`Wget/([\d\.]+)`)
+	goHTTPRegex         = regexp.MustCompile(`Go-http-client/([\d\.]+)`)
+	postmanRegex        = regexp.MustCompile(`PostmanRuntime/([\d\.]+)`)
+	insomniaRegex       = regexp.MustCompile(`Insomnia/([\d\.]+)`)
+	httpieRegex         = regexp.MustCompile(`HTTPie/([\d\.]+)`)
+	pythonRequestsRegex = regexp.MustCompile(`python-requests/([\d\.]+)`)
+	axiosRegex          = regexp.MustCompile(`axios/([\d\.]+)`)
+	nodeFetchRegex      = regexp.MustCompile(`node-fetch/([\d\.]+)`)
+	androidRegex        = regexp.MustCompile(`Android ([\d\.]+)`)
+	iosSafariRegex      = regexp.MustCompile(`OS ([\d_]+).*like Mac OS X`)
 )
 
 var (
@@ -166,8 +177,38 @@ func GetUserID(ctx context.Context) string {
 }
 
 func simplifyUserAgent(ua string) string {
+	// Check for mobile browsers first (they often contain "Mobile" or "Android" or "iPhone")
+	if strings.Contains(ua, "iPhone") || strings.Contains(ua, "iPad") {
+		if match := iosSafariRegex.FindStringSubmatch(ua); len(match) == 2 {
+			return "iOS/" + strings.ReplaceAll(match[1], "_", ".")
+		}
+		return "iOS"
+	}
+	if strings.Contains(ua, "Android") {
+		if match := androidRegex.FindStringSubmatch(ua); len(match) == 2 {
+			return "Android/" + match[1]
+		}
+		return "Android"
+	}
+
+	// Desktop browsers
 	switch {
-	case strings.Contains(ua, "Chrome"):
+	case strings.Contains(ua, "Edg") || strings.Contains(ua, "Edge"):
+		if match := edgeRegex.FindStringSubmatch(ua); len(match) == 2 {
+			return "Edge/" + match[1]
+		}
+		return "Edge"
+	case strings.Contains(ua, "OPR") || strings.Contains(ua, "Opera"):
+		if match := operaRegex.FindStringSubmatch(ua); len(match) == 2 {
+			return "Opera/" + match[1]
+		}
+		return "Opera"
+	case strings.Contains(ua, "MSIE") || strings.Contains(ua, "Trident"):
+		if match := ieRegex.FindStringSubmatch(ua); len(match) == 2 {
+			return "IE/" + match[1]
+		}
+		return "IE"
+	case strings.Contains(ua, "Chrome") && !strings.Contains(ua, "Edg"):
 		if match := chromeRegex.FindStringSubmatch(ua); len(match) == 2 {
 			return "Chrome/" + match[1]
 		}
@@ -182,21 +223,54 @@ func simplifyUserAgent(ua string) string {
 			return "Safari/" + match[1]
 		}
 		return "Safari"
-	case strings.Contains(ua, "curl"):
-		if match := curlRegex.FindStringSubmatch(ua); len(match) == 2 {
-			return "curl/" + match[1]
-		}
-		return "curl"
-	case strings.Contains(ua, "Go-http-client"):
-		if match := goHTTPRegex.FindStringSubmatch(ua); len(match) == 2 {
-			return "Go-http-client/" + match[1]
-		}
-		return "Go-http-client"
+	// API testing tools and HTTP clients
 	case strings.Contains(ua, "Postman"):
 		if match := postmanRegex.FindStringSubmatch(ua); len(match) == 2 {
 			return "Postman/" + match[1]
 		}
 		return "Postman"
+	case strings.Contains(ua, "Insomnia"):
+		if match := insomniaRegex.FindStringSubmatch(ua); len(match) == 2 {
+			return "Insomnia/" + match[1]
+		}
+		return "Insomnia"
+	case strings.Contains(ua, "HTTPie"):
+		if match := httpieRegex.FindStringSubmatch(ua); len(match) == 2 {
+			return "HTTPie/" + match[1]
+		}
+		return "HTTPie"
+	// Command-line tools
+	case strings.Contains(ua, "curl"):
+		if match := curlRegex.FindStringSubmatch(ua); len(match) == 2 {
+			return "curl/" + match[1]
+		}
+		return "curl"
+	case strings.Contains(ua, "Wget"):
+		if match := wgetRegex.FindStringSubmatch(ua); len(match) == 2 {
+			return "Wget/" + match[1]
+		}
+		return "Wget"
+	// Programming language HTTP clients
+	case strings.Contains(ua, "python-requests"):
+		if match := pythonRequestsRegex.FindStringSubmatch(ua); len(match) == 2 {
+			return "python-requests/" + match[1]
+		}
+		return "python-requests"
+	case strings.Contains(ua, "axios"):
+		if match := axiosRegex.FindStringSubmatch(ua); len(match) == 2 {
+			return "axios/" + match[1]
+		}
+		return "axios"
+	case strings.Contains(ua, "node-fetch"):
+		if match := nodeFetchRegex.FindStringSubmatch(ua); len(match) == 2 {
+			return "node-fetch/" + match[1]
+		}
+		return "node-fetch"
+	case strings.Contains(ua, "Go-http-client"):
+		if match := goHTTPRegex.FindStringSubmatch(ua); len(match) == 2 {
+			return "Go-http-client/" + match[1]
+		}
+		return "Go-http-client"
 	default:
 		return "Other"
 	}

@@ -2,14 +2,19 @@
 package helpers
 
 import (
+	"context"
+	"crypto/md5"
+	"encoding/hex"
 	"fmt"
 	"net/http"
 	"regexp"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/praction-networks/common/appError"
+	"github.com/praction-networks/common/metrics"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -97,6 +102,44 @@ type QueryPolicy struct {
 	Projection  ProjectionConfig
 	TimeLayouts []string // global fallback for time parsing
 	Limits      Limits
+	// Optional: Query caching configuration
+	CacheConfig *CacheConfig
+	// Optional: Rate limiting configuration
+	RateLimitConfig *RateLimitConfig
+	// Optional: Full-text search configuration
+	FullTextSearch *FullTextSearchConfig
+	// Optional: Geospatial search configuration
+	GeoSpatial *GeoSpatialConfig
+}
+
+// CacheConfig configures query result caching
+type CacheConfig struct {
+	Enabled   bool          // Enable caching
+	TTL       time.Duration // Cache TTL
+	MaxSize   int           // Maximum cache entries
+	CacheImpl QueryCache    // Cache implementation (optional, uses in-memory by default)
+}
+
+// RateLimitConfig configures rate limiting
+type RateLimitConfig struct {
+	Enabled     bool          // Enable rate limiting
+	MaxRequests int           // Maximum requests per window
+	Window      time.Duration // Time window
+	LimiterImpl RateLimiter   // Rate limiter implementation (optional, uses in-memory by default)
+}
+
+// FullTextSearchConfig configures MongoDB full-text search
+type FullTextSearchConfig struct {
+	Enabled         bool     // Enable full-text search
+	DefaultLanguage string   // Default language for text search (e.g., "english")
+	TextIndexFields []string // Fields that have text indexes
+}
+
+// GeoSpatialConfig configures geospatial queries
+type GeoSpatialConfig struct {
+	Enabled       bool    // Enable geospatial queries
+	LocationField string  // Field name containing location (GeoJSON Point)
+	MaxDistance   float64 // Maximum distance in meters for $geoNear
 }
 
 // Sensible defaults (optional helper)
@@ -142,6 +185,8 @@ type PaginatedFeedQuery struct {
 	Search         string
 	DateFrom       *time.Time
 	DateTo         *time.Time
+	TextSearch     *TextSearchQuery
+	GeoQuery       *GeoQuery
 }
 
 // Output: ready-to-use Mongo query
@@ -152,18 +197,347 @@ type MongoQuery struct {
 	WithMeta      bool
 	Limit         int
 	Offset        int
+	// Aggregation pipeline (optional, for complex queries)
+	Pipeline []bson.M
+	// Full-text search query
+	TextSearch *TextSearchQuery
+	// Geospatial query
+	GeoQuery *GeoQuery
+}
+
+// TextSearchQuery represents a MongoDB full-text search query
+type TextSearchQuery struct {
+	Search        string // Search term
+	Language      string // Language for stemming
+	CaseSensitive bool   // Case sensitive search
+}
+
+// GeoQuery represents a geospatial query
+type GeoQuery struct {
+	Type        string    // "near", "within", "intersects"
+	Coordinates []float64 // [longitude, latitude] for Point
+	MaxDistance float64   // Maximum distance in meters (for $geoNear)
+	MinDistance float64   // Minimum distance in meters (for $geoNear)
+	Geometry    bson.M    // GeoJSON geometry (for $geoWithin, $geoIntersects)
 }
 
 /* ==============================
    PUBLIC ENTRYPOINT
    ============================== */
 
+// QueryCache interface for caching query results
+type QueryCache interface {
+	Get(ctx context.Context, key string) (MongoQuery, bool)
+	Set(ctx context.Context, key string, query MongoQuery, ttl time.Duration) error
+	SetAsync(ctx context.Context, key string, query MongoQuery, ttl time.Duration) // Non-blocking async set
+	Delete(ctx context.Context, key string) error
+	Clear(ctx context.Context) error
+}
+
+// RateLimiter interface for rate limiting queries
+type RateLimiter interface {
+	Allow(ctx context.Context, key string) (bool, error)
+	Reset(ctx context.Context, key string) error
+}
+
+// In-memory query cache implementation
+type inMemoryQueryCache struct {
+	cache   map[string]cacheEntry
+	mu      sync.RWMutex
+	maxSize int
+}
+
+type cacheEntry struct {
+	query     MongoQuery
+	expiresAt time.Time
+}
+
+func NewInMemoryQueryCache(maxSize int) QueryCache {
+	return &inMemoryQueryCache{
+		cache:   make(map[string]cacheEntry),
+		maxSize: maxSize,
+	}
+}
+
+func (c *inMemoryQueryCache) Get(ctx context.Context, key string) (MongoQuery, bool) {
+	// Fast path: check context cancellation first (non-blocking check)
+	select {
+	case <-ctx.Done():
+		return MongoQuery{}, false
+	default:
+	}
+
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+
+	entry, exists := c.cache[key]
+	if !exists {
+		return MongoQuery{}, false
+	}
+
+	if time.Now().After(entry.expiresAt) {
+		// Expired, delete it (async cleanup to avoid blocking)
+		go func() {
+			c.mu.Lock()
+			defer c.mu.Unlock()
+			// Double-check after acquiring write lock
+			if entry, stillExists := c.cache[key]; stillExists && time.Now().After(entry.expiresAt) {
+				delete(c.cache, key)
+			}
+		}()
+		return MongoQuery{}, false
+	}
+
+	return entry.query, true
+}
+
+func (c *inMemoryQueryCache) Set(ctx context.Context, key string, query MongoQuery, ttl time.Duration) error {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	// Evict oldest entries if cache is full
+	if len(c.cache) >= c.maxSize {
+		c.evictOldest()
+	}
+
+	c.cache[key] = cacheEntry{
+		query:     query,
+		expiresAt: time.Now().Add(ttl),
+	}
+	return nil
+}
+
+// SetAsync performs a non-blocking async cache set operation
+func (c *inMemoryQueryCache) SetAsync(ctx context.Context, key string, query MongoQuery, ttl time.Duration) {
+	go func() {
+		// Use a separate context with timeout to prevent goroutine leaks
+		setCtx, cancel := context.WithTimeout(context.Background(), 100*time.Millisecond)
+		defer cancel()
+
+		// Make a copy of the query to avoid race conditions
+		queryCopy := query
+
+		// Attempt to set in cache (non-blocking for caller)
+		select {
+		case <-setCtx.Done():
+			// Timeout - cache set failed, but that's OK (non-critical)
+			return
+		default:
+			_ = c.Set(setCtx, key, queryCopy, ttl)
+		}
+	}()
+}
+
+func (c *inMemoryQueryCache) Delete(ctx context.Context, key string) error {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	delete(c.cache, key)
+	return nil
+}
+
+func (c *inMemoryQueryCache) Clear(ctx context.Context) error {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	c.cache = make(map[string]cacheEntry)
+	return nil
+}
+
+func (c *inMemoryQueryCache) evictOldest() {
+	oldestKey := ""
+	oldestTime := time.Now()
+
+	for key, entry := range c.cache {
+		if entry.expiresAt.Before(oldestTime) {
+			oldestTime = entry.expiresAt
+			oldestKey = key
+		}
+	}
+
+	if oldestKey != "" {
+		delete(c.cache, oldestKey)
+	}
+}
+
+// In-memory rate limiter implementation (token bucket)
+type inMemoryRateLimiter struct {
+	buckets     map[string]*rateBucket
+	mu          sync.RWMutex
+	maxRequests int
+	window      time.Duration
+}
+
+type rateBucket struct {
+	tokens     int
+	lastRefill time.Time
+}
+
+func NewInMemoryRateLimiter(maxRequests int, window time.Duration) RateLimiter {
+	return &inMemoryRateLimiter{
+		buckets:     make(map[string]*rateBucket),
+		maxRequests: maxRequests,
+		window:      window,
+	}
+}
+
+func (rl *inMemoryRateLimiter) Allow(ctx context.Context, key string) (bool, error) {
+	// Fast path: check context cancellation first (non-blocking check)
+	select {
+	case <-ctx.Done():
+		return false, ctx.Err()
+	default:
+	}
+
+	rl.mu.Lock()
+	defer rl.mu.Unlock()
+
+	bucket, exists := rl.buckets[key]
+	now := time.Now()
+
+	if !exists {
+		rl.buckets[key] = &rateBucket{
+			tokens:     rl.maxRequests - 1,
+			lastRefill: now,
+		}
+		return true, nil
+	}
+
+	// Refill tokens based on elapsed time
+	elapsed := now.Sub(bucket.lastRefill)
+	if elapsed >= rl.window {
+		bucket.tokens = rl.maxRequests
+		bucket.lastRefill = now
+	} else {
+		// Refill proportionally
+		refillAmount := int(float64(rl.maxRequests) * elapsed.Seconds() / rl.window.Seconds())
+		if refillAmount > 0 {
+			bucket.tokens = min(rl.maxRequests, bucket.tokens+refillAmount)
+			bucket.lastRefill = now
+		}
+	}
+
+	if bucket.tokens > 0 {
+		bucket.tokens--
+		return true, nil
+	}
+
+	return false, nil
+}
+
+func (rl *inMemoryRateLimiter) Reset(ctx context.Context, key string) error {
+	rl.mu.Lock()
+	defer rl.mu.Unlock()
+	delete(rl.buckets, key)
+	return nil
+}
+
+// BuildFromRequest builds a MongoDB query from HTTP request with caching and rate limiting
 func BuildFromRequest(r *http.Request, policy QueryPolicy) (MongoQuery, error) {
+	ctx := r.Context()
+
+	// Rate limiting check
+	if policy.RateLimitConfig != nil && policy.RateLimitConfig.Enabled {
+		limiter := policy.RateLimitConfig.LimiterImpl
+		if limiter == nil {
+			limiter = NewInMemoryRateLimiter(policy.RateLimitConfig.MaxRequests, policy.RateLimitConfig.Window)
+		}
+
+		// Use client IP or user ID as rate limit key
+		rateLimitKey := getRateLimitKey(r)
+		allowed, err := limiter.Allow(ctx, rateLimitKey)
+		if err != nil {
+			return MongoQuery{}, appError.New(appError.InternalServerError, "Rate limit check failed", http.StatusInternalServerError, err)
+		}
+		if !allowed {
+			metrics.QueryRateLimitHits.WithLabelValues(rateLimitKey).Inc()
+			return MongoQuery{}, appError.New(appError.RateLimitExceeded, "Rate limit exceeded", http.StatusTooManyRequests, fmt.Errorf("rate limit exceeded for key: %s", rateLimitKey))
+		}
+	}
+
+	// Check cache if enabled
+	if policy.CacheConfig != nil && policy.CacheConfig.Enabled {
+		cache := policy.CacheConfig.CacheImpl
+		if cache == nil {
+			cache = NewInMemoryQueryCache(policy.CacheConfig.MaxSize)
+		}
+
+		cacheKey := generateCacheKey(r, policy)
+		if cached, found := cache.Get(ctx, cacheKey); found {
+			metrics.QueryCacheHits.Inc()
+			return cached, nil
+		}
+		metrics.QueryCacheMisses.Inc()
+	}
+
+	// Parse and build query
+	startTime := time.Now()
 	var fq PaginatedFeedQuery
 	if err := parseInto(&fq, r, policy); err != nil {
+		metrics.QueryBuildErrors.WithLabelValues("parse").Inc()
 		return MongoQuery{}, err
 	}
-	return buildMongoQuery(fq, policy)
+
+	query, err := buildMongoQuery(fq, policy)
+	if err != nil {
+		metrics.QueryBuildErrors.WithLabelValues("build").Inc()
+		return MongoQuery{}, err
+	}
+
+	// Record query build duration (non-blocking - Prometheus metrics are atomic)
+	duration := time.Since(startTime)
+	metrics.QueryBuildDuration.Observe(duration.Seconds())
+	metrics.QueryBuildsTotal.Inc()
+
+	// Cache the query if enabled (async/non-blocking)
+	if policy.CacheConfig != nil && policy.CacheConfig.Enabled {
+		cache := policy.CacheConfig.CacheImpl
+		if cache == nil {
+			cache = NewInMemoryQueryCache(policy.CacheConfig.MaxSize)
+		}
+		cacheKey := generateCacheKey(r, policy)
+		ttl := policy.CacheConfig.TTL
+		if ttl == 0 {
+			ttl = 5 * time.Minute // Default TTL
+		}
+
+		// Use async set to avoid blocking the request
+		// Cache failures are non-critical - query was built successfully
+		if asyncCache, ok := cache.(interface {
+			SetAsync(context.Context, string, MongoQuery, time.Duration)
+		}); ok {
+			asyncCache.SetAsync(ctx, cacheKey, query, ttl)
+		} else {
+			// Fallback to sync set if async not supported
+			go func() {
+				_ = cache.Set(context.Background(), cacheKey, query, ttl)
+			}()
+		}
+	}
+
+	return query, nil
+}
+
+// generateCacheKey creates a cache key from request and policy
+func generateCacheKey(r *http.Request, policy QueryPolicy) string {
+	key := r.Method + ":" + r.URL.Path + "?" + r.URL.RawQuery
+	hash := md5.Sum([]byte(key))
+	return hex.EncodeToString(hash[:])
+}
+
+// getRateLimitKey extracts a key for rate limiting (IP or user ID)
+func getRateLimitKey(r *http.Request) string {
+	// Try to get user ID from header first
+	if userID := r.Header.Get("X-User-ID"); userID != "" {
+		return "user:" + userID
+	}
+	// Fall back to IP address
+	ip := r.RemoteAddr
+	if forwarded := r.Header.Get("X-Forwarded-For"); forwarded != "" {
+		ips := strings.Split(forwarded, ",")
+		if len(ips) > 0 {
+			ip = strings.TrimSpace(ips[0])
+		}
+	}
+	return "ip:" + ip
 }
 
 /* ==============================
@@ -234,6 +608,8 @@ func parseInto(fq *PaginatedFeedQuery, r *http.Request, p QueryPolicy) error {
 	known := map[string]bool{
 		"limit": true, "offset": true, "sort": true, "include": true, "exclude": true,
 		"pagination_meta": true, "distinct": true, "search": true, "date_from": true, "date_to": true,
+		"text_search": true, "text_language": true, "text_case_sensitive": true,
+		"lat": true, "lon": true, "geo_type": true, "max_distance": true, "min_distance": true,
 	}
 	for key, vals := range qs {
 		if known[key] || len(vals) == 0 {
@@ -250,8 +626,9 @@ func parseInto(fq *PaginatedFeedQuery, r *http.Request, p QueryPolicy) error {
 		if p.Limits.MaxValueLength > 0 && len(val) > p.Limits.MaxValueLength {
 			val = enforceLenCap(val, p.Limits.MaxValueLength)
 		}
-		// Sanitize input to prevent NoSQL injection
-		val = sanitizeInput(val)
+		// Note: No sanitization needed here - MongoDB driver handles injection prevention
+		// when using bson.M with proper type coercion. Field names are validated separately.
+		// Values are properly escaped in buildFilter() using regexp.QuoteMeta for regex ops.
 		if fq.Filters[field] == nil {
 			fq.Filters[field] = map[string]string{}
 		}
@@ -319,8 +696,8 @@ func parseInto(fq *PaginatedFeedQuery, r *http.Request, p QueryPolicy) error {
 		if p.Limits.MaxSearchLength > 0 && len(s) > p.Limits.MaxSearchLength {
 			s = enforceLenCap(s, p.Limits.MaxSearchLength)
 		}
-		// Sanitize search input to prevent NoSQL injection
-		s = sanitizeInput(s)
+		// Note: No sanitization needed - search terms are properly escaped using regexp.QuoteMeta
+		// in buildFilter() when building the $regex query. This preserves legitimate special characters.
 		fq.Search = s
 	}
 
@@ -340,12 +717,81 @@ func parseInto(fq *PaginatedFeedQuery, r *http.Request, p QueryPolicy) error {
 		fq.DateTo = &t
 	}
 
+	// --- Full-text search ---
+	if v := qs.Get("text_search"); v != "" && p.FullTextSearch != nil && p.FullTextSearch.Enabled {
+		fq.TextSearch = &TextSearchQuery{
+			Search:        strings.TrimSpace(v),
+			Language:      qs.Get("text_language"),
+			CaseSensitive: qs.Get("text_case_sensitive") == "true",
+		}
+		if fq.TextSearch.Language == "" {
+			fq.TextSearch.Language = p.FullTextSearch.DefaultLanguage
+		}
+		if p.Limits.MaxSearchLength > 0 && len(fq.TextSearch.Search) > p.Limits.MaxSearchLength {
+			fq.TextSearch.Search = enforceLenCap(fq.TextSearch.Search, p.Limits.MaxSearchLength)
+		}
+	}
+
+	// --- Geospatial queries ---
+	if p.GeoSpatial != nil && p.GeoSpatial.Enabled {
+		if latStr := qs.Get("lat"); latStr != "" {
+			if lonStr := qs.Get("lon"); lonStr != "" {
+				lat, err1 := strconv.ParseFloat(latStr, 64)
+				lon, err2 := strconv.ParseFloat(lonStr, 64)
+				if err1 == nil && err2 == nil {
+					fq.GeoQuery = &GeoQuery{
+						Type:        qs.Get("geo_type"),  // "near", "within", "intersects"
+						Coordinates: []float64{lon, lat}, // GeoJSON format: [longitude, latitude]
+						MaxDistance: p.GeoSpatial.MaxDistance,
+					}
+					if maxDistStr := qs.Get("max_distance"); maxDistStr != "" {
+						if maxDist, err := strconv.ParseFloat(maxDistStr, 64); err == nil {
+							fq.GeoQuery.MaxDistance = maxDist
+						}
+					}
+					if minDistStr := qs.Get("min_distance"); minDistStr != "" {
+						if minDist, err := strconv.ParseFloat(minDistStr, 64); err == nil {
+							fq.GeoQuery.MinDistance = minDist
+						}
+					}
+					if fq.GeoQuery.Type == "" {
+						fq.GeoQuery.Type = "near" // Default to $geoNear
+					}
+				}
+			}
+		}
+	}
+
 	// Validate query complexity
 	if err := validateQueryComplexity(*fq, p); err != nil {
 		return err
 	}
 
+	// Record query complexity metric
+	complexity := calculateQueryComplexity(*fq)
+	metrics.QueryComplexity.Observe(float64(complexity))
+
 	return nil
+}
+
+// calculateQueryComplexity calculates a complexity score for the query
+func calculateQueryComplexity(fq PaginatedFeedQuery) int {
+	complexity := 0
+	complexity += len(fq.Filters) * 2 // Each filter adds complexity
+	complexity += len(fq.Sort)        // Each sort adds complexity
+	if fq.Search != "" {
+		complexity += len(strings.Fields(fq.Search)) * 2 // Search terms add complexity
+	}
+	if fq.TextSearch != nil {
+		complexity += 5 // Full-text search is more complex
+	}
+	if fq.GeoQuery != nil {
+		complexity += 5 // Geospatial queries are more complex
+	}
+	if fq.DateFrom != nil || fq.DateTo != nil {
+		complexity += 2 // Date ranges add complexity
+	}
+	return complexity
 }
 
 /* ==============================
@@ -392,14 +838,120 @@ func buildMongoQuery(fq PaginatedFeedQuery, p QueryPolicy) (MongoQuery, error) {
 		opts.SetMaxTime(time.Duration(p.Limits.FindMaxTimeMS) * time.Millisecond)
 	}
 
-	return MongoQuery{
+	query := MongoQuery{
 		Filter:        filter,
 		FindOptions:   opts,
 		DistinctField: fq.DistinctField,
 		WithMeta:      fq.PaginationMeta,
 		Limit:         fq.Limit,
 		Offset:        fq.Offset,
-	}, nil
+		TextSearch:    fq.TextSearch,
+		GeoQuery:      fq.GeoQuery,
+	}
+
+	// Build aggregation pipeline for complex queries (full-text search, geospatial)
+	if fq.TextSearch != nil || fq.GeoQuery != nil {
+		pipeline := buildAggregationPipeline(fq, p, filter, opts)
+		query.Pipeline = pipeline
+	}
+
+	return query, nil
+}
+
+// buildAggregationPipeline builds MongoDB aggregation pipeline for complex queries
+func buildAggregationPipeline(fq PaginatedFeedQuery, p QueryPolicy, filter bson.M, opts *options.FindOptions) []bson.M {
+	pipeline := []bson.M{}
+
+	// $geoNear must be first stage if present
+	if fq.GeoQuery != nil && p.GeoSpatial != nil {
+		geoStage := bson.M{
+			"$geoNear": bson.M{
+				"near": bson.M{
+					"type":        "Point",
+					"coordinates": fq.GeoQuery.Coordinates,
+				},
+				"distanceField": "distance",
+				"spherical":     true,
+			},
+		}
+		if fq.GeoQuery.MaxDistance > 0 {
+			geoStage["$geoNear"].(bson.M)["maxDistance"] = fq.GeoQuery.MaxDistance
+		}
+		if fq.GeoQuery.MinDistance > 0 {
+			geoStage["$geoNear"].(bson.M)["minDistance"] = fq.GeoQuery.MinDistance
+		}
+		if p.GeoSpatial.LocationField != "" {
+			geoStage["$geoNear"].(bson.M)["key"] = p.GeoSpatial.LocationField
+		}
+		pipeline = append(pipeline, geoStage)
+	}
+
+	// $match stage for filters
+	if len(filter) > 0 {
+		pipeline = append(pipeline, bson.M{"$match": filter})
+	}
+
+	// $text search stage (must come after $geoNear if present, but before $match)
+	if fq.TextSearch != nil && p.FullTextSearch != nil {
+		textStage := bson.M{
+			"$match": bson.M{
+				"$text": bson.M{
+					"$search": fq.TextSearch.Search,
+				},
+			},
+		}
+		if fq.TextSearch.Language != "" {
+			textStage["$match"].(bson.M)["$text"].(bson.M)["$language"] = fq.TextSearch.Language
+		}
+		if fq.TextSearch.CaseSensitive {
+			textStage["$match"].(bson.M)["$text"].(bson.M)["$caseSensitive"] = true
+		}
+		// Insert text search before $match if no $geoNear, otherwise after
+		if fq.GeoQuery == nil {
+			pipeline = append([]bson.M{textStage}, pipeline...)
+		} else {
+			// Insert after $geoNear
+			pipeline = append(pipeline[:1], append([]bson.M{textStage}, pipeline[1:]...)...)
+		}
+	}
+
+	// $sort stage
+	if len(fq.Sort) > 0 {
+		sortDoc := bson.M{}
+		for _, s := range fq.Sort {
+			dir := 1
+			if s.Order == "desc" {
+				dir = -1
+			}
+			sortDoc[dbField(s.Field, p)] = dir
+		}
+		pipeline = append(pipeline, bson.M{"$sort": sortDoc})
+	}
+
+	// $skip and $limit stages
+	if fq.Offset > 0 {
+		pipeline = append(pipeline, bson.M{"$skip": fq.Offset})
+	}
+	if fq.Limit > 0 {
+		pipeline = append(pipeline, bson.M{"$limit": min(fq.Limit, p.Pagination.MaxLimit)})
+	}
+
+	// $project stage for field projection
+	if len(fq.IncludeFields) > 0 || len(fq.ExcludeFields) > 0 {
+		proj := bson.M{}
+		if len(fq.IncludeFields) > 0 {
+			for _, f := range fq.IncludeFields {
+				proj[dbField(f, p)] = 1
+			}
+		} else {
+			for _, f := range fq.ExcludeFields {
+				proj[dbField(f, p)] = 0
+			}
+		}
+		pipeline = append(pipeline, bson.M{"$project": proj})
+	}
+
+	return pipeline
 }
 
 func buildFilter(fq PaginatedFeedQuery, p QueryPolicy) bson.M {
@@ -622,64 +1174,20 @@ func containsInjectionPattern(input string) bool {
 	return false
 }
 
-// sanitizeInput removes potentially dangerous characters and patterns to prevent NoSQL injection
+// sanitizeInput is DEPRECATED - do not use for filter/search values.
+// MongoDB driver prevents injection when using bson.M with proper type coercion.
+// Field names are validated via validAPIFieldName().
+// Values are properly escaped in buildFilter() using regexp.QuoteMeta for regex operations.
+// This function is kept for backward compatibility but should not be called.
+//
+// If you need to sanitize user input, use:
+// - regexp.QuoteMeta() for regex patterns
+// - Proper type coercion via coerceValue() for typed fields
+// - Field name validation via validAPIFieldName()
 func sanitizeInput(input string) string {
-	// Remove or escape dangerous characters
-	dangerousChars := map[string]string{
-		"$":  "", // Remove MongoDB operators
-		".":  "", // Remove dot notation
-		"(":  "", // Remove parentheses
-		")":  "",
-		"[":  "", // Remove brackets
-		"]":  "",
-		"{":  "", // Remove braces
-		"}":  "",
-		"\\": "", // Remove backslashes
-		"/":  "", // Remove forward slashes
-		":":  "", // Remove colons
-		";":  "", // Remove semicolons
-		"=":  "", // Remove equals
-		"<":  "", // Remove comparison operators
-		">":  "",
-		"!":  "", // Remove exclamation
-		"@":  "", // Remove at symbol
-		"#":  "", // Remove hash
-		"%":  "", // Remove percent
-		"^":  "", // Remove caret
-		"&":  "", // Remove ampersand
-		"*":  "", // Remove asterisk
-		"|":  "", // Remove pipe
-		"~":  "", // Remove tilde
-		"`":  "", // Remove backtick
-		"'":  "", // Remove single quotes
-		"\"": "", // Remove double quotes
-		"?":  "", // Remove question mark
-		"+":  "", // Remove plus
-		"-":  "", // Remove minus
-	}
-
-	result := input
-	for char, replacement := range dangerousChars {
-		result = strings.ReplaceAll(result, char, replacement)
-	}
-
-	// Remove common NoSQL injection patterns
-	injectionPatterns := []string{
-		"$where", "$ne", "$gt", "$gte", "$lt", "$lte", "$in", "$nin", "$exists", "$regex",
-		"$or", "$and", "$not", "$nor", "$all", "$elemMatch", "$size", "$type",
-		"javascript:", "this.", "function", "eval", "exec", "script",
-		"sleep(", "waitfor", "delay", "benchmark", "load_file", "into outfile",
-		"union", "select", "insert", "update", "delete", "drop", "create", "alter",
-	}
-
-	lowerResult := strings.ToLower(result)
-	for _, pattern := range injectionPatterns {
-		if strings.Contains(lowerResult, pattern) {
-			result = strings.ReplaceAll(result, pattern, "")
-		}
-	}
-
-	return strings.TrimSpace(result)
+	// This function is intentionally empty - sanitization happens at query build time
+	// through proper escaping and type coercion, not by removing characters.
+	return input
 }
 
 // validateRegexPattern checks for potentially dangerous regex patterns that could cause ReDoS

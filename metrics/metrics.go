@@ -150,6 +150,62 @@ var (
 	)
 )
 
+// Query Builder Metrics
+var (
+	QueryBuildsTotal = prometheus.NewCounter(
+		prometheus.CounterOpts{
+			Name: "query_builds_total",
+			Help: "Total number of queries built",
+		},
+	)
+
+	QueryBuildDuration = prometheus.NewHistogram(
+		prometheus.HistogramOpts{
+			Name:    "query_build_duration_seconds",
+			Help:    "Query build duration in seconds",
+			Buckets: []float64{.0001, .0005, .001, .005, .01, .025, .05, .1},
+		},
+	)
+
+	QueryBuildErrors = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "query_build_errors_total",
+			Help: "Total query build errors",
+		},
+		[]string{"error_type"},
+	)
+
+	QueryCacheHits = prometheus.NewCounter(
+		prometheus.CounterOpts{
+			Name: "query_cache_hits_total",
+			Help: "Total query cache hits",
+		},
+	)
+
+	QueryCacheMisses = prometheus.NewCounter(
+		prometheus.CounterOpts{
+			Name: "query_cache_misses_total",
+			Help: "Total query cache misses",
+		},
+	)
+
+	QueryRateLimitHits = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "query_rate_limit_hits_total",
+			Help: "Total query rate limit hits",
+		},
+		[]string{"key"},
+	)
+
+	QueryComplexity = prometheus.NewHistogram(
+		prometheus.HistogramOpts{
+			Name:    "query_complexity_score",
+			Help:    "Query complexity score (filters + sorts + search)",
+			Buckets: []float64{1, 5, 10, 15, 20, 25, 30, 40, 50},
+		},
+	)
+)
+
 // ResponseWriter tracks response status and size
 type ResponseWriter struct {
 	http.ResponseWriter
@@ -207,6 +263,15 @@ func RegisterAllMetrics() {
 		// Business metrics
 		UsersRegistered,
 		APICalls,
+
+		// Query builder metrics
+		QueryBuildsTotal,
+		QueryBuildDuration,
+		QueryBuildErrors,
+		QueryCacheHits,
+		QueryCacheMisses,
+		QueryRateLimitHits,
+		QueryComplexity,
 
 		// Default collectors
 		collectors.NewGoCollector(),
