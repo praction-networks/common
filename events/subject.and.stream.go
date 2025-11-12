@@ -11,6 +11,13 @@ const (
 	InventoryStream  StreamName = "InventoryStream"
 )
 
+// Global Stream names as constants
+const (
+	NotificationStream StreamName = "NotificationStream"
+	AuditStream        StreamName = "AuditStream"
+	IntegrationStream  StreamName = "IntegrationStream"
+)
+
 // Subjects defines the NATS Subjects for different events
 type Subject string
 
@@ -51,16 +58,46 @@ const (
 	TenantUserRoleCreatedSubject Subject = "tenantuserrole.created"
 	TenantUserRoleUpdatedSubject Subject = "tenantuserrole.updated"
 	TenantUserRoleDeletedSubject Subject = "tenantuserrole.deleted"
+)
 
-	// Auth Service Event Initialization
-	AuthUserCreatedSubject Subject = "auth.user.created"
-	AuthUserUpdatedSubject Subject = "auth.user.updated"
-	AuthUserDeletedSubject Subject = "auth.user.deleted"
+// Global Subjects - Cross-service events that any service can publish
+const (
+	// OTP Events (authentication/verification)
+	OTPSentSubject     Subject = "otp.sent"
+	OTPVerifiedSubject Subject = "otp.verified"
+	OTPExpiredSubject  Subject = "otp.expired"
+	OTPFailedSubject   Subject = "otp.failed"
 
-	// OTP Events
-	TenantUserOTPSentSubject     Subject = "tenantuser.otp.sent"
-	TenantUserOTPVerifiedSubject Subject = "tenantuser.otp.verified"
-	TenantUserOTPExpiredSubject  Subject = "tenantuser.otp.expired"
+	// SMS Notification Events
+	SMSSentSubject      Subject = "sms.sent"
+	SMSDeliveredSubject Subject = "sms.delivered"
+	SMSFailedSubject    Subject = "sms.failed"
+	SMSReadSubject      Subject = "sms.read" // Optional: for read receipts
+
+	// Email Notification Events
+	EmailSentSubject      Subject = "email.sent"
+	EmailDeliveredSubject Subject = "email.delivered"
+	EmailFailedSubject    Subject = "email.failed"
+	EmailBouncedSubject   Subject = "email.bounced"
+	EmailOpenedSubject    Subject = "email.opened"  // Optional: for tracking
+	EmailClickedSubject   Subject = "email.clicked" // Optional: for tracking
+
+	// WhatsApp Notification Events
+	WhatsAppSentSubject      Subject = "whatsapp.sent"
+	WhatsAppDeliveredSubject Subject = "whatsapp.delivered"
+	WhatsAppFailedSubject    Subject = "whatsapp.failed"
+	WhatsAppReadSubject      Subject = "whatsapp.read"
+
+	// Telegram Notification Events
+	TelegramSentSubject      Subject = "telegram.sent"
+	TelegramDeliveredSubject Subject = "telegram.delivered"
+	TelegramFailedSubject    Subject = "telegram.failed"
+
+	// Push Notification Events
+	PushSentSubject      Subject = "push.sent"
+	PushDeliveredSubject Subject = "push.delivered"
+	PushFailedSubject    Subject = "push.failed"
+	PushOpenedSubject    Subject = "push.opened" // Optional: for tracking
 )
 
 // StreamMetadata defines metadata for streams
@@ -111,25 +148,61 @@ var Streams = map[StreamName]StreamMetadata{
 			TenantUserCreatedSubject,
 			TenantUserUpdatedSubject,
 			TenantUserDeletedSubject,
-
-			//OTP Events
-			TenantUserOTPSentSubject,
-			TenantUserOTPVerifiedSubject,
-			TenantUserOTPExpiredSubject,
 		},
 	},
 	AuthStream: {
 		Name:        AuthStream,
 		Description: "Stream for auth service events",
 		Subjects: []Subject{
-			AuthUserCreatedSubject,
-			AuthUserUpdatedSubject,
-			AuthUserDeletedSubject,
 
 			// Tenant User Role Events
 			TenantUserRoleCreatedSubject,
 			TenantUserRoleUpdatedSubject,
 			TenantUserRoleDeletedSubject,
+		},
+	},
+
+	// Global Streams - Cross-service events
+	NotificationStream: {
+		Name:        NotificationStream,
+		Description: "Global stream for notification events from all services",
+		Subjects: []Subject{
+			// OTP Events
+			OTPSentSubject,
+			OTPVerifiedSubject,
+			OTPExpiredSubject,
+			OTPFailedSubject,
+
+			// SMS Notification Events
+			SMSSentSubject,
+			SMSDeliveredSubject,
+			SMSFailedSubject,
+			SMSReadSubject,
+
+			// Email Notification Events
+			EmailSentSubject,
+			EmailDeliveredSubject,
+			EmailFailedSubject,
+			EmailBouncedSubject,
+			EmailOpenedSubject,
+			EmailClickedSubject,
+
+			// WhatsApp Notification Events
+			WhatsAppSentSubject,
+			WhatsAppDeliveredSubject,
+			WhatsAppFailedSubject,
+			WhatsAppReadSubject,
+
+			// Telegram Notification Events
+			TelegramSentSubject,
+			TelegramDeliveredSubject,
+			TelegramFailedSubject,
+
+			// Push Notification Events
+			PushSentSubject,
+			PushDeliveredSubject,
+			PushFailedSubject,
+			PushOpenedSubject,
 		},
 	},
 }
