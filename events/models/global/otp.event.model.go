@@ -9,6 +9,7 @@ type OTPEventModel struct {
 	OTP            string        `json:"otp"`
 	TenantID       string        `json:"tenant_id"`
 	ExpiryDuration time.Duration `json:"expiry_duration" default:"30m"`
+	Channel        []string      `json:"channel" default:"sms,email,whatsapp,telegram"`
 }
 
 type OTPResendEventModel struct {
@@ -18,4 +19,5 @@ type OTPResendEventModel struct {
 	Resend         bool          `json:"resend" default:"false"`
 	Type           string        `json:"type" default:"sms"`
 	ExpiryDuration time.Duration `json:"expiry_duration" default:"30m"`
+	Channel        []string      `json:"channel" default:"sms,email,whatsapp,telegram"`
 }
