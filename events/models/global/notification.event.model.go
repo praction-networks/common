@@ -26,7 +26,15 @@ type NotificationModel struct {
 	// Recipient contains recipients for SMS, WhatsApp, Telegram (phone numbers)
 	// Example: ["+1234567890", "+9876543210"]
 	// Used when Channel contains "sms", "whatsapp", or "telegram"
-	Recipient []string `json:"recipient,omitempty"`
+	SMSRecipients []string `json:"sms_recipients,omitempty"`
+
+	// WhatsAppRecipients contains WhatsApp recipients
+	// Used when Channel contains "whatsapp"
+	WhatsAppRecipients []string `json:"whatsapp_recipients,omitempty"`
+
+	// TelegramRecipients contains Telegram recipients
+	// Used when Channel contains "telegram"
+	TelegramRecipients []string `json:"telegram_recipients,omitempty"`
 
 	// MailRecipient contains email-specific recipient information
 	// Used when Channel contains "email"
