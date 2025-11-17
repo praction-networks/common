@@ -63,41 +63,16 @@ const (
 // Global Subjects - Cross-service events that any service can publish
 const (
 	// OTP Events (authentication/verification)
-	OTPSentSubject     Subject = "otp.sent"
-	OTPVerifiedSubject Subject = "otp.verified"
-	OTPExpiredSubject  Subject = "otp.expired"
-	OTPFailedSubject   Subject = "otp.failed"
-
-	// SMS Notification Events
-	SMSSentSubject      Subject = "sms.sent"
-	SMSDeliveredSubject Subject = "sms.delivered"
-	SMSFailedSubject    Subject = "sms.failed"
-	SMSReadSubject      Subject = "sms.read" // Optional: for read receipts
-
-	// Email Notification Events
-	EmailSentSubject      Subject = "email.sent"
-	EmailDeliveredSubject Subject = "email.delivered"
-	EmailFailedSubject    Subject = "email.failed"
-	EmailBouncedSubject   Subject = "email.bounced"
-	EmailOpenedSubject    Subject = "email.opened"  // Optional: for tracking
-	EmailClickedSubject   Subject = "email.clicked" // Optional: for tracking
-
-	// WhatsApp Notification Events
-	WhatsAppSentSubject      Subject = "whatsapp.sent"
-	WhatsAppDeliveredSubject Subject = "whatsapp.delivered"
-	WhatsAppFailedSubject    Subject = "whatsapp.failed"
-	WhatsAppReadSubject      Subject = "whatsapp.read"
-
-	// Telegram Notification Events
-	TelegramSentSubject      Subject = "telegram.sent"
-	TelegramDeliveredSubject Subject = "telegram.delivered"
-	TelegramFailedSubject    Subject = "telegram.failed"
+	UserNotifcationSentSubject     Subject = "user.notification.sent"
+	UserNotifcationVerifiedSubject Subject = "user.notification.verified"
+	UserNotifcationExpiredSubject  Subject = "user.notification.expired"
+	UserNotifcationFailedSubject   Subject = "user.notification.failed"
 
 	// Push Notification Events
-	PushSentSubject      Subject = "push.sent"
-	PushDeliveredSubject Subject = "push.delivered"
-	PushFailedSubject    Subject = "push.failed"
-	PushOpenedSubject    Subject = "push.opened" // Optional: for tracking
+	UserPushNotificationSentSubject      Subject = "user.push.notification.sent"
+	UserPushNotificationDeliveredSubject Subject = "user.push.notification.delivered"
+	UserPushNotificationFailedSubject    Subject = "user.push.notification.failed"
+	UserPushNotificationOpenedSubject    Subject = "user.push.notification.opened" // Optional: for tracking
 )
 
 // StreamMetadata defines metadata for streams
@@ -167,42 +142,14 @@ var Streams = map[StreamName]StreamMetadata{
 		Name:        NotificationStream,
 		Description: "Global stream for notification events from all services",
 		Subjects: []Subject{
-			// OTP Events
-			OTPSentSubject,
-			OTPVerifiedSubject,
-			OTPExpiredSubject,
-			OTPFailedSubject,
-
-			// SMS Notification Events
-			SMSSentSubject,
-			SMSDeliveredSubject,
-			SMSFailedSubject,
-			SMSReadSubject,
-
-			// Email Notification Events
-			EmailSentSubject,
-			EmailDeliveredSubject,
-			EmailFailedSubject,
-			EmailBouncedSubject,
-			EmailOpenedSubject,
-			EmailClickedSubject,
-
-			// WhatsApp Notification Events
-			WhatsAppSentSubject,
-			WhatsAppDeliveredSubject,
-			WhatsAppFailedSubject,
-			WhatsAppReadSubject,
-
-			// Telegram Notification Events
-			TelegramSentSubject,
-			TelegramDeliveredSubject,
-			TelegramFailedSubject,
-
-			// Push Notification Events
-			PushSentSubject,
-			PushDeliveredSubject,
-			PushFailedSubject,
-			PushOpenedSubject,
+			UserNotifcationSentSubject,
+			UserNotifcationVerifiedSubject,
+			UserNotifcationExpiredSubject,
+			UserNotifcationFailedSubject,
+			UserPushNotificationSentSubject,
+			UserPushNotificationDeliveredSubject,
+			UserPushNotificationFailedSubject,
+			UserPushNotificationOpenedSubject,
 		},
 	},
 }
