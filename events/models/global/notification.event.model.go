@@ -50,6 +50,10 @@ type NotificationModel struct {
 	// Examples: "authentication", "marketing", "transactional", "system"
 	// This is separate from TemplateCode which identifies the specific template
 	NotificationType string `json:"notification_type,omitempty"`
+
+	// IsSystemEvent indicates if this is a system notification
+	// Defaults to false if not set
+	IsSystemEvent bool `json:"is_system_event"`
 }
 
 // MailNotification contains email-specific recipient and sender information
