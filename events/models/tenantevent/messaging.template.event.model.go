@@ -2,18 +2,28 @@ package tenantevent
 
 import "time"
 
+// TenantTemplateConfig represents tenant-specific configuration for a template
+// This allows enabling/disabling a template for a specific tenant
+// Note: Sender ID and DLT Template ID are SMS-specific and stored in MessagingSMSTemplate, not tenant-specific
+type TenantTemplateConfig struct {
+	TenantID string `bson:"tenantID" json:"tenantID"`
+	IsActive bool   `bson:"isActive" json:"isActive"` // Can disable template for specific tenant
+}
+
 // MessagingTemplateInsertEventModel represents a messaging template creation event
 type MessagingTemplateInsertEventModel struct {
-	ID           string   `bson:"_id" json:"id"`
-	Name         string   `bson:"name" json:"name"`
-	Code         string   `bson:"code" json:"code"`
-	Channel      string   `bson:"channel" json:"channel"`
-	Language     string   `bson:"language" json:"language"`
-	Description  string   `bson:"description,omitempty" json:"description,omitempty"`
-	IsActive     bool     `bson:"isActive" json:"isActive"`
-	Tags         []string `bson:"tags,omitempty" json:"tags,omitempty"`
-	AssignedTo   []string `bson:"assignedTo,omitempty" json:"assignedTo,omitempty"`
-	AssignableBy []string `bson:"assignableBy,omitempty" json:"assignableBy,omitempty"`
+	ID               string                 `bson:"_id" json:"id"`
+	Name             string                 `bson:"name" json:"name"`
+	Code             string                 `bson:"code" json:"code"`
+	Channel          string                 `bson:"channel" json:"channel"`
+	Language         string                 `bson:"language" json:"language"`
+	Description      string                 `bson:"description,omitempty" json:"description,omitempty"`
+	IsActive         bool                   `bson:"isActive" json:"isActive"`
+	IsSystemTemplate bool                   `bson:"isSystemTemplate" json:"isSystemTemplate"` // If true, this template is for system notifications only. Can only be assigned by system users.
+	Tags             []string               `bson:"tags,omitempty" json:"tags,omitempty"`
+	AssignedTo       []string               `bson:"assignedTo,omitempty" json:"assignedTo,omitempty"`
+	TenantConfigs    []TenantTemplateConfig `bson:"tenantConfigs,omitempty" json:"tenantConfigs,omitempty"` // Tenant-specific template configurations (array) - only IsActive flag
+	AssignableBy     []string               `bson:"assignableBy,omitempty" json:"assignableBy,omitempty"`   // Which tenant types can assign this template. Ignored if IsSystemTemplate is true.
 
 	// Channel-specific template data (contains content and variables)
 	SMS      *MessagingSMSTemplate      `bson:"sms,omitempty" json:"sms,omitempty"`
@@ -26,16 +36,18 @@ type MessagingTemplateInsertEventModel struct {
 
 // MessagingTemplateUpdateEventModel represents a messaging template update event
 type MessagingTemplateUpdateEventModel struct {
-	ID           string   `bson:"_id" json:"id"`
-	Name         string   `bson:"name" json:"name"`
-	Code         string   `bson:"code" json:"code"`
-	Channel      string   `bson:"channel" json:"channel"`
-	Language     string   `bson:"language" json:"language"`
-	Description  string   `bson:"description,omitempty" json:"description,omitempty"`
-	IsActive     bool     `bson:"isActive" json:"isActive"`
-	Tags         []string `bson:"tags,omitempty" json:"tags,omitempty"`
-	AssignedTo   []string `bson:"assignedTo,omitempty" json:"assignedTo,omitempty"`
-	AssignableBy []string `bson:"assignableBy,omitempty" json:"assignableBy,omitempty"`
+	ID               string                 `bson:"_id" json:"id"`
+	Name             string                 `bson:"name" json:"name"`
+	Code             string                 `bson:"code" json:"code"`
+	Channel          string                 `bson:"channel" json:"channel"`
+	Language         string                 `bson:"language" json:"language"`
+	Description      string                 `bson:"description,omitempty" json:"description,omitempty"`
+	IsActive         bool                   `bson:"isActive" json:"isActive"`
+	IsSystemTemplate bool                   `bson:"isSystemTemplate" json:"isSystemTemplate"` // If true, this template is for system notifications only. Can only be assigned by system users.
+	Tags             []string               `bson:"tags,omitempty" json:"tags,omitempty"`
+	AssignedTo       []string               `bson:"assignedTo,omitempty" json:"assignedTo,omitempty"`
+	TenantConfigs    []TenantTemplateConfig `bson:"tenantConfigs,omitempty" json:"tenantConfigs,omitempty"` // Tenant-specific template configurations (array) - only IsActive flag
+	AssignableBy     []string               `bson:"assignableBy,omitempty" json:"assignableBy,omitempty"`   // Which tenant types can assign this template. Ignored if IsSystemTemplate is true.
 
 	// Channel-specific template data (contains content and variables)
 	SMS      *MessagingSMSTemplate      `bson:"sms,omitempty" json:"sms,omitempty"`
@@ -63,12 +75,14 @@ type MessagingTemplateVariable struct {
 }
 
 // MessagingSMSTemplate represents SMS-specific template data
+// Sender ID and DLT Template ID are SMS-specific (not tenant-specific)
+// These values are used when sending SMS for any tenant using this template
 type MessagingSMSTemplate struct {
 	Content       string                      `bson:"content" json:"content"`
 	Variables     []MessagingTemplateVariable `bson:"variables" json:"variables"`
-	DLTTemplateID string                      `bson:"dlt_template_id,omitempty" json:"dlt_template_id,omitempty"`
-	SenderID      string                      `bson:"sender_id,omitempty" json:"sender_id,omitempty"`
-	MaxLength     int                         `bson:"max_length,omitempty" json:"max_length,omitempty"` // SMS character limit (default: 160)
+	DLTTemplateID string                      `bson:"dlt_template_id,omitempty" json:"dlt_template_id,omitempty"` // DLT template ID for SMS (SMS-specific, not tenant-specific)
+	SenderID      string                      `bson:"sender_id,omitempty" json:"sender_id,omitempty"`             // Sender ID for SMS (SMS-specific, not tenant-specific)
+	MaxLength     int                         `bson:"max_length,omitempty" json:"max_length,omitempty"`           // SMS character limit (default: 160)
 }
 
 // MessagingEmailTemplate represents Email-specific template data
