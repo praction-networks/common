@@ -1,5 +1,12 @@
 package tenantevent
 
+// SMSType represents supported SMS gateway providers
+type SMSType string
+
+const (
+	SMSGatewayMSG91OTP SMSType = "MSG91"
+)
+
 type SMSProviderInsertEventModel struct {
 	ID         string         `bson:"_id" json:"id"`
 	Provider   string         `bson:"provider" json:"provider"`
