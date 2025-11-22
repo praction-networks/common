@@ -4,12 +4,11 @@ type StreamName string
 
 // Stream names as constants
 const (
-	SeedAppStream      StreamName = "SeedAppStream"
-	AuthStream         StreamName = "AuthStream"
-	TenantStream       StreamName = "TenantStream"
-	TenantUserStream   StreamName = "TenantUserStream"
-	InventoryStream    StreamName = "InventoryStream"
-	NotificationStream StreamName = "NotificationStream"
+	SeedAppStream    StreamName = "SeedAppStream"
+	AuthStream       StreamName = "AuthStream"
+	TenantStream     StreamName = "TenantStream"
+	TenantUserStream StreamName = "TenantUserStream"
+	InventoryStream  StreamName = "InventoryStream"
 )
 
 // Global Stream names as constants
@@ -59,11 +58,6 @@ const (
 	TenantUserRoleCreatedSubject Subject = "tenantuserrole.created"
 	TenantUserRoleUpdatedSubject Subject = "tenantuserrole.updated"
 	TenantUserRoleDeletedSubject Subject = "tenantuserrole.deleted"
-
-	// Template Action Code Event Initialization
-	TemplateActionCodeCreatedSubject Subject = "templateactioncode.created"
-	TemplateActionCodeUpdatedSubject Subject = "templateactioncode.updated"
-	TemplateActionCodeDeletedSubject Subject = "templateactioncode.deleted"
 )
 
 // Global Subjects - Cross-service events that any service can publish
@@ -156,16 +150,6 @@ var Streams = map[StreamName]StreamMetadata{
 			UserPushNotificationDeliveredSubject,
 			UserPushNotificationFailedSubject,
 			UserPushNotificationOpenedSubject,
-		},
-	},
-
-	NotificationStream: {
-		Name:        NotificationStream,
-		Description: "Stream for notification events from notification service",
-		Subjects: []Subject{
-			TemplateActionCodeCreatedSubject,
-			TemplateActionCodeUpdatedSubject,
-			TemplateActionCodeDeletedSubject,
 		},
 	},
 }
