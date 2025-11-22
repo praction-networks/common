@@ -4,18 +4,19 @@ type StreamName string
 
 // Stream names as constants
 const (
-	SeedAppStream    StreamName = "SeedAppStream"
-	AuthStream       StreamName = "AuthStream"
-	TenantStream     StreamName = "TenantStream"
-	TenantUserStream StreamName = "TenantUserStream"
-	InventoryStream  StreamName = "InventoryStream"
+	SeedAppStream      StreamName = "SeedAppStream"
+	AuthStream         StreamName = "AuthStream"
+	TenantStream       StreamName = "TenantStream"
+	TenantUserStream   StreamName = "TenantUserStream"
+	InventoryStream    StreamName = "InventoryStream"
+	NotificationStream StreamName = "NotificationStream"
 )
 
 // Global Stream names as constants
 const (
-	NotificationStream StreamName = "NotificationStream"
-	AuditStream        StreamName = "AuditStream"
-	IntegrationStream  StreamName = "IntegrationStream"
+	NotificationGlobalStream StreamName = "NotificationGlobalStream"
+	AuditGlobalStream        StreamName = "AuditGlobalStream"
+	IntegrationGlobalStream  StreamName = "IntegrationGlobalStream"
 )
 
 // Subjects defines the NATS Subjects for different events
@@ -58,6 +59,11 @@ const (
 	TenantUserRoleCreatedSubject Subject = "tenantuserrole.created"
 	TenantUserRoleUpdatedSubject Subject = "tenantuserrole.updated"
 	TenantUserRoleDeletedSubject Subject = "tenantuserrole.deleted"
+
+	// Template Action Code Event Initialization
+	TemplateActionCodeCreatedSubject Subject = "templateactioncode.created"
+	TemplateActionCodeUpdatedSubject Subject = "templateactioncode.updated"
+	TemplateActionCodeDeletedSubject Subject = "templateactioncode.deleted"
 )
 
 // Global Subjects - Cross-service events that any service can publish
@@ -138,8 +144,8 @@ var Streams = map[StreamName]StreamMetadata{
 	},
 
 	// Global Streams - Cross-service events
-	NotificationStream: {
-		Name:        NotificationStream,
+	NotificationGlobalStream: {
+		Name:        NotificationGlobalStream,
 		Description: "Global stream for notification events from all services",
 		Subjects: []Subject{
 			UserNotifcationSentSubject,
@@ -150,6 +156,16 @@ var Streams = map[StreamName]StreamMetadata{
 			UserPushNotificationDeliveredSubject,
 			UserPushNotificationFailedSubject,
 			UserPushNotificationOpenedSubject,
+		},
+	},
+
+	NotificationStream: {
+		Name:        NotificationStream,
+		Description: "Stream for notification events from notification service",
+		Subjects: []Subject{
+			TemplateActionCodeCreatedSubject,
+			TemplateActionCodeUpdatedSubject,
+			TemplateActionCodeDeletedSubject,
 		},
 	},
 }
