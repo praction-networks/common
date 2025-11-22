@@ -5,9 +5,9 @@ type LanguageCode string
 
 // LanguageInfo contains language code, name, and native name
 type LanguageInfo struct {
-	Code       LanguageCode
-	Name       string
-	NativeName string
+	Code       LanguageCode `json:"code"`
+	Name       string       `json:"name"`
+	NativeName string       `json:"nativeName"`
 }
 
 // All supported language codes (WhatsApp supported languages)
