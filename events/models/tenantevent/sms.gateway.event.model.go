@@ -13,7 +13,6 @@ type SMSProviderInsertEventModel struct {
 	AssignedTo []string       `bson:"assignedTo" json:"assignedTo"`
 	Metadata   map[string]any `bson:"metadata,omitempty" json:"metadata"`
 	IsActive   bool           `bson:"isActive" json:"isActive"`
-	IsSystem   bool           `bson:"isSystem" json:"isSystem"`
 	Version    int            `bson:"version" json:"version"`
 }
 
@@ -23,7 +22,6 @@ type SMSProviderUpdateEventModel struct {
 	AssignedTo []string       `bson:"assignedTo" json:"assignedTo"`
 	Metadata   map[string]any `bson:"metadata,omitempty" json:"metadata"`
 	IsActive   bool           `bson:"isActive" json:"isActive"`
-	IsSystem   bool           `bson:"isSystem" json:"isSystem"`
 	Version    int            `bson:"version" json:"version"`
 }
 

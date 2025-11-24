@@ -12,18 +12,17 @@ type TenantTemplateConfig struct {
 
 // MessagingTemplateInsertEventModel represents a messaging template creation event
 type MessagingTemplateInsertEventModel struct {
-	ID               string                 `bson:"_id" json:"id"`
-	Name             string                 `bson:"name" json:"name"`
-	Code             string                 `bson:"code" json:"code"`
-	Channel          string                 `bson:"channel" json:"channel"`
-	Language         string                 `bson:"language" json:"language"`
-	Description      string                 `bson:"description,omitempty" json:"description,omitempty"`
-	IsActive         bool                   `bson:"isActive" json:"isActive"`
-	IsSystemTemplate bool                   `bson:"isSystemTemplate" json:"isSystemTemplate"` // If true, this template is for system notifications only. Can only be assigned by system users.
-	Tags             []string               `bson:"tags,omitempty" json:"tags,omitempty"`
-	AssignedTo       []string               `bson:"assignedTo,omitempty" json:"assignedTo,omitempty"`
-	TenantConfigs    []TenantTemplateConfig `bson:"tenantConfigs,omitempty" json:"tenantConfigs,omitempty"` // Tenant-specific template configurations (array) - only IsActive flag
-	AssignableBy     []string               `bson:"assignableBy,omitempty" json:"assignableBy,omitempty"`   // Which tenant types can assign this template. Ignored if IsSystemTemplate is true.
+	ID            string                 `bson:"_id" json:"id"`
+	Name          string                 `bson:"name" json:"name"`
+	Code          string                 `bson:"code" json:"code"`
+	Channel       string                 `bson:"channel" json:"channel"`
+	Language      string                 `bson:"language" json:"language"`
+	Description   string                 `bson:"description,omitempty" json:"description,omitempty"`
+	IsActive      bool                   `bson:"isActive" json:"isActive"`
+	Tags          []string               `bson:"tags,omitempty" json:"tags,omitempty"`
+	AssignedTo    []string               `bson:"assignedTo,omitempty" json:"assignedTo,omitempty"`
+	TenantConfigs []TenantTemplateConfig `bson:"tenantConfigs,omitempty" json:"tenantConfigs,omitempty"` // Tenant-specific template configurations (array) - only IsActive flag
+	AssignableBy  []string               `bson:"assignableBy,omitempty" json:"assignableBy,omitempty"`   // Which tenant types can assign this template. Ignored if IsSystemTemplate is true.
 
 	// Channel-specific template data (contains content and variables)
 	SMS      *MessagingSMSTemplate      `bson:"sms,omitempty" json:"sms,omitempty"`
@@ -43,11 +42,10 @@ type MessagingTemplateUpdateEventModel struct {
 	Language         string                 `bson:"language" json:"language"`
 	Description      string                 `bson:"description,omitempty" json:"description,omitempty"`
 	IsActive         bool                   `bson:"isActive" json:"isActive"`
-	IsSystemTemplate bool                   `bson:"isSystemTemplate" json:"isSystemTemplate"` // If true, this template is for system notifications only. Can only be assigned by system users.
 	Tags             []string               `bson:"tags,omitempty" json:"tags,omitempty"`
 	AssignedTo       []string               `bson:"assignedTo,omitempty" json:"assignedTo,omitempty"`
 	TenantConfigs    []TenantTemplateConfig `bson:"tenantConfigs,omitempty" json:"tenantConfigs,omitempty"` // Tenant-specific template configurations (array) - only IsActive flag
-	AssignableBy     []string               `bson:"assignableBy,omitempty" json:"assignableBy,omitempty"`   // Which tenant types can assign this template. Ignored if IsSystemTemplate is true.
+	AssignableBy     []string               `bson:"assignableBy,omitempty" json:"assignableBy,omitempty"`   // Which tenant types can assign this template.
 
 	// Channel-specific template data (contains content and variables)
 	SMS      *MessagingSMSTemplate      `bson:"sms,omitempty" json:"sms,omitempty"`

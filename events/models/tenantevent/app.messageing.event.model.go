@@ -6,7 +6,6 @@ type AppMessaegerInsertEventModel struct {
 	AssignedTo []WhatsAppTenantConfig `bson:"assignedTo" json:"assignedTo"`
 	Metadata   map[string]any         `bson:"metadata,omitempty" json:"metadata,omitempty"`
 	IsActive   bool                   `bson:"isActive" json:"isActive"`
-	IsSystem   bool                   `bson:"isSystem" json:"isSystem"`
 	Version    int                    `bson:"version" json:"version"`
 }
 
@@ -16,7 +15,6 @@ type AppMessengerUpdateEventModel struct {
 	AssignedTo []WhatsAppTenantConfig `bson:"assignedTo" json:"assignedTo"`
 	Metadata   map[string]any         `bson:"metadata,omitempty" json:"metadata,omitempty"`
 	IsActive   bool                   `bson:"isActive" json:"isActive"`
-	IsSystem   bool                   `bson:"isSystem" json:"isSystem"`
 	Version    int                    `bson:"version" json:"version"`
 }
 

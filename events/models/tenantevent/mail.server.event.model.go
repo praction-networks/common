@@ -10,7 +10,6 @@ type MailServerInsertEventModel struct {
 	PostalConfig    *PostalConfig    `bson:"postal" json:"postal"`
 	MailchimpConfig *MailchimpConfig `bson:"mailchimp" json:"mailchimp"`
 	IsActive        bool             `bson:"isActive" json:"isActive"`
-	IsSystem        bool             `bson:"isSystem" json:"isSystem"`
 	Version         int              `bson:"version" json:"version"`
 }
 
@@ -24,7 +23,6 @@ type MailServerUpdateEventModel struct {
 	PostalConfig    *PostalConfig    `bson:"postal" json:"postal"`
 	MailchimpConfig *MailchimpConfig `bson:"mailchimp" json:"mailchimp"`
 	IsActive        bool             `bson:"isActive" json:"isActive"`
-	IsSystem        bool             `bson:"isSystem" json:"isSystem"`
 	Version         int              `bson:"version" json:"version"`
 }
 
