@@ -25,6 +25,7 @@ type TenantInsertEventModel struct {
 	TenantTAN        TANModel                         `bson:"tenantTAN" json:"tenantTAN"`
 	TenantCIN        CINModel                         `bson:"tenantCIN" json:"tenantCIN"`
 	EnabledFeatures  EnabledFeatures                  `bson:"enabledFeatures,omitempty" json:"enabledFeatures,omitempty"`
+	IsSystem         bool                             `bson:"isSystem" json:"isSystem"`
 	OLTs             []string                         `bson:"olts,omitempty" json:"olts,omitempty"`
 	KYCProvider      []KYCProviderTenantConfig        `bson:"kycProvider,omitempty" json:"kycProvider,omitempty"`
 	PaymentGateway   ProvidersModel                   `bson:"paymentGateway,omitempty" json:"paymentGateway,omitempty"`
