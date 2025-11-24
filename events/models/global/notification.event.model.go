@@ -41,19 +41,10 @@ type NotificationModel struct {
 	// If email is in Channel, use MailRecipient.ToMail for recipients
 	MailRecipient *MailNotification `json:"mail_recipient,omitempty"`
 
-	// Language specifies the preferred language for the notification
-	// Defaults to "en" if not provided
-	// Examples: "en", "es", "fr", "hi"
-	Language string `json:"language,omitempty" default:"en"`
-
 	// NotificationType is optional metadata for categorization/routing/logging
 	// Examples: "authentication", "marketing", "transactional", "system"
 	// This is separate from TemplateCode which identifies the specific template
-	NotificationType string `json:"notification_type,omitempty"`
-
-	// IsSystemEvent indicates if this is a system notification
-	// Defaults to false if not set
-	IsSystemEvent bool `json:"is_system_event"`
+	NotificationTypes []string `json:"notification_types,omitempty"`
 }
 
 // MailNotification contains email-specific recipient and sender information
