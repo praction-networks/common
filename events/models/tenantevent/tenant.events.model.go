@@ -8,86 +8,89 @@ import (
 )
 
 type TenantInsertEventModel struct {
-	ID               string                           `bson:"_id" json:"id"`
-	Name             string                           `bson:"name" json:"name"`
-	Code             string                           `bson:"code" json:"code"`
-	Type             string                           `bson:"type" json:"type"`
-	Fqdn             string                           `bson:"fqdn,omitempty" json:"fqdn,omitempty"`
-	Environment      string                           `bson:"environment,omitempty" json:"environment,omitempty"`
-	EntType          string                           `bson:"entType,omitempty" json:"entType,omitempty"`
-	ParentTenantID   string                           `bson:"parentTenantID,omitempty" json:"parentTenantID,omitempty"`
-	DefaultEmail     string                           `bson:"defaultEmail" json:"defaultEmail"`
-	DefaultPhone     string                           `bson:"defaultPhone" json:"defaultPhone"`
-	PermanentAddress AddressModel                     `bson:"permanentAddress" json:"permanentAddress"`
-	CurrentAddress   AddressModel                     `bson:"currentAddress" json:"currentAddress"`
-	TenantGST        []GSTModel                       `bson:"tenantGST" json:"tenantGST"`
-	TenantPAN        PANModel                         `bson:"tenantPAN" json:"tenantPAN"`
-	TenantTAN        TANModel                         `bson:"tenantTAN" json:"tenantTAN"`
-	TenantCIN        CINModel                         `bson:"tenantCIN" json:"tenantCIN"`
-	EnabledFeatures  EnabledFeatures                  `bson:"enabledFeatures,omitempty" json:"enabledFeatures,omitempty"`
-	IsSystem         bool                             `bson:"isSystem" json:"isSystem"`
-	OLTs             []string                         `bson:"olts,omitempty" json:"olts,omitempty"`
-	KYCProvider      []KYCProviderTenantConfig        `bson:"kycProvider,omitempty" json:"kycProvider,omitempty"`
-	PaymentGateway   ProvidersModel                   `bson:"paymentGateway,omitempty" json:"paymentGateway,omitempty"`
-	SMSProvider      []SMSProviderTenantConfig        `bson:"smsProvider,omitempty" json:"smsProvider,omitempty"`
-	MailProvider     []MailServerProviderTenantConfig `bson:"mailProvider,omitempty" json:"mailProvider,omitempty"`
-	AppsMessanger    []AppMessagingProvidersModel     `bson:"appsMessanger,omitempty" json:"appsMessanger,omitempty"`
-	ExternalRadius   []ExternalRadiusProvidersModel   `bson:"externalRadius,omitempty" json:"externalRadius,omitempty"`
-	IsActive         bool                             `bson:"isActive" json:"isActive"`
-	Version          int                              `bson:"version,omitempty" json:"version,omitempty"`
+	ID          string `bson:"_id" json:"id"`
+	Name        string `bson:"name" json:"name"`
+	Code        string `bson:"code" json:"code"`
+	Type        string `bson:"type" json:"type"`
+	Fqdn        string `bson:"fqdn,omitempty" json:"fqdn,omitempty"`
+	Environment string `bson:"environment,omitempty" json:"environment,omitempty"`
+	EntType     string `bson:"entType,omitempty" json:"entType,omitempty"`
 
-	// ==================== HIERARCHY FIELDS (NEW) ====================
-	// These fields enable other services to understand tenant relationships
-	Path              string   `bson:"path,omitempty" json:"path,omitempty"`                           // Materialized path: "/isp_abc/reseller_xyz/dist_123"
-	PathDepth         int      `bson:"pathDepth,omitempty" json:"pathDepth,omitempty"`                 // Depth of path (number of segments)
-	Ancestors         []string `bson:"ancestors,omitempty" json:"ancestors,omitempty"`                 // All ancestor IDs from root to parent
-	Level             int      `bson:"level,omitempty" json:"level,omitempty"`                         // Hierarchy level (0=root, 1=child, etc.)
-	IsLeaf            bool     `bson:"isLeaf,omitempty" json:"isLeaf,omitempty"`                       // True if has no children
-	ChildrenCount     int      `bson:"childrenCount,omitempty" json:"childrenCount,omitempty"`         // Count of direct children
-	ChildIDs          []string `bson:"childIDs,omitempty" json:"childIDs,omitempty"`                   // Direct child tenant IDs
-	AllowedChildTypes []string `bson:"allowedChildTypes,omitempty" json:"allowedChildTypes,omitempty"` // Permitted child types
-	MaxDepth          int      `bson:"maxDepth,omitempty" json:"maxDepth,omitempty"`                   // Maximum allowed descendant depth
+	// Hierarchy Management
+	ParentTenantID string   `bson:"parentTenantID,omitempty" json:"parentTenantID,omitempty"`
+	ChildIDs       []string `bson:"childIds,omitempty" json:"childIds,omitempty"`
+	Path           string   `bson:"path" json:"path"`
+	PathDepth      int      `bson:"pathDepth" json:"pathDepth"`
+	Ancestors      []string `bson:"ancestors,omitempty" json:"ancestors,omitempty"`
+	Level          int      `bson:"level" json:"level"`
+	IsLeaf         bool     `bson:"isLeaf" json:"isLeaf"`
+	ChildrenCount  int      `bson:"childrenCount" json:"childrenCount"`
+
+	// Hierarchy Constraints
+	MaxDepth          int      `bson:"maxDepth,omitempty" json:"maxDepth,omitempty"`
+	AllowedChildTypes []string `bson:"allowedChildTypes,omitempty" json:"allowedChildTypes,omitempty"`
+
+	DefaultEmail     string          `bson:"defaultEmail" json:"defaultEmail"`
+	DefaultPhone     string          `bson:"defaultPhone" json:"defaultPhone"`
+	PermanentAddress AddressModel    `bson:"permanentAddress" json:"permanentAddress"`
+	CurrentAddress   AddressModel    `bson:"currentAddress" json:"currentAddress"`
+	TenantGST        []GSTModel      `bson:"tenantGST,omitempty" json:"tenantGST,omitempty"`
+	TenantPAN        PANModel        `bson:"tenantPAN,omitempty" json:"tenantPAN,omitempty"`
+	TenantTAN        TANModel        `bson:"tenantTAN,omitempty" json:"tenantTAN,omitempty"`
+	TenantCIN        CINModel        `bson:"tenantCIN,omitempty" json:"tenantCIN,omitempty"`
+	EnabledFeatures  EnabledFeatures `bson:"enabledFeatures,omitempty" json:"enabledFeatures,omitempty"`
+	OLTs             []string        `bson:"olts,omitempty" json:"olts,omitempty"`
+
+	// Note: Provider configurations (KYC, SMS, Mail, App Messaging) are now managed through
+	// separate binding collections and published via separate provider binding events.
+	// See: tenant.provider.binding.event.model.go
+
+	IsSystem bool `bson:"isSystem" json:"isSystem"`
+	IsActive bool `bson:"isActive" json:"isActive"`
+	Version  int  `bson:"version,omitempty" json:"version,omitempty"`
 }
 
 type TenantUpdateEventModel struct {
-	ID               string                           `bson:"_id" json:"id"`
-	Name             string                           `bson:"name" json:"name"`
-	Code             string                           `bson:"code" json:"code"`
-	Type             string                           `bson:"type" json:"type"`
-	Fqdn             string                           `bson:"fqdn,omitempty" json:"fqdn,omitempty"`
-	Environment      string                           `bson:"environment,omitempty" json:"environment,omitempty"`
-	EntType          string                           `bson:"entType,omitempty" json:"entType,omitempty"`
-	ParentTenantID   string                           `bson:"parentTenantID,omitempty" json:"parentTenantID,omitempty"`
-	ChildIDs         []string                         `bson:"childIDs,omitempty" json:"childIDs,omitempty"`
-	DefaultEmail     string                           `bson:"defaultEmail" json:"defaultEmail"`
-	DefaultPhone     string                           `bson:"defaultPhone" json:"defaultPhone"`
-	PermanentAddress AddressModel                     `bson:"permanentAddress" json:"permanentAddress"`
-	CurrentAddress   AddressModel                     `bson:"currentAddress" json:"currentAddress"`
-	TenantGST        []GSTModel                       `bson:"tenantGST" json:"tenantGST"`
-	TenantPAN        PANModel                         `bson:"tenantPAN" json:"tenantPAN"`
-	TenantTAN        TANModel                         `bson:"tenantTAN" json:"tenantTAN"`
-	TenantCIN        CINModel                         `bson:"tenantCIN" json:"tenantCIN"`
-	EnabledFeatures  EnabledFeatures                  `bson:"enabledFeatures,omitempty" json:"enabledFeatures,omitempty"`
-	OLTs             []string                         `bson:"olts,omitempty" json:"olts,omitempty"`
-	KYCProvider      []KYCProviderTenantConfig        `bson:"kycProvider,omitempty" json:"kycProvider,omitempty"`
-	PaymentGateway   ProvidersModel                   `bson:"paymentGateway,omitempty" json:"paymentGateway,omitempty"`
-	SMSProvider      []SMSProviderTenantConfig        `bson:"smsProvider,omitempty" json:"smsProvider,omitempty"`
-	MailProvider     []MailServerProviderTenantConfig `bson:"mailProvider,omitempty" json:"mailProvider,omitempty"`
-	AppsMessanger    []AppMessagingProvidersModel     `bson:"appsMessanger,omitempty" json:"appsMessanger,omitempty"`
-	ExternalRadius   []ExternalRadiusProvidersModel   `bson:"externalRadius,omitempty" json:"externalRadius,omitempty"`
-	IsActive         bool                             `bson:"isActive" json:"isActive"`
-	Version          int                              `bson:"version,omitempty" json:"version,omitempty"`
+	ID          string `bson:"_id" json:"id"`
+	Name        string `bson:"name,omitempty" json:"name,omitempty"`
+	Code        string `bson:"code,omitempty" json:"code,omitempty"`
+	Type        string `bson:"type,omitempty" json:"type,omitempty"`
+	Fqdn        string `bson:"fqdn,omitempty" json:"fqdn,omitempty"`
+	Environment string `bson:"environment,omitempty" json:"environment,omitempty"`
+	EntType     string `bson:"entType,omitempty" json:"entType,omitempty"`
 
-	// ==================== HIERARCHY FIELDS (NEW) ====================
-	// These fields enable other services to understand tenant relationships
-	Path              string   `bson:"path,omitempty" json:"path,omitempty"`                           // Materialized path: "/isp_abc/reseller_xyz/dist_123"
-	PathDepth         int      `bson:"pathDepth,omitempty" json:"pathDepth,omitempty"`                 // Depth of path (number of segments)
-	Ancestors         []string `bson:"ancestors,omitempty" json:"ancestors,omitempty"`                 // All ancestor IDs from root to parent
-	Level             int      `bson:"level,omitempty" json:"level,omitempty"`                         // Hierarchy level (0=root, 1=child, etc.)
-	IsLeaf            bool     `bson:"isLeaf,omitempty" json:"isLeaf,omitempty"`                       // True if has no children
-	ChildrenCount     int      `bson:"childrenCount,omitempty" json:"childrenCount,omitempty"`         // Count of direct children
-	AllowedChildTypes []string `bson:"allowedChildTypes,omitempty" json:"allowedChildTypes,omitempty"` // Permitted child types
-	MaxDepth          int      `bson:"maxDepth,omitempty" json:"maxDepth,omitempty"`                   // Maximum allowed descendant depth
+	// Hierarchy Management
+	ParentTenantID string   `bson:"parentTenantID,omitempty" json:"parentTenantID,omitempty"`
+	ChildIDs       []string `bson:"childIds,omitempty" json:"childIds,omitempty"`
+	Path           string   `bson:"path,omitempty" json:"path,omitempty"`
+	PathDepth      int      `bson:"pathDepth,omitempty" json:"pathDepth,omitempty"`
+	Ancestors      []string `bson:"ancestors,omitempty" json:"ancestors,omitempty"`
+	Level          int      `bson:"level,omitempty" json:"level,omitempty"`
+	IsLeaf         bool     `bson:"isLeaf,omitempty" json:"isLeaf,omitempty"`
+	ChildrenCount  int      `bson:"childrenCount,omitempty" json:"childrenCount,omitempty"`
+
+	// Hierarchy Constraints
+	MaxDepth          int      `bson:"maxDepth,omitempty" json:"maxDepth,omitempty"`
+	AllowedChildTypes []string `bson:"allowedChildTypes,omitempty" json:"allowedChildTypes,omitempty"`
+
+	DefaultEmail     string           `bson:"defaultEmail,omitempty" json:"defaultEmail,omitempty"`
+	DefaultPhone     string           `bson:"defaultPhone,omitempty" json:"defaultPhone,omitempty"`
+	PermanentAddress *AddressModel    `bson:"permanentAddress,omitempty" json:"permanentAddress,omitempty"`
+	CurrentAddress   *AddressModel    `bson:"currentAddress,omitempty" json:"currentAddress,omitempty"`
+	TenantGST        []GSTModel       `bson:"tenantGST,omitempty" json:"tenantGST,omitempty"`
+	TenantPAN        *PANModel        `bson:"tenantPAN,omitempty" json:"tenantPAN,omitempty"`
+	TenantTAN        *TANModel        `bson:"tenantTAN,omitempty" json:"tenantTAN,omitempty"`
+	TenantCIN        *CINModel        `bson:"tenantCIN,omitempty" json:"tenantCIN,omitempty"`
+	EnabledFeatures  *EnabledFeatures `bson:"enabledFeatures,omitempty" json:"enabledFeatures,omitempty"`
+	OLTs             []string         `bson:"olts,omitempty" json:"olts,omitempty"`
+
+	// Note: Provider configurations (KYC, SMS, Mail, App Messaging) are now managed through
+	// separate binding collections and published via separate provider binding events.
+	// See: tenant.provider.binding.event.model.go
+
+	IsSystem *bool `bson:"isSystem,omitempty" json:"isSystem,omitempty"`
+	IsActive *bool `bson:"isActive,omitempty" json:"isActive,omitempty"`
+	Version  int   `bson:"version,omitempty" json:"version,omitempty"`
 }
 
 type GSTModel struct {
@@ -176,6 +179,7 @@ type TenantPaymentGatewayConfig struct {
 
 type SMSProviderTenantConfig struct {
 	ProviderID   string                   `bson:"providerID,omitempty" json:"providerID,omitempty"`
+	Channel      string                   `bson:"channel,omitempty" json:"channel,omitempty"` // SMS channel (e.g., "OTP", "Promotional", "Transactional")
 	UseTemplate  bool                     `bson:"useTemplate" json:"useTemplate"`
 	UseParent    bool                     `bson:"useParent,omitempty" json:"useParent,omitempty"`
 	TenantConfig *TenantSMSProviderConfig `bson:"tenantConfig,omitempty" json:"tenantConfig,omitempty"`
@@ -231,10 +235,16 @@ type TenantKYCProviderConfig struct {
 
 type AppMessagingProvidersModel struct {
 	MessageProviderID string                    `bson:"messageProviderID,omitempty" json:"messageProviderID,omitempty"`
+	Channel           string                    `bson:"channel,omitempty" json:"channel,omitempty"` // Messaging channel (WhatsApp, Telegram, etc.)
 	UseTemplate       bool                      `bson:"useTemplate" json:"useTemplate"`
 	UseParent         bool                      `bson:"useParent,omitempty" json:"useParent,omitempty"`
 	TenantConfig      *TenantAppMessagingConfig `bson:"tenantConfig,omitempty" json:"tenantConfig,omitempty"`
 	MessageProvider   MessagingProvider         `bson:"messageProvider,omitempty" json:"messageProvider,omitempty"`
+	Priority          int                       `bson:"priority,omitempty" json:"priority,omitempty"`
+	IsActive          bool                      `bson:"isActive,omitempty" json:"isActive,omitempty"`
+	FailoverOn        bool                      `bson:"failoverOn,omitempty" json:"failoverOn,omitempty"`
+	MaxRetries        int                       `bson:"maxRetries,omitempty" json:"maxRetries,omitempty"`
+	Weight            int                       `bson:"weight,omitempty" json:"weight,omitempty"`
 }
 
 type TenantAppMessagingConfig struct {

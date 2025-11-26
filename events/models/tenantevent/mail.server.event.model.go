@@ -1,29 +1,41 @@
 package tenantevent
 
 type MailServerInsertEventModel struct {
-	ID              string           `bson:"_id" json:"id"`
-	SortCode        string           `bson:"sort_code" json:"sort_code"`
-	AssignedTo      []string         `bson:"assignedTo" json:"assignedTo"`
-	SMTPConfig      *SMTPConfig      `bson:"smtp" json:"smtp"`
-	SendGridConfig  *SendGridConfig  `bson:"sendgrid" json:"sendgrid"`
-	MailgunConfig   *MailgunConfig   `bson:"mailgun" json:"mailgun"`
-	PostalConfig    *PostalConfig    `bson:"postal" json:"postal"`
-	MailchimpConfig *MailchimpConfig `bson:"mailchimp" json:"mailchimp"`
-	IsActive        bool             `bson:"isActive" json:"isActive"`
-	Version         int              `bson:"version" json:"version"`
+	ID                 string           `bson:"_id" json:"id"`
+	Name               string           `bson:"name" json:"name"`
+	SortCode           string           `bson:"sort_code" json:"sort_code"`
+	OwnerTenantID      string           `bson:"ownerTenantID" json:"ownerTenantID"`
+	OwnerTenantType    string           `bson:"ownerTenantType" json:"ownerTenantType"`
+	Scope              string           `bson:"scope" json:"scope"`
+	AllowedTenantTypes []string         `bson:"allowedTenantTypes,omitempty" json:"allowedTenantTypes,omitempty"`
+	ExplicitTenantIDs  []string         `bson:"explicitTenantIDs,omitempty" json:"explicitTenantIDs,omitempty"`
+	AssignedTo         []string         `bson:"assignedTo,omitempty" json:"assignedTo,omitempty"` // Deprecated: Use ExplicitTenantIDs when Scope=ExplicitTenants
+	SMTPConfig         *SMTPConfig      `bson:"smtp" json:"smtp"`
+	SendGridConfig     *SendGridConfig  `bson:"sendgrid" json:"sendgrid"`
+	MailgunConfig      *MailgunConfig   `bson:"mailgun" json:"mailgun"`
+	PostalConfig       *PostalConfig    `bson:"postal" json:"postal"`
+	MailchimpConfig    *MailchimpConfig `bson:"mailchimp" json:"mailchimp"`
+	IsActive           bool             `bson:"isActive" json:"isActive"`
+	Version            int              `bson:"version" json:"version"`
 }
 
 type MailServerUpdateEventModel struct {
-	ID              string           `bson:"_id" json:"id"`
-	SortCode        string           `bson:"sort_code" json:"sort_code"`
-	AssignedTo      []string         `bson:"assignedTo" json:"assignedTo"`
-	SMTPConfig      *SMTPConfig      `bson:"smtp" json:"smtp"`
-	SendGridConfig  *SendGridConfig  `bson:"sendgrid" json:"sendgrid"`
-	MailgunConfig   *MailgunConfig   `bson:"mailgun" json:"mailgun"`
-	PostalConfig    *PostalConfig    `bson:"postal" json:"postal"`
-	MailchimpConfig *MailchimpConfig `bson:"mailchimp" json:"mailchimp"`
-	IsActive        bool             `bson:"isActive" json:"isActive"`
-	Version         int              `bson:"version" json:"version"`
+	ID                 string           `bson:"_id" json:"id"`
+	Name               string           `bson:"name" json:"name"`
+	SortCode           string           `bson:"sort_code" json:"sort_code"`
+	OwnerTenantID      string           `bson:"ownerTenantID" json:"ownerTenantID"`
+	OwnerTenantType    string           `bson:"ownerTenantType" json:"ownerTenantType"`
+	Scope              string           `bson:"scope" json:"scope"`
+	AllowedTenantTypes []string         `bson:"allowedTenantTypes,omitempty" json:"allowedTenantTypes,omitempty"`
+	ExplicitTenantIDs  []string         `bson:"explicitTenantIDs,omitempty" json:"explicitTenantIDs,omitempty"`
+	AssignedTo         []string         `bson:"assignedTo,omitempty" json:"assignedTo,omitempty"` // Deprecated: Use ExplicitTenantIDs when Scope=ExplicitTenants
+	SMTPConfig         *SMTPConfig      `bson:"smtp" json:"smtp"`
+	SendGridConfig     *SendGridConfig  `bson:"sendgrid" json:"sendgrid"`
+	MailgunConfig      *MailgunConfig   `bson:"mailgun" json:"mailgun"`
+	PostalConfig       *PostalConfig    `bson:"postal" json:"postal"`
+	MailchimpConfig    *MailchimpConfig `bson:"mailchimp" json:"mailchimp"`
+	IsActive           bool             `bson:"isActive" json:"isActive"`
+	Version            int              `bson:"version" json:"version"`
 }
 
 type MailServerDeleteEventModel struct {
