@@ -40,6 +40,7 @@ type TenantInsertEventModel struct {
 	TenantCIN        CINModel        `bson:"tenantCIN,omitempty" json:"tenantCIN,omitempty"`
 	EnabledFeatures  EnabledFeatures `bson:"enabledFeatures,omitempty" json:"enabledFeatures,omitempty"`
 	OLTs             []string        `bson:"olts,omitempty" json:"olts,omitempty"`
+	TenantMFAPolicy  TenantMFAPolicy `bson:"tenantMFAPolicy,omitempty" json:"tenantMFAPolicy,omitempty"`
 
 	// Note: Provider configurations (KYC, SMS, Mail, App Messaging) are now managed through
 	// separate binding collections and published via separate provider binding events.

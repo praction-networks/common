@@ -4,6 +4,10 @@
 
 set -e
 
+# Configure Go to skip checksum verification for private repositories
+export GOPRIVATE=github.com/praction-networks/*
+export GONOSUMDB=github.com/praction-networks/*
+
 PACKAGE_NAME="github.com/praction-networks/common"
 LATEST_VERSION=$(git describe --tags --abbrev=0)
 
