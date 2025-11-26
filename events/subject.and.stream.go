@@ -49,6 +49,20 @@ const (
 	MessagingTemplateUpdateSubject  Subject = "messagingtemplate.updated"
 	MessagingTemplateDeleteSubject  Subject = "messagingtemplate.deleted"
 
+	// Tenant Provider Binding Events
+	TenantSMSProviderBindingCreatedSubject  Subject = "tenant.smsbinding.created"
+	TenantSMSProviderBindingUpdatedSubject  Subject = "tenant.smsbinding.updated"
+	TenantSMSProviderBindingDeletedSubject  Subject = "tenant.smsbinding.deleted"
+	TenantMailServerBindingCreatedSubject   Subject = "tenant.mailbinding.created"
+	TenantMailServerBindingUpdatedSubject   Subject = "tenant.mailbinding.updated"
+	TenantMailServerBindingDeletedSubject   Subject = "tenant.mailbinding.deleted"
+	TenantKYCProviderBindingCreatedSubject  Subject = "tenant.kycbinding.created"
+	TenantKYCProviderBindingUpdatedSubject  Subject = "tenant.kycbinding.updated"
+	TenantKYCProviderBindingDeletedSubject  Subject = "tenant.kycbinding.deleted"
+	TenantAppMessagingBindingCreatedSubject Subject = "tenant.appmessagingbinding.created"
+	TenantAppMessagingBindingUpdatedSubject Subject = "tenant.appmessagingbinding.updated"
+	TenantAppMessagingBindingDeletedSubject Subject = "tenant.appmessagingbinding.deleted"
+
 	//Domain User Service Event Initialization
 	TenantUserCreatedSubject Subject = "tenantuser.created"
 	TenantUserUpdatedSubject Subject = "tenantuser.updated"
@@ -112,6 +126,19 @@ var Streams = map[StreamName]StreamMetadata{
 			MessagingTemplateCreatedSubject,
 			MessagingTemplateUpdateSubject,
 			MessagingTemplateDeleteSubject,
+			// Tenant Provider Binding Events
+			TenantSMSProviderBindingCreatedSubject,
+			TenantSMSProviderBindingUpdatedSubject,
+			TenantSMSProviderBindingDeletedSubject,
+			TenantMailServerBindingCreatedSubject,
+			TenantMailServerBindingUpdatedSubject,
+			TenantMailServerBindingDeletedSubject,
+			TenantKYCProviderBindingCreatedSubject,
+			TenantKYCProviderBindingUpdatedSubject,
+			TenantKYCProviderBindingDeletedSubject,
+			TenantAppMessagingBindingCreatedSubject,
+			TenantAppMessagingBindingUpdatedSubject,
+			TenantAppMessagingBindingDeletedSubject,
 		},
 	},
 

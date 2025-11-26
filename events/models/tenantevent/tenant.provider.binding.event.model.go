@@ -1,0 +1,175 @@
+package tenantevent
+
+// ==================== SMS PROVIDER BINDING EVENTS ====================
+
+// TenantSMSProviderBindingInsertEventModel represents an SMS provider binding creation event
+type TenantSMSProviderBindingInsertEventModel struct {
+	ID               string                   `bson:"_id" json:"id"`
+	TenantID         string                   `bson:"tenantID" json:"tenantID"`
+	Channel          string                   `bson:"channel" json:"channel"`
+	ProviderID       string                   `bson:"providerID,omitempty" json:"providerID,omitempty"`
+	UseTemplate      bool                     `bson:"useTemplate" json:"useTemplate"`
+	UseParent        bool                     `bson:"useParent,omitempty" json:"useParent,omitempty"`
+	TenantConfig     *TenantSMSProviderConfig `bson:"tenantConfig,omitempty" json:"tenantConfig,omitempty"`
+	Priority         int                      `bson:"priority" json:"priority"`
+	IsActive         bool                     `bson:"isActive" json:"isActive"`
+	FailoverOn       bool                     `bson:"failoverOn" json:"failoverOn"`
+	MaxRetries       int                      `bson:"maxRetries,omitempty" json:"maxRetries,omitempty"`
+	Weight           int                      `bson:"weight,omitempty" json:"weight,omitempty"`
+	ResolvedProvider string                   `bson:"resolvedProvider,omitempty" json:"resolvedProvider,omitempty"`
+	Version          int                      `bson:"version" json:"version"`
+}
+
+// TenantSMSProviderBindingUpdateEventModel represents an SMS provider binding update event
+type TenantSMSProviderBindingUpdateEventModel struct {
+	ID               string                   `bson:"_id" json:"id"`
+	TenantID         string                   `bson:"tenantID" json:"tenantID"`
+	Channel          string                   `bson:"channel" json:"channel"`
+	ProviderID       string                   `bson:"providerID,omitempty" json:"providerID,omitempty"`
+	UseTemplate      bool                     `bson:"useTemplate" json:"useTemplate"`
+	UseParent        bool                     `bson:"useParent,omitempty" json:"useParent,omitempty"`
+	TenantConfig     *TenantSMSProviderConfig `bson:"tenantConfig,omitempty" json:"tenantConfig,omitempty"`
+	Priority         int                      `bson:"priority" json:"priority"`
+	IsActive         bool                     `bson:"isActive" json:"isActive"`
+	FailoverOn       bool                     `bson:"failoverOn" json:"failoverOn"`
+	MaxRetries       int                      `bson:"maxRetries,omitempty" json:"maxRetries,omitempty"`
+	Weight           int                      `bson:"weight,omitempty" json:"weight,omitempty"`
+	ResolvedProvider string                   `bson:"resolvedProvider,omitempty" json:"resolvedProvider,omitempty"`
+	Version          int                      `bson:"version" json:"version"`
+}
+
+// TenantSMSProviderBindingDeleteEventModel represents an SMS provider binding deletion event
+type TenantSMSProviderBindingDeleteEventModel struct {
+	ID       string `bson:"_id" json:"id"`
+	TenantID string `bson:"tenantID" json:"tenantID"`
+}
+
+// ==================== MAIL SERVER BINDING EVENTS ====================
+
+// TenantMailServerBindingInsertEventModel represents a Mail server binding creation event
+type TenantMailServerBindingInsertEventModel struct {
+	ID               string                  `bson:"_id" json:"id"`
+	TenantID         string                  `bson:"tenantID" json:"tenantID"`
+	ProviderID       string                  `bson:"providerID,omitempty" json:"providerID,omitempty"`
+	UseTemplate      bool                    `bson:"useTemplate" json:"useTemplate"`
+	UseParent        bool                    `bson:"useParent,omitempty" json:"useParent,omitempty"`
+	TenantConfig     *TenantMailServerConfig `bson:"tenantConfig,omitempty" json:"tenantConfig,omitempty"`
+	Priority         int                     `bson:"priority" json:"priority"`
+	IsActive         bool                    `bson:"isActive" json:"isActive"`
+	FailoverOn       bool                    `bson:"failoverOn" json:"failoverOn"`
+	MaxRetries       int                     `bson:"maxRetries,omitempty" json:"maxRetries,omitempty"`
+	Weight           int                     `bson:"weight,omitempty" json:"weight,omitempty"`
+	ResolvedSortCode string                  `bson:"resolvedSortCode,omitempty" json:"resolvedSortCode,omitempty"`
+	Version          int                     `bson:"version" json:"version"`
+}
+
+// TenantMailServerBindingUpdateEventModel represents a Mail server binding update event
+type TenantMailServerBindingUpdateEventModel struct {
+	ID               string                  `bson:"_id" json:"id"`
+	TenantID         string                  `bson:"tenantID" json:"tenantID"`
+	ProviderID       string                  `bson:"providerID,omitempty" json:"providerID,omitempty"`
+	UseTemplate      bool                    `bson:"useTemplate" json:"useTemplate"`
+	UseParent        bool                    `bson:"useParent,omitempty" json:"useParent,omitempty"`
+	TenantConfig     *TenantMailServerConfig `bson:"tenantConfig,omitempty" json:"tenantConfig,omitempty"`
+	Priority         int                     `bson:"priority" json:"priority"`
+	IsActive         bool                    `bson:"isActive" json:"isActive"`
+	FailoverOn       bool                    `bson:"failoverOn" json:"failoverOn"`
+	MaxRetries       int                     `bson:"maxRetries,omitempty" json:"maxRetries,omitempty"`
+	Weight           int                     `bson:"weight,omitempty" json:"weight,omitempty"`
+	ResolvedSortCode string                  `bson:"resolvedSortCode,omitempty" json:"resolvedSortCode,omitempty"`
+	Version          int                     `bson:"version" json:"version"`
+}
+
+// TenantMailServerBindingDeleteEventModel represents a Mail server binding deletion event
+type TenantMailServerBindingDeleteEventModel struct {
+	ID       string `bson:"_id" json:"id"`
+	TenantID string `bson:"tenantID" json:"tenantID"`
+}
+
+// ==================== KYC PROVIDER BINDING EVENTS ====================
+
+// TenantKYCProviderBindingInsertEventModel represents a KYC provider binding creation event
+type TenantKYCProviderBindingInsertEventModel struct {
+	ID               string                   `bson:"_id" json:"id"`
+	TenantID         string                   `bson:"tenantID" json:"tenantID"`
+	ProviderType     string                   `bson:"providerType" json:"providerType"`
+	ProviderID       string                   `bson:"providerID,omitempty" json:"providerID,omitempty"`
+	UseTemplate      bool                     `bson:"useTemplate" json:"useTemplate"`
+	UseParent        bool                     `bson:"useParent,omitempty" json:"useParent,omitempty"`
+	TenantConfig     *TenantKYCProviderConfig `bson:"tenantConfig,omitempty" json:"tenantConfig,omitempty"`
+	Priority         int                      `bson:"priority" json:"priority"`
+	IsActive         bool                     `bson:"isActive" json:"isActive"`
+	FailoverOn       bool                     `bson:"failoverOn" json:"failoverOn"`
+	MaxRetries       int                      `bson:"maxRetries,omitempty" json:"maxRetries,omitempty"`
+	Weight           int                      `bson:"weight,omitempty" json:"weight,omitempty"`
+	ResolvedProvider string                   `bson:"resolvedProvider,omitempty" json:"resolvedProvider,omitempty"`
+	Version          int                      `bson:"version" json:"version"`
+}
+
+// TenantKYCProviderBindingUpdateEventModel represents a KYC provider binding update event
+type TenantKYCProviderBindingUpdateEventModel struct {
+	ID               string                   `bson:"_id" json:"id"`
+	TenantID         string                   `bson:"tenantID" json:"tenantID"`
+	ProviderType     string                   `bson:"providerType" json:"providerType"`
+	ProviderID       string                   `bson:"providerID,omitempty" json:"providerID,omitempty"`
+	UseTemplate      bool                     `bson:"useTemplate" json:"useTemplate"`
+	UseParent        bool                     `bson:"useParent,omitempty" json:"useParent,omitempty"`
+	TenantConfig     *TenantKYCProviderConfig `bson:"tenantConfig,omitempty" json:"tenantConfig,omitempty"`
+	Priority         int                      `bson:"priority" json:"priority"`
+	IsActive         bool                     `bson:"isActive" json:"isActive"`
+	FailoverOn       bool                     `bson:"failoverOn" json:"failoverOn"`
+	MaxRetries       int                      `bson:"maxRetries,omitempty" json:"maxRetries,omitempty"`
+	Weight           int                      `bson:"weight,omitempty" json:"weight,omitempty"`
+	ResolvedProvider string                   `bson:"resolvedProvider,omitempty" json:"resolvedProvider,omitempty"`
+	Version          int                      `bson:"version" json:"version"`
+}
+
+// TenantKYCProviderBindingDeleteEventModel represents a KYC provider binding deletion event
+type TenantKYCProviderBindingDeleteEventModel struct {
+	ID       string `bson:"_id" json:"id"`
+	TenantID string `bson:"tenantID" json:"tenantID"`
+}
+
+// ==================== APP MESSAGING BINDING EVENTS ====================
+
+// TenantAppMessagingBindingInsertEventModel represents an App Messaging provider binding creation event
+type TenantAppMessagingBindingInsertEventModel struct {
+	ID                string                    `bson:"_id" json:"id"`
+	TenantID          string                    `bson:"tenantID" json:"tenantID"`
+	Channel           string                    `bson:"channel" json:"channel"`
+	MessageProviderID string                    `bson:"messageProviderID,omitempty" json:"messageProviderID,omitempty"`
+	UseTemplate       bool                      `bson:"useTemplate" json:"useTemplate"`
+	UseParent         bool                      `bson:"useParent,omitempty" json:"useParent,omitempty"`
+	TenantConfig      *TenantAppMessagingConfig `bson:"tenantConfig,omitempty" json:"tenantConfig,omitempty"`
+	Priority          int                       `bson:"priority" json:"priority"`
+	IsActive          bool                      `bson:"isActive" json:"isActive"`
+	FailoverOn        bool                      `bson:"failoverOn" json:"failoverOn"`
+	MaxRetries        int                       `bson:"maxRetries,omitempty" json:"maxRetries,omitempty"`
+	Weight            int                       `bson:"weight,omitempty" json:"weight,omitempty"`
+	ResolvedProvider  string                    `bson:"resolvedProvider,omitempty" json:"resolvedProvider,omitempty"`
+	Version           int                       `bson:"version" json:"version"`
+}
+
+// TenantAppMessagingBindingUpdateEventModel represents an App Messaging provider binding update event
+type TenantAppMessagingBindingUpdateEventModel struct {
+	ID                string                    `bson:"_id" json:"id"`
+	TenantID          string                    `bson:"tenantID" json:"tenantID"`
+	Channel           string                    `bson:"channel" json:"channel"`
+	MessageProviderID string                    `bson:"messageProviderID,omitempty" json:"messageProviderID,omitempty"`
+	UseTemplate       bool                      `bson:"useTemplate" json:"useTemplate"`
+	UseParent         bool                      `bson:"useParent,omitempty" json:"useParent,omitempty"`
+	TenantConfig      *TenantAppMessagingConfig `bson:"tenantConfig,omitempty" json:"tenantConfig,omitempty"`
+	Priority          int                       `bson:"priority" json:"priority"`
+	IsActive          bool                      `bson:"isActive" json:"isActive"`
+	FailoverOn        bool                      `bson:"failoverOn" json:"failoverOn"`
+	MaxRetries        int                       `bson:"maxRetries,omitempty" json:"maxRetries,omitempty"`
+	Weight            int                       `bson:"weight,omitempty" json:"weight,omitempty"`
+	ResolvedProvider  string                    `bson:"resolvedProvider,omitempty" json:"resolvedProvider,omitempty"`
+	Version           int                       `bson:"version" json:"version"`
+}
+
+// TenantAppMessagingBindingDeleteEventModel represents an App Messaging provider binding deletion event
+type TenantAppMessagingBindingDeleteEventModel struct {
+	ID       string `bson:"_id" json:"id"`
+	TenantID string `bson:"tenantID" json:"tenantID"`
+}
