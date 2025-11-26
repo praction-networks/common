@@ -50,33 +50,33 @@ type TenantInsertEventModel struct {
 }
 
 type TenantUpdateEventModel struct {
-	ID               string                         `bson:"_id" json:"id"`
-	Name             string                         `bson:"name" json:"name"`
-	Code             string                         `bson:"code" json:"code"`
-	Type             string                         `bson:"type" json:"type"`
-	Fqdn             string                         `bson:"fqdn,omitempty" json:"fqdn,omitempty"`
-	Environment      string                         `bson:"environment,omitempty" json:"environment,omitempty"`
-	EntType          string                         `bson:"entType,omitempty" json:"entType,omitempty"`
-	ParentTenantID   string                         `bson:"parentTenantID,omitempty" json:"parentTenantID,omitempty"`
-	ChildIDs         []string                       `bson:"childIDs,omitempty" json:"childIDs,omitempty"`
-	DefaultEmail     string                         `bson:"defaultEmail" json:"defaultEmail"`
-	DefaultPhone     string                         `bson:"defaultPhone" json:"defaultPhone"`
-	PermanentAddress AddressModel                   `bson:"permanentAddress" json:"permanentAddress"`
-	CurrentAddress   AddressModel                   `bson:"currentAddress" json:"currentAddress"`
-	TenantGST        []GSTModel                     `bson:"tenantGST" json:"tenantGST"`
-	TenantPAN        PANModel                       `bson:"tenantPAN" json:"tenantPAN"`
-	TenantTAN        TANModel                       `bson:"tenantTAN" json:"tenantTAN"`
-	TenantCIN        CINModel                       `bson:"tenantCIN" json:"tenantCIN"`
-	EnabledFeatures  EnabledFeatures                `bson:"enabledFeatures,omitempty" json:"enabledFeatures,omitempty"`
-	OLTs             []string                       `bson:"olts,omitempty" json:"olts,omitempty"`
-	KYCProvider      ProvidersModel                 `bson:"kycProvider,omitempty" json:"kycProvider,omitempty"`
-	PaymentGateway   ProvidersModel                 `bson:"paymentGateway,omitempty" json:"paymentGateway,omitempty"`
-	SMSProvider      ProvidersModel                 `bson:"smsProvider,omitempty" json:"smsProvider,omitempty"`
-	MailProvider     ProvidersModel                 `bson:"mailProvider,omitempty" json:"mailProvider,omitempty"`
-	AppsMessanger    []AppMessagingProvidersModel   `bson:"appsMessanger,omitempty" json:"appsMessanger,omitempty"`
-	ExternalRadius   []ExternalRadiusProvidersModel `bson:"externalRadius,omitempty" json:"externalRadius,omitempty"`
-	IsActive         bool                           `bson:"isActive" json:"isActive"`
-	Version          int                            `bson:"version,omitempty" json:"version,omitempty"`
+	ID               string                           `bson:"_id" json:"id"`
+	Name             string                           `bson:"name" json:"name"`
+	Code             string                           `bson:"code" json:"code"`
+	Type             string                           `bson:"type" json:"type"`
+	Fqdn             string                           `bson:"fqdn,omitempty" json:"fqdn,omitempty"`
+	Environment      string                           `bson:"environment,omitempty" json:"environment,omitempty"`
+	EntType          string                           `bson:"entType,omitempty" json:"entType,omitempty"`
+	ParentTenantID   string                           `bson:"parentTenantID,omitempty" json:"parentTenantID,omitempty"`
+	ChildIDs         []string                         `bson:"childIDs,omitempty" json:"childIDs,omitempty"`
+	DefaultEmail     string                           `bson:"defaultEmail" json:"defaultEmail"`
+	DefaultPhone     string                           `bson:"defaultPhone" json:"defaultPhone"`
+	PermanentAddress AddressModel                     `bson:"permanentAddress" json:"permanentAddress"`
+	CurrentAddress   AddressModel                     `bson:"currentAddress" json:"currentAddress"`
+	TenantGST        []GSTModel                       `bson:"tenantGST" json:"tenantGST"`
+	TenantPAN        PANModel                         `bson:"tenantPAN" json:"tenantPAN"`
+	TenantTAN        TANModel                         `bson:"tenantTAN" json:"tenantTAN"`
+	TenantCIN        CINModel                         `bson:"tenantCIN" json:"tenantCIN"`
+	EnabledFeatures  EnabledFeatures                  `bson:"enabledFeatures,omitempty" json:"enabledFeatures,omitempty"`
+	OLTs             []string                         `bson:"olts,omitempty" json:"olts,omitempty"`
+	KYCProvider      []KYCProviderTenantConfig        `bson:"kycProvider,omitempty" json:"kycProvider,omitempty"`
+	PaymentGateway   ProvidersModel                   `bson:"paymentGateway,omitempty" json:"paymentGateway,omitempty"`
+	SMSProvider      []SMSProviderTenantConfig        `bson:"smsProvider,omitempty" json:"smsProvider,omitempty"`
+	MailProvider     []MailServerProviderTenantConfig `bson:"mailProvider,omitempty" json:"mailProvider,omitempty"`
+	AppsMessanger    []AppMessagingProvidersModel     `bson:"appsMessanger,omitempty" json:"appsMessanger,omitempty"`
+	ExternalRadius   []ExternalRadiusProvidersModel   `bson:"externalRadius,omitempty" json:"externalRadius,omitempty"`
+	IsActive         bool                             `bson:"isActive" json:"isActive"`
+	Version          int                              `bson:"version,omitempty" json:"version,omitempty"`
 
 	// ==================== HIERARCHY FIELDS (NEW) ====================
 	// These fields enable other services to understand tenant relationships
@@ -160,18 +160,103 @@ type TenantHierarchyRecomputedEventModel struct {
 }
 
 type ProvidersModel struct {
-	DefaultProviderID string   `bson:"defaultProviderID,omitempty" json:"defaultProviderID,omitempty"`
-	Providers         []string `bson:"providers,omitempty" json:"providers,omitempty"`
+	DefaultProviderID string                      `bson:"defaultProviderID,omitempty" json:"defaultProviderID,omitempty"`
+	UseTemplate       bool                        `bson:"useTemplate" json:"useTemplate"`
+	UseParent         bool                        `bson:"useParent,omitempty" json:"useParent,omitempty"`
+	TenantConfig      *TenantPaymentGatewayConfig `bson:"tenantConfig,omitempty" json:"tenantConfig,omitempty"`
+	Providers         []string                    `bson:"providers,omitempty" json:"providers,omitempty"`
+}
+
+type TenantPaymentGatewayConfig struct {
+	DefaultProviderID string         `bson:"defaultProviderID" json:"defaultProviderID"`
+	Providers         []string       `bson:"providers" json:"providers"`
+	Gateway           PaymentGateway `bson:"gateway" json:"gateway"`
+	Metadata          map[string]any `bson:"metadata" json:"metadata"`
+}
+
+type SMSProviderTenantConfig struct {
+	ProviderID   string                   `bson:"providerID,omitempty" json:"providerID,omitempty"`
+	UseTemplate  bool                     `bson:"useTemplate" json:"useTemplate"`
+	UseParent    bool                     `bson:"useParent,omitempty" json:"useParent,omitempty"`
+	TenantConfig *TenantSMSProviderConfig `bson:"tenantConfig,omitempty" json:"tenantConfig,omitempty"`
+	Priority     int                      `bson:"priority" json:"priority"`
+	IsActive     bool                     `bson:"isActive" json:"isActive"`
+	FailoverOn   bool                     `bson:"failoverOn" json:"failoverOn"`
+	MaxRetries   int                      `bson:"maxRetries,omitempty" json:"maxRetries,omitempty"`
+	Weight       int                      `bson:"weight,omitempty" json:"weight,omitempty"`
+}
+
+type TenantSMSProviderConfig struct {
+	Provider SMSType        `bson:"provider" json:"provider"`
+	Metadata map[string]any `bson:"metadata" json:"metadata"`
+}
+
+type MailServerProviderTenantConfig struct {
+	ProviderID   string                  `bson:"providerID,omitempty" json:"providerID,omitempty"`
+	UseTemplate  bool                    `bson:"useTemplate" json:"useTemplate"`
+	UseParent    bool                    `bson:"useParent,omitempty" json:"useParent,omitempty"`
+	TenantConfig *TenantMailServerConfig `bson:"tenantConfig,omitempty" json:"tenantConfig,omitempty"`
+	Priority     int                     `bson:"priority" json:"priority"`
+	IsActive     bool                    `bson:"isActive" json:"isActive"`
+	FailoverOn   bool                    `bson:"failoverOn" json:"failoverOn"`
+	MaxRetries   int                     `bson:"maxRetries,omitempty" json:"maxRetries,omitempty"`
+	Weight       int                     `bson:"weight,omitempty" json:"weight,omitempty"`
+}
+
+type TenantMailServerConfig struct {
+	SortCode        MailProviderType `bson:"sort_code" json:"sort_code"`
+	SMTPConfig      *SMTPConfig      `bson:"smtp,omitempty" json:"smtp,omitempty"`
+	SendGridConfig  *SendGridConfig  `bson:"sendgrid,omitempty" json:"sendgrid,omitempty"`
+	MailgunConfig   *MailgunConfig   `bson:"mailgun,omitempty" json:"mailgun,omitempty"`
+	PostalConfig    *PostalConfig    `bson:"postal,omitempty" json:"postal,omitempty"`
+	MailchimpConfig *MailchimpConfig `bson:"mailchimp,omitempty" json:"mailchimp,omitempty"`
+}
+
+type KYCProviderTenantConfig struct {
+	ProviderID   string                   `bson:"providerID,omitempty" json:"providerID,omitempty"`
+	UseTemplate  bool                     `bson:"useTemplate" json:"useTemplate"`
+	UseParent    bool                     `bson:"useParent,omitempty" json:"useParent,omitempty"`
+	TenantConfig *TenantKYCProviderConfig `bson:"tenantConfig,omitempty" json:"tenantConfig,omitempty"`
+	Priority     int                      `bson:"priority" json:"priority"`
+	IsActive     bool                     `bson:"isActive" json:"isActive"`
+	FailoverOn   bool                     `bson:"failoverOn" json:"failoverOn"`
+	MaxRetries   int                      `bson:"maxRetries,omitempty" json:"maxRetries,omitempty"`
+	Weight       int                      `bson:"weight,omitempty" json:"weight,omitempty"`
+}
+
+type TenantKYCProviderConfig struct {
+	Provider KYCType        `bson:"provider" json:"provider"`
+	Metadata map[string]any `bson:"metadata" json:"metadata"`
 }
 
 type AppMessagingProvidersModel struct {
-	MessageProviderID string `bson:"messageProviderID,omitempty" json:"messageProviderID,omitempty"`
-	MessageProvider   string `bson:"messageProvider,omitempty" json:"messageProvider,omitempty"`
+	MessageProviderID string                    `bson:"messageProviderID,omitempty" json:"messageProviderID,omitempty"`
+	UseTemplate       bool                      `bson:"useTemplate" json:"useTemplate"`
+	UseParent         bool                      `bson:"useParent,omitempty" json:"useParent,omitempty"`
+	TenantConfig      *TenantAppMessagingConfig `bson:"tenantConfig,omitempty" json:"tenantConfig,omitempty"`
+	MessageProvider   MessagingProvider         `bson:"messageProvider,omitempty" json:"messageProvider,omitempty"`
+}
+
+type TenantAppMessagingConfig struct {
+	MessageProvider      MessagingProvider `bson:"messageProvider" json:"messageProvider"`
+	Metadata             map[string]any    `bson:"metadata" json:"metadata"`
+	PhoneNumberID        string            `bson:"phoneNumberID,omitempty" json:"phoneNumberID,omitempty"`
+	BusinessAccountID    string            `bson:"businessAccountID,omitempty" json:"businessAccountID,omitempty"`
+	AccessToken          string            `bson:"accessToken,omitempty" json:"accessToken,omitempty"`
+	AllowedMessagesTypes []string          `bson:"allowedMessagesTypes,omitempty" json:"allowedMessagesTypes,omitempty"`
 }
 
 type ExternalRadiusProvidersModel struct {
-	ExternalRadiusProviderID string   `bson:"externalRadiusProviderID,omitempty" json:"externalRadiusProviderID,omitempty"`
-	ExternalRadiusProviders  []string `bson:"externalRadiusProviders,omitempty" json:"externalRadiusProviders,omitempty"`
+	ExternalRadiusProviderID string                      `bson:"externalRadiusProviderID,omitempty" json:"externalRadiusProviderID,omitempty"`
+	UseTemplate              bool                        `bson:"useTemplate" json:"useTemplate"`
+	UseParent                bool                        `bson:"useParent,omitempty" json:"useParent,omitempty"`
+	TenantConfig             *TenantRadiusProviderConfig `bson:"tenantConfig,omitempty" json:"tenantConfig,omitempty"`
+	ExternalRadiusProviders  RadiusProvider              `bson:"externalRadiusProviders,omitempty" json:"externalRadiusProviders,omitempty"`
+}
+
+type TenantRadiusProviderConfig struct {
+	Provider RadiusProvider `bson:"provider" json:"provider"`
+	Metadata map[string]any `bson:"metadata" json:"metadata"`
 }
 
 type PANModel struct {
@@ -304,6 +389,13 @@ type TenantDelete struct {
 	ID primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 }
 
+// Lightweight enum aliases to mirror tenant-service models without a direct dependency
+type MailProviderType string
+type MessagingProvider string
+type RadiusProvider string
+type KYCType string
+type PaymentGateway string
+
 // ProviderTenantConfig represents a common configuration for providers assigned to tenants
 // Used for SMS, Mail, and other providers that support priority-based routing with failover
 type ProviderTenantConfig struct {
@@ -314,15 +406,3 @@ type ProviderTenantConfig struct {
 	MaxRetries int    `json:"maxRetries,omitempty" bson:"maxRetries,omitempty" validate:"omitempty,min=1,max=10"` // Max retries before failover (default: 3)
 	Weight     int    `json:"weight,omitempty" bson:"weight,omitempty" validate:"omitempty,min=1,max=100"`        // For load balancing (1-100)
 }
-
-// SMSProviderTenantConfig is an alias for ProviderTenantConfig for backward compatibility
-// and clearer type semantics in SMS-specific contexts
-type SMSProviderTenantConfig = ProviderTenantConfig
-
-// MailServerProviderTenantConfig is an alias for ProviderTenantConfig for backward compatibility
-// and clearer type semantics in Mail-specific contexts
-type MailServerProviderTenantConfig = ProviderTenantConfig
-
-// KYCProviderTenantConfig is an alias for ProviderTenantConfig for backward compatibility
-// and clearer type semantics in KYC-specific contexts
-type KYCProviderTenantConfig = ProviderTenantConfig
