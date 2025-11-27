@@ -1,15 +1,21 @@
 package helpers
 
 import (
+	"context"
 	"crypto/rsa"
 	"crypto/x509"
 	"encoding/pem"
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/praction-networks/common/appError"
 	"github.com/praction-networks/common/logger"
+)
+
+var (
+	IsSystemUserKey = &contextKey{"is_system_user"}
 )
 
 // AuthMiddleware validates that requests are signed by auth-service
@@ -89,8 +95,28 @@ func (m *AuthMiddleware) ValidateServiceToken(next http.Handler) http.Handler {
 			return
 		}
 
+		// Extract X-Is-System-User header (set by auth-service via forward-auth)
+		isSystemUser := false
+		if isSystemUserHeader := r.Header.Get("X-Is-System-User"); isSystemUserHeader != "" {
+			if parsed, err := strconv.ParseBool(isSystemUserHeader); err == nil {
+				isSystemUser = parsed
+			}
+		}
+
+		// Set system user status in context for downstream handlers
+		ctx := context.WithValue(r.Context(), IsSystemUserKey, isSystemUser)
+
 		// Service token signature is valid - request was validated by auth-service
-		// Proceed to next handler
-		next.ServeHTTP(w, r)
+		// Proceed to next handler with updated context
+		next.ServeHTTP(w, r.WithContext(ctx))
 	})
+}
+
+// IsSystemUser retrieves the system user status from the request context
+// Returns true if the user is a system user (SuperAdmin or IsSystem flag), false otherwise
+func IsSystemUser(ctx context.Context) bool {
+	if isSystemUser, ok := ctx.Value(IsSystemUserKey).(bool); ok {
+		return isSystemUser
+	}
+	return false
 }
