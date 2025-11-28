@@ -517,7 +517,7 @@ func BuildFromRequest(r *http.Request, policy QueryPolicy) (MongoQuery, error) {
 }
 
 // generateCacheKey creates a cache key from request and policy
-func generateCacheKey(r *http.Request, policy QueryPolicy) string {
+func generateCacheKey(r *http.Request, _ QueryPolicy) string {
 	key := r.Method + ":" + r.URL.Path + "?" + r.URL.RawQuery
 	hash := md5.Sum([]byte(key))
 	return hex.EncodeToString(hash[:])
@@ -859,7 +859,7 @@ func buildMongoQuery(fq PaginatedFeedQuery, p QueryPolicy) (MongoQuery, error) {
 }
 
 // buildAggregationPipeline builds MongoDB aggregation pipeline for complex queries
-func buildAggregationPipeline(fq PaginatedFeedQuery, p QueryPolicy, filter bson.M, opts *options.FindOptions) []bson.M {
+func buildAggregationPipeline(fq PaginatedFeedQuery, p QueryPolicy, filter bson.M, _ *options.FindOptions) []bson.M {
 	pipeline := []bson.M{}
 
 	// $geoNear must be first stage if present
@@ -1172,22 +1172,6 @@ func containsInjectionPattern(input string) bool {
 	}
 
 	return false
-}
-
-// sanitizeInput is DEPRECATED - do not use for filter/search values.
-// MongoDB driver prevents injection when using bson.M with proper type coercion.
-// Field names are validated via validAPIFieldName().
-// Values are properly escaped in buildFilter() using regexp.QuoteMeta for regex operations.
-// This function is kept for backward compatibility but should not be called.
-//
-// If you need to sanitize user input, use:
-// - regexp.QuoteMeta() for regex patterns
-// - Proper type coercion via coerceValue() for typed fields
-// - Field name validation via validAPIFieldName()
-func sanitizeInput(input string) string {
-	// This function is intentionally empty - sanitization happens at query build time
-	// through proper escaping and type coercion, not by removing characters.
-	return input
 }
 
 // validateRegexPattern checks for potentially dangerous regex patterns that could cause ReDoS
