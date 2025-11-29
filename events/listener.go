@@ -85,6 +85,29 @@ func (l *Listener) Listen(ctx context.Context) error {
 		l.InProgressTick = l.AckWait / 2
 	}
 
+	// For DeliverAllPolicy, always delete and recreate existing consumers to ensure
+	// we replay ALL messages from the beginning, including seed events that may have been
+	// published before the service started. Since handlers are idempotent, replaying is safe.
+	// This ensures notification-service and tenant-user-service catch up on seed tenant events.
+	existingConsumer, _ := stream.Consumer(ctx, l.Durable)
+	if existingConsumer != nil && l.DeliverPolicy == jetstream.DeliverAllPolicy {
+		logger.Info("Deleting existing consumer to ensure replay of all messages with DeliverAllPolicy",
+			"consumer", l.Durable,
+			"stream", string(l.StreamName),
+			"reason", "Need to catch up on all messages including seed events")
+		if err := stream.DeleteConsumer(ctx, l.Durable); err != nil {
+			logger.Warn("Failed to delete existing consumer, will try to update",
+				"consumer", l.Durable,
+				"stream", string(l.StreamName),
+				"error", err)
+			// Continue anyway - CreateOrUpdateConsumer might still work
+		} else {
+			logger.Info("Existing consumer deleted successfully, will create new one to replay all messages",
+				"consumer", l.Durable,
+				"stream", string(l.StreamName))
+		}
+	}
+
 	// Create or update the consumer (use fields available in your ConsumerConfig)
 	cc := jetstream.ConsumerConfig{
 		Name:          l.Durable,

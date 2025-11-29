@@ -120,6 +120,11 @@ func LoggingMiddleware(next http.Handler) http.Handler {
 		status := rw.Status()
 		size := rw.Size()
 
+		// Skip logging for health check endpoints to reduce noise
+		if strings.HasSuffix(r.URL.Path, "/health") {
+			return
+		}
+
 		fields := []interface{}{
 			"reqID", reqID,
 			"method", r.Method,
