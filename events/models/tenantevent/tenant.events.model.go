@@ -251,7 +251,7 @@ type AppMessagingProvidersModel struct {
 type TenantAppMessagingConfig struct {
 	MessageProvider      MessagingProvider `bson:"messageProvider" json:"messageProvider"`
 	Metadata             map[string]any    `bson:"metadata" json:"metadata"`
-	PhoneNumberID        string            `bson:"phoneNumberID,omitempty" json:"phoneNumberID,omitempty"` // Business Phone Number ID - for sending messages
+	PhoneNumberID        []string          `bson:"phoneNumberID,omitempty" json:"phoneNumberID,omitempty"` // Business Phone Number ID(s) - array of phone numbers for sending messages
 	AccessToken          string            `bson:"accessToken,omitempty" json:"accessToken,omitempty"`     // Meta Graph API Access Token - for sending messages and template submissions
 	AllowedMessagesTypes []string          `bson:"allowedMessagesTypes,omitempty" json:"allowedMessagesTypes,omitempty"`
 }
