@@ -10,6 +10,7 @@ type TenantSMSProviderBindingInsertEventModel struct {
 	ProviderID       string                   `bson:"providerID,omitempty" json:"providerID,omitempty"`
 	UseTemplate      bool                     `bson:"useTemplate" json:"useTemplate"`
 	UseParent        bool                     `bson:"useParent,omitempty" json:"useParent,omitempty"`
+	ParentTenantID   string                   `bson:"parentTenantID,omitempty" json:"parentTenantID,omitempty"` // Explicit parent tenant ID when useParent is true
 	TenantConfig     *TenantSMSProviderConfig `bson:"tenantConfig,omitempty" json:"tenantConfig,omitempty"`
 	Priority         int                      `bson:"priority" json:"priority"`
 	IsActive         bool                     `bson:"isActive" json:"isActive"`
@@ -28,6 +29,7 @@ type TenantSMSProviderBindingUpdateEventModel struct {
 	ProviderID       string                   `bson:"providerID,omitempty" json:"providerID,omitempty"`
 	UseTemplate      bool                     `bson:"useTemplate" json:"useTemplate"`
 	UseParent        bool                     `bson:"useParent,omitempty" json:"useParent,omitempty"`
+	ParentTenantID   string                   `bson:"parentTenantID,omitempty" json:"parentTenantID,omitempty"` // Explicit parent tenant ID when useParent is true
 	TenantConfig     *TenantSMSProviderConfig `bson:"tenantConfig,omitempty" json:"tenantConfig,omitempty"`
 	Priority         int                      `bson:"priority" json:"priority"`
 	IsActive         bool                     `bson:"isActive" json:"isActive"`
@@ -53,6 +55,7 @@ type TenantMailServerBindingInsertEventModel struct {
 	ProviderID       string                  `bson:"providerID,omitempty" json:"providerID,omitempty"`
 	UseTemplate      bool                    `bson:"useTemplate" json:"useTemplate"`
 	UseParent        bool                    `bson:"useParent,omitempty" json:"useParent,omitempty"`
+	ParentTenantID   string                  `bson:"parentTenantID,omitempty" json:"parentTenantID,omitempty"` // Explicit parent tenant ID when useParent is true
 	TenantConfig     *TenantMailServerConfig `bson:"tenantConfig,omitempty" json:"tenantConfig,omitempty"`
 	Priority         int                     `bson:"priority" json:"priority"`
 	IsActive         bool                    `bson:"isActive" json:"isActive"`
@@ -70,6 +73,7 @@ type TenantMailServerBindingUpdateEventModel struct {
 	ProviderID       string                  `bson:"providerID,omitempty" json:"providerID,omitempty"`
 	UseTemplate      bool                    `bson:"useTemplate" json:"useTemplate"`
 	UseParent        bool                    `bson:"useParent,omitempty" json:"useParent,omitempty"`
+	ParentTenantID   string                  `bson:"parentTenantID,omitempty" json:"parentTenantID,omitempty"` // Explicit parent tenant ID when useParent is true
 	TenantConfig     *TenantMailServerConfig `bson:"tenantConfig,omitempty" json:"tenantConfig,omitempty"`
 	Priority         int                     `bson:"priority" json:"priority"`
 	IsActive         bool                    `bson:"isActive" json:"isActive"`
@@ -96,6 +100,7 @@ type TenantKYCProviderBindingInsertEventModel struct {
 	ProviderID       string                   `bson:"providerID,omitempty" json:"providerID,omitempty"`
 	UseTemplate      bool                     `bson:"useTemplate" json:"useTemplate"`
 	UseParent        bool                     `bson:"useParent,omitempty" json:"useParent,omitempty"`
+	ParentTenantID   string                   `bson:"parentTenantID,omitempty" json:"parentTenantID,omitempty"` // Explicit parent tenant ID when useParent is true
 	TenantConfig     *TenantKYCProviderConfig `bson:"tenantConfig,omitempty" json:"tenantConfig,omitempty"`
 	Priority         int                      `bson:"priority" json:"priority"`
 	IsActive         bool                     `bson:"isActive" json:"isActive"`
@@ -114,6 +119,7 @@ type TenantKYCProviderBindingUpdateEventModel struct {
 	ProviderID       string                   `bson:"providerID,omitempty" json:"providerID,omitempty"`
 	UseTemplate      bool                     `bson:"useTemplate" json:"useTemplate"`
 	UseParent        bool                     `bson:"useParent,omitempty" json:"useParent,omitempty"`
+	ParentTenantID   string                   `bson:"parentTenantID,omitempty" json:"parentTenantID,omitempty"` // Explicit parent tenant ID when useParent is true
 	TenantConfig     *TenantKYCProviderConfig `bson:"tenantConfig,omitempty" json:"tenantConfig,omitempty"`
 	Priority         int                      `bson:"priority" json:"priority"`
 	IsActive         bool                     `bson:"isActive" json:"isActive"`
@@ -140,6 +146,7 @@ type TenantAppMessagingBindingInsertEventModel struct {
 	MessageProviderID string                    `bson:"messageProviderID,omitempty" json:"messageProviderID,omitempty"`
 	UseTemplate       bool                      `bson:"useTemplate" json:"useTemplate"`
 	UseParent         bool                      `bson:"useParent,omitempty" json:"useParent,omitempty"`
+	ParentTenantID    string                    `bson:"parentTenantID,omitempty" json:"parentTenantID,omitempty"` // Explicit parent tenant ID when useParent is true
 	TenantConfig      *TenantAppMessagingConfig `bson:"tenantConfig,omitempty" json:"tenantConfig,omitempty"`
 	Priority          int                       `bson:"priority" json:"priority"`
 	IsActive          bool                      `bson:"isActive" json:"isActive"`
@@ -158,6 +165,7 @@ type TenantAppMessagingBindingUpdateEventModel struct {
 	MessageProviderID string                    `bson:"messageProviderID,omitempty" json:"messageProviderID,omitempty"`
 	UseTemplate       bool                      `bson:"useTemplate" json:"useTemplate"`
 	UseParent         bool                      `bson:"useParent,omitempty" json:"useParent,omitempty"`
+	ParentTenantID    string                    `bson:"parentTenantID,omitempty" json:"parentTenantID,omitempty"` // Explicit parent tenant ID when useParent is true
 	TenantConfig      *TenantAppMessagingConfig `bson:"tenantConfig,omitempty" json:"tenantConfig,omitempty"`
 	Priority          int                       `bson:"priority" json:"priority"`
 	IsActive          bool                      `bson:"isActive" json:"isActive"`
