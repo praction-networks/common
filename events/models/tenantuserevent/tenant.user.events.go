@@ -10,41 +10,51 @@ type UserAccess struct {
 
 // Domain User Events (Extended Profiles)
 type TenantUserCreateEvent struct {
-	ID                 string       `json:"id" bson:"_id"`
-	FirstName          string       `json:"firstName" bson:"firstName"`
-	LastName           string       `json:"lastName" bson:"lastName"`
-	Mobile             string       `json:"mobile" bson:"mobile"`
-	IsMobileVerified   bool         `json:"isMobileVerified" bson:"isMobileVerified"`
-	Whatsapp           string       `json:"whatsapp" bson:"whatsapp"`
-	IsWhatsappVerified bool         `json:"isWhatsappVerified" bson:"isWhatsappVerified"`
-	Email              string       `json:"email" bson:"email"`
-	IsEmailVerified    bool         `json:"isEmailVerified" bson:"isEmailVerified"`
-	Gender             string       `json:"gender" bson:"gender"`
-	DOB                string       `json:"dob" bson:"dob"`
-	UserAccess         []UserAccess `json:"userAccess" bson:"userAccess"` // Multiple zone/department assignments
-	OnLeave            bool         `json:"onLeave" bson:"onLeave"`
-	IsSuspended        bool         `json:"isSuspended" bson:"isSuspended"`
-	IsActive           bool         `json:"isActive" bson:"isActive"`
-	Version            int          `json:"version" bson:"version"`
+	ID                       string       `json:"id" bson:"_id"`
+	FirstName                string       `json:"firstName" bson:"firstName"`
+	MiddleName               string       `json:"middleName" bson:"middleName"`
+	LastName                 string       `json:"lastName" bson:"lastName"`
+	Mobile                   string       `json:"mobile" bson:"mobile"`
+	IsMobileVerified         bool         `json:"isMobileVerified" bson:"isMobileVerified"`
+	OfficialMobile           string       `json:"officialMobile" bson:"officialMobile"`
+	IsOfficialMobileVerified bool         `json:"isOfficialMobileVerified" bson:"isOfficialMobileVerified"`
+	Whatsapp                 string       `json:"whatsapp" bson:"whatsapp"`
+	IsWhatsappVerified       bool         `json:"isWhatsappVerified" bson:"isWhatsappVerified"`
+	Email                    string       `json:"email" bson:"email"`
+	IsEmailVerified          bool         `json:"isEmailVerified" bson:"isEmailVerified"`
+	OfficialEmail            string       `json:"officialEmail" bson:"officialEmail"`
+	IsOfficialEmailVerified  bool         `json:"isOfficialEmailVerified" bson:"isOfficialEmailVerified"`
+	Gender                   string       `json:"gender" bson:"gender"`
+	DOB                      string       `json:"dob" bson:"dob"`
+	UserAccess               []UserAccess `json:"userAccess" bson:"userAccess"` // Multiple zone/department assignments
+	OnLeave                  bool         `json:"onLeave" bson:"onLeave"`
+	IsActive                 bool         `json:"isActive" bson:"isActive"`
+	IsSystem                 bool         `json:"isSystem" bson:"isSystem"`
+	Version                  int          `json:"version" bson:"version"`
 }
 
 type TenantUserUpdateEvent struct {
-	ID                 string       `json:"id" bson:"_id"`
-	FirstName          string       `json:"firstName" bson:"firstName"`
-	LastName           string       `json:"lastName" bson:"lastName"`
-	Mobile             string       `json:"mobile" bson:"mobile"`
-	IsMobileVerified   bool         `json:"isMobileVerified" bson:"isMobileVerified"`
-	Whatsapp           string       `json:"whatsapp" bson:"whatsapp"`
-	IsWhatsappVerified bool         `json:"isWhatsappVerified" bson:"isWhatsappVerified"`
-	Email              string       `json:"email" bson:"email"`
-	IsEmailVerified    bool         `json:"isEmailVerified" bson:"isEmailVerified"`
-	Gender             string       `json:"gender" bson:"gender"`
-	DOB                string       `json:"dob" bson:"dob"`
-	UserAccess         []UserAccess `json:"userAccess" bson:"userAccess"` // Updated assignments
-	IsSuspended        bool         `json:"isSuspended" bson:"isSuspended"`
-	OnLeave            bool         `json:"onLeave" bson:"onLeave"`
-	IsActive           bool         `json:"isActive" bson:"isActive"`
-	Version            int          `json:"version" bson:"version"`
+	ID                       string       `json:"id" bson:"_id"`
+	FirstName                string       `json:"firstName" bson:"firstName"`
+	MiddleName               string       `json:"middleName" bson:"middleName"`
+	LastName                 string       `json:"lastName" bson:"lastName"`
+	Mobile                   string       `json:"mobile" bson:"mobile"`
+	IsMobileVerified         bool         `json:"isMobileVerified" bson:"isMobileVerified"`
+	OfficialMobile           string       `json:"officialMobile" bson:"officialMobile"`
+	IsOfficialMobileVerified bool         `json:"isOfficialMobileVerified" bson:"isOfficialMobileVerified"`
+	Whatsapp                 string       `json:"whatsapp" bson:"whatsapp"`
+	IsWhatsappVerified       bool         `json:"isWhatsappVerified" bson:"isWhatsappVerified"`
+	Email                    string       `json:"email" bson:"email"`
+	IsEmailVerified          bool         `json:"isEmailVerified" bson:"isEmailVerified"`
+	OfficialEmail            string       `json:"officialEmail" bson:"officialEmail"`
+	IsOfficialEmailVerified  bool         `json:"isOfficialEmailVerified" bson:"isOfficialEmailVerified"`
+	Gender                   string       `json:"gender" bson:"gender"`
+	DOB                      string       `json:"dob" bson:"dob"`
+	UserAccess               []UserAccess `json:"userAccess" bson:"userAccess"` // Updated assignments
+	IsSystem                 bool         `json:"isSystem" bson:"isSystem"`
+	OnLeave                  bool         `json:"onLeave" bson:"onLeave"`
+	IsActive                 bool         `json:"isActive" bson:"isActive"`
+	Version                  int          `json:"version" bson:"version"`
 }
 
 type TenantUserDeleteEvent struct {
