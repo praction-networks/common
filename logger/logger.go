@@ -172,6 +172,12 @@ var ipv6Regex = regexp.MustCompile(`\b([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}\b`)
 // emailRegex matches email addresses for masking
 var emailRegex = regexp.MustCompile(`[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}`)
 
+// localTimeEncoder encodes time in local timezone with ISO8601 format
+// Example: 2025-12-03T10:54:27+05:30 (IST) or 2025-12-03T06:24:27+01:00 (CET)
+func localTimeEncoder(t time.Time, enc zapcore.PrimitiveArrayEncoder) {
+	enc.AppendString(t.Local().Format(time.RFC3339))
+}
+
 // ============================================
 // ASYNC WRITE SYNCER
 // ============================================
@@ -348,8 +354,8 @@ func InitializeLogger(config LoggerConfig) error {
 			CallerKey:      "caller",
 			MessageKey:     "msg",
 			StacktraceKey:  "stacktrace",
-			EncodeTime:     zapcore.RFC3339TimeEncoder,
-			EncodeLevel:    zapcore.CapitalLevelEncoder, // ERROR, INFO, WARN, DEBUG
+			EncodeTime:     localTimeEncoder, // Uses server's local timezone (IST, CET, etc.)
+			EncodeLevel:    zapcore.CapitalLevelEncoder,
 			EncodeCaller:   zapcore.ShortCallerEncoder,
 			EncodeDuration: zapcore.StringDurationEncoder,
 		})
