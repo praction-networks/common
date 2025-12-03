@@ -206,6 +206,98 @@ var (
 	)
 )
 
+// Security Metrics
+var (
+	// Nonce operations
+	NonceStored = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "nonce_stored_total",
+			Help: "Total nonces stored for replay protection",
+		},
+		[]string{"status"},
+	)
+
+	NonceChecks = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "nonce_checks_total",
+			Help: "Total nonce existence checks",
+		},
+		[]string{"result"}, // "exists", "not_exists"
+	)
+
+	ActiveNonces = prometheus.NewGauge(
+		prometheus.GaugeOpts{
+			Name: "active_nonces_count",
+			Help: "Current number of active nonces in Redis",
+		},
+	)
+
+	// Replay attack detection
+	ReplayAttacksDetected = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "replay_attacks_detected_total",
+			Help: "Total replay attacks detected and blocked",
+		},
+		[]string{"type", "nas_id"}, // type: "nonce_reuse", "timestamp_expired", etc.
+	)
+
+	// Security events
+	SecurityIncidents = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "security_incidents_total",
+			Help: "Total security incidents",
+		},
+		[]string{"type", "severity"}, // type: "invalid_signature", "unauthorized_nas", etc.
+	)
+
+	// HMAC validation
+	HMACValidations = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "hmac_validations_total",
+			Help: "Total HMAC signature validations",
+		},
+		[]string{"result"}, // "success", "failure"
+	)
+
+	// Timestamp validation
+	TimestampValidations = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "timestamp_validations_total",
+			Help: "Total timestamp validations",
+		},
+		[]string{"result"}, // "valid", "expired", "future"
+	)
+
+	// NAS authentication
+	NASAuthAttempts = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "nas_auth_attempts_total",
+			Help: "Total NAS authentication attempts",
+		},
+		[]string{"nas_id", "result"}, // result: "success", "failure"
+	)
+)
+
+// Redis Operation Metrics
+var (
+	RedisOperations = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "redis_operations_total",
+			Help: "Total Redis operations",
+		},
+		[]string{"operation", "status"}, // operation: "get", "set", "del", "exists"
+	)
+
+	RedisOperationDuration = prometheus.NewHistogramVec(
+		prometheus.HistogramOpts{
+			Name:    "redis_operation_duration_seconds",
+			Help:    "Redis operation duration",
+			Buckets: []float64{.0001, .0005, .001, .005, .01, .05, .1},
+		},
+		[]string{"operation"},
+	)
+)
+
 // ResponseWriter tracks response status and size
 type ResponseWriter struct {
 	http.ResponseWriter
@@ -273,6 +365,20 @@ func RegisterAllMetrics() {
 		QueryRateLimitHits,
 		QueryComplexity,
 
+		// Security metrics
+		NonceStored,
+		NonceChecks,
+		ActiveNonces,
+		ReplayAttacksDetected,
+		SecurityIncidents,
+		HMACValidations,
+		TimestampValidations,
+		NASAuthAttempts,
+
+		// Redis metrics
+		RedisOperations,
+		RedisOperationDuration,
+
 		// Default collectors
 		collectors.NewGoCollector(),
 		collectors.NewProcessCollector(collectors.ProcessCollectorOpts{}),
@@ -326,4 +432,46 @@ func IncNATSInflight(stream, subject string) {
 
 func DecNATSInflight(stream, subject string) {
 	NATSInflightMessages.WithLabelValues(stream, subject).Dec()
+}
+
+// Security Metrics Helpers
+func RecordNonceStored(status string) {
+	NonceStored.WithLabelValues(status).Inc()
+}
+
+func RecordNonceCheck(result string) {
+	NonceChecks.WithLabelValues(result).Inc()
+}
+
+func SetActiveNonces(count float64) {
+	ActiveNonces.Set(count)
+}
+
+func RecordReplayAttack(attackType string, nasId string) {
+	ReplayAttacksDetected.WithLabelValues(attackType, nasId).Inc()
+}
+
+func RecordSecurityIncident(incidentType string, severity string) {
+	SecurityIncidents.WithLabelValues(incidentType, severity).Inc()
+}
+
+func RecordHMACValidation(result string) {
+	HMACValidations.WithLabelValues(result).Inc()
+}
+
+func RecordTimestampValidation(result string) {
+	TimestampValidations.WithLabelValues(result).Inc()
+}
+
+func RecordNASAuthAttempt(nasId string, result string) {
+	NASAuthAttempts.WithLabelValues(nasId, result).Inc()
+}
+
+// Redis Metrics Helpers
+func RecordRedisOperation(operation string, status string) {
+	RedisOperations.WithLabelValues(operation, status).Inc()
+}
+
+func RecordRedisOperationDuration(operation string, duration time.Duration) {
+	RedisOperationDuration.WithLabelValues(operation).Observe(duration.Seconds())
 }
