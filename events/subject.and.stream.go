@@ -61,9 +61,10 @@ const (
 	TenantAppMessagingBindingDeletedSubject Subject = "tenant.appmessagingbinding.deleted"
 
 	//Domain User Service Event Initialization
-	TenantUserCreatedSubject Subject = "tenantuser.created"
-	TenantUserUpdatedSubject Subject = "tenantuser.updated"
-	TenantUserDeletedSubject Subject = "tenantuser.deleted"
+	TenantUserCreatedSubject     Subject = "tenantuser.created"
+	TenantUserUpdatedSubject     Subject = "tenantuser.updated"
+	TenantUserDeletedSubject     Subject = "tenantuser.deleted"
+	TenantUserPasswordSetSubject Subject = "tenantuser.password.set" // Initial password set during onboarding
 
 	// Tenant Auth Role Event Initialization
 	TenantUserRoleCreatedSubject Subject = "tenantuserrole.created"
@@ -144,6 +145,7 @@ var Streams = map[StreamName]StreamMetadata{
 			TenantUserCreatedSubject,
 			TenantUserUpdatedSubject,
 			TenantUserDeletedSubject,
+			TenantUserPasswordSetSubject,
 		},
 	},
 	AuthStream: {

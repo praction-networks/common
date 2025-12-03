@@ -62,3 +62,12 @@ type TenantUserDeleteEvent struct {
 	UserAccess []UserAccess `json:"userAccess" bson:"userAccess"` // Updated assignments
 	Version    int          `json:"version" bson:"version"`
 }
+
+// TenantUserPasswordSetEvent is published when a new user sets their initial password
+// after OTP verification during onboarding. This event is consumed by auth-service
+// to create the credential password record securely via internal NATS communication.
+type TenantUserPasswordSetEvent struct {
+	UserID       string `json:"userId"`       // User ID (cuid2)
+	PasswordHash string `json:"passwordHash"` // Bcrypt hashed password
+	Timestamp    string `json:"timestamp"`    // ISO 8601 timestamp
+}
