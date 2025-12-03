@@ -51,17 +51,23 @@ type ComplianceConfig struct {
 	Salt               string // Salt for pseudonymization (should be from env)
 	RetentionDays      int    // Log retention period (for documentation)
 	DataRegion         string // Data residency region (EU, US, etc.)
+	Enabled            bool   // Enable/disable compliance features (for dev mode)
 }
 
 // DefaultComplianceConfig returns a GDPR-compliant default configuration
 func DefaultComplianceConfig() *ComplianceConfig {
+	env := os.Getenv("ENVIRONMENT")
+	// Enable compliance by default in production, disable in dev
+	enabled := env == "production" || env == "staging" || env == "prod"
+
 	return &ComplianceConfig{
 		Mode:               ComplianceModeModerate,
-		AnonymizeIP:        true,
+		AnonymizeIP:        enabled,
 		PseudonymizeUserID: false,
 		Salt:               os.Getenv("LOG_PSEUDONYMIZATION_SALT"),
 		RetentionDays:      90,
 		DataRegion:         os.Getenv("DATA_REGION"),
+		Enabled:            enabled,
 	}
 }
 
@@ -343,7 +349,7 @@ func InitializeLogger(config LoggerConfig) error {
 			MessageKey:     "msg",
 			StacktraceKey:  "stacktrace",
 			EncodeTime:     zapcore.RFC3339TimeEncoder,
-			EncodeLevel:    zapcore.LowercaseLevelEncoder,
+			EncodeLevel:    zapcore.CapitalLevelEncoder, // ERROR, INFO, WARN, DEBUG
 			EncodeCaller:   zapcore.ShortCallerEncoder,
 			EncodeDuration: zapcore.StringDurationEncoder,
 		})
@@ -640,6 +646,11 @@ func processValue(key string, value interface{}) interface{} {
 func maskPII(keyLower, value string) string {
 	if complianceConfig == nil || value == "" {
 		return mask(value)
+	}
+
+	// In dev mode with compliance disabled, return value as-is for easier debugging
+	if !complianceConfig.Enabled {
+		return value
 	}
 
 	switch complianceConfig.Mode {
