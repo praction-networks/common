@@ -1,0 +1,152 @@
+package subscriberevent
+
+import "time"
+
+// SubscriberCreatedEvent represents a subscriber creation event
+type SubscriberCreatedEvent struct {
+	ID                     string                 `json:"id" bson:"id"`
+	TenantID               string                 `json:"tenantId" bson:"tenantId"`
+	DomainID               string                 `json:"domainId,omitempty" bson:"domainId,omitempty"`
+	Type                   string                 `json:"type" bson:"type"`
+	Status                 string                 `json:"status" bson:"status"`
+	ExternalRef            string                 `json:"externalRef,omitempty" bson:"externalRef,omitempty"`
+	FullName               string                 `json:"fullName,omitempty" bson:"fullName,omitempty"`
+	OrganizationName       string                 `json:"organizationName,omitempty" bson:"organizationName,omitempty"`
+	PrimaryMobile          string                 `json:"primaryMobile" bson:"primaryMobile"`
+	PrimaryEmail           string                 `json:"primaryEmail,omitempty" bson:"primaryEmail,omitempty"`
+	WhatsAppNumber         string                 `json:"whatsAppNumber,omitempty" bson:"whatsAppNumber,omitempty"`
+	PrimaryUserID          string                 `json:"primaryUserId,omitempty" bson:"primaryUserId,omitempty"`
+	CustomerSpecificFields map[string]interface{} `json:"customerSpecificFields,omitempty" bson:"customerSpecificFields,omitempty"`
+	CreatedAt              time.Time              `json:"createdAt" bson:"createdAt"`
+	CreatedBy              string                 `json:"createdBy,omitempty" bson:"createdBy,omitempty"`
+}
+
+// SubscriberUpdatedEvent represents a subscriber update event
+type SubscriberUpdatedEvent struct {
+	ID                     string                 `json:"id" bson:"id"`
+	TenantID               string                 `json:"tenantId" bson:"tenantId"`
+	Type                   string                 `json:"type,omitempty" bson:"type,omitempty"`
+	Status                 string                 `json:"status,omitempty" bson:"status,omitempty"`
+	FullName               string                 `json:"fullName,omitempty" bson:"fullName,omitempty"`
+	OrganizationName       string                 `json:"organizationName,omitempty" bson:"organizationName,omitempty"`
+	PrimaryMobile          string                 `json:"primaryMobile,omitempty" bson:"primaryMobile,omitempty"`
+	PrimaryEmail           string                 `json:"primaryEmail,omitempty" bson:"primaryEmail,omitempty"`
+	WhatsAppNumber         string                 `json:"whatsAppNumber,omitempty" bson:"whatsAppNumber,omitempty"`
+	CustomerSpecificFields map[string]interface{} `json:"customerSpecificFields,omitempty" bson:"customerSpecificFields,omitempty"`
+	UpdatedAt              time.Time              `json:"updatedAt" bson:"updatedAt"`
+	UpdatedBy              string                 `json:"updatedBy,omitempty" bson:"updatedBy,omitempty"`
+	Version                int                    `json:"version" bson:"version"`
+}
+
+// SubscriberDeletedEvent represents a subscriber deletion event
+type SubscriberDeletedEvent struct {
+	ID        string    `json:"id" bson:"id"`
+	TenantID  string    `json:"tenantId" bson:"tenantId"`
+	DeletedAt time.Time `json:"deletedAt" bson:"deletedAt"`
+	DeletedBy string    `json:"deletedBy,omitempty" bson:"deletedBy,omitempty"`
+}
+
+// BroadbandSubscriptionCreatedEvent represents a broadband subscription creation event
+type BroadbandSubscriptionCreatedEvent struct {
+	ID                    string    `json:"id" bson:"id"`
+	SubscriberID          string    `json:"subscriberId" bson:"subscriberId"`
+	TenantID              string    `json:"tenantId" bson:"tenantId"`
+	AccountNumber         string    `json:"accountNumber" bson:"accountNumber"`
+	Status                string    `json:"status" bson:"status"`
+	AccessType            string    `json:"accessType" bson:"accessType"`
+	PlanID                string    `json:"planId" bson:"planId"`
+	PlanName              string    `json:"planName,omitempty" bson:"planName,omitempty"`
+	SpeedDownMbps         int       `json:"speedDownMbps" bson:"speedDownMbps"`
+	SpeedUpMbps           int       `json:"speedUpMbps" bson:"speedUpMbps"`
+	InstallationAddressID string    `json:"installationAddressId,omitempty" bson:"installationAddressId,omitempty"`
+	BillingProfileID      string    `json:"billingProfileId,omitempty" bson:"billingProfileId,omitempty"`
+	PPPoEUsername         string    `json:"pppoeUsername,omitempty" bson:"pppoeUsername,omitempty"`
+	OLTDeviceID           string    `json:"oltDeviceId,omitempty" bson:"oltDeviceId,omitempty"`
+	OLTPort               string    `json:"oltPort,omitempty" bson:"oltPort,omitempty"`
+	CreatedAt             time.Time `json:"createdAt" bson:"createdAt"`
+	CreatedBy             string    `json:"createdBy,omitempty" bson:"createdBy,omitempty"`
+}
+
+// BroadbandSubscriptionUpdatedEvent represents a broadband subscription update event
+type BroadbandSubscriptionUpdatedEvent struct {
+	ID                    string    `json:"id" bson:"id"`
+	SubscriberID          string    `json:"subscriberId" bson:"subscriberId"`
+	TenantID              string    `json:"tenantId" bson:"tenantId"`
+	AccountNumber         string    `json:"accountNumber,omitempty" bson:"accountNumber,omitempty"`
+	Status                string    `json:"status,omitempty" bson:"status,omitempty"`
+	PlanID                string    `json:"planId,omitempty" bson:"planId,omitempty"`
+	SpeedDownMbps         int       `json:"speedDownMbps,omitempty" bson:"speedDownMbps,omitempty"`
+	SpeedUpMbps           int       `json:"speedUpMbps,omitempty" bson:"speedUpMbps,omitempty"`
+	InstallationAddressID string    `json:"installationAddressId,omitempty" bson:"installationAddressId,omitempty"`
+	UpdatedAt             time.Time `json:"updatedAt" bson:"updatedAt"`
+	UpdatedBy             string    `json:"updatedBy,omitempty" bson:"updatedBy,omitempty"`
+	Version               int       `json:"version" bson:"version"`
+}
+
+// BroadbandSubscriptionDeletedEvent represents a broadband subscription deletion event
+type BroadbandSubscriptionDeletedEvent struct {
+	ID            string    `json:"id" bson:"id"`
+	SubscriberID  string    `json:"subscriberId" bson:"subscriberId"`
+	TenantID      string    `json:"tenantId" bson:"tenantId"`
+	AccountNumber string    `json:"accountNumber" bson:"accountNumber"`
+	DeletedAt     time.Time `json:"deletedAt" bson:"deletedAt"`
+	DeletedBy     string    `json:"deletedBy,omitempty" bson:"deletedBy,omitempty"`
+}
+
+// HotspotProfileCreatedEvent represents a hotspot profile creation event
+type HotspotProfileCreatedEvent struct {
+	ID                string    `json:"id" bson:"id"`
+	SubscriberID      string    `json:"subscriberId" bson:"subscriberId"`
+	TenantID          string    `json:"tenantId" bson:"tenantId"`
+	Status            string    `json:"status" bson:"status"`
+	UserID            string    `json:"userId,omitempty" bson:"userId,omitempty"`
+	DefaultAuthMethod string    `json:"defaultAuthMethod" bson:"defaultAuthMethod"`
+	MaxDevices        int       `json:"maxDevices" bson:"maxDevices"`
+	AutoLoginEnabled  bool      `json:"autoLoginEnabled" bson:"autoLoginEnabled"`
+	CreatedAt         time.Time `json:"createdAt" bson:"createdAt"`
+	CreatedBy         string    `json:"createdBy,omitempty" bson:"createdBy,omitempty"`
+}
+
+// HotspotProfileUpdatedEvent represents a hotspot profile update event
+type HotspotProfileUpdatedEvent struct {
+	ID                string    `json:"id" bson:"id"`
+	SubscriberID      string    `json:"subscriberId" bson:"subscriberId"`
+	TenantID          string    `json:"tenantId" bson:"tenantId"`
+	Status            string    `json:"status,omitempty" bson:"status,omitempty"`
+	UserID            string    `json:"userId,omitempty" bson:"userId,omitempty"`
+	DefaultAuthMethod string    `json:"defaultAuthMethod,omitempty" bson:"defaultAuthMethod,omitempty"`
+	MaxDevices        int       `json:"maxDevices,omitempty" bson:"maxDevices,omitempty"`
+	UpdatedAt         time.Time `json:"updatedAt" bson:"updatedAt"`
+	UpdatedBy         string    `json:"updatedBy,omitempty" bson:"updatedBy,omitempty"`
+	Version           int       `json:"version" bson:"version"`
+}
+
+// HotspotProfileDeletedEvent represents a hotspot profile deletion event
+type HotspotProfileDeletedEvent struct {
+	ID           string    `json:"id" bson:"id"`
+	SubscriberID string    `json:"subscriberId" bson:"subscriberId"`
+	TenantID     string    `json:"tenantId" bson:"tenantId"`
+	DeletedAt    time.Time `json:"deletedAt" bson:"deletedAt"`
+	DeletedBy    string    `json:"deletedBy,omitempty" bson:"deletedBy,omitempty"`
+}
+
+// HotspotDeviceAddedEvent represents when a device is added to a hotspot profile
+type HotspotDeviceAddedEvent struct {
+	ProfileID    string    `json:"profileId" bson:"profileId"`
+	SubscriberID string    `json:"subscriberId" bson:"subscriberId"`
+	TenantID     string    `json:"tenantId" bson:"tenantId"`
+	MACAddress   string    `json:"macAddress" bson:"macAddress"`
+	DeviceName   string    `json:"deviceName,omitempty" bson:"deviceName,omitempty"`
+	DeviceType   string    `json:"deviceType,omitempty" bson:"deviceType,omitempty"`
+	Trusted      bool      `json:"trusted" bson:"trusted"`
+	AddedAt      time.Time `json:"addedAt" bson:"addedAt"`
+}
+
+// HotspotDeviceRemovedEvent represents when a device is removed from a hotspot profile
+type HotspotDeviceRemovedEvent struct {
+	ProfileID    string    `json:"profileId" bson:"profileId"`
+	SubscriberID string    `json:"subscriberId" bson:"subscriberId"`
+	TenantID     string    `json:"tenantId" bson:"tenantId"`
+	MACAddress   string    `json:"macAddress" bson:"macAddress"`
+	RemovedAt    time.Time `json:"removedAt" bson:"removedAt"`
+}

@@ -9,6 +9,7 @@ const (
 	TenantStream     StreamName = "TenantStream"
 	TenantUserStream StreamName = "TenantUserStream"
 	InventoryStream  StreamName = "InventoryStream"
+	SubscriberStream StreamName = "SubscriberStream"
 )
 
 // Global Stream names as constants
@@ -70,6 +71,23 @@ const (
 	TenantUserRoleCreatedSubject Subject = "tenantuserrole.created"
 	TenantUserRoleUpdatedSubject Subject = "tenantuserrole.updated"
 	TenantUserRoleDeletedSubject Subject = "tenantuserrole.deleted"
+
+	// Subscriber Service Event Initialization
+	SubscriberCreatedSubject Subject = "subscriber.created"
+	SubscriberUpdatedSubject Subject = "subscriber.updated"
+	SubscriberDeletedSubject Subject = "subscriber.deleted"
+
+	// Broadband Subscription Events
+	BroadbandSubscriptionCreatedSubject Subject = "subscriber.broadband.created"
+	BroadbandSubscriptionUpdatedSubject Subject = "subscriber.broadband.updated"
+	BroadbandSubscriptionDeletedSubject Subject = "subscriber.broadband.deleted"
+
+	// Hotspot Profile Events
+	HotspotProfileCreatedSubject Subject = "subscriber.hotspot.created"
+	HotspotProfileUpdatedSubject Subject = "subscriber.hotspot.updated"
+	HotspotProfileDeletedSubject Subject = "subscriber.hotspot.deleted"
+	HotspotDeviceAddedSubject    Subject = "subscriber.hotspot.device.added"
+	HotspotDeviceRemovedSubject  Subject = "subscriber.hotspot.device.removed"
 )
 
 // Global Subjects - Cross-service events that any service can publish
@@ -173,6 +191,26 @@ var Streams = map[StreamName]StreamMetadata{
 			UserPushNotificationDeliveredSubject,
 			UserPushNotificationFailedSubject,
 			UserPushNotificationOpenedSubject,
+		},
+	},
+	SubscriberStream: {
+		Name:        SubscriberStream,
+		Description: "Stream for subscriber service events including broadband and hotspot",
+		Subjects: []Subject{
+			// Subscriber Events
+			SubscriberCreatedSubject,
+			SubscriberUpdatedSubject,
+			SubscriberDeletedSubject,
+			// Broadband Subscription Events
+			BroadbandSubscriptionCreatedSubject,
+			BroadbandSubscriptionUpdatedSubject,
+			BroadbandSubscriptionDeletedSubject,
+			// Hotspot Profile Events
+			HotspotProfileCreatedSubject,
+			HotspotProfileUpdatedSubject,
+			HotspotProfileDeletedSubject,
+			HotspotDeviceAddedSubject,
+			HotspotDeviceRemovedSubject,
 		},
 	},
 }
