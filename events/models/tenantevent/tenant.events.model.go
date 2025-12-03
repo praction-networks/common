@@ -251,8 +251,9 @@ type AppMessagingProvidersModel struct {
 type TenantAppMessagingConfig struct {
 	MessageProvider      MessagingProvider `bson:"messageProvider" json:"messageProvider"`
 	Metadata             map[string]any    `bson:"metadata" json:"metadata"`
-	PhoneNumberID        []string          `bson:"phoneNumberID,omitempty" json:"phoneNumberID,omitempty"` // Business Phone Number ID(s) - array of phone numbers for sending messages
-	AccessToken          string            `bson:"accessToken,omitempty" json:"accessToken,omitempty"`     // Meta Graph API Access Token - for sending messages and template submissions
+	PhoneNumberID        string            `bson:"phoneNumberID,omitempty" json:"phoneNumberID,omitempty"`         // Single WhatsApp Business Phone Number ID
+	BusinessAccountID    string            `bson:"businessAccountID,omitempty" json:"businessAccountID,omitempty"` // Single WhatsApp Business Account ID
+	AccessToken          string            `bson:"accessToken,omitempty" json:"accessToken,omitempty"`             // Single Access Token for this phone number
 	AllowedMessagesTypes []string          `bson:"allowedMessagesTypes,omitempty" json:"allowedMessagesTypes,omitempty"`
 }
 
