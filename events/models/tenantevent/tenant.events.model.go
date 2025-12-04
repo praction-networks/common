@@ -249,12 +249,17 @@ type AppMessagingProvidersModel struct {
 }
 
 type TenantAppMessagingConfig struct {
-	MessageProvider      MessagingProvider `bson:"messageProvider" json:"messageProvider"`
-	Metadata             map[string]any    `bson:"metadata" json:"metadata"`
-	PhoneNumberID        string            `bson:"phoneNumberID,omitempty" json:"phoneNumberID,omitempty"`         // Single WhatsApp Business Phone Number ID
-	BusinessAccountID    string            `bson:"businessAccountID,omitempty" json:"businessAccountID,omitempty"` // Single WhatsApp Business Account ID
-	AccessToken          string            `bson:"accessToken,omitempty" json:"accessToken,omitempty"`             // Single Access Token for this phone number
-	AllowedMessagesTypes []string          `bson:"allowedMessagesTypes,omitempty" json:"allowedMessagesTypes,omitempty"`
+	AccessToken        string `bson:"accessToken" json:"accessToken"`
+	WebhookURL         string `bson:"webhookURL" json:"webhookURL"`
+	WebhookVerifyToken string `bson:"webhookVerifyToken,omitempty" json:"webhookVerifyToken,omitempty"`
+}
+
+type TemplateBinding struct {
+	TemplateID          string   `bson:"templateID" json:"templateID"`
+	PhoneNumberID       string   `bson:"phoneNumberID" json:"phoneNumberID"`
+	BusinessAccountID   string   `bson:"businessAccountID" json:"businessAccountID"`
+	AllowedMessageTypes []string `bson:"allowedMessageTypes" json:"allowedMessageTypes"`
+	IsActive            bool     `bson:"isActive" json:"isActive"`
 }
 
 type ExternalRadiusProvidersModel struct {
@@ -321,6 +326,18 @@ type EnabledFeatures struct {
 	IsIPACTRadiusProviderEnabled   bool `json:"isIPACTRadiusProviderEnabled" bson:"isIPACTRadiusProviderEnabled"`     // IPACT RADIUS
 	IsFreeRadiusProviderEnabled    bool `json:"isFreeRadiusProviderEnabled" bson:"isFreeRadiusProviderEnabled"`       // FreeRADIUS
 
+	// ===== Hotspot & Captive Portal =====
+	IsHotspotEnabled           bool `json:"isHotspotEnabled" bson:"isHotspotEnabled"`                     // Master hotspot toggle
+	IsOTPAuthEnabled           bool `json:"isOTPAuthEnabled" bson:"isOTPAuthEnabled"`                     // OTP-based authentication
+	IsSocialLoginEnabled       bool `json:"isSocialLoginEnabled" bson:"isSocialLoginEnabled"`             // Social media login
+	IsVoucherLoginEnabled      bool `json:"isVoucherLoginEnabled" bson:"isVoucherLoginEnabled"`           // Voucher/scratch card access
+	IsGuestWiFiEnabled         bool `json:"isGuestWiFiEnabled" bson:"isGuestWiFiEnabled"`                 // Guest WiFi portal
+	IsSessionManagementEnabled bool `json:"isSessionManagementEnabled" bson:"isSessionManagementEnabled"` // Session tracking
+	IsCustomBrandingEnabled    bool `json:"isCustomBrandingEnabled" bson:"isCustomBrandingEnabled"`       // Custom portal branding
+	IsAdvertisementEnabled     bool `json:"isAdvertisementEnabled" bson:"isAdvertisementEnabled"`         // Advertisement injection
+	IsUsageLimitEnabled        bool `json:"isUsageLimitEnabled" bson:"isUsageLimitEnabled"`               // Data/time usage limits
+	IsMultipleSSIDEnabled      bool `json:"isMultipleSSIDEnabled" bson:"isMultipleSSIDEnabled"`           // Multiple SSID support
+
 	// ===== Value-Added Services (VAS) =====
 	IsIPTVEnabled            bool `json:"isIPTVEnabled" bson:"isIPTVEnabled"`                       // IPTV
 	IsOTTEnabled             bool `json:"isOTTEnabled" bson:"isOTTEnabled"`                         // OTT bundles
@@ -329,7 +346,6 @@ type EnabledFeatures struct {
 	IsCloudBackupEnabled     bool `json:"isCloudBackupEnabled" bson:"isCloudBackupEnabled"`         // Cloud backup for users
 	IsFirewallServiceEnabled bool `json:"isFirewallServiceEnabled" bson:"isFirewallServiceEnabled"` // Managed firewall
 	IsDNSFilteringEnabled    bool `json:"isDNSFilteringEnabled" bson:"isDNSFilteringEnabled"`       // DNS filtering / parental control
-	IsHotspotLoginEnabled    bool `json:"isHotspotLoginEnabled" bson:"isHotspotLoginEnabled"`       // Captive portal / hotspot
 	IsRoamingEnabled         bool `json:"isRoamingEnabled" bson:"isRoamingEnabled"`                 // Wi-Fi roaming across zones
 
 	// ===== Marketing, Campaigns & Retention =====
