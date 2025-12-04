@@ -88,6 +88,11 @@ const (
 	HotspotProfileDeletedSubject Subject = "subscriber.hotspot.deleted"
 	HotspotDeviceAddedSubject    Subject = "subscriber.hotspot.device.added"
 	HotspotDeviceRemovedSubject  Subject = "subscriber.hotspot.device.removed"
+
+	// Field Configuration Events
+	FieldConfigCreatedSubject Subject = "subscriber.fieldconfig.created"
+	FieldConfigUpdatedSubject Subject = "subscriber.fieldconfig.updated"
+	FieldConfigDeletedSubject Subject = "subscriber.fieldconfig.deleted"
 )
 
 // Global Subjects - Cross-service events that any service can publish
@@ -195,7 +200,7 @@ var Streams = map[StreamName]StreamMetadata{
 	},
 	SubscriberStream: {
 		Name:        SubscriberStream,
-		Description: "Stream for subscriber service events including broadband and hotspot",
+		Description: "Stream for subscriber service events including broadband, hotspot, and field configurations",
 		Subjects: []Subject{
 			// Subscriber Events
 			SubscriberCreatedSubject,
@@ -211,6 +216,10 @@ var Streams = map[StreamName]StreamMetadata{
 			HotspotProfileDeletedSubject,
 			HotspotDeviceAddedSubject,
 			HotspotDeviceRemovedSubject,
+			// Field Configuration Events
+			FieldConfigCreatedSubject,
+			FieldConfigUpdatedSubject,
+			FieldConfigDeletedSubject,
 		},
 	},
 }
