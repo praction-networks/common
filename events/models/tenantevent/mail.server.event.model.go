@@ -5,11 +5,11 @@ type MailServerInsertEventModel struct {
 	ID                 string           `bson:"_id" json:"id"`
 	Name               string           `bson:"name" json:"name" `
 	SortCode           string           `bson:"sortCode" json:"sortCode" `
-	OwnerTenantID      string           `bson:"ownerTenantID" json:"ownerTenantID" `
+	OwnerTenantID      string           `bson:"ownerTenantId" json:"ownerTenantId" `
 	OwnerTenantType    string           `bson:"ownerTenantType" json:"ownerTenantType" `
 	Scope              string           `bson:"scope" json:"scope" `
 	AllowedTenantTypes []string         `bson:"allowedTenantTypes,omitempty" json:"allowedTenantTypes,omitempty"`
-	ExplicitTenantIDs  []string         `bson:"explicitTenantIDs,omitempty" json:"explicitTenantIDs,omitempty" `
+	ExplicitTenantIDs  []string         `bson:"explicitTenantIds,omitempty" json:"explicitTenantIds,omitempty" `
 	SMTPConfig         *SMTPConfig      `bson:"smtp,omitempty" json:"smtp,omitempty"`
 	SendGridConfig     *SendGridConfig  `bson:"sendgrid,omitempty" json:"sendgrid,omitempty"`
 	MailgunConfig      *MailgunConfig   `bson:"mailgun,omitempty" json:"mailgun,omitempty"`
@@ -24,11 +24,11 @@ type MailServerUpdateEventModel struct {
 	ID                 string           `bson:"_id" json:"id"`
 	Name               string           `bson:"name,omitempty" json:"name,omitempty" `
 	SortCode           string           `bson:"sortCode,omitempty" json:"sortCode,omitempty" `
-	OwnerTenantID      string           `bson:"ownerTenantID,omitempty" json:"ownerTenantID,omitempty" `
+	OwnerTenantID      string           `bson:"ownerTenantId,omitempty" json:"ownerTenantId,omitempty" `
 	OwnerTenantType    string           `bson:"ownerTenantType,omitempty" json:"ownerTenantType,omitempty"`
 	Scope              string           `bson:"scope,omitempty" json:"scope,omitempty" `
 	AllowedTenantTypes []string         `bson:"allowedTenantTypes,omitempty" json:"allowedTenantTypes,omitempty"`
-	ExplicitTenantIDs  []string         `bson:"explicitTenantIDs,omitempty" json:"explicitTenantIDs,omitempty" `
+	ExplicitTenantIDs  []string         `bson:"explicitTenantIds,omitempty" json:"explicitTenantIds,omitempty" `
 	SMTPConfig         *SMTPConfig      `bson:"smtp,omitempty" json:"smtp,omitempty"`
 	SendGridConfig     *SendGridConfig  `bson:"sendgrid,omitempty" json:"sendgrid,omitempty"`
 	MailgunConfig      *MailgunConfig   `bson:"mailgun,omitempty" json:"mailgun,omitempty"`
@@ -56,28 +56,28 @@ type SMTPConfig struct {
 
 // SendGridConfig schema for SendGrid configuration
 type SendGridConfig struct {
-	APIKey string `bson:"api_key" json:"api_key" `
+	APIKey string `bson:"apiKey" json:"apiKey" `
 	From   string `bson:"from" json:"from" `
 }
 
 // MailgunConfig schema for Mailgun configuration
 type MailgunConfig struct {
 	Domain       string `bson:"domain" json:"domain"`
-	APIKey       string `bson:"api_key" json:"api_key" `
-	PublicAPIKey string `bson:"public_api_key" json:"public_api_key" `
+	APIKey       string `bson:"apiKey" json:"apiKey" `
+	PublicAPIKey string `bson:"publicApiKey" json:"publicApiKey" `
 	From         string `bson:"from" json:"from" `
 }
 
 // PostalConfig schema for Postal configuration
 type PostalConfig struct {
-	ServerURL string `bson:"server_url" json:"server_url" `
-	APIKey    string `bson:"api_key" json:"api_key" `
+	ServerURL string `bson:"serverUrl" json:"serverUrl" `
+	APIKey    string `bson:"apiKey" json:"apiKey" `
 	From      string `bson:"from" json:"from" `
 }
 
 // MailchimpConfig schema for Mailchimp configuration
 type MailchimpConfig struct {
-	APIKey       string `bson:"api_key" json:"api_key" `
-	ServerPrefix string `bson:"server_prefix" json:"server_prefix" `
+	APIKey       string `bson:"apiKey" json:"apiKey" `
+	ServerPrefix string `bson:"serverPrefix" json:"serverPrefix" `
 	From         string `bson:"from" json:"from" `
 }

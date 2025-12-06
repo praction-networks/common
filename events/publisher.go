@@ -370,14 +370,14 @@ func (p *Publisher[T]) PublishWithOptions(ctx context.Context, data T, userOpts 
 		filter := bson.M{"_id": docID}
 		update := bson.M{
 			"$setOnInsert": bson.M{
-				"stream_name": string(p.Stream),
-				"subject":     string(p.Subject),
-				"payload":     payload, // keep original payload on first insert
-				"attempts":    0,
+				"streamName": string(p.Stream),
+				"subject":    string(p.Subject),
+				"payload":    payload, // keep original payload on first insert
+				"attempts":   0,
 			},
 			"$set": bson.M{
-				"timestamp":  time.Now(), // last attempt time
-				"last_error": lastErrStr,
+				"timestamp": time.Now(), // last attempt time
+				"lastError": lastErrStr,
 			},
 			"$inc": bson.M{"attempts": actualAttempts}, // record how many we already tried here
 		}

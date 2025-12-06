@@ -5,13 +5,13 @@ type MFAFactorType string
 
 const (
 	MFAFactorPassword         MFAFactorType = "password"
-	MFAFactorOTPSMS           MFAFactorType = "otp_sms"
-	MFAFactorOTPEmail         MFAFactorType = "otp_email"
-	MFAFactorTOTPApp          MFAFactorType = "totp_app"
-	MFAFactorPushNotification MFAFactorType = "push_app"
-	MFAFactorWebAuthnPasskey  MFAFactorType = "webauthn_passkey"
-	MFAFactorWebAuthnDevice   MFAFactorType = "webauthn_device"
-	MFAFactorHardwareKeyU2F   MFAFactorType = "hardware_key_u2f"
+	MFAFactorOTPSMS           MFAFactorType = "otpSms"
+	MFAFactorOTPEmail         MFAFactorType = "otpEmail"
+	MFAFactorTOTPApp          MFAFactorType = "totpApp"
+	MFAFactorPushNotification MFAFactorType = "pushApp"
+	MFAFactorWebAuthnPasskey  MFAFactorType = "webauthnPasskey"
+	MFAFactorWebAuthnDevice   MFAFactorType = "webauthnDevice"
+	MFAFactorHardwareKeyU2F   MFAFactorType = "hardwareKeyU2F"
 	MFAFactorBiometric        MFAFactorType = "biometric"
 )
 
@@ -20,17 +20,17 @@ type MFARiskActionType string
 
 const (
 	MFARiskActionLogin                MFARiskActionType = "login"
-	MFARiskActionPasswordChange       MFARiskActionType = "password_change"
+	MFARiskActionPasswordChange       MFARiskActionType = "passwordChange"
 	MFARiskActionProfileUpdate        MFARiskActionType = "profile_update"
-	MFARiskActionPaymentOperation     MFARiskActionType = "payment_operation"
-	MFARiskActionAPIKeyCreate         MFARiskActionType = "api_key_create"
-	MFARiskActionAPIKeyRevoke         MFARiskActionType = "api_key_revoke"
-	MFARiskActionKYCOperation         MFARiskActionType = "kyc_operation"
-	MFARiskActionAdminPortalAccess    MFARiskActionType = "admin_portal_access"
-	MFARiskActionIntegrationChange    MFARiskActionType = "integration_change"
-	MFARiskActionNetworkConfigChange  MFARiskActionType = "network_config_change"
-	MFARiskActionRadiusConfigChange   MFARiskActionType = "radius_config_change"
-	MFARiskActionCriticalConfigChange MFARiskActionType = "critical_config_change"
+	MFARiskActionPaymentOperation     MFARiskActionType = "paymentOperation"
+	MFARiskActionAPIKeyCreate         MFARiskActionType = "apiKeyCreate"
+	MFARiskActionAPIKeyRevoke         MFARiskActionType = "apiKeyRevoke"
+	MFARiskActionKYCOperation         MFARiskActionType = "kycOperation"
+	MFARiskActionAdminPortalAccess    MFARiskActionType = "adminPortalAccess"
+	MFARiskActionIntegrationChange    MFARiskActionType = "integrationChange"
+	MFARiskActionNetworkConfigChange  MFARiskActionType = "networkConfigChange"
+	MFARiskActionRadiusConfigChange   MFARiskActionType = "radiusConfigChange"
+	MFARiskActionCriticalConfigChange MFARiskActionType = "criticalConfigChange"
 )
 
 type ConfigScope string
@@ -46,7 +46,7 @@ type TenantMFAPolicy struct {
 	ID       string      `json:"id" bson:"_id"`      // cuid2
 	Scope    ConfigScope `json:"scope" bson:"scope"` // system|tenant
 	Name     string      `json:"name" bson:"name"`
-	TenantID string      `json:"tenantID" bson:"tenantID" validate:"required,isCuid2"`
+	TenantID string      `json:"tenantId" bson:"tenantId"`
 
 	// --- Inheritance & control ---
 
@@ -61,13 +61,13 @@ type TenantMFAPolicy struct {
 	// --- Global requirements ---
 
 	// Is MFA enabled and required for this tenant at all?
-	IsMFARequired bool `json:"isMFARequired" bson:"isMFARequired"`
+	IsMFARequired bool `json:"isMfaRequired" bson:"isMfaRequired"`
 
 	// Minimum count of factors required:
 	// 0 = no MFA,
 	// 1 = password + 1 factor,
 	// 2 = strong MFA / passwordless + extra factor.
-	MinFactors int `json:"minFactors" bson:"minFactors" validate:"min=0,max=3"`
+	MinFactors int `json:"minFactors" bson:"minFactors"`
 
 	// Which MFA methods are allowed for users in this tenant.
 	AllowedMethods []MFAFactorType `json:"allowedMethods,omitempty" bson:"allowedMethods,omitempty"`
@@ -86,18 +86,18 @@ type TenantMFAPolicy struct {
 	// --- Session & re-auth policy ---
 
 	// Total session lifetime before full re-login (minutes)
-	SessionTimeoutMinutes int `json:"sessionTimeoutMinutes" bson:"sessionTimeoutMinutes" validate:"min=5,max=1440"`
+	SessionTimeoutMinutes int `json:"sessionTimeoutMinutes" bson:"sessionTimeoutMinutes"`
 
 	// Idle timeout before logout (minutes)
-	IdleTimeoutMinutes int `json:"idleTimeoutMinutes" bson:"idleTimeoutMinutes" validate:"min=1,max=120"`
+	IdleTimeoutMinutes int `json:"idleTimeoutMinutes" bson:"idleTimeoutMinutes"`
 
 	// How often MFA must be re-verified even if session is active (hours)
-	MFAReauthIntervalHours int `json:"mfaReauthIntervalHours" bson:"mfaReauthIntervalHours" validate:"min=1,max=168"`
+	MFAReauthIntervalHours int `json:"mfaReauthIntervalHours" bson:"mfaReauthIntervalHours"`
 
 	// --- Optional network-level controls ---
 
 	IPRestrictionsEnabled bool     `json:"ipRestrictionsEnabled" bson:"ipRestrictionsEnabled"`
-	AllowedCIDRs          []string `json:"allowedCIDRs,omitempty" bson:"allowedCIDRs,omitempty"`
+	AllowedCIDRs          []string `json:"allowedCidrs,omitempty" bson:"allowedCidrs,omitempty"`
 
 	GeoRestrictionsEnabled bool     `json:"geoRestrictionsEnabled" bson:"geoRestrictionsEnabled"`
 	AllowedCountries       []string `json:"allowedCountries,omitempty" bson:"allowedCountries,omitempty"`

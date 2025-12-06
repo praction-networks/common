@@ -69,11 +69,11 @@ func ReplayFallbackOnce(ctx context.Context, jsm *JsStreamManager, coll *mongo.C
 			ok++
 			continue
 		} else {
-			// one-shot failed: bump attempts and last_error
+			// one-shot failed: bump attempts and lastError
 			_, uerr := coll.UpdateByID(ctx, d.ID, bson.M{
 				"$set": bson.M{
-					"last_error": perr.Error(),
-					"timestamp":  now,
+					"lastError": perr.Error(),
+					"timestamp": now,
 				},
 				"$inc": bson.M{"attempts": 1},
 			})

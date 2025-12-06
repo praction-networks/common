@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type TenantInsertEventModel struct {
@@ -17,7 +16,7 @@ type TenantInsertEventModel struct {
 	EntType     string `bson:"entType,omitempty" json:"entType,omitempty"`
 
 	// Hierarchy Management
-	ParentTenantID string   `bson:"parentTenantID,omitempty" json:"parentTenantID,omitempty"`
+	ParentTenantID string   `bson:"parentTenantId,omitempty" json:"parentTenantId,omitempty"`
 	ChildIDs       []string `bson:"childIds,omitempty" json:"childIds,omitempty"`
 	Path           string   `bson:"path" json:"path"`
 	PathDepth      int      `bson:"pathDepth" json:"pathDepth"`
@@ -61,7 +60,7 @@ type TenantUpdateEventModel struct {
 	EntType     string `bson:"entType,omitempty" json:"entType,omitempty"`
 
 	// Hierarchy Management
-	ParentTenantID string   `bson:"parentTenantID,omitempty" json:"parentTenantID,omitempty"`
+	ParentTenantID string   `bson:"parentTenantId,omitempty" json:"parentTenantId,omitempty"`
 	ChildIDs       []string `bson:"childIds,omitempty" json:"childIds,omitempty"`
 	Path           string   `bson:"path,omitempty" json:"path,omitempty"`
 	PathDepth      int      `bson:"pathDepth,omitempty" json:"pathDepth,omitempty"`
@@ -209,7 +208,7 @@ type MailServerProviderTenantConfig struct {
 }
 
 type TenantMailServerConfig struct {
-	SortCode        MailProviderType `bson:"sort_code" json:"sort_code"`
+	SortCode        MailProviderType `bson:"sortCode" json:"sortCode"`
 	SMTPConfig      *SMTPConfig      `bson:"smtp,omitempty" json:"smtp,omitempty"`
 	SendGridConfig  *SendGridConfig  `bson:"sendgrid,omitempty" json:"sendgrid,omitempty"`
 	MailgunConfig   *MailgunConfig   `bson:"mailgun,omitempty" json:"mailgun,omitempty"`
@@ -235,7 +234,7 @@ type TenantKYCProviderConfig struct {
 }
 
 type AppMessagingProvidersModel struct {
-	MessageProviderID string                    `bson:"messageProviderID,omitempty" json:"messageProviderID,omitempty"`
+	MessageProviderID string                    `bson:"messageProviderId,omitempty" json:"messageProviderId,omitempty"`
 	Channel           string                    `bson:"channel,omitempty" json:"channel,omitempty"` // Messaging channel (WhatsApp, Telegram, etc.)
 	UseTemplate       bool                      `bson:"useTemplate" json:"useTemplate"`
 	UseParent         bool                      `bson:"useParent,omitempty" json:"useParent,omitempty"`
@@ -250,20 +249,20 @@ type AppMessagingProvidersModel struct {
 
 type TenantAppMessagingConfig struct {
 	AccessToken        string `bson:"accessToken" json:"accessToken"`
-	WebhookURL         string `bson:"webhookURL" json:"webhookURL"`
+	WebhookURL         string `bson:"webhookUrl" json:"webhookUrl"`
 	WebhookVerifyToken string `bson:"webhookVerifyToken,omitempty" json:"webhookVerifyToken,omitempty"`
 }
 
 type TemplateBinding struct {
-	TemplateID          string   `bson:"templateID" json:"templateID"`
-	PhoneNumberID       string   `bson:"phoneNumberID" json:"phoneNumberID"`
-	BusinessAccountID   string   `bson:"businessAccountID" json:"businessAccountID"`
+	TemplateID          string   `bson:"templateId" json:"templateId"`
+	PhoneNumberID       string   `bson:"phoneNumberId" json:"phoneNumberId"`
+	BusinessAccountID   string   `bson:"businessAccountId" json:"businessAccountId"`
 	AllowedMessageTypes []string `bson:"allowedMessageTypes" json:"allowedMessageTypes"`
 	IsActive            bool     `bson:"isActive" json:"isActive"`
 }
 
 type ExternalRadiusProvidersModel struct {
-	ExternalRadiusProviderID string                      `bson:"externalRadiusProviderID,omitempty" json:"externalRadiusProviderID,omitempty"`
+	ExternalRadiusProviderID string                      `bson:"externalRadiusProviderId,omitempty" json:"externalRadiusProviderId,omitempty"`
 	UseTemplate              bool                        `bson:"useTemplate" json:"useTemplate"`
 	UseParent                bool                        `bson:"useParent,omitempty" json:"useParent,omitempty"`
 	TenantConfig             *TenantRadiusProviderConfig `bson:"tenantConfig,omitempty" json:"tenantConfig,omitempty"`
@@ -339,13 +338,13 @@ type EnabledFeatures struct {
 	IsMultipleSSIDEnabled      bool `json:"isMultipleSSIDEnabled" bson:"isMultipleSSIDEnabled"`           // Multiple SSID support
 
 	// ===== Value-Added Services (VAS) =====
-	IsIPTVEnabled            bool `json:"isIPTVEnabled" bson:"isIPTVEnabled"`                       // IPTV
-	IsOTTEnabled             bool `json:"isOTTEnabled" bson:"isOTTEnabled"`                         // OTT bundles
+	IsIPTVEnabled            bool `json:"isIptvEnabled" bson:"isIptvEnabled"`                       // IPTV
+	IsOTTEnabled             bool `json:"isOttEnabled" bson:"isOttEnabled"`                         // OTT bundles
 	IsVoiceServiceEnabled    bool `json:"isVoiceServiceEnabled" bson:"isVoiceServiceEnabled"`       // VoIP/Voice
-	IsVPNEnabled             bool `json:"isVPNEnabled" bson:"isVPNEnabled"`                         // Managed VPN
+	IsVPNEnabled             bool `json:"isVpnEnabled" bson:"isVpnEnabled"`                         // Managed VPN
 	IsCloudBackupEnabled     bool `json:"isCloudBackupEnabled" bson:"isCloudBackupEnabled"`         // Cloud backup for users
 	IsFirewallServiceEnabled bool `json:"isFirewallServiceEnabled" bson:"isFirewallServiceEnabled"` // Managed firewall
-	IsDNSFilteringEnabled    bool `json:"isDNSFilteringEnabled" bson:"isDNSFilteringEnabled"`       // DNS filtering / parental control
+	IsDNSFilteringEnabled    bool `json:"isDnsFilteringEnabled" bson:"isDnsFilteringEnabled"`       // DNS filtering / parental control
 	IsRoamingEnabled         bool `json:"isRoamingEnabled" bson:"isRoamingEnabled"`                 // Wi-Fi roaming across zones
 
 	// ===== Marketing, Campaigns & Retention =====
@@ -364,8 +363,8 @@ type EnabledFeatures struct {
 
 	// ===== Operations & Integrations =====
 	IsTicketingEnabled      bool `json:"isTicketingEnabled" bson:"isTicketingEnabled"`           // Helpdesk/ticketing
-	IsCRMIntegrationEnabled bool `json:"isCRMIntegrationEnabled" bson:"isCRMIntegrationEnabled"` // CRM integration (Zoho/HubSpot/etc.)
-	IsERPIntegrationEnabled bool `json:"isERPIntegrationEnabled" bson:"isERPIntegrationEnabled"` // ERP integration
+	IsCRMIntegrationEnabled bool `json:"isCrmIntegrationEnabled" bson:"isCrmIntegrationEnabled"` // CRM integration (Zoho/HubSpot/etc.)
+	IsERPIntegrationEnabled bool `json:"isErpIntegrationEnabled" bson:"isErpIntegrationEnabled"` // ERP integration
 	IsInventorySyncEnabled  bool `json:"isInventorySyncEnabled" bson:"isInventorySyncEnabled"`   // Inventory sync with ERP
 	IsPartnerPortalEnabled  bool `json:"isPartnerPortalEnabled" bson:"isPartnerPortalEnabled"`   // Partner/reseller portal
 
@@ -377,43 +376,42 @@ type EnabledFeatures struct {
 	IsChurnPredictionEnabled  bool `json:"isChurnPredictionEnabled" bson:"isChurnPredictionEnabled"`   // AI churn prediction
 
 	// ===== Security & Compliance =====
-	Is2FAEnabled                 bool `json:"is2FAEnabled" bson:"is2FAEnabled"`                                 // Two-factor auth (2FA)
+	Is2FAEnabled                 bool `json:"is2faEnabled" bson:"is2faEnabled"`                                 // Two-factor auth (2FA)
 	IsAuditLoggingEnabled        bool `json:"isAuditLoggingEnabled" bson:"isAuditLoggingEnabled"`               // Audit logs
 	IsDataRetentionPolicyEnabled bool `json:"isDataRetentionPolicyEnabled" bson:"isDataRetentionPolicyEnabled"` // Data retention enforcement
-	IsGDPRComplianceEnabled      bool `json:"isGDPRComplianceEnabled" bson:"isGDPRComplianceEnabled"`           // GDPR/DPDP controls (toggle gates UI/flows)
+	IsGDPRComplianceEnabled      bool `json:"isGdprComplianceEnabled" bson:"isGdprComplianceEnabled"`           // GDPR/DPDP controls (toggle gates UI/flows)
 
 	// ===== AI & Automation =====
-	IsAIAssistantEnabled           bool `json:"isAIAssistantEnabled" bson:"isAIAssistantEnabled"`                     // AI assistant in portal/app
-	IsAIBasedSupportEnabled        bool `json:"isAIBasedSupportEnabled" bson:"isAIBasedSupportEnabled"`               // AI chat/agent for support
-	IsNetworkOptimizationAIEnabled bool `json:"isNetworkOptimizationAIEnabled" bson:"isNetworkOptimizationAIEnabled"` // AI-driven network tuning
-	IsPredictiveMaintenanceEnabled bool `json:"isPredictiveMaintenanceEnabled" bson:"isPredictiveMaintenanceEnabled"` // Predictive maintenance alerts
+	IsAIAssistantEnabled           bool `json:"isAiAssistantEnabled" bson:"isAiAssistantEnabled"`                         // AI assistant in portal/app
+	IsAIBasedSupportEnabled        bool `json:"isAiBasedSupportEnabled" bson:"isAiBasedSupportEnabled"`                   // AI chat/agent for support
+	IsNetworkOptimizationAIEnabled bool `json:"isNetworkOptimizationAiEnabled" bson:"isNetworkOptimizationAiEnabled"`     // AI-driven network tuning
+	IsPredictiveMaintenanceEnabled bool `json:"isPredictiveMaintenanceAiEnabled" bson:"isPredictiveMaintenanceAiEnabled"` // Predictive maintenance alerts
 }
 
 type ISPSettings struct {
 	Plans            []string `json:"plans,omitempty" bson:"plans,omitempty"`
 	MaxBandwidthMbps int      `json:"maxBandwidthMbps,omitempty" bson:"maxBandwidthMbps,omitempty"`
-	IPPoolCIDR       string   `json:"ipPoolCIDR,omitempty" bson:"ipPoolCIDR,omitempty"`
+	IPPoolCIDR       string   `json:"ipPoolCidr,omitempty" bson:"ipPoolCidr,omitempty"`
 	CoverageArea     bson.M   `json:"coverageArea,omitempty" bson:"coverageArea,omitempty"`
 	Latitude         string   `json:"latitude,omitempty" bson:"latitude,omitempty"`
 	Longitude        string   `json:"longitude,omitempty" bson:"longitude,omitempty"`
-	BillingCycle     string   `json:"billingCycle,omitempty" bson:"billingCycle,omitempty"`
+	BillingCycle     string   `json:"billingCycleId,omitempty" bson:"billingCycleId,omitempty"`
 	AutoRenewal      bool     `json:"autoRenewal,omitempty" bson:"autoRenewal,omitempty"`
 	SupportContact   string   `json:"supportContact,omitempty" bson:"supportContact,omitempty"`
-	AssignedRM       string   `json:"assignedRM,omitempty" bson:"assignedRM,omitempty"`
-	DeviceIDs        []string `json:"deviceIDs,omitempty" bson:"deviceIDs,omitempty"`
+	AssignedRM       string   `json:"assignedRm,omitempty" bson:"assignedRm,omitempty"`
+	DeviceIDs        []string `json:"deviceIds,omitempty" bson:"deviceIds,omitempty"`
 }
 
 type TenantUpdate struct {
-	ID          primitive.ObjectID `json:"id" bson:"_id,omitempty"`
-	UUID        string             `json:"uuid" bson:"uuid,omitempty"`
-	Name        string             `json:"name" bson:"name,omitempty"`
-	SystemName  string             `json:"systemName" bson:"systemName,omitempty"`
-	ParentRefID primitive.ObjectID `json:"parentRefId,omitempty" bson:"parentRefId,omitempty"` // Nullable parent reference
-	Version     int                `json:"version" bson:"version"`
+	ID          string `json:"id" bson:"_id,omitempty"`
+	Name        string `json:"name" bson:"name,omitempty"`
+	SystemName  string `json:"systemName" bson:"systemName,omitempty"`
+	ParentRefID string `json:"parentRefId,omitempty" bson:"parentRefId,omitempty"` // Nullable parent reference
+	Version     int    `json:"version" bson:"version"`
 }
 
 type TenantDelete struct {
-	ID primitive.ObjectID `json:"id" bson:"_id,omitempty"`
+	ID string `json:"id" bson:"_id,omitempty"`
 }
 
 // Lightweight enum aliases to mirror tenant-service models without a direct dependency
@@ -426,10 +424,10 @@ type PaymentGateway string
 // ProviderTenantConfig represents a common configuration for providers assigned to tenants
 // Used for SMS, Mail, and other providers that support priority-based routing with failover
 type ProviderTenantConfig struct {
-	ProviderID string `json:"providerID" bson:"providerID" validate:"required,isCuid2"`
-	Priority   int    `json:"priority" bson:"priority" validate:"required,min=1"`                                 // 1 = Primary, 2 = Secondary, 3 = Tertiary, etc.
-	IsActive   bool   `json:"isActive" bson:"isActive"`                                                           // Can disable provider for specific tenant
-	FailoverOn bool   `json:"failoverOn" bson:"failoverOn"`                                                       // Enable automatic failover to next provider
-	MaxRetries int    `json:"maxRetries,omitempty" bson:"maxRetries,omitempty" validate:"omitempty,min=1,max=10"` // Max retries before failover (default: 3)
-	Weight     int    `json:"weight,omitempty" bson:"weight,omitempty" validate:"omitempty,min=1,max=100"`        // For load balancing (1-100)
+	ProviderID string `json:"providerId" bson:"providerId"`
+	Priority   int    `json:"priority" bson:"priority"`                         // 1 = Primary, 2 = Secondary, 3 = Tertiary, etc.
+	IsActive   bool   `json:"isActive" bson:"isActive"`                         // Can disable provider for specific tenant
+	FailoverOn bool   `json:"failoverOn" bson:"failoverOn"`                     // Enable automatic failover to next provider
+	MaxRetries int    `json:"maxRetries,omitempty" bson:"maxRetries,omitempty"` // Max retries before failover (default: 3)
+	Weight     int    `json:"weight,omitempty" bson:"weight,omitempty"`         // For load balancing (1-100)
 }
