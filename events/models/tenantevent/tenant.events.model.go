@@ -304,88 +304,121 @@ type ExternalRadiusSettings struct {
 	IPACTID string `bson:"ipactEnabled,omitempty" json:"ipactEnabled,omitempty"`
 }
 
-// EnabledFeatures defines all feature toggles for a Domain/Tenant.
-// NOTE: Flat structure maintained for backward-compatibility with existing JSON/BSON.
+// EnabledFeatures defines all feature toggles for a Domain/Tenant, organized by category
 type EnabledFeatures struct {
-	// ===== Core User Experience =====
-	IsUserPortalEnabled    bool `bson:"isUserPortalEnabled" json:"isUserPortalEnabled"`       // Enable user portal
-	IsUserKYCEnabled       bool `bson:"isUserKYCEnabled" json:"isUserKYCEnabled"`             // Enable KYC for users
-	IsOnlinePaymentEnabled bool `bson:"isOnlinePaymentEnabled" json:"isOnlinePaymentEnabled"` // Enable online payment
+	Core          CoreFeatures         `json:"core" bson:"core"`                   // Core user experience features
+	Notifications NotificationFeatures `json:"notifications" bson:"notifications"` // Notification channels
+	Radius        RadiusFeatures       `json:"radius" bson:"radius"`               // RADIUS provider options
+	Hotspot       HotspotFeatures      `json:"hotspot" bson:"hotspot"`             // Hotspot & captive portal
+	VAS           VASFeatures          `json:"vas" bson:"vas"`                     // Value-added services
+	Marketing     MarketingFeatures    `json:"marketing" bson:"marketing"`         // Marketing & campaigns
+	Billing       BillingFeatures      `json:"billing" bson:"billing"`             // Billing & collections
+	Operations    OperationsFeatures   `json:"operations" bson:"operations"`       // Operations & integrations
+	Analytics     AnalyticsFeatures    `json:"analytics" bson:"analytics"`         // Analytics & feedback
+	Security      SecurityFeatures     `json:"security" bson:"security"`           // Security & compliance
+	AI            AIFeatures           `json:"ai" bson:"ai"`                       // AI & automation
+}
 
-	// ===== Notifications & Messaging =====
-	IsUserMailNotificationEnabled     bool `json:"isUserMailNotificationEnabled" bson:"isUserMailNotificationEnabled"`         // Email notifications
-	IsUserSMSNotificationEnabled      bool `json:"isUserSMSNotificationEnabled" bson:"isUserSMSNotificationEnabled"`           // SMS notifications
-	IsUserWhatsappNotificationEnabled bool `json:"isUserWhatsappNotificationEnabled" bson:"isUserWhatsappNotificationEnabled"` // WhatsApp notifications
-	IsUserTelegramNotificationEnabled bool `json:"isUserTelegramNotificationEnabled" bson:"isUserTelegramNotificationEnabled"` // Telegram notifications
-	IsPushNotificationEnabled         bool `json:"isPushNotificationEnabled" bson:"isPushNotificationEnabled"`                 // Mobile push notifications
-	IsInAppBannerEnabled              bool `json:"isInAppBannerEnabled" bson:"isInAppBannerEnabled"`                           // In-app banner/announcement bar
+// CoreFeatures - Core user experience
+type CoreFeatures struct {
+	IsUserPortalEnabled    bool `json:"isUserPortalEnabled" bson:"isUserPortalEnabled"`
+	IsUserKYCEnabled       bool `json:"isUserKYCEnabled" bson:"isUserKYCEnabled"`
+	IsOnlinePaymentEnabled bool `json:"isOnlinePaymentEnabled" bson:"isOnlinePaymentEnabled"`
+}
 
-	// ===== Access / RADIUS Providers =====
-	IsJazeeraRadiusProviderEnabled bool `json:"isJazeeraRadiusProviderEnabled" bson:"isJazeeraRadiusProviderEnabled"` // Jazeera RADIUS
-	IsIPACTRadiusProviderEnabled   bool `json:"isIPACTRadiusProviderEnabled" bson:"isIPACTRadiusProviderEnabled"`     // IPACT RADIUS
-	IsFreeRadiusProviderEnabled    bool `json:"isFreeRadiusProviderEnabled" bson:"isFreeRadiusProviderEnabled"`       // FreeRADIUS
+// NotificationFeatures - Notification channels
+type NotificationFeatures struct {
+	IsUserMailNotificationEnabled     bool `json:"isUserMailNotificationEnabled" bson:"isUserMailNotificationEnabled"`
+	IsUserSMSNotificationEnabled      bool `json:"isUserSMSNotificationEnabled" bson:"isUserSMSNotificationEnabled"`
+	IsUserWhatsappNotificationEnabled bool `json:"isUserWhatsappNotificationEnabled" bson:"isUserWhatsappNotificationEnabled"`
+	IsUserTelegramNotificationEnabled bool `json:"isUserTelegramNotificationEnabled" bson:"isUserTelegramNotificationEnabled"`
+	IsPushNotificationEnabled         bool `json:"isPushNotificationEnabled" bson:"isPushNotificationEnabled"`
+	IsInAppBannerEnabled              bool `json:"isInAppBannerEnabled" bson:"isInAppBannerEnabled"`
+}
 
-	// ===== Hotspot & Captive Portal =====
+// RadiusFeatures - RADIUS provider options
+type RadiusFeatures struct {
+	IsJazeeraRadiusProviderEnabled bool `json:"isJazeeraRadiusProviderEnabled" bson:"isJazeeraRadiusProviderEnabled"`
+	IsIPACTRadiusProviderEnabled   bool `json:"isIpactRadiusProviderEnabled" bson:"isIpactRadiusProviderEnabled"`
+	IsFreeRadiusProviderEnabled    bool `json:"isFreeRadiusProviderEnabled" bson:"isFreeRadiusProviderEnabled"`
+}
+
+// HotspotFeatures - Hotspot & captive portal
+type HotspotFeatures struct {
 	IsHotspotEnabled           bool `json:"isHotspotEnabled" bson:"isHotspotEnabled"`                     // Master hotspot toggle
-	IsOTPAuthEnabled           bool `json:"isOTPAuthEnabled" bson:"isOTPAuthEnabled"`                     // OTP-based authentication
-	IsSocialLoginEnabled       bool `json:"isSocialLoginEnabled" bson:"isSocialLoginEnabled"`             // Social media login
+	IsOTPAuthEnabled           bool `json:"isOtpAuthEnabled" bson:"isOtpAuthEnabled"`                     // OTP-based authentication
+	IsSocialLoginEnabled       bool `json:"isSocialLoginEnabled" bson:"isSocialLoginEnabled"`             // Social media login (Google, Facebook)
 	IsVoucherLoginEnabled      bool `json:"isVoucherLoginEnabled" bson:"isVoucherLoginEnabled"`           // Voucher/scratch card access
 	IsGuestWiFiEnabled         bool `json:"isGuestWiFiEnabled" bson:"isGuestWiFiEnabled"`                 // Guest WiFi portal
-	IsSessionManagementEnabled bool `json:"isSessionManagementEnabled" bson:"isSessionManagementEnabled"` // Session tracking
+	IsSessionManagementEnabled bool `json:"isSessionManagementEnabled" bson:"isSessionManagementEnabled"` // Session tracking & management
 	IsCustomBrandingEnabled    bool `json:"isCustomBrandingEnabled" bson:"isCustomBrandingEnabled"`       // Custom portal branding
 	IsAdvertisementEnabled     bool `json:"isAdvertisementEnabled" bson:"isAdvertisementEnabled"`         // Advertisement injection
 	IsUsageLimitEnabled        bool `json:"isUsageLimitEnabled" bson:"isUsageLimitEnabled"`               // Data/time usage limits
 	IsMultipleSSIDEnabled      bool `json:"isMultipleSSIDEnabled" bson:"isMultipleSSIDEnabled"`           // Multiple SSID support
+}
 
-	// ===== Value-Added Services (VAS) =====
-	IsIPTVEnabled            bool `json:"isIptvEnabled" bson:"isIptvEnabled"`                       // IPTV
-	IsOTTEnabled             bool `json:"isOttEnabled" bson:"isOttEnabled"`                         // OTT bundles
-	IsVoiceServiceEnabled    bool `json:"isVoiceServiceEnabled" bson:"isVoiceServiceEnabled"`       // VoIP/Voice
-	IsVPNEnabled             bool `json:"isVpnEnabled" bson:"isVpnEnabled"`                         // Managed VPN
-	IsCloudBackupEnabled     bool `json:"isCloudBackupEnabled" bson:"isCloudBackupEnabled"`         // Cloud backup for users
-	IsFirewallServiceEnabled bool `json:"isFirewallServiceEnabled" bson:"isFirewallServiceEnabled"` // Managed firewall
-	IsDNSFilteringEnabled    bool `json:"isDnsFilteringEnabled" bson:"isDnsFilteringEnabled"`       // DNS filtering / parental control
-	IsRoamingEnabled         bool `json:"isRoamingEnabled" bson:"isRoamingEnabled"`                 // Wi-Fi roaming across zones
+// VASFeatures - Value-added services
+type VASFeatures struct {
+	IsIPTVEnabled            bool `json:"isIptvEnabled" bson:"isIptvEnabled"`
+	IsOTTEnabled             bool `json:"isOttEnabled" bson:"isOttEnabled"`
+	IsVoiceServiceEnabled    bool `json:"isVoiceServiceEnabled" bson:"isVoiceServiceEnabled"`
+	IsVPNEnabled             bool `json:"isVpnEnabled" bson:"isVpnEnabled"`
+	IsCloudBackupEnabled     bool `json:"isCloudBackupEnabled" bson:"isCloudBackupEnabled"`
+	IsFirewallServiceEnabled bool `json:"isFirewallServiceEnabled" bson:"isFirewallServiceEnabled"`
+	IsDNSFilteringEnabled    bool `json:"isDnsFilteringEnabled" bson:"isDnsFilteringEnabled"`
+	IsRoamingEnabled         bool `json:"isRoamingEnabled" bson:"isRoamingEnabled"`
+}
 
-	// ===== Marketing, Campaigns & Retention =====
-	IsCampaginServiceEnabled     bool `json:"isCampaginServiceEnabled" bson:"isCampaginServiceEnabled"`         // (legacy) Campaign service
-	IsPromoCampaignEnabled       bool `json:"isPromoCampaignEnabled" bson:"isPromoCampaignEnabled"`             // Promotional campaigns (generic)
-	IsEmailCampaignEnabled       bool `json:"isEmailCampaignEnabled" bson:"isEmailCampaignEnabled"`             // Email campaigns
-	IsSMSCampaignEnabled         bool `json:"isSMSCampaignEnabled" bson:"isSMSCampaignEnabled"`                 // SMS campaigns
-	IsMarketingAutomationEnabled bool `json:"isMarketingAutomationEnabled" bson:"isMarketingAutomationEnabled"` // Marketing automation workflows
-	IsCouponsEnabled             bool `json:"isCouponsEnabled" bson:"isCouponsEnabled"`                         // Discount coupons
-	IsLoyaltyProgramEnabled      bool `json:"isLoyaltyProgramEnabled" bson:"isLoyaltyProgramEnabled"`           // Loyalty/reward points
-	IsReferralProgramEnabled     bool `json:"isReferralProgramEnabled" bson:"isReferralProgramEnabled"`         // Referral program
+// MarketingFeatures - Marketing, campaigns & retention
+type MarketingFeatures struct {
+	IsCampaginServiceEnabled     bool `json:"isCampaginServiceEnabled" bson:"isCampaginServiceEnabled"`
+	IsPromoCampaignEnabled       bool `json:"isPromoCampaignEnabled" bson:"isPromoCampaignEnabled"`
+	IsEmailCampaignEnabled       bool `json:"isEmailCampaignEnabled" bson:"isEmailCampaignEnabled"`
+	IsSMSCampaignEnabled         bool `json:"isSmsCampaignEnabled" bson:"isSmsCampaignEnabled"`
+	IsMarketingAutomationEnabled bool `json:"isMarketingAutomationEnabled" bson:"isMarketingAutomationEnabled"`
+	IsCouponsEnabled             bool `json:"isCouponsEnabled" bson:"isCouponsEnabled"`
+	IsLoyaltyProgramEnabled      bool `json:"isLoyaltyProgramEnabled" bson:"isLoyaltyProgramEnabled"`
+	IsReferralProgramEnabled     bool `json:"isReferralProgramEnabled" bson:"isReferralProgramEnabled"`
+}
 
-	// ===== Billing & Collections =====
-	IsInvoiceAutoReminderEnabled bool `json:"isInvoiceAutoReminderEnabled" bson:"isInvoiceAutoReminderEnabled"` // Auto invoice/payment reminders
-	IsPaymentSplitEnabled        bool `json:"isPaymentSplitEnabled" bson:"isPaymentSplitEnabled"`               // Split payments (partners/vendors)
+// BillingFeatures - Billing & collections
+type BillingFeatures struct {
+	IsInvoiceAutoReminderEnabled bool `json:"isInvoiceAutoReminderEnabled" bson:"isInvoiceAutoReminderEnabled"`
+	IsPaymentSplitEnabled        bool `json:"isPaymentSplitEnabled" bson:"isPaymentSplitEnabled"`
+}
 
-	// ===== Operations & Integrations =====
-	IsTicketingEnabled      bool `json:"isTicketingEnabled" bson:"isTicketingEnabled"`           // Helpdesk/ticketing
-	IsCRMIntegrationEnabled bool `json:"isCrmIntegrationEnabled" bson:"isCrmIntegrationEnabled"` // CRM integration (Zoho/HubSpot/etc.)
-	IsERPIntegrationEnabled bool `json:"isErpIntegrationEnabled" bson:"isErpIntegrationEnabled"` // ERP integration
-	IsInventorySyncEnabled  bool `json:"isInventorySyncEnabled" bson:"isInventorySyncEnabled"`   // Inventory sync with ERP
-	IsPartnerPortalEnabled  bool `json:"isPartnerPortalEnabled" bson:"isPartnerPortalEnabled"`   // Partner/reseller portal
+// OperationsFeatures - Operations & integrations
+type OperationsFeatures struct {
+	IsTicketingEnabled      bool `json:"isTicketingEnabled" bson:"isTicketingEnabled"`
+	IsCRMIntegrationEnabled bool `json:"isCrmIntegrationEnabled" bson:"isCrmIntegrationEnabled"`
+	IsERPIntegrationEnabled bool `json:"isErpIntegrationEnabled" bson:"isErpIntegrationEnabled"`
+	IsInventorySyncEnabled  bool `json:"isInventorySyncEnabled" bson:"isInventorySyncEnabled"`
+	IsPartnerPortalEnabled  bool `json:"isPartnerPortalEnabled" bson:"isPartnerPortalEnabled"`
+}
 
-	// ===== Analytics & Feedback =====
-	IsUsageAnalyticsEnabled   bool `json:"isUsageAnalyticsEnabled" bson:"isUsageAnalyticsEnabled"`     // User behavior/usage analytics
-	IsRevenueAnalyticsEnabled bool `json:"isRevenueAnalyticsEnabled" bson:"isRevenueAnalyticsEnabled"` // Revenue analytics
-	IsNetworkAnalyticsEnabled bool `json:"isNetworkAnalyticsEnabled" bson:"isNetworkAnalyticsEnabled"` // Network performance analytics
-	IsCustomerFeedbackEnabled bool `json:"isCustomerFeedbackEnabled" bson:"isCustomerFeedbackEnabled"` // Surveys/feedback
-	IsChurnPredictionEnabled  bool `json:"isChurnPredictionEnabled" bson:"isChurnPredictionEnabled"`   // AI churn prediction
+// AnalyticsFeatures - Analytics & feedback
+type AnalyticsFeatures struct {
+	IsUsageAnalyticsEnabled   bool `json:"isUsageAnalyticsEnabled" bson:"isUsageAnalyticsEnabled"`
+	IsRevenueAnalyticsEnabled bool `json:"isRevenueAnalyticsEnabled" bson:"isRevenueAnalyticsEnabled"`
+	IsNetworkAnalyticsEnabled bool `json:"isNetworkAnalyticsEnabled" bson:"isNetworkAnalyticsEnabled"`
+	IsCustomerFeedbackEnabled bool `json:"isCustomerFeedbackEnabled" bson:"isCustomerFeedbackEnabled"`
+	IsChurnPredictionEnabled  bool `json:"isChurnPredictionEnabled" bson:"isChurnPredictionEnabled"`
+}
 
-	// ===== Security & Compliance =====
-	Is2FAEnabled                 bool `json:"is2faEnabled" bson:"is2faEnabled"`                                 // Two-factor auth (2FA)
-	IsAuditLoggingEnabled        bool `json:"isAuditLoggingEnabled" bson:"isAuditLoggingEnabled"`               // Audit logs
-	IsDataRetentionPolicyEnabled bool `json:"isDataRetentionPolicyEnabled" bson:"isDataRetentionPolicyEnabled"` // Data retention enforcement
-	IsGDPRComplianceEnabled      bool `json:"isGdprComplianceEnabled" bson:"isGdprComplianceEnabled"`           // GDPR/DPDP controls (toggle gates UI/flows)
+// SecurityFeatures - Security & compliance
+type SecurityFeatures struct {
+	Is2FAEnabled                 bool `json:"is2FAEnabled" bson:"is2FAEnabled"`
+	IsAuditLoggingEnabled        bool `json:"isAuditLoggingEnabled" bson:"isAuditLoggingEnabled"`
+	IsDataRetentionPolicyEnabled bool `json:"isDataRetentionPolicyEnabled" bson:"isDataRetentionPolicyEnabled"`
+	IsGDPRComplianceEnabled      bool `json:"isGdprComplianceEnabled" bson:"isGdprComplianceEnabled"`
+}
 
-	// ===== AI & Automation =====
-	IsAIAssistantEnabled           bool `json:"isAiAssistantEnabled" bson:"isAiAssistantEnabled"`                         // AI assistant in portal/app
-	IsAIBasedSupportEnabled        bool `json:"isAiBasedSupportEnabled" bson:"isAiBasedSupportEnabled"`                   // AI chat/agent for support
-	IsNetworkOptimizationAIEnabled bool `json:"isNetworkOptimizationAiEnabled" bson:"isNetworkOptimizationAiEnabled"`     // AI-driven network tuning
-	IsPredictiveMaintenanceEnabled bool `json:"isPredictiveMaintenanceAiEnabled" bson:"isPredictiveMaintenanceAiEnabled"` // Predictive maintenance alerts
+// AIFeatures - AI & automation
+type AIFeatures struct {
+	IsAIAssistantEnabled           bool `json:"isAiAssistantEnabled" bson:"isAiAssistantEnabled"`
+	IsAIBasedSupportEnabled        bool `json:"isAiBasedSupportEnabled" bson:"isAiBasedSupportEnabled"`
+	IsNetworkOptimizationAIEnabled bool `json:"isNetworkOptimizationAIEnabled" bson:"isNetworkOptimizationAIEnabled"`
+	IsPredictiveMaintenanceEnabled bool `json:"isPredictiveMaintenanceEnabled" bson:"isPredictiveMaintenanceEnabled"`
 }
 
 type ISPSettings struct {
