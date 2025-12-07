@@ -1,17 +1,20 @@
 package subscriberevent
 
 // FieldConfigItem represents a single field configuration item in events
+// This must match the structure in subscriber-service/internal/models/field.config.model.go
 type FieldConfigItem struct {
-	FieldKey          string                `json:"fieldKey" bson:"fieldKey"`
-	IsVisible         bool                  `json:"isVisible" bson:"isVisible"`
-	IsMandatory       bool                  `json:"isMandatory" bson:"isMandatory"`
-	IsReadOnly        bool                  `json:"isReadOnly" bson:"isReadOnly"`
-	IsHidden          bool                  `json:"isHidden" bson:"isHidden"`
-	DisplayOrder      int                   `json:"displayOrder" bson:"displayOrder"`
-	CustomLabel       *string               `json:"customLabel,omitempty" bson:"customLabel,omitempty"`
-	CustomPlaceholder *string               `json:"customPlaceholder,omitempty" bson:"customPlaceholder,omitempty"`
-	ValidationRules   *FieldValidationRules `json:"validationRules,omitempty" bson:"validationRules,omitempty"`
-	ConditionalRules  *ConditionalRules     `json:"conditionalRules,omitempty" bson:"conditionalRules,omitempty"`
+	FieldKey          string                `json:"fieldKey" bson:"fieldKey"`                                       // Field identifier (e.g., "primaryMobile")
+	FieldName         string                `json:"fieldName" bson:"fieldName"`                                     // Display name (e.g., "Primary Mobile")
+	DataType          string                `json:"dataType" bson:"dataType"`                                       // Data type: string, number, boolean, date, enum, array, object
+	IsVisible         bool                  `json:"isVisible" bson:"isVisible"`                                     // Show in form?
+	IsMandatory       bool                  `json:"isMandatory" bson:"isMandatory"`                                 // Required field?
+	IsReadOnly        bool                  `json:"isReadOnly" bson:"isReadOnly"`                                   // Read-only field?
+	IsHidden          bool                  `json:"isHidden" bson:"isHidden"`                                       // Completely hidden (vs not visible)?
+	DisplayOrder      int                   `json:"displayOrder" bson:"displayOrder"`                               // Order in form (1, 2, 3...)
+	CustomLabel       *string               `json:"customLabel,omitempty" bson:"customLabel,omitempty"`             // Override default label
+	CustomPlaceholder *string               `json:"customPlaceholder,omitempty" bson:"customPlaceholder,omitempty"` // Override default placeholder
+	ValidationRules   *FieldValidationRules `json:"validationRules,omitempty" bson:"validationRules,omitempty"`     // Custom validation
+	ConditionalRules  *ConditionalRules     `json:"conditionalRules,omitempty" bson:"conditionalRules,omitempty"`   // Show/hide based on conditions
 }
 
 // FieldValidationRules represents validation rules for a field in events
