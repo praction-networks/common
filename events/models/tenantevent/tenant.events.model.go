@@ -308,22 +308,27 @@ type ExternalRadiusSettings struct {
 type EnabledFeatures struct {
 	Core          CoreFeatures         `json:"core" bson:"core"`                   // Core user experience features
 	Notifications NotificationFeatures `json:"notifications" bson:"notifications"` // Notification channels
-	Radius        RadiusFeatures       `json:"radius" bson:"radius"`               // RADIUS provider options
 	Hotspot       HotspotFeatures      `json:"hotspot" bson:"hotspot"`             // Hotspot & captive portal
 	VAS           VASFeatures          `json:"vas" bson:"vas"`                     // Value-added services
 	Marketing     MarketingFeatures    `json:"marketing" bson:"marketing"`         // Marketing & campaigns
 	Billing       BillingFeatures      `json:"billing" bson:"billing"`             // Billing & collections
 	Operations    OperationsFeatures   `json:"operations" bson:"operations"`       // Operations & integrations
 	Analytics     AnalyticsFeatures    `json:"analytics" bson:"analytics"`         // Analytics & feedback
-	Security      SecurityFeatures     `json:"security" bson:"security"`           // Security & compliance
+	I9Shield      SecurityFeatures     `json:"i9Shield" bson:"i9Shield"`           // I9 Shield features
 	AI            AIFeatures           `json:"ai" bson:"ai"`                       // AI & automation
 }
 
 // CoreFeatures - Core user experience
 type CoreFeatures struct {
-	IsUserPortalEnabled    bool `json:"isUserPortalEnabled" bson:"isUserPortalEnabled"`
-	IsUserKYCEnabled       bool `json:"isUserKYCEnabled" bson:"isUserKYCEnabled"`
-	IsOnlinePaymentEnabled bool `json:"isOnlinePaymentEnabled" bson:"isOnlinePaymentEnabled"`
+	IsNotificationEnabled bool `json:"isNotificationEnabled" bson:"isNotificationEnabled"`
+	IsUserPortalEnabled   bool `json:"isUserPortalEnabled" bson:"isUserPortalEnabled"`
+	IsVasEnabled          bool `json:"isVasEnabled" bson:"isVasEnabled"`
+	IsMarketingEnabled    bool `json:"isMarketingEnabled" bson:"isMarketingEnabled"`
+	IsBillingEnabled      bool `json:"isBillingEnabled" bson:"isBillingEnabled"`
+	IsOperationsEnabled   bool `json:"isOperationsEnabled" bson:"isOperationsEnabled"`
+	IsAnalyticsEnabled    bool `json:"isAnalyticsEnabled" bson:"isAnalyticsEnabled"`
+	IsI9ShieldEnabled     bool `json:"isI9ShieldEnabled" bson:"isI9ShieldEnabled"`
+	IsAIEnabled           bool `json:"isAIEnabled" bson:"isAIEnabled"`
 }
 
 // NotificationFeatures - Notification channels
@@ -333,19 +338,10 @@ type NotificationFeatures struct {
 	IsUserWhatsappNotificationEnabled bool `json:"isUserWhatsappNotificationEnabled" bson:"isUserWhatsappNotificationEnabled"`
 	IsUserTelegramNotificationEnabled bool `json:"isUserTelegramNotificationEnabled" bson:"isUserTelegramNotificationEnabled"`
 	IsPushNotificationEnabled         bool `json:"isPushNotificationEnabled" bson:"isPushNotificationEnabled"`
-	IsInAppBannerEnabled              bool `json:"isInAppBannerEnabled" bson:"isInAppBannerEnabled"`
-}
-
-// RadiusFeatures - RADIUS provider options
-type RadiusFeatures struct {
-	IsJazeeraRadiusProviderEnabled bool `json:"isJazeeraRadiusProviderEnabled" bson:"isJazeeraRadiusProviderEnabled"`
-	IsIPACTRadiusProviderEnabled   bool `json:"isIpactRadiusProviderEnabled" bson:"isIpactRadiusProviderEnabled"`
-	IsFreeRadiusProviderEnabled    bool `json:"isFreeRadiusProviderEnabled" bson:"isFreeRadiusProviderEnabled"`
 }
 
 // HotspotFeatures - Hotspot & captive portal
-type HotspotFeatures struct {
-	IsHotspotEnabled           bool `json:"isHotspotEnabled" bson:"isHotspotEnabled"`                     // Master hotspot toggle
+type HotspotFeatures struct { // Master hotspot toggle
 	IsOTPAuthEnabled           bool `json:"isOtpAuthEnabled" bson:"isOtpAuthEnabled"`                     // OTP-based authentication
 	IsSocialLoginEnabled       bool `json:"isSocialLoginEnabled" bson:"isSocialLoginEnabled"`             // Social media login (Google, Facebook)
 	IsVoucherLoginEnabled      bool `json:"isVoucherLoginEnabled" bson:"isVoucherLoginEnabled"`           // Voucher/scratch card access
@@ -365,8 +361,7 @@ type VASFeatures struct {
 	IsVPNEnabled             bool `json:"isVpnEnabled" bson:"isVpnEnabled"`
 	IsCloudBackupEnabled     bool `json:"isCloudBackupEnabled" bson:"isCloudBackupEnabled"`
 	IsFirewallServiceEnabled bool `json:"isFirewallServiceEnabled" bson:"isFirewallServiceEnabled"`
-	IsDNSFilteringEnabled    bool `json:"isDnsFilteringEnabled" bson:"isDnsFilteringEnabled"`
-	IsRoamingEnabled         bool `json:"isRoamingEnabled" bson:"isRoamingEnabled"`
+	IsDNSSecurityEnabled     bool `json:"isDnsSecurityEnabled" bson:"isDnsSecurityEnabled"`
 }
 
 // MarketingFeatures - Marketing, campaigns & retention
@@ -383,6 +378,8 @@ type MarketingFeatures struct {
 
 // BillingFeatures - Billing & collections
 type BillingFeatures struct {
+	IsOnlinePaymentEnabled       bool `json:"isOnlinePaymentEnabled" bson:"isOnlinePaymentEnabled"`
+	IsMultiSplitPaymentEnabled   bool `json:"isMultiSplitPaymentEnabled" bson:"isMultiSplitPaymentEnabled"`
 	IsInvoiceAutoReminderEnabled bool `json:"isInvoiceAutoReminderEnabled" bson:"isInvoiceAutoReminderEnabled"`
 	IsPaymentSplitEnabled        bool `json:"isPaymentSplitEnabled" bson:"isPaymentSplitEnabled"`
 }
