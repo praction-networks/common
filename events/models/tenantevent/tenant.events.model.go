@@ -320,6 +320,8 @@ type EnabledFeatures struct {
 
 // CoreFeatures - Core user experience
 type CoreFeatures struct {
+	IsHotspotEnabled      bool `json:"isHotspotEnabled" bson:"isHotspotEnabled"`
+	IsUserKYCEnabled      bool `json:"isUserKYCEnabled" bson:"isUserKYCEnabled"`
 	IsNotificationEnabled bool `json:"isNotificationEnabled" bson:"isNotificationEnabled"`
 	IsUserPortalEnabled   bool `json:"isUserPortalEnabled" bson:"isUserPortalEnabled"`
 	IsVasEnabled          bool `json:"isVasEnabled" bson:"isVasEnabled"`
