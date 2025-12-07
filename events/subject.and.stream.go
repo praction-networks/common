@@ -93,6 +93,12 @@ const (
 	FieldConfigCreatedSubject Subject = "subscriber.fieldconfig.created"
 	FieldConfigUpdatedSubject Subject = "subscriber.fieldconfig.updated"
 	FieldConfigDeletedSubject Subject = "subscriber.fieldconfig.deleted"
+
+	// Theme Events (Tenant Service) - Unified subjects, portalType in event payload
+	ThemeCreatedSubject    Subject = "theme.created"
+	ThemeUpdatedSubject    Subject = "theme.updated"
+	ThemeDeletedSubject    Subject = "theme.deleted"
+	ThemeSetDefaultSubject Subject = "theme.set_default"
 )
 
 // Global Subjects - Cross-service events that any service can publish
@@ -157,6 +163,11 @@ var Streams = map[StreamName]StreamMetadata{
 			TenantAppMessagingBindingCreatedSubject,
 			TenantAppMessagingBindingUpdatedSubject,
 			TenantAppMessagingBindingDeletedSubject,
+			// Theme Events (unified subjects, portalType in event payload)
+			ThemeCreatedSubject,
+			ThemeUpdatedSubject,
+			ThemeDeletedSubject,
+			ThemeSetDefaultSubject,
 		},
 	},
 
