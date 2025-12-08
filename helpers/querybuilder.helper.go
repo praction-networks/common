@@ -603,13 +603,30 @@ func parseInto(fq *PaginatedFeedQuery, r *http.Request, p QueryPolicy) error {
 		return badReqWithField("sort", fmt.Sprintf("too many sort fields, maximum allowed: %d", p.Limits.MaxSorts))
 	}
 
+	// --- Special query parameters (tenantId -> tenantIds with $in) ---
+	// Handle tenantId specially: map to tenantIds field with $in operator
+	if tenantIdVal := qs.Get("tenantId"); tenantIdVal != "" {
+		// Map tenantId to tenantIds field with $in operator
+		if fq.Filters == nil {
+			fq.Filters = map[string]map[string]string{}
+		}
+		if fq.Filters["tenantIds"] == nil {
+			fq.Filters["tenantIds"] = map[string]string{}
+		}
+		// Use $in operator to check if tenantId is in tenantIds array
+		fq.Filters["tenantIds"]["in"] = tenantIdVal
+	}
+
 	// --- Filters (any unknown key becomes a filter) ---
-	fq.Filters = map[string]map[string]string{}
+	if fq.Filters == nil {
+		fq.Filters = map[string]map[string]string{}
+	}
 	known := map[string]bool{
 		"limit": true, "offset": true, "sort": true, "include": true, "exclude": true,
 		"pagination_meta": true, "distinct": true, "search": true, "date_from": true, "date_to": true,
 		"text_search": true, "text_language": true, "text_case_sensitive": true,
 		"lat": true, "lon": true, "geo_type": true, "max_distance": true, "min_distance": true,
+		"tenantId": true, // Exclude tenantId from regular filter processing (handled above)
 	}
 	for key, vals := range qs {
 		if known[key] || len(vals) == 0 {
