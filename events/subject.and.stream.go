@@ -24,7 +24,7 @@ type Subject string
 
 const (
 
-	//Domain Service Event Initialization
+	//Tenant Service Event Initialization
 	TenantCreatedSubject         Subject = "tenant.created"
 	TenantUpdatedSubject         Subject = "tenant.updated"
 	TenantDeletedSubject         Subject = "tenant.deleted"

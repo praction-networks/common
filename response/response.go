@@ -167,3 +167,82 @@ func SendCustomError(w http.ResponseWriter, message string, errors []ErrorDetail
 func SendCustomResponse(w http.ResponseWriter, errors []ErrorDetail, statusCode int) {
 	sendError(w, "err", errors, statusCode)
 }
+
+// SendResponseModel sends a response using a generic Response[T] model structure
+// This supports services that use Response[T] with Success, Message, Data, Error, Meta fields
+func SendResponseModel[T any](w http.ResponseWriter, success bool, message string, data T, errorCode string, errorDetails string, meta interface{}, statusCode int) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(statusCode)
+
+	// Build response based on the Response[T] structure
+	response := map[string]interface{}{
+		"success": success,
+		"message": message,
+	}
+
+	if success {
+		response["data"] = data
+		if meta != nil {
+			response["meta"] = meta
+		}
+	} else {
+		errorObj := map[string]interface{}{
+			"code":    errorCode,
+			"message": message,
+		}
+		if errorDetails != "" {
+			errorObj["details"] = errorDetails
+		}
+		response["error"] = errorObj
+	}
+
+	if err := json.NewEncoder(w).Encode(response); err != nil {
+		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+	}
+}
+
+// SendResponseModelSuccess sends a success response using Response[T] model
+func SendResponseModelSuccess[T any](w http.ResponseWriter, message string, data T, statusCode int) {
+	SendResponseModel(w, true, message, data, "", "", nil, statusCode)
+}
+
+// SendResponseModelError sends an error response using Response[T] model
+func SendResponseModelError(w http.ResponseWriter, message string, errorCode string, errorDetails string, statusCode int) {
+	SendResponseModel[interface{}](w, false, message, nil, errorCode, errorDetails, nil, statusCode)
+}
+
+// SendResponseModel200OK sends a 200 OK success response using Response[T] model
+func SendResponseModel200OK[T any](w http.ResponseWriter, message string, data T) {
+	SendResponseModelSuccess(w, message, data, http.StatusOK)
+}
+
+// SendResponseModel201Created sends a 201 Created success response using Response[T] model
+func SendResponseModel201Created[T any](w http.ResponseWriter, message string, data T) {
+	SendResponseModelSuccess(w, message, data, http.StatusCreated)
+}
+
+// SendResponseModel400BadRequest sends a 400 Bad Request error response using Response[T] model
+func SendResponseModel400BadRequest(w http.ResponseWriter, message string) {
+	SendResponseModelError(w, message, "BAD_REQUEST", message, http.StatusBadRequest)
+}
+
+// SendResponseModel404NotFound sends a 404 Not Found error response using Response[T] model
+func SendResponseModel404NotFound(w http.ResponseWriter, message string) {
+	SendResponseModelError(w, message, "NOT_FOUND", message, http.StatusNotFound)
+}
+
+// SendResponseModel500InternalServerError sends a 500 Internal Server Error response using Response[T] model
+func SendResponseModel500InternalServerError(w http.ResponseWriter, message string) {
+	SendResponseModelError(w, message, "INTERNAL_SERVER_ERROR", message, http.StatusInternalServerError)
+}
+
+// SendResponseModelValidationError sends a validation error response using Response[T] model
+func SendResponseModelValidationError(w http.ResponseWriter, message string, validationErrors interface{}, statusCode int) {
+	// Convert validation errors to JSON string for details
+	details := ""
+	if validationErrors != nil {
+		detailsBytes, _ := json.Marshal(validationErrors)
+		details = string(detailsBytes)
+	}
+	SendResponseModelError(w, message, "VALIDATION_ERROR", details, statusCode)
+}
