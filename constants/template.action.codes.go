@@ -338,6 +338,7 @@ func GetAllActionCodes() map[TemplateActionCode]bool {
 		TemplateActionCodeCustomerRenewalReminder:           true,
 		TemplateActionCodeCustomerChurnRisk:                 true,
 		TemplateActionCodeCustomerDisconnected:              true,
+		TemplateActionCodeHotSpotLoginOTP:                   true,
 	}
 }
 
@@ -468,6 +469,7 @@ func GetActionCodeDescriptions() map[TemplateActionCode]string {
 		TemplateActionCodeCustomerRenewalReminder:           "Renewal Reminder - Plan renewal due",
 		TemplateActionCodeCustomerChurnRisk:                 "Churn Risk Alert - At-risk customer detected",
 		TemplateActionCodeCustomerDisconnected:              "Customer Disconnected - Permanent disconnection",
+		TemplateActionCodeHotSpotLoginOTP:                   "Hotspot Login OTP - One-Time Password for login",
 	}
 }
 
