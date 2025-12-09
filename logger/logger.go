@@ -79,7 +79,7 @@ func DefaultComplianceConfig() *ComplianceConfig {
 // Compliance: GDPR Art. 32, PCI-DSS, HIPAA
 var sensitiveKeys = []string{
 	// Authentication & Security
-	"password", "passwd", "pwd", "pass",
+	"passwd", "pwd", "pass",
 	"secret", "secretkey", "secret_key",
 	"token", "accesstoken", "access_token", "refreshtoken", "refresh_token",
 	"apikey", "api_key", "apitoken", "api_token",
