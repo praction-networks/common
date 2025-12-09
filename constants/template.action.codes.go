@@ -142,6 +142,11 @@ const (
 	TemplateActionCodeLeadReopened      TemplateActionCode = "LEAD.REOPENED"
 
 	// -----------------------------------------------------
+	// 11. Hotspots Logic Actions
+	// -----------------------------------------------------
+	TemplateActionCodeHotSpotLoginOTP TemplateActionCode = "HOTSPOT.SUBSCRIBER_LOGIN_OTP"
+
+	// -----------------------------------------------------
 	// 12. Feasibility Check & Site Survey Actions
 	// -----------------------------------------------------
 	TemplateActionCodeFeasibilityRequested              TemplateActionCode = "FEASIBILITY.REQUESTED"
