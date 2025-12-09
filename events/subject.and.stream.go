@@ -4,12 +4,13 @@ type StreamName string
 
 // Stream names as constants
 const (
-	SeedAppStream    StreamName = "SeedAppStream"
-	AuthStream       StreamName = "AuthStream"
-	TenantStream     StreamName = "TenantStream"
-	TenantUserStream StreamName = "TenantUserStream"
-	InventoryStream  StreamName = "InventoryStream"
-	SubscriberStream StreamName = "SubscriberStream"
+	SeedAppStream       StreamName = "SeedAppStream"
+	AuthStream          StreamName = "AuthStream"
+	TenantStream        StreamName = "TenantStream"
+	TenantUserStream    StreamName = "TenantUserStream"
+	InventoryStream     StreamName = "InventoryStream"
+	SubscriberStream    StreamName = "SubscriberStream"
+	CaptivePortalStream StreamName = "CaptivePortalStream"
 )
 
 // Global Stream names as constants
@@ -81,6 +82,10 @@ const (
 	BroadbandSubscriptionCreatedSubject Subject = "subscriber.broadband.created"
 	BroadbandSubscriptionUpdatedSubject Subject = "subscriber.broadband.updated"
 	BroadbandSubscriptionDeletedSubject Subject = "subscriber.broadband.deleted"
+
+	GuestHotspotSubscriberCreatedSubject Subject = "subscriber.guest.hotspot.created"
+	GuestHotspotSubscriberUpdatedSubject Subject = "subscriber.guest.hotspot.updated"
+	GuestHotspotSubscriberDeletedSubject Subject = "subscriber.guest.hotspot.deleted"
 
 	// Hotspot Profile Events
 	HotspotProfileCreatedSubject Subject = "subscriber.hotspot.created"
@@ -231,6 +236,15 @@ var Streams = map[StreamName]StreamMetadata{
 			FieldConfigCreatedSubject,
 			FieldConfigUpdatedSubject,
 			FieldConfigDeletedSubject,
+		},
+	},
+	CaptivePortalStream: {
+		Name:        CaptivePortalStream,
+		Description: "Stream for captive portal service events",
+		Subjects: []Subject{
+			GuestHotspotSubscriberCreatedSubject,
+			GuestHotspotSubscriberUpdatedSubject,
+			GuestHotspotSubscriberDeletedSubject,
 		},
 	},
 }

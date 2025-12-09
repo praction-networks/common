@@ -100,6 +100,8 @@ type HotspotProfileCreatedEvent struct {
 	TenantID          string    `json:"tenantId" bson:"tenantId"`
 	Status            string    `json:"status" bson:"status"`
 	UserID            string    `json:"userId,omitempty" bson:"userId,omitempty"`
+	Username          string    `json:"username,omitempty" bson:"username,omitempty"` // RADIUS username
+	Password          string    `json:"password,omitempty" bson:"password,omitempty"` // RADIUS password
 	DefaultAuthMethod string    `json:"defaultAuthMethod" bson:"defaultAuthMethod"`
 	MaxDevices        int       `json:"maxDevices" bson:"maxDevices"`
 	AutoLoginEnabled  bool      `json:"autoLoginEnabled" bson:"autoLoginEnabled"`
