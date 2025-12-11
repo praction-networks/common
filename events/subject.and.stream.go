@@ -73,6 +73,11 @@ const (
 	TenantUserRoleUpdatedSubject Subject = "tenantuserrole.updated"
 	TenantUserRoleDeletedSubject Subject = "tenantuserrole.deleted"
 
+	// NAS Createa in captive portal service
+	NASCreatedSubject Subject = "captiveportal.nas.created"
+	NASUpdatedSubject Subject = "captiveportal.nas.updated"
+	NASDeletedSubject Subject = "captiveportal.nas.deleted"
+
 	// Subscriber Service Event Initialization
 	SubscriberCreatedSubject Subject = "subscriber.created"
 	SubscriberUpdatedSubject Subject = "subscriber.updated"
@@ -245,6 +250,9 @@ var Streams = map[StreamName]StreamMetadata{
 			GuestHotspotSubscriberCreatedSubject,
 			GuestHotspotSubscriberUpdatedSubject,
 			GuestHotspotSubscriberDeletedSubject,
+			NASCreatedSubject,
+			NASUpdatedSubject,
+			NASDeletedSubject,
 		},
 	},
 }
