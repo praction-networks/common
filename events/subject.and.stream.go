@@ -99,10 +99,10 @@ const (
 	HotspotDeviceAddedSubject    Subject = "subscriber.hotspot.device.added"
 	HotspotDeviceRemovedSubject  Subject = "subscriber.hotspot.device.removed"
 
-	// Field Configuration Events
-	FieldConfigCreatedSubject Subject = "subscriber.fieldconfig.created"
-	FieldConfigUpdatedSubject Subject = "subscriber.fieldconfig.updated"
-	FieldConfigDeletedSubject Subject = "subscriber.fieldconfig.deleted"
+	// Form Configuration Events (replaces FieldConfig - fields are now stored in FormConfig)
+	FormConfigCreatedSubject Subject = "subscriber.formconfig.created"
+	FormConfigUpdatedSubject Subject = "subscriber.formconfig.updated"
+	FormConfigDeletedSubject Subject = "subscriber.formconfig.deleted"
 
 	// Theme Events (Tenant Service) - Unified subjects, portalType in event payload
 	ThemeCreatedSubject    Subject = "theme.created"
@@ -221,7 +221,7 @@ var Streams = map[StreamName]StreamMetadata{
 	},
 	SubscriberStream: {
 		Name:        SubscriberStream,
-		Description: "Stream for subscriber service events including broadband, hotspot, and field configurations",
+		Description: "Stream for subscriber service events including broadband, hotspot, and form configurations",
 		Subjects: []Subject{
 			// Subscriber Events
 			SubscriberCreatedSubject,
@@ -237,10 +237,10 @@ var Streams = map[StreamName]StreamMetadata{
 			HotspotProfileDeletedSubject,
 			HotspotDeviceAddedSubject,
 			HotspotDeviceRemovedSubject,
-			// Field Configuration Events
-			FieldConfigCreatedSubject,
-			FieldConfigUpdatedSubject,
-			FieldConfigDeletedSubject,
+			// Form Configuration Events (fields are now stored in FormConfig)
+			FormConfigCreatedSubject,
+			FormConfigUpdatedSubject,
+			FormConfigDeletedSubject,
 		},
 	},
 	CaptivePortalStream: {
