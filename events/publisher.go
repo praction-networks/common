@@ -357,35 +357,35 @@ func (p *Publisher[T]) PublishWithOptions(ctx context.Context, data T, userOpts 
 				return nil, fmt.Errorf("publish cancelled: %w", ctx.Err())
 			}
 		}
-	}
 
-	// Fallback (idempotent upsert) after threshold (only when enabled)
-	if p.FallbackStorage != nil && opts.FallbackEnabled != nil && *opts.FallbackEnabled && actualAttempts >= opts.FallbackAfterAttempts {
-		docID := fmt.Sprintf("%s|%s", p.Stream, opts.MsgID)
-		lastErrStr := "publish failed"
-		if lastErr != nil {
-			lastErrStr = lastErr.Error()
-		}
+		// Fallback (idempotent upsert) after threshold (only when enabled)
+		if p.FallbackStorage != nil && opts.FallbackEnabled != nil && *opts.FallbackEnabled && actualAttempts >= opts.FallbackAfterAttempts {
+			docID := fmt.Sprintf("%s|%s", p.Stream, opts.MsgID)
+			lastErrStr := "publish failed"
+			if lastErr != nil {
+				lastErrStr = lastErr.Error()
+			}
 
-		filter := bson.M{"_id": docID}
-		update := bson.M{
-			"$setOnInsert": bson.M{
-				"streamName": string(p.Stream),
-				"subject":    string(p.Subject),
-				"payload":    payload, // keep original payload on first insert
-				"attempts":   0,
-			},
-			"$set": bson.M{
-				"timestamp": time.Now(), // last attempt time
-				"lastError": lastErrStr,
-			},
-			"$inc": bson.M{"attempts": actualAttempts}, // record how many we already tried here
-		}
-		_, ferr := p.FallbackStorage.UpdateOne(ctx, filter, update, mopt.Update().SetUpsert(true))
-		if ferr != nil {
-			logger.Error("Fallback upsert failed", ferr, "subject", p.Subject, "msgID", opts.MsgID)
-		} else {
-			logger.Warn("Fallback upserted", "subject", p.Subject, "msgID", opts.MsgID)
+			filter := bson.M{"_id": docID}
+			update := bson.M{
+				"$setOnInsert": bson.M{
+					"streamName": string(p.Stream),
+					"subject":    string(p.Subject),
+					"payload":    payload, // keep original payload on first insert
+					"attempts":   0,
+				},
+				"$set": bson.M{
+					"timestamp": time.Now(), // last attempt time
+					"lastError": lastErrStr,
+				},
+				"$inc": bson.M{"attempts": actualAttempts}, // record how many we already tried here
+			}
+			_, ferr := p.FallbackStorage.UpdateOne(ctx, filter, update, mopt.Update().SetUpsert(true))
+			if ferr != nil {
+				logger.Error("Fallback upsert failed", ferr, "subject", p.Subject, "msgID", opts.MsgID)
+			} else {
+				logger.Warn("Fallback upserted", "subject", p.Subject, "msgID", opts.MsgID)
+			}
 		}
 	}
 
@@ -393,21 +393,4 @@ func (p *Publisher[T]) PublishWithOptions(ctx context.Context, data T, userOpts 
 		lastErr = fmt.Errorf("publish failed without specific error")
 	}
 	return nil, fmt.Errorf("failed to publish after %d attempts: %w", actualAttempts, lastErr)
-}
-
-// EnsureFallbackIndexes creates helpful indexes for the fallback collection.
-// Call once at boot if you use Mongo fallback.
-func EnsureFallbackIndexes(ctx context.Context, coll *mongo.Collection) error {
-	if coll == nil {
-		return nil
-	}
-	models := []mongo.IndexModel{
-		{
-			Keys:    bson.D{{Key: "timestamp", Value: 1}},
-			Options: mopt.Index().SetName("ts_idx"),
-		},
-		// _id is unique by default (we use "<Stream>|<MsgID>")
-	}
-	_, err := coll.Indexes().CreateMany(ctx, models)
-	return err
 }
