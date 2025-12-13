@@ -26,6 +26,7 @@ const (
 	EnabledFeaturesFieldHotspotIsOTPAuthEnabled           = "Hotspot.IsOTPAuthEnabled"
 	EnabledFeaturesFieldHotspotIsSocialLoginEnabled       = "Hotspot.IsSocialLoginEnabled"
 	EnabledFeaturesFieldHotspotIsVoucherLoginEnabled      = "Hotspot.IsVoucherLoginEnabled"
+	EnabledFeaturesFieldHotspotIsPasswordLoginEnabled     = "Hotspot.IsPasswordLoginEnabled"
 	EnabledFeaturesFieldHotspotIsGuestWiFiEnabled         = "Hotspot.IsGuestWiFiEnabled"
 	EnabledFeaturesFieldHotspotIsSessionManagementEnabled = "Hotspot.IsSessionManagementEnabled"
 	EnabledFeaturesFieldHotspotIsCustomBrandingEnabled    = "Hotspot.IsCustomBrandingEnabled"
@@ -128,6 +129,7 @@ type HotspotFeatures struct { // Master hotspot toggle
 	IsOTPAuthEnabled           bool `json:"isOtpAuthEnabled" bson:"isOtpAuthEnabled"`                     // OTP-based authentication
 	IsSocialLoginEnabled       bool `json:"isSocialLoginEnabled" bson:"isSocialLoginEnabled"`             // Social media login (Google, Facebook)
 	IsVoucherLoginEnabled      bool `json:"isVoucherLoginEnabled" bson:"isVoucherLoginEnabled"`           // Voucher/scratch card access
+	IsPasswordLoginEnabled     bool `json:"isPasswordLoginEnabled" bson:"isPasswordLoginEnabled"`         // Password-based authentication
 	IsGuestWiFiEnabled         bool `json:"isGuestWiFiEnabled" bson:"isGuestWiFiEnabled"`                 // Guest WiFi portal
 	IsSessionManagementEnabled bool `json:"isSessionManagementEnabled" bson:"isSessionManagementEnabled"` // Session tracking & management
 	IsCustomBrandingEnabled    bool `json:"isCustomBrandingEnabled" bson:"isCustomBrandingEnabled"`       // Custom portal branding
