@@ -341,7 +341,7 @@ func (p *Publisher[T]) PublishWithOptions(ctx context.Context, data T, userOpts 
 
 		lastErr = err
 		metrics.RecordNATSFailure(streamInfo.Config.Name, string(p.Subject), err)
-		logger.Error("Publish failed", "subject", p.Subject, "attempt", attempt, "error", err)
+		logger.Error("Publish failed", err, "subject", p.Subject, "attempt", attempt)
 
 		// Stop if context is done
 		if ctx.Err() != nil {
