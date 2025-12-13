@@ -1,5 +1,15 @@
 package subscriberevent
 
+type FormType string
+
+const (
+	FormTypeSubscriber FormType = "subscriber" // User details form: name, mobile, email, address, KYC (ISP/Reseller/Partner/Distributor)
+	FormTypeBroadband  FormType = "broadband"  // System/Account form: PPPoE, MAC, session details, account config (ISP/Reseller/Partner/Distributor)
+	FormTypeHotspot    FormType = "hotspot"    // System/Account form: auth settings, device bindings, MAC, session details (Enterprise/Branch)
+	FormTypeLogin      FormType = "login"      // User details form: name, mobile, email, address, KYC for login (Enterprise/Branch)
+	FormTypeSignup     FormType = "signup"     // User details form: name, mobile, email, address, KYC for registration (Enterprise/Branch)
+)
+
 // FormConfigCreatedEvent represents a form configuration creation event
 // FormConfig includes fields, layout, sections, settings, and toggles
 // This must match the structure in subscriber-service/internal/models/form.config.model.go
@@ -7,7 +17,7 @@ package subscriberevent
 type FormConfigCreatedEvent struct {
 	ID       string            `json:"id" bson:"id"`
 	TenantID string            `json:"tenantId" bson:"tenantId"`
-	FormType string            `json:"formType" bson:"formType"` // subscriber, broadband, hotspot, login, signup
+	FormType FormType          `json:"formType" bson:"formType"` // subscriber, broadband, hotspot, login, signup
 	Fields   []FieldConfigItem `json:"fields" bson:"fields"`     // Fields stored directly in FormConfig
 	Sections []FormSection     `json:"sections,omitempty" bson:"sections,omitempty"`
 	Layout   *FormLayout       `json:"layout,omitempty" bson:"layout,omitempty"`
