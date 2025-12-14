@@ -14,6 +14,8 @@ const (
 	NASFieldIPAddress       = "ipAddress"
 	NASFieldIsActive        = "isActive"
 	NASFieldSSIDs           = "ssids"
+	NASFieldRedirectorDomain = "redirectorDomain"
+	NASFieldForwardDomain    = "forwardDomain"
 	NASFieldCreatedAt       = "createdAt"
 	NASFieldUpdatedAt       = "updatedAt"
 	NASFieldCreatedBy       = "createdBy"
@@ -41,6 +43,8 @@ type NASCreatedEvent struct {
 	IPAddress       string   `bson:"ipAddress" json:"ipAddress"`                                 // NAS IP address
 	AllowedIPRanges []string `bson:"allowedIPRanges,omitempty" json:"allowedIPRanges,omitempty"` // Client IP ranges (e.g., ["10.0.0.0/24"])
 	SSIDs           []string `bson:"ssids" json:"ssids"`                                         // WiFi SSIDs broadcasted by this NAS
+	RedirectorDomain string   `bson:"redirectorDomain" json:"redirectorDomain"`                   // Redirector domain (e.g., "redirector.rapidnet.in")
+	ForwardDomain    string   `bson:"forwardDomain" json:"forwardDomain"`                         // Forward domain (e.g., "forward.rapidnet.in")
 
 	// Security credentials
 	Secret       string `bson:"secret" json:"-"`                                // For HMAC/JWT signing and API authentication (bcrypt hashed, never sent to client)
@@ -84,7 +88,8 @@ type NASUpdatedEvent struct {
 	IPAddress       string   `bson:"ipAddress" json:"ipAddress"`                                 // NAS IP address
 	AllowedIPRanges []string `bson:"allowedIPRanges,omitempty" json:"allowedIPRanges,omitempty"` // Client IP ranges (e.g., ["10.0.0.0/24"])
 	SSIDs           []string `bson:"ssids" json:"ssids"`                                         // WiFi SSIDs broadcasted by this NAS
-
+	RedirectorDomain string   `bson:"redirectorDomain" json:"redirectorDomain"`                   // Redirector domain (e.g., "redirector.rapidnet.in")
+	ForwardDomain    string   `bson:"forwardDomain" json:"forwardDomain"`                         // Forward domain (e.g., "forward.rapidnet.in")
 	// Security credentials
 	Secret       string `bson:"secret" json:"-"`                                // For HMAC/JWT signing and API authentication (bcrypt hashed, never sent to client)
 	RADIUSSecret string `bson:"radiusSecret" json:"-"`                          // For RADIUS protocol communication (bcrypt hashed, never sent to client)
