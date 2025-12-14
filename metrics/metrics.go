@@ -391,6 +391,8 @@ func RegisterAllMetrics() {
 		RedirectorNASCacheHits,
 		RedirectorNASCacheMisses,
 		RedirectorNASCacheInvalidations,
+		RedirectorMongoDBPoolSize,
+		RedirectorRedisPoolSize,
 
 		// Default collectors
 		collectors.NewGoCollector(),
@@ -584,6 +586,23 @@ var (
 			Help: "Total NAS device cache invalidations",
 		},
 	)
+
+	// Connection pool metrics
+	RedirectorMongoDBPoolSize = prometheus.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "redirector_mongodb_pool_size",
+			Help: "MongoDB connection pool size metrics",
+		},
+		[]string{"type"}, // type: "max", "min", "available", "in_use"
+	)
+
+	RedirectorRedisPoolSize = prometheus.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "redirector_redis_pool_size",
+			Help: "Redis connection pool size metrics",
+		},
+		[]string{"type"}, // type: "max", "idle", "active", "waiting"
+	)
 )
 
 // Redirector Metrics Helpers
@@ -629,4 +648,13 @@ func RecordRedirectorNASCacheMiss() {
 
 func RecordRedirectorNASCacheInvalidation() {
 	RedirectorNASCacheInvalidations.Inc()
+}
+
+// Connection Pool Metrics Helpers
+func SetRedirectorMongoDBPoolSize(metricType string, value float64) {
+	RedirectorMongoDBPoolSize.WithLabelValues(metricType).Set(value)
+}
+
+func SetRedirectorRedisPoolSize(metricType string, value float64) {
+	RedirectorRedisPoolSize.WithLabelValues(metricType).Set(value)
 }
