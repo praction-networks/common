@@ -17,6 +17,7 @@ type SubscriberCreatedEvent struct {
 	WhatsAppNumber         string                 `json:"whatsAppNumber,omitempty" bson:"whatsAppNumber,omitempty"`
 	PrimaryUserID          string                 `json:"primaryUserId,omitempty" bson:"primaryUserId,omitempty"`
 	CustomerSpecificFields map[string]interface{} `json:"customerSpecificFields,omitempty" bson:"customerSpecificFields,omitempty"`
+	Version                int                    `json:"version" bson:"version"`
 }
 
 // SubscriberUpdatedEvent represents a subscriber update event
@@ -97,6 +98,7 @@ type HotspotProfileCreatedEvent struct {
 	DefaultAuthMethod string    `json:"defaultAuthMethod" bson:"defaultAuthMethod"`
 	MaxDevices        int       `json:"maxDevices" bson:"maxDevices"`
 	AutoLoginEnabled  bool      `json:"autoLoginEnabled" bson:"autoLoginEnabled"`
+	Version           int       `json:"version" bson:"version"`
 }
 
 // HotspotProfileUpdatedEvent represents a hotspot profile update event
@@ -116,6 +118,7 @@ type HotspotProfileDeletedEvent struct {
 	ID           string    `json:"id" bson:"id"`
 	SubscriberID string    `json:"subscriberId" bson:"subscriberId"`
 	TenantID     string    `json:"tenantId" bson:"tenantId"`
+	Version      int       `json:"version" bson:"version"`
 }
 
 // HotspotDeviceAddedEvent represents when a device is added to a hotspot profile
@@ -127,7 +130,7 @@ type HotspotDeviceAddedEvent struct {
 	DeviceName   string    `json:"deviceName,omitempty" bson:"deviceName,omitempty"`
 	DeviceType   string    `json:"deviceType,omitempty" bson:"deviceType,omitempty"`
 	Trusted      bool      `json:"trusted" bson:"trusted"`
-	AddedAt      time.Time `json:"addedAt" bson:"addedAt"`
+	Version      int       `json:"version" bson:"version"`
 }
 
 // HotspotDeviceRemovedEvent represents when a device is removed from a hotspot profile
@@ -136,5 +139,5 @@ type HotspotDeviceRemovedEvent struct {
 	SubscriberID string    `json:"subscriberId" bson:"subscriberId"`
 	TenantID     string    `json:"tenantId" bson:"tenantId"`
 	MACAddress   string    `json:"macAddress" bson:"macAddress"`
-	RemovedAt    time.Time `json:"removedAt" bson:"removedAt"`
+	Version      int       `json:"version" bson:"version"`
 }
