@@ -379,6 +379,16 @@ func RegisterAllMetrics() {
 		RedisOperations,
 		RedisOperationDuration,
 
+		// Redirector metrics
+		RedirectorRequests,
+		RedirectorRateLimitHits,
+		RedirectorTokensGenerated,
+		RedirectorURLGenerationDuration,
+		RedirectorValidationFailures,
+		RedirectorCircuitBreakerState,
+		RedirectorCircuitBreakerFailures,
+		RedirectorMemoryRateLimiterSize,
+
 		// Default collectors
 		collectors.NewGoCollector(),
 		collectors.NewProcessCollector(collectors.ProcessCollectorOpts{}),
@@ -474,4 +484,112 @@ func RecordRedisOperation(operation string, status string) {
 
 func RecordRedisOperationDuration(operation string, duration time.Duration) {
 	RedisOperationDuration.WithLabelValues(operation).Observe(duration.Seconds())
+}
+
+// Redirector Service Metrics
+var (
+	// Redirector requests
+	RedirectorRequests = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "redirector_requests_total",
+			Help: "Total redirector requests",
+		},
+		[]string{"nas_id", "status"}, // status: "success", "rate_limited", "invalid_hostname", etc.
+	)
+
+	// Rate limiting
+	RedirectorRateLimitHits = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "redirector_rate_limit_hits_total",
+			Help: "Total redirector rate limit hits",
+		},
+		[]string{"type", "nas_id"}, // type: "per_nas", "per_ip"
+	)
+
+	// Token generation
+	RedirectorTokensGenerated = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "redirector_tokens_generated_total",
+			Help: "Total redirector tokens generated",
+		},
+		[]string{"nas_id", "status"}, // status: "success", "failure"
+	)
+
+	// URL generation duration
+	RedirectorURLGenerationDuration = prometheus.NewHistogramVec(
+		prometheus.HistogramOpts{
+			Name:    "redirector_url_generation_duration_seconds",
+			Help:    "Redirector URL generation duration",
+			Buckets: []float64{.001, .005, .01, .025, .05, .1, .25, .5, 1},
+		},
+		[]string{"nas_id"},
+	)
+
+	// Request validation failures
+	RedirectorValidationFailures = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "redirector_validation_failures_total",
+			Help: "Total redirector validation failures",
+		},
+		[]string{"type"}, // type: "hostname_length", "query_param_length", "query_string_length", "decode_iterations", "invalid_hostname"
+	)
+
+	// Circuit breaker state changes
+	RedirectorCircuitBreakerState = prometheus.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "redirector_circuit_breaker_state",
+			Help: "Redirector circuit breaker state (0=Closed, 1=Open, 2=HalfOpen)",
+		},
+		[]string{"service"}, // service: "redis", "mongodb"
+	)
+
+	// Circuit breaker failures
+	RedirectorCircuitBreakerFailures = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "redirector_circuit_breaker_failures_total",
+			Help: "Total circuit breaker failures",
+		},
+		[]string{"service", "state"}, // service: "redis", "mongodb"; state: "closed", "open", "halfopen"
+	)
+
+	// Memory rate limiter usage
+	RedirectorMemoryRateLimiterSize = prometheus.NewGauge(
+		prometheus.GaugeOpts{
+			Name: "redirector_memory_rate_limiter_size",
+			Help: "Current number of entries in memory rate limiter",
+		},
+	)
+)
+
+// Redirector Metrics Helpers
+func RecordRedirectorRequest(nasId string, status string) {
+	RedirectorRequests.WithLabelValues(nasId, status).Inc()
+}
+
+func RecordRedirectorRateLimitHit(limitType string, nasId string) {
+	RedirectorRateLimitHits.WithLabelValues(limitType, nasId).Inc()
+}
+
+func RecordRedirectorTokenGenerated(nasId string, status string) {
+	RedirectorTokensGenerated.WithLabelValues(nasId, status).Inc()
+}
+
+func RecordRedirectorURLGenerationDuration(nasId string, duration time.Duration) {
+	RedirectorURLGenerationDuration.WithLabelValues(nasId).Observe(duration.Seconds())
+}
+
+func RecordRedirectorValidationFailure(validationType string) {
+	RedirectorValidationFailures.WithLabelValues(validationType).Inc()
+}
+
+func SetRedirectorCircuitBreakerState(service string, state float64) {
+	RedirectorCircuitBreakerState.WithLabelValues(service).Set(state)
+}
+
+func RecordRedirectorCircuitBreakerFailure(service string, state string) {
+	RedirectorCircuitBreakerFailures.WithLabelValues(service, state).Inc()
+}
+
+func SetRedirectorMemoryRateLimiterSize(size float64) {
+	RedirectorMemoryRateLimiterSize.Set(size)
 }
