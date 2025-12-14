@@ -57,7 +57,7 @@ func MapMongoError(err error, userMsg string) error {
 
 // LogMongoError adds consistent structured logging for mongo operations
 func LogMongoError(op, coll string, err error, fields ...any) {
-	args := append([]any{"op", op, "collection", coll, "error", err}, fields...)
+	args := append([]any{"op", op, "collection", coll, err}, fields...)
 	logger.Error("mongo op failed", args...)
 }
 
@@ -87,7 +87,7 @@ func addContextFields(ctx context.Context, fields []any) []any {
 
 // LogMongoErrorWithCtx includes context identifiers when available
 func LogMongoErrorWithCtx(ctx context.Context, op, coll string, err error, fields ...any) {
-	args := append([]any{"op", op, "collection", coll, "error", err}, fields...)
+	args := append([]any{"op", op, "collection", coll, err}, fields...)
 	args = addContextFields(ctx, args)
 	logger.Error("mongo op failed", args...)
 }
@@ -159,7 +159,7 @@ func WithRetry(ctx context.Context, op string, maxAttempts int, baseDelay time.D
 			return err
 		}
 		// Log retry and sleep before next attempt
-		logArgs := addContextFields(ctx, []any{"op", op, "attempt", attempt, "next_delay", delay, "error", err})
+		logArgs := addContextFields(ctx, []any{"op", op, "attempt", attempt, "next_delay", delay, err})
 		logger.Warn("mongo transient error, will retry", logArgs...)
 		time.Sleep(delay)
 		// Exponential backoff with cap

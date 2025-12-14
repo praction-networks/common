@@ -99,7 +99,7 @@ func (l *Listener) Listen(ctx context.Context) error {
 			logger.Warn("Failed to delete existing consumer, will try to update",
 				"consumer", l.Durable,
 				"stream", string(l.StreamName),
-				"error", err)
+				err)
 			// Continue anyway - CreateOrUpdateConsumer might still work
 		} else {
 			logger.Info("Existing consumer deleted successfully, will create new one to replay all messages",

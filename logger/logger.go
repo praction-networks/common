@@ -303,7 +303,7 @@ func (c *CasbinLogger) LogEnforce(matcher string, request []interface{}, result 
 func (c *CasbinLogger) LogError(err error, v ...string) {
 	if c.IsEnabled() {
 		Error("Casbin Error",
-			"error", err,
+			err,
 			"details", v,
 		)
 	}

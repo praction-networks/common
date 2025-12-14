@@ -17,8 +17,6 @@ type SubscriberCreatedEvent struct {
 	WhatsAppNumber         string                 `json:"whatsAppNumber,omitempty" bson:"whatsAppNumber,omitempty"`
 	PrimaryUserID          string                 `json:"primaryUserId,omitempty" bson:"primaryUserId,omitempty"`
 	CustomerSpecificFields map[string]interface{} `json:"customerSpecificFields,omitempty" bson:"customerSpecificFields,omitempty"`
-	CreatedAt              time.Time              `json:"createdAt" bson:"createdAt"`
-	CreatedBy              string                 `json:"createdBy,omitempty" bson:"createdBy,omitempty"`
 }
 
 // SubscriberUpdatedEvent represents a subscriber update event
@@ -33,8 +31,6 @@ type SubscriberUpdatedEvent struct {
 	PrimaryEmail           string                 `json:"primaryEmail,omitempty" bson:"primaryEmail,omitempty"`
 	WhatsAppNumber         string                 `json:"whatsAppNumber,omitempty" bson:"whatsAppNumber,omitempty"`
 	CustomerSpecificFields map[string]interface{} `json:"customerSpecificFields,omitempty" bson:"customerSpecificFields,omitempty"`
-	UpdatedAt              time.Time              `json:"updatedAt" bson:"updatedAt"`
-	UpdatedBy              string                 `json:"updatedBy,omitempty" bson:"updatedBy,omitempty"`
 	Version                int                    `json:"version" bson:"version"`
 }
 
@@ -63,8 +59,6 @@ type BroadbandSubscriptionCreatedEvent struct {
 	PPPoEUsername         string    `json:"pppoeUsername,omitempty" bson:"pppoeUsername,omitempty"`
 	OLTDeviceID           string    `json:"oltDeviceId,omitempty" bson:"oltDeviceId,omitempty"`
 	OLTPort               string    `json:"oltPort,omitempty" bson:"oltPort,omitempty"`
-	CreatedAt             time.Time `json:"createdAt" bson:"createdAt"`
-	CreatedBy             string    `json:"createdBy,omitempty" bson:"createdBy,omitempty"`
 }
 
 // BroadbandSubscriptionUpdatedEvent represents a broadband subscription update event
@@ -78,8 +72,6 @@ type BroadbandSubscriptionUpdatedEvent struct {
 	SpeedDownMbps         int       `json:"speedDownMbps,omitempty" bson:"speedDownMbps,omitempty"`
 	SpeedUpMbps           int       `json:"speedUpMbps,omitempty" bson:"speedUpMbps,omitempty"`
 	InstallationAddressID string    `json:"installationAddressId,omitempty" bson:"installationAddressId,omitempty"`
-	UpdatedAt             time.Time `json:"updatedAt" bson:"updatedAt"`
-	UpdatedBy             string    `json:"updatedBy,omitempty" bson:"updatedBy,omitempty"`
 	Version               int       `json:"version" bson:"version"`
 }
 
@@ -105,8 +97,6 @@ type HotspotProfileCreatedEvent struct {
 	DefaultAuthMethod string    `json:"defaultAuthMethod" bson:"defaultAuthMethod"`
 	MaxDevices        int       `json:"maxDevices" bson:"maxDevices"`
 	AutoLoginEnabled  bool      `json:"autoLoginEnabled" bson:"autoLoginEnabled"`
-	CreatedAt         time.Time `json:"createdAt" bson:"createdAt"`
-	CreatedBy         string    `json:"createdBy,omitempty" bson:"createdBy,omitempty"`
 }
 
 // HotspotProfileUpdatedEvent represents a hotspot profile update event
@@ -118,8 +108,6 @@ type HotspotProfileUpdatedEvent struct {
 	UserID            string    `json:"userId,omitempty" bson:"userId,omitempty"`
 	DefaultAuthMethod string    `json:"defaultAuthMethod,omitempty" bson:"defaultAuthMethod,omitempty"`
 	MaxDevices        int       `json:"maxDevices,omitempty" bson:"maxDevices,omitempty"`
-	UpdatedAt         time.Time `json:"updatedAt" bson:"updatedAt"`
-	UpdatedBy         string    `json:"updatedBy,omitempty" bson:"updatedBy,omitempty"`
 	Version           int       `json:"version" bson:"version"`
 }
 
@@ -128,8 +116,6 @@ type HotspotProfileDeletedEvent struct {
 	ID           string    `json:"id" bson:"id"`
 	SubscriberID string    `json:"subscriberId" bson:"subscriberId"`
 	TenantID     string    `json:"tenantId" bson:"tenantId"`
-	DeletedAt    time.Time `json:"deletedAt" bson:"deletedAt"`
-	DeletedBy    string    `json:"deletedBy,omitempty" bson:"deletedBy,omitempty"`
 }
 
 // HotspotDeviceAddedEvent represents when a device is added to a hotspot profile
