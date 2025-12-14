@@ -10,6 +10,19 @@ const (
 	FormTypeSignup     FormType = "signup"     // User details form: name, mobile, email, address, KYC for registration (Enterprise/Branch)
 )
 
+// AuthMethod represents an authentication method for login/signup forms
+type AuthMethod string
+
+const (
+	AuthMethodOTP      AuthMethod = "OTP"
+	AuthMethodPassword AuthMethod = "PASSWORD"
+	AuthMethodSocial   AuthMethod = "SOCIAL"
+	AuthMethodVoucher  AuthMethod = "VOUCHER"
+	AuthMethodSSO      AuthMethod = "SSO"
+	AuthMethodQRCode   AuthMethod = "QRCODE"
+	AuthMethodOneTap   AuthMethod = "ONETAP"
+)
+
 // FormConfigCreatedEvent represents a form configuration creation event
 // FormConfig includes fields, layout, sections, settings, and toggles
 // This must match the structure in subscriber-service/internal/models/form.config.model.go
