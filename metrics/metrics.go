@@ -388,6 +388,9 @@ func RegisterAllMetrics() {
 		RedirectorCircuitBreakerState,
 		RedirectorCircuitBreakerFailures,
 		RedirectorMemoryRateLimiterSize,
+		RedirectorNASCacheHits,
+		RedirectorNASCacheMisses,
+		RedirectorNASCacheInvalidations,
 
 		// Default collectors
 		collectors.NewGoCollector(),
@@ -559,6 +562,28 @@ var (
 			Help: "Current number of entries in memory rate limiter",
 		},
 	)
+
+	// NAS device cache metrics
+	RedirectorNASCacheHits = prometheus.NewCounter(
+		prometheus.CounterOpts{
+			Name: "redirector_nas_cache_hits_total",
+			Help: "Total NAS device cache hits",
+		},
+	)
+
+	RedirectorNASCacheMisses = prometheus.NewCounter(
+		prometheus.CounterOpts{
+			Name: "redirector_nas_cache_misses_total",
+			Help: "Total NAS device cache misses",
+		},
+	)
+
+	RedirectorNASCacheInvalidations = prometheus.NewCounter(
+		prometheus.CounterOpts{
+			Name: "redirector_nas_cache_invalidations_total",
+			Help: "Total NAS device cache invalidations",
+		},
+	)
 )
 
 // Redirector Metrics Helpers
@@ -592,4 +617,16 @@ func RecordRedirectorCircuitBreakerFailure(service string, state string) {
 
 func SetRedirectorMemoryRateLimiterSize(size float64) {
 	RedirectorMemoryRateLimiterSize.Set(size)
+}
+
+func RecordRedirectorNASCacheHit() {
+	RedirectorNASCacheHits.Inc()
+}
+
+func RecordRedirectorNASCacheMiss() {
+	RedirectorNASCacheMisses.Inc()
+}
+
+func RecordRedirectorNASCacheInvalidation() {
+	RedirectorNASCacheInvalidations.Inc()
 }
