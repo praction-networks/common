@@ -32,6 +32,8 @@ type SubscriberUpdatedEvent struct {
 	PrimaryEmail           string                 `json:"primaryEmail,omitempty" bson:"primaryEmail,omitempty"`
 	WhatsAppNumber         string                 `json:"whatsAppNumber,omitempty" bson:"whatsAppNumber,omitempty"`
 	CustomerSpecificFields map[string]interface{} `json:"customerSpecificFields,omitempty" bson:"customerSpecificFields,omitempty"`
+	FirstHotspotLoginAt    *time.Time             `json:"firstHotspotLoginAt,omitempty" bson:"firstHotspotLoginAt,omitempty"` // When subscriber first logged into hotspot
+	LastHotspotLoginAt     *time.Time             `json:"lastHotspotLoginAt,omitempty" bson:"lastHotspotLoginAt,omitempty"`   // When subscriber last logged into hotspot
 	Version                int                    `json:"version" bson:"version"`
 }
 
@@ -98,19 +100,21 @@ type HotspotProfileCreatedEvent struct {
 	DefaultAuthMethod string    `json:"defaultAuthMethod" bson:"defaultAuthMethod"`
 	MaxDevices        int       `json:"maxDevices" bson:"maxDevices"`
 	AutoLoginEnabled  bool      `json:"autoLoginEnabled" bson:"autoLoginEnabled"`
+	CreationSource    string    `json:"creationSource,omitempty" bson:"creationSource,omitempty"` // "CAPTIVE_PORTAL", "ADMIN", "API", "IMPORT"
 	Version           int       `json:"version" bson:"version"`
 }
 
 // HotspotProfileUpdatedEvent represents a hotspot profile update event
 type HotspotProfileUpdatedEvent struct {
-	ID                string    `json:"id" bson:"id"`
-	SubscriberID      string    `json:"subscriberId" bson:"subscriberId"`
-	TenantID          string    `json:"tenantId" bson:"tenantId"`
-	Status            string    `json:"status,omitempty" bson:"status,omitempty"`
-	UserID            string    `json:"userId,omitempty" bson:"userId,omitempty"`
-	DefaultAuthMethod string    `json:"defaultAuthMethod,omitempty" bson:"defaultAuthMethod,omitempty"`
-	MaxDevices        int       `json:"maxDevices,omitempty" bson:"maxDevices,omitempty"`
-	Version           int       `json:"version" bson:"version"`
+	ID                string     `json:"id" bson:"id"`
+	SubscriberID      string     `json:"subscriberId" bson:"subscriberId"`
+	TenantID          string     `json:"tenantId" bson:"tenantId"`
+	Status            string     `json:"status,omitempty" bson:"status,omitempty"`
+	UserID            string     `json:"userId,omitempty" bson:"userId,omitempty"`
+	DefaultAuthMethod string     `json:"defaultAuthMethod,omitempty" bson:"defaultAuthMethod,omitempty"`
+	MaxDevices        int        `json:"maxDevices,omitempty" bson:"maxDevices,omitempty"`
+	FirstLoginAt      *time.Time `json:"firstLoginAt,omitempty" bson:"firstLoginAt,omitempty"` // When was the first successful login
+	Version           int        `json:"version" bson:"version"`
 }
 
 // HotspotProfileDeletedEvent represents a hotspot profile deletion event
@@ -130,6 +134,7 @@ type HotspotDeviceAddedEvent struct {
 	DeviceName   string    `json:"deviceName,omitempty" bson:"deviceName,omitempty"`
 	DeviceType   string    `json:"deviceType,omitempty" bson:"deviceType,omitempty"`
 	Trusted      bool      `json:"trusted" bson:"trusted"`
+	IsPrimary    bool      `json:"isPrimary,omitempty" bson:"isPrimary,omitempty"` // Is this the primary device for this profile?
 	Version      int       `json:"version" bson:"version"`
 }
 
