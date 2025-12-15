@@ -11,6 +11,7 @@ const (
 	InventoryStream     StreamName = "InventoryStream"
 	SubscriberStream    StreamName = "SubscriberStream"
 	CaptivePortalStream StreamName = "CaptivePortalStream"
+	AccountDataStream   StreamName = "AccountDataStream"
 )
 
 // Global Stream names as constants
@@ -109,6 +110,17 @@ const (
 	ThemeUpdatedSubject    Subject = "theme.updated"
 	ThemeDeletedSubject    Subject = "theme.deleted"
 	ThemeSetDefaultSubject Subject = "theme.set_default"
+
+	// Account Data CDC Events (from PostgreSQL CDC)
+	AccountDataUserProfileCreatedSubject Subject = "accountdata.userprofile.created"
+	AccountDataUserProfileUpdatedSubject Subject = "accountdata.userprofile.updated"
+	AccountDataUserProfileDeletedSubject Subject = "accountdata.userprofile.deleted"
+	AccountDataRadcheckCreatedSubject    Subject = "accountdata.radcheck.created"
+	AccountDataRadcheckUpdatedSubject    Subject = "accountdata.radcheck.updated"
+	AccountDataRadcheckDeletedSubject    Subject = "accountdata.radcheck.deleted"
+	AccountDataRadusergroupCreatedSubject Subject = "accountdata.radusergroup.created"
+	AccountDataRadusergroupUpdatedSubject Subject = "accountdata.radusergroup.updated"
+	AccountDataRadusergroupDeletedSubject Subject = "accountdata.radusergroup.deleted"
 )
 
 // Global Subjects - Cross-service events that any service can publish
@@ -253,6 +265,21 @@ var Streams = map[StreamName]StreamMetadata{
 			NASCreatedSubject,
 			NASUpdatedSubject,
 			NASDeletedSubject,
+		},
+	},
+	AccountDataStream: {
+		Name:        AccountDataStream,
+		Description: "Stream for account data CDC events from PostgreSQL",
+		Subjects: []Subject{
+			AccountDataUserProfileCreatedSubject,
+			AccountDataUserProfileUpdatedSubject,
+			AccountDataUserProfileDeletedSubject,
+			AccountDataRadcheckCreatedSubject,
+			AccountDataRadcheckUpdatedSubject,
+			AccountDataRadcheckDeletedSubject,
+			AccountDataRadusergroupCreatedSubject,
+			AccountDataRadusergroupUpdatedSubject,
+			AccountDataRadusergroupDeletedSubject,
 		},
 	},
 }
