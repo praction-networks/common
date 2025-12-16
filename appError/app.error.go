@@ -100,6 +100,11 @@ const (
 	DBTransactionError  ErrorCode = "DB_TRANSACTION_ERROR"   // Error during a database transaction
 	DBWriteConcernError ErrorCode = "DB_WRITE_CONCERN_ERROR" // Write concern not satisfied
 	DBRetryableError    ErrorCode = "DB_RETRYABLE_ERROR"     // Temporary/retryable database error
+	DBQueryError        ErrorCode = "DB_QUERY_ERROR"         // Error while executing a query on the database
+	DBQueryTimeoutError ErrorCode = "DB_QUERY_TIMEOUT_ERROR" // Query timed out
+	DBQueryCanceledError ErrorCode = "DB_QUERY_CANCELED_ERROR" // Query canceled
+	DBQueryInterruptedError ErrorCode = "DB_QUERY_INTERRUPTED_ERROR" // Query interrupted
+	DBQueryFailedError ErrorCode = "DB_QUERY_FAILED_ERROR" // Query failed
 
 	// NATS (Messaging System) Errors
 	NATSConnectionError   ErrorCode = "NATS_CONNECTION_ERROR"   // Failed to connect to NATS
