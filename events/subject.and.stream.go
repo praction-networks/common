@@ -105,6 +105,19 @@ const (
 	FormConfigUpdatedSubject Subject = "subscriber.formconfig.updated"
 	FormConfigDeletedSubject Subject = "subscriber.formconfig.deleted"
 
+	// Voucher Template Events
+	VoucherTemplateCreatedSubject Subject = "subscriber.voucher.template.created"
+	VoucherTemplateUpdatedSubject Subject = "subscriber.voucher.template.updated"
+	VoucherTemplateDeletedSubject Subject = "subscriber.voucher.template.deleted"
+
+	// Voucher Instance Events
+	VoucherInstanceCreatedSubject Subject = "subscriber.voucher.instance.created"
+	VoucherInstanceBulkCreatedSubject Subject = "subscriber.voucher.instance.bulk.created"
+	VoucherInstanceUsedSubject Subject = "subscriber.voucher.instance.used"
+	VoucherInstanceExpiredSubject Subject = "subscriber.voucher.instance.expired"
+	VoucherInstanceRevokedSubject Subject = "subscriber.voucher.instance.revoked"
+	VoucherInstanceExtendedSubject Subject = "subscriber.voucher.instance.extended"
+
 	// Theme Events (Tenant Service) - Unified subjects, portalType in event payload
 	ThemeCreatedSubject    Subject = "theme.created"
 	ThemeUpdatedSubject    Subject = "theme.updated"
@@ -121,6 +134,9 @@ const (
 	AccountDataRadusergroupCreatedSubject Subject = "accountdata.radusergroup.created"
 	AccountDataRadusergroupUpdatedSubject Subject = "accountdata.radusergroup.updated"
 	AccountDataRadusergroupDeletedSubject Subject = "accountdata.radusergroup.deleted"
+
+	// Captive Portal Voucher Events
+	CouponDetailsSubject Subject = "captiveportal.coupon.details"
 )
 
 // Global Subjects - Cross-service events that any service can publish
@@ -253,6 +269,17 @@ var Streams = map[StreamName]StreamMetadata{
 			FormConfigCreatedSubject,
 			FormConfigUpdatedSubject,
 			FormConfigDeletedSubject,
+			// Voucher Template Events
+			VoucherTemplateCreatedSubject,
+			VoucherTemplateUpdatedSubject,
+			VoucherTemplateDeletedSubject,
+			// Voucher Instance Events
+			VoucherInstanceCreatedSubject,
+			VoucherInstanceBulkCreatedSubject,
+			VoucherInstanceUsedSubject,
+			VoucherInstanceExpiredSubject,
+			VoucherInstanceRevokedSubject,
+			VoucherInstanceExtendedSubject,
 		},
 	},
 	CaptivePortalStream: {
@@ -265,6 +292,7 @@ var Streams = map[StreamName]StreamMetadata{
 			NASCreatedSubject,
 			NASUpdatedSubject,
 			NASDeletedSubject,
+			CouponDetailsSubject,
 		},
 	},
 	AccountDataStream: {
