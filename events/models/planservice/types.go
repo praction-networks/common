@@ -1,4 +1,4 @@
-package productservice
+package planservice
 
 type Status string
 
