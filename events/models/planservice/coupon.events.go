@@ -12,8 +12,6 @@ type CouponCreatedEvent struct {
 	ValidFrom    time.Time `json:"validFrom" bson:"validFrom"`
 	ValidTo      *time.Time `json:"validTo,omitempty" bson:"validTo,omitempty"`
 	Status       Status    `json:"status" bson:"status"`
-	CreatedAt    time.Time `json:"createdAt" bson:"createdAt"`
-	CreatedBy    string    `json:"createdBy" bson:"createdBy"`
 	Version      int       `json:"version" bson:"version"`
 }
 
@@ -27,8 +25,6 @@ type CouponUpdatedEvent struct {
 	ValidFrom    *time.Time `json:"validFrom,omitempty" bson:"validFrom,omitempty"`
 	ValidTo      *time.Time `json:"validTo,omitempty" bson:"validTo,omitempty"`
 	Status       Status     `json:"status,omitempty" bson:"status,omitempty"`
-	UpdatedAt    time.Time  `json:"updatedAt" bson:"updatedAt"`
-	UpdatedBy    string     `json:"updatedBy" bson:"updatedBy"`
 	Version      int        `json:"version" bson:"version"`
 }
 

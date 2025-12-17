@@ -24,8 +24,6 @@ type PriceBookCreatedEvent struct {
 	EffectiveTo   *time.Time          `json:"effectiveTo,omitempty" bson:"effectiveTo,omitempty"`
 	Items         []PriceBookItemEvent `json:"items" bson:"items"`
 	Status        Status              `json:"status" bson:"status"`
-	CreatedAt     time.Time           `json:"createdAt" bson:"createdAt"`
-	CreatedBy     string              `json:"createdBy" bson:"createdBy"`
 	Version       int                 `json:"version" bson:"version"`
 }
 
@@ -41,8 +39,6 @@ type PriceBookUpdatedEvent struct {
 	EffectiveTo   *time.Time          `json:"effectiveTo,omitempty" bson:"effectiveTo,omitempty"`
 	Items         []PriceBookItemEvent `json:"items,omitempty" bson:"items,omitempty"`
 	Status        Status              `json:"status,omitempty" bson:"status,omitempty"`
-	UpdatedAt     time.Time           `json:"updatedAt" bson:"updatedAt"`
-	UpdatedBy     string              `json:"updatedBy" bson:"updatedBy"`
 	Version       int                 `json:"version" bson:"version"`
 }
 

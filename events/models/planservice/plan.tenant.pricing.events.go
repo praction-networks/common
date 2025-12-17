@@ -41,8 +41,6 @@ type PlanTenantPricingCreatedEvent struct {
 	EffectiveFrom time.Time                   `json:"effectiveFrom" bson:"effectiveFrom"`      // When this pricing becomes effective
 	EffectiveTo   *time.Time                  `json:"effectiveTo,omitempty" bson:"effectiveTo,omitempty"` // When this pricing expires (nil = no expiry)
 	Status        Status                      `json:"status" bson:"status"`                    // ACTIVE, INACTIVE, etc.
-	CreatedAt     time.Time                   `json:"createdAt" bson:"createdAt"`
-	CreatedBy     string                      `json:"createdBy" bson:"createdBy"`
 	Version       int                         `json:"version" bson:"version"`
 }
 
@@ -55,8 +53,6 @@ type PlanTenantPricingUpdatedEvent struct {
 	EffectiveFrom *time.Time                  `json:"effectiveFrom,omitempty" bson:"effectiveFrom,omitempty"`
 	EffectiveTo   *time.Time                  `json:"effectiveTo,omitempty" bson:"effectiveTo,omitempty"`
 	Status        Status                      `json:"status,omitempty" bson:"status,omitempty"`
-	UpdatedAt     time.Time                   `json:"updatedAt" bson:"updatedAt"`
-	UpdatedBy     string                      `json:"updatedBy" bson:"updatedBy"`
 	Version       int                         `json:"version" bson:"version"`
 }
 
