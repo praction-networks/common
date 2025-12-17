@@ -18,18 +18,18 @@ type PlanItemTenantPricingEvent struct {
 
 // PricingTierEvent represents a pricing tier in events
 type PricingTierEvent struct {
-	MinQty  float64 `json:"minQty" bson:"minQty"`
-	MaxQty  *float64 `json:"maxQty,omitempty" bson:"maxQty,omitempty"`
-	Price   float64 `json:"price" bson:"price"`
-	Unit    Unit    `json:"unit" bson:"unit"`
+	MinQty    int     `json:"minQty" bson:"minQty"`       // Start quantity for this tier
+	MaxQty    *int    `json:"maxQty,omitempty" bson:"maxQty,omitempty"` // End quantity (nil = unlimited)
+	UnitPrice float64 `json:"unitPrice" bson:"unitPrice"` // Price per unit in this tier
+	FlatFee   float64 `json:"flatFee,omitempty" bson:"flatFee,omitempty"` // Optional flat fee for this tier
 }
 
 // VolumeDiscountEvent represents a volume discount in events
 type VolumeDiscountEvent struct {
-	MinQty     float64 `json:"minQty" bson:"minQty"`
-	MaxQty     *float64 `json:"maxQty,omitempty" bson:"maxQty,omitempty"`
-	DiscountPct float64 `json:"discountPct" bson:"discountPct"`
-	DiscountAmt *float64 `json:"discountAmt,omitempty" bson:"discountAmt,omitempty"`
+	MinQty      int     `json:"minQty" bson:"minQty"`           // Minimum quantity for discount
+	MaxQty      *int    `json:"maxQty,omitempty" bson:"maxQty,omitempty"` // Maximum quantity (nil = unlimited)
+	DiscountPct float64 `json:"discountPct,omitempty" bson:"discountPct,omitempty"` // Percentage discount
+	DiscountAmt float64 `json:"discountAmt,omitempty" bson:"discountAmt,omitempty"` // Fixed amount discount
 }
 
 // PlanTenantPricingCreatedEvent represents a plan tenant pricing creation event
