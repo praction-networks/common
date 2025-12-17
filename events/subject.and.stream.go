@@ -12,7 +12,7 @@ const (
 	SubscriberStream    StreamName = "SubscriberStream"
 	CaptivePortalStream StreamName = "CaptivePortalStream"
 	AccountDataStream   StreamName = "AccountDataStream"
-	ProductStream       StreamName = "ProductStream"
+	PlanStream       StreamName = "PlanStream"
 )
 
 // Global Stream names as constants
@@ -337,8 +337,8 @@ var Streams = map[StreamName]StreamMetadata{
 			AccountDataRadusergroupDeletedSubject,
 		},
 	},
-	ProductStream: {
-		Name:        ProductStream,
+	PlanStream: {
+		Name:        PlanStream,
 		Description: "Stream for plan service events consumed by other services",
 		Subjects: []Subject{
 			// Plan Tenant Pricing Events (CRITICAL - consumed by billing/subscription services)
