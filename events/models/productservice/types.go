@@ -3,10 +3,14 @@ package productservice
 type Status string
 
 const (
-	StatusActive   Status = "ACTIVE"
-	StatusInactive Status = "INACTIVE"
-	StatusDraft    Status = "DRAFT"
-	StautsAssigned Status = "ASSIGNED"
+	StatusActive         Status = "ACTIVE"
+	StatusInactive       Status = "INACTIVE"
+	StatusDraft          Status = "DRAFT"
+	StautsAssigned       Status = "ASSIGNED"
+	StatusPendingApproval Status = "PENDING_APPROVAL"
+	StatusArchived       Status = "ARCHIVED"
+	StatusDeprecated     Status = "DEPRECATED" // Old plan, no new subscriptions
+	StatusSunset         Status = "SUNSET"     // Being phased out
 )
 
 
@@ -22,13 +26,37 @@ const (
 type Unit string
 
 const (
+	// Time-based units
 	UnitYear   Unit = "YEAR"
 	UnitMonth  Unit = "MONTH"
 	UnitDay    Unit = "DAY"
 	UnitHour   Unit = "HOUR"
 	UnitMinute Unit = "MINUTE"
+	
+	// Data units
 	UnitGB     Unit = "GB"
 	UnitMB     Unit = "MB"
+	UnitTB     Unit = "TB"     // Terabytes
+	UnitKB     Unit = "KB"     // Kilobytes
+	
+	// Bandwidth units
+	UnitMbps   Unit = "MBPS"   // Megabits per second
+	UnitKbps   Unit = "KBPS"   // Kilobits per second
+	UnitGbps   Unit = "GBPS"   // Gigabits per second
+	
+	// Voice/Communication units
+	UnitMinutes Unit = "MINUTES" // Voice minutes (separate from time)
+	UnitSMS     Unit = "SMS"     // SMS count
+	UnitMMS     Unit = "MMS"     // MMS count
+	UnitCall    Unit = "CALL"    // Call count
+	
+	// Hardware/Resource units
+	UnitSim        Unit = "SIM"        // SIM card count
+	UnitDevice     Unit = "DEVICE"      // Device count
+	UnitLocation   Unit = "LOCATION"   // Site/location count
+	UnitConcurrent Unit = "CONCURRENT"  // Concurrent connections
+	
+	// Generic
 	UnitCount  Unit = "COUNT"
 )
 
