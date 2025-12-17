@@ -119,3 +119,126 @@ const (
 	OverrideTargetPlan    OverrideTargetType = "PLAN"
 	OverrideTargetPriceBook OverrideTargetType = "PRICE_BOOK"
 )
+
+// PricingModelType represents the type of pricing model
+type PricingModelType string
+
+const (
+	PricingModelTypeFlat   PricingModelType = "FLAT"   // Single flat price
+	PricingModelTypeTiered PricingModelType = "TIERED" // Tiered pricing (quantity-based)
+	PricingModelTypeVolume PricingModelType = "VOLUME"  // Volume discount pricing
+	PricingModelTypeBundle PricingModelType = "BUNDLE" // Bundle pricing
+)
+
+// ActivationMethodType represents activation method
+type ActivationMethodType string
+
+const (
+	ActivationMethodTypeImmediate ActivationMethodType = "IMMEDIATE" // Activate immediately
+	ActivationMethodTypeScheduled ActivationMethodType = "SCHEDULED" // Schedule activation
+	ActivationMethodTypeManual    ActivationMethodType = "MANUAL"   // Manual activation required
+)
+
+// ProrationMethodType represents proration calculation method
+type ProrationMethodType string
+
+const (
+	ProrationMethodTypeDaily       ProrationMethodType = "DAILY"       // Daily proration
+	ProrationMethodTypeHourly      ProrationMethodType = "HOURLY"      // Hourly proration
+	ProrationMethodTypeProportional ProrationMethodType = "PROPORTIONAL" // Proportional proration
+)
+
+// ProrationRoundingType represents proration rounding method
+type ProrationRoundingType string
+
+const (
+	ProrationRoundingTypeUp      ProrationRoundingType = "UP"      // Round up
+	ProrationRoundingTypeDown    ProrationRoundingType = "DOWN"   // Round down
+	ProrationRoundingTypeNearest ProrationRoundingType = "NEAREST" // Round to nearest
+)
+
+// TrialType represents trial period type
+type TrialType string
+
+const (
+	TrialTypeFree       TrialType = "FREE"       // Free trial
+	TrialTypeDiscounted TrialType = "DISCOUNTED" // Discounted trial
+)
+
+// RenewalMethodType represents renewal method
+type RenewalMethodType string
+
+const (
+	RenewalMethodTypeAuto    RenewalMethodType = "AUTO"    // Automatic renewal
+	RenewalMethodTypeManual  RenewalMethodType = "MANUAL"  // Manual renewal required
+	RenewalMethodTypeOptional RenewalMethodType = "OPTIONAL" // Optional renewal
+)
+
+// UpgradeType represents upgrade option type
+type UpgradeType string
+
+const (
+	UpgradeTypeAuto       UpgradeType = "AUTO"       // Automatic upgrade
+	UpgradeTypeOptional   UpgradeType = "OPTIONAL"   // Optional upgrade
+	UpgradeTypeRecommended UpgradeType = "RECOMMENDED" // Recommended upgrade
+)
+
+// CreditLimitType represents credit limit type
+type CreditLimitType string
+
+const (
+	CreditLimitTypeHard CreditLimitType = "HARD" // Hard limit - service stops
+	CreditLimitTypeSoft CreditLimitType = "SOFT" // Soft limit - warnings only
+	CreditLimitTypeNone CreditLimitType = "NONE" // No credit limit
+)
+
+// PaymentTermsType represents payment terms
+type PaymentTermsType string
+
+const (
+	PaymentTermsTypePrepaid  PaymentTermsType = "PREPAID"  // Prepaid payment
+	PaymentTermsTypePostpaid PaymentTermsType = "POSTPAID" // Postpaid payment
+	PaymentTermsTypeHybrid   PaymentTermsType = "HYBRID"   // Hybrid payment
+)
+
+// ResourceType represents resource allocation type
+type ResourceType string
+
+const (
+	ResourceTypeIPAddress ResourceType = "IP_ADDRESS"
+	ResourceTypeVLAN      ResourceType = "VLAN"
+	ResourceTypePort      ResourceType = "PORT"
+	ResourceTypeEquipment ResourceType = "EQUIPMENT"
+	ResourceTypeBandwidth ResourceType = "BANDWIDTH"
+	ResourceTypeCircuit   ResourceType = "CIRCUIT"
+)
+
+// AllocationType represents resource allocation method
+type AllocationType string
+
+const (
+	AllocationTypeDedicated AllocationType = "DEDICATED" // Dedicated resource
+	AllocationTypeShared    AllocationType = "SHARED"    // Shared resource
+	AllocationTypePool      AllocationType = "POOL"      // Pool-based allocation
+)
+
+// MigrationType represents plan migration type
+type MigrationType string
+
+const (
+	MigrationTypeUpgrade   MigrationType = "UPGRADE"   // Upgrade migration
+	MigrationTypeDowngrade MigrationType = "DOWNGRADE" // Downgrade migration
+	MigrationTypeLateral   MigrationType = "LATERAL"   // Lateral migration
+	MigrationTypeCustom    MigrationType = "CUSTOM"    // Custom migration
+)
+
+// PlanItemRole represents the role of an item in a plan
+type PlanItemRole string
+
+const (
+	PlanItemRoleBase     PlanItemRole = "BASE"     // Base plan item
+	PlanItemRoleAddon    PlanItemRole = "ADDON"    // Add-on item
+	PlanItemRoleBundle   PlanItemRole = "BUNDLE"   // Bundle item
+	PlanItemRoleOptional PlanItemRole = "OPTIONAL" // Optional item
+)
+
