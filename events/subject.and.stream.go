@@ -12,6 +12,7 @@ const (
 	SubscriberStream    StreamName = "SubscriberStream"
 	CaptivePortalStream StreamName = "CaptivePortalStream"
 	AccountDataStream   StreamName = "AccountDataStream"
+	ProductStream       StreamName = "ProductStream"
 )
 
 // Global Stream names as constants
@@ -137,6 +138,32 @@ const (
 
 	// Captive Portal Voucher Events
 	CouponDetailsSubject Subject = "captiveportal.coupon.details"
+
+	// Plan Service Event Initialization
+	// Plan Tenant Pricing Events (CRITICAL - consumed by billing/subscription services)
+	PlanTenantPricingCreatedSubject Subject = "plan.tenant.pricing.created"
+	PlanTenantPricingUpdatedSubject Subject = "plan.tenant.pricing.updated"
+	PlanTenantPricingDeletedSubject Subject = "plan.tenant.pricing.deleted"
+
+	// Plan Events (consumed by subscriber/billing services)
+	PlanCreatedSubject Subject = "plan.created"
+	PlanUpdatedSubject Subject = "plan.updated"
+	PlanDeletedSubject Subject = "plan.deleted"
+
+	// Price Book Events (may be consumed by billing services)
+	PriceBookCreatedSubject Subject = "pricebook.created"
+	PriceBookUpdatedSubject Subject = "pricebook.updated"
+	PriceBookDeletedSubject Subject = "pricebook.deleted"
+
+	// Promotion Events
+	PromotionCreatedSubject Subject = "promotion.created"
+	PromotionUpdatedSubject Subject = "promotion.updated"
+	PromotionDeletedSubject Subject = "promotion.deleted"
+
+	// Coupon Events
+	CouponCreatedSubject Subject = "coupon.created"
+	CouponUpdatedSubject Subject = "coupon.updated"
+	CouponDeletedSubject Subject = "coupon.deleted"
 )
 
 // Global Subjects - Cross-service events that any service can publish
@@ -308,6 +335,32 @@ var Streams = map[StreamName]StreamMetadata{
 			AccountDataRadusergroupCreatedSubject,
 			AccountDataRadusergroupUpdatedSubject,
 			AccountDataRadusergroupDeletedSubject,
+		},
+	},
+	ProductStream: {
+		Name:        ProductStream,
+		Description: "Stream for plan service events consumed by other services",
+		Subjects: []Subject{
+			// Plan Tenant Pricing Events (CRITICAL - consumed by billing/subscription services)
+			PlanTenantPricingCreatedSubject,
+			PlanTenantPricingUpdatedSubject,
+			PlanTenantPricingDeletedSubject,
+			// Plan Events (consumed by subscriber/billing services)
+			PlanCreatedSubject,
+			PlanUpdatedSubject,
+			PlanDeletedSubject,
+			// Price Book Events (may be consumed by billing services)
+			PriceBookCreatedSubject,
+			PriceBookUpdatedSubject,
+			PriceBookDeletedSubject,
+			// Promotion Events
+			PromotionCreatedSubject,
+			PromotionUpdatedSubject,
+			PromotionDeletedSubject,
+			// Coupon Events
+			CouponCreatedSubject,
+			CouponUpdatedSubject,
+			CouponDeletedSubject,
 		},
 	},
 }
