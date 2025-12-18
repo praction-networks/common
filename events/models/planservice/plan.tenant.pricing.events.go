@@ -53,6 +53,8 @@ type PlanTenantPricingUpdatedEvent struct {
 	EffectiveFrom *time.Time                  `json:"effectiveFrom,omitempty" bson:"effectiveFrom,omitempty"`
 	EffectiveTo   *time.Time                  `json:"effectiveTo,omitempty" bson:"effectiveTo,omitempty"`
 	Status        Status                      `json:"status,omitempty" bson:"status,omitempty"`
+	UpdatedAt     time.Time                   `json:"updatedAt" bson:"updatedAt"`
+	UpdatedBy     string                      `json:"updatedBy" bson:"updatedBy"`
 	Version       int                         `json:"version" bson:"version"`
 }
 

@@ -94,6 +94,7 @@ const (
 type BillingCycle string
 
 const (
+	BillingCycleMinute    BillingCycle = "MINUTE"       // For short-duration access (cafe/hotel WiFi - 15/30/60 min plans)
 	BillingCycleHourly    BillingCycle = "HOURLY"
 	BillingCycleDaily     BillingCycle = "DAILY"
 	BillingCycleWeekly    BillingCycle = "WEEKLY"
