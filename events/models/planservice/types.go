@@ -6,7 +6,7 @@ const (
 	StatusActive         Status = "ACTIVE"
 	StatusInactive       Status = "INACTIVE"
 	StatusDraft          Status = "DRAFT"
-	StautsAssigned       Status = "ASSIGNED"
+	StatusAssigned       Status = "ASSIGNED" // Fixed typo: was StautsAssigned
 	StatusPendingApproval Status = "PENDING_APPROVAL"
 	StatusArchived       Status = "ARCHIVED"
 	StatusDeprecated     Status = "DEPRECATED" // Old plan, no new subscriptions
@@ -17,10 +17,11 @@ const (
 type ProductType string
 
 const (
-	ProductTypeService ProductType = "SERVICE"
-	ProductTypeGoods   ProductType = "GOODS"
-	ProductTypeInstlalation ProductType = "INSTLALATION"
-	ProductTypeOther   ProductType = "OTHER"
+	ProductTypeService      ProductType = "SERVICE"
+	ProductTypeGoods        ProductType = "GOODS"
+	ProductTypeBundle       ProductType = "BUNDLE"       // Product bundle (multiple products)
+	ProductTypeInstallation ProductType = "INSTALLATION" // Fixed typo: was INSTLALATION
+	ProductTypeOther        ProductType = "OTHER"
 )
 
 type Unit string
@@ -241,5 +242,82 @@ const (
 	PlanItemRoleAddon    PlanItemRole = "ADDON"    // Add-on item
 	PlanItemRoleBundle   PlanItemRole = "BUNDLE"   // Bundle item
 	PlanItemRoleOptional PlanItemRole = "OPTIONAL" // Optional item
+)
+
+// PromotionConditionType represents promotion condition types
+type PromotionConditionType string
+
+const (
+	PromotionConditionTypePlanType        PromotionConditionType = "PLAN_TYPE"
+	PromotionConditionTypeCustomerSegment PromotionConditionType = "CUSTOMER_SEGMENT"
+	PromotionConditionTypeQuantity        PromotionConditionType = "QUANTITY"
+	PromotionConditionTypeDateRange       PromotionConditionType = "DATE_RANGE"
+	PromotionConditionTypeBundle          PromotionConditionType = "BUNDLE"
+	PromotionConditionTypeTotalAmount     PromotionConditionType = "TOTAL_AMOUNT"
+	PromotionConditionTypeProduct         PromotionConditionType = "PRODUCT"
+)
+
+// PromotionConditionOperator represents promotion condition operators
+type PromotionConditionOperator string
+
+const (
+	PromotionOperatorEQ       PromotionConditionOperator = "EQ"
+	PromotionOperatorGT       PromotionConditionOperator = "GT"
+	PromotionOperatorLT       PromotionConditionOperator = "LT"
+	PromotionOperatorGTE      PromotionConditionOperator = "GTE"
+	PromotionOperatorLTE      PromotionConditionOperator = "LTE"
+	PromotionOperatorIN       PromotionConditionOperator = "IN"
+	PromotionOperatorBETWEEN  PromotionConditionOperator = "BETWEEN"
+	PromotionOperatorCONTAINS PromotionConditionOperator = "CONTAINS"
+	PromotionOperatorNOT_IN   PromotionConditionOperator = "NOT_IN"
+)
+
+// PromotionActionType represents promotion action types
+type PromotionActionType string
+
+const (
+	PromotionActionTypeDiscountPercent PromotionActionType = "DISCOUNT_PERCENT"
+	PromotionActionTypeDiscountAmount  PromotionActionType = "DISCOUNT_AMOUNT"
+	PromotionActionTypeFreeItem        PromotionActionType = "FREE_ITEM"
+	PromotionActionTypeUpgrade         PromotionActionType = "UPGRADE"
+	PromotionActionTypeCashback        PromotionActionType = "CASHBACK"
+	PromotionActionTypeFreeShipping    PromotionActionType = "FREE_SHIPPING"
+)
+
+// PromotionActionTarget represents promotion action targets
+type PromotionActionTarget string
+
+const (
+	PromotionTargetPlan  PromotionActionTarget = "PLAN"
+	PromotionTargetItem  PromotionActionTarget = "ITEM"
+	PromotionTargetTotal PromotionActionTarget = "TOTAL"
+)
+
+// PromotionType represents promotion types
+type PromotionType string
+
+const (
+	PromotionTypeDiscount  PromotionType = "DISCOUNT"
+	PromotionTypeCashback  PromotionType = "CASHBACK"
+	PromotionTypeFreeItem  PromotionType = "FREE_ITEM"
+	PromotionTypeUpgrade   PromotionType = "UPGRADE"
+	PromotionTypeBundle    PromotionType = "BUNDLE"
+)
+
+// PromotionScope represents promotion scope
+type PromotionScope string
+
+const (
+	PromotionScopeGlobal   PromotionScope = "GLOBAL"
+	PromotionScopeTenant   PromotionScope = "TENANT"
+	PromotionScopeRegional PromotionScope = "REGIONAL"
+)
+
+// PromotionExclusivity represents promotion exclusivity
+type PromotionExclusivity string
+
+const (
+	PromotionExclusivityExclusive PromotionExclusivity = "EXCLUSIVE"
+	PromotionExclusivityStackable PromotionExclusivity = "STACKABLE"
 )
 
