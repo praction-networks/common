@@ -322,3 +322,12 @@ const (
 	PromotionExclusivityStackable PromotionExclusivity = "STACKABLE"
 )
 
+// BandwidthRestrictionTemplate represents bandwidth restriction template types
+type BandwidthRestrictionTemplate string
+
+const (
+	BandwidthRestrictionTemplateAlways                    BandwidthRestrictionTemplate = "ALWAYS"                      // Always apply bandwidth restriction
+	BandwidthRestrictionTemplateFupLimitNotExceeded       BandwidthRestrictionTemplate = "FUP_LIMIT_NOT_EXCEEDED"    // Apply when FUP limit doesn't exceed
+	BandwidthRestrictionTemplateUploadOrDownloadNotExceeded BandwidthRestrictionTemplate = "UPLOAD_OR_DOWNLOAD_NOT_EXCEEDED" // Apply when either upload or download doesn't exceed
+)
+
