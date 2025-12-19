@@ -40,7 +40,7 @@ type NASCreatedEvent struct {
 	Model        string `bson:"model,omitempty" json:"model,omitempty"`               // Device model
 
 	// Network configuration
-	Ports           int      `bson:"ports" json:"ports"`                                       // NAS ports (e.g., 3799)
+	Ports           *int      `bson:"ports" json:"ports"`                                       // NAS ports (e.g., 3799)
 	IPAddress       string   `bson:"ipAddress" json:"ipAddress"`                                 // NAS IP address
 	AllowedIPRanges []string `bson:"allowedIPRanges,omitempty" json:"allowedIPRanges,omitempty"` // Client IP ranges (e.g., ["10.0.0.0/24"])
 	SSIDs           []string `bson:"ssids" json:"ssids"`                                         // WiFi SSIDs broadcasted by this NAS
