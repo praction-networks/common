@@ -12,7 +12,8 @@ const (
 	SubscriberStream    StreamName = "SubscriberStream"
 	CaptivePortalStream StreamName = "CaptivePortalStream"
 	AccountDataStream   StreamName = "AccountDataStream"
-	PlanStream       StreamName = "PlanStream"
+	PlanStream          StreamName = "PlanStream"
+	TicketStream        StreamName = "TicketStream"
 )
 
 // Global Stream names as constants
@@ -112,12 +113,12 @@ const (
 	VoucherTemplateDeletedSubject Subject = "subscriber.voucher.template.deleted"
 
 	// Voucher Instance Events
-	VoucherInstanceCreatedSubject Subject = "subscriber.voucher.instance.created"
+	VoucherInstanceCreatedSubject     Subject = "subscriber.voucher.instance.created"
 	VoucherInstanceBulkCreatedSubject Subject = "subscriber.voucher.instance.bulk.created"
-	VoucherInstanceUsedSubject Subject = "subscriber.voucher.instance.used"
-	VoucherInstanceExpiredSubject Subject = "subscriber.voucher.instance.expired"
-	VoucherInstanceRevokedSubject Subject = "subscriber.voucher.instance.revoked"
-	VoucherInstanceExtendedSubject Subject = "subscriber.voucher.instance.extended"
+	VoucherInstanceUsedSubject        Subject = "subscriber.voucher.instance.used"
+	VoucherInstanceExpiredSubject     Subject = "subscriber.voucher.instance.expired"
+	VoucherInstanceRevokedSubject     Subject = "subscriber.voucher.instance.revoked"
+	VoucherInstanceExtendedSubject    Subject = "subscriber.voucher.instance.extended"
 
 	// Theme Events (Tenant Service) - Unified subjects, portalType in event payload
 	ThemeCreatedSubject    Subject = "theme.created"
@@ -126,12 +127,12 @@ const (
 	ThemeSetDefaultSubject Subject = "theme.set_default"
 
 	// Account Data CDC Events (from PostgreSQL CDC)
-	AccountDataUserProfileCreatedSubject Subject = "accountdata.userprofile.created"
-	AccountDataUserProfileUpdatedSubject Subject = "accountdata.userprofile.updated"
-	AccountDataUserProfileDeletedSubject Subject = "accountdata.userprofile.deleted"
-	AccountDataRadcheckCreatedSubject    Subject = "accountdata.radcheck.created"
-	AccountDataRadcheckUpdatedSubject    Subject = "accountdata.radcheck.updated"
-	AccountDataRadcheckDeletedSubject    Subject = "accountdata.radcheck.deleted"
+	AccountDataUserProfileCreatedSubject  Subject = "accountdata.userprofile.created"
+	AccountDataUserProfileUpdatedSubject  Subject = "accountdata.userprofile.updated"
+	AccountDataUserProfileDeletedSubject  Subject = "accountdata.userprofile.deleted"
+	AccountDataRadcheckCreatedSubject     Subject = "accountdata.radcheck.created"
+	AccountDataRadcheckUpdatedSubject     Subject = "accountdata.radcheck.updated"
+	AccountDataRadcheckDeletedSubject     Subject = "accountdata.radcheck.deleted"
 	AccountDataRadusergroupCreatedSubject Subject = "accountdata.radusergroup.created"
 	AccountDataRadusergroupUpdatedSubject Subject = "accountdata.radusergroup.updated"
 	AccountDataRadusergroupDeletedSubject Subject = "accountdata.radusergroup.deleted"
@@ -164,6 +165,28 @@ const (
 	CouponCreatedSubject Subject = "coupon.created"
 	CouponUpdatedSubject Subject = "coupon.updated"
 	CouponDeletedSubject Subject = "coupon.deleted"
+
+	// Ticket Events
+	TicketCreatedSubject                Subject = "ticket.created"
+	TicketUpdatedSubject                Subject = "ticket.updated"
+	TicketResolvedSubject               Subject = "ticket.resolved"
+	TicketClosedSubject                 Subject = "ticket.closed"
+	TicketCommentAddedSubject           Subject = "ticket.comment.added"
+	TicketCustomerRepliedSubject        Subject = "ticket.customer.replied"
+	TicketTechnicianStatusUpdateSubject Subject = "ticket.technician.status.update"
+	TicketAttachmentAddedSubject        Subject = "ticket.attachment.added"
+	TicketStatusChangedSubject          Subject = "ticket.status.changed"
+	TicketAssignedSubject               Subject = "ticket.assigned"
+	TicketEscalatedSubject              Subject = "ticket.escalated"
+	AssignmentRequestedSubject          Subject = "ticket.assignment.requested"
+	AssignmentApprovedSubject           Subject = "ticket.assignment.approved"
+	AssignmentDeniedSubject             Subject = "ticket.assignment.denied"
+	AppointmentScheduledSubject         Subject = "ticket.appointment.scheduled"
+	AppointmentStatusChangedSubject     Subject = "ticket.appointment.status.changed"
+	ChecklistCreatedSubject             Subject = "ticket.checklist.created"
+	ChecklistItemCompletedSubject       Subject = "ticket.checklist.item.completed"
+	SLABreachedSubject                  Subject = "ticket.sla.breached"
+	SLAStateChangedSubject              Subject = "ticket.sla.changed"
 )
 
 // Global Subjects - Cross-service events that any service can publish
@@ -361,6 +384,33 @@ var Streams = map[StreamName]StreamMetadata{
 			CouponCreatedSubject,
 			CouponUpdatedSubject,
 			CouponDeletedSubject,
+		},
+	},
+	TicketStream: {
+		Name:        TicketStream,
+		Description: "Stream for ticket lifecycle events",
+		Subjects: []Subject{
+			// Ticket Events
+			TicketCreatedSubject,
+			TicketUpdatedSubject,
+			TicketResolvedSubject,
+			TicketClosedSubject,
+			TicketCommentAddedSubject,
+			TicketCustomerRepliedSubject,
+			TicketTechnicianStatusUpdateSubject,
+			TicketAttachmentAddedSubject,
+			TicketStatusChangedSubject,
+			TicketAssignedSubject,
+			TicketEscalatedSubject,
+			AssignmentRequestedSubject,
+			AssignmentApprovedSubject,
+			AssignmentDeniedSubject,
+			AppointmentScheduledSubject,
+			AppointmentStatusChangedSubject,
+			ChecklistCreatedSubject,
+			ChecklistItemCompletedSubject,
+			SLABreachedSubject,
+			SLAStateChangedSubject,
 		},
 	},
 }
