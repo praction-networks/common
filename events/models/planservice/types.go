@@ -72,8 +72,8 @@ const (
 type TaxMode string
 
 const (
-	TaxModeAuto  TaxMode = "AUTO"
-	TaxModeFixed TaxMode = "FIXED"
+	TaxModeDynamic TaxMode = "DYNAMIC" // Tax calculated dynamically based on category HSN/SAC and location (company state vs user state)
+	TaxModeFixed   TaxMode = "FIXED"   // Tax uses a fixed tax rate ID
 )
 
 type PriceBookScope string
@@ -81,7 +81,8 @@ type PriceBookScope string
 const (
 	PriceBookScopeGlobal PriceBookScope = "GLOBAL"
 	PriceBookScopeTenant PriceBookScope = "TENANT"
-	PriceBookScopeZone PriceBookScope = "ZONE"
+	PriceBookScopeZone   PriceBookScope = "ZONE"
+	PriceBookScopePlan   PriceBookScope = "PLAN" // Plan-specific pricing overrides (merges Plan Tenant Pricing)
 )
 
 type PlanType string
