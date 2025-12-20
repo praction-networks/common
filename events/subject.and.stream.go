@@ -12,6 +12,7 @@ const (
 	SubscriberStream    StreamName = "SubscriberStream"
 	AccountDataStream   StreamName = "AccountDataStream"
 	CaptivePortalStream StreamName = "CaptivePortalStream"
+	PlanStream          StreamName = "PlanStream"
 )
 
 // Global Stream names as constants
@@ -139,6 +140,28 @@ const (
 	GuestHotspotSubscriberUpdatedSubject Subject = "subscriber.guest.hotspot.updated"
 	GuestHotspotSubscriberDeletedSubject Subject = "subscriber.guest.hotspot.deleted"
 	CouponDetailsSubject                 Subject = "captiveportal.coupon.details"
+
+	// Plan Service Events
+	// Plan Tenant Pricing Events (CRITICAL - consumed by billing/subscription services)
+	PlanTenantPricingCreatedSubject Subject = "plan.tenant.pricing.created"
+	PlanTenantPricingUpdatedSubject Subject = "plan.tenant.pricing.updated"
+	PlanTenantPricingDeletedSubject Subject = "plan.tenant.pricing.deleted"
+	// Plan Events (consumed by subscriber/billing services)
+	PlanCreatedSubject Subject = "plan.created"
+	PlanUpdatedSubject Subject = "plan.updated"
+	PlanDeletedSubject Subject = "plan.deleted"
+	// Price Book Events
+	PriceBookCreatedSubject Subject = "pricebook.created"
+	PriceBookUpdatedSubject Subject = "pricebook.updated"
+	PriceBookDeletedSubject Subject = "pricebook.deleted"
+	// Promotion Events
+	PromotionCreatedSubject Subject = "promotion.created"
+	PromotionUpdatedSubject Subject = "promotion.updated"
+	PromotionDeletedSubject Subject = "promotion.deleted"
+	// Coupon Events
+	CouponCreatedSubject Subject = "coupon.created"
+	CouponUpdatedSubject Subject = "coupon.updated"
+	CouponDeletedSubject Subject = "coupon.deleted"
 )
 
 // Global Subjects - Cross-service events that any service can publish
@@ -314,6 +337,32 @@ var Streams = map[StreamName]StreamMetadata{
 			GuestHotspotSubscriberUpdatedSubject,
 			GuestHotspotSubscriberDeletedSubject,
 			CouponDetailsSubject,
+		},
+	},
+	PlanStream: {
+		Name:        PlanStream,
+		Description: "Stream for plan service events",
+		Subjects: []Subject{
+			// Plan Tenant Pricing Events (CRITICAL - consumed by billing/subscription services)
+			PlanTenantPricingCreatedSubject,
+			PlanTenantPricingUpdatedSubject,
+			PlanTenantPricingDeletedSubject,
+			// Plan Events (consumed by subscriber/billing services)
+			PlanCreatedSubject,
+			PlanUpdatedSubject,
+			PlanDeletedSubject,
+			// Price Book Events
+			PriceBookCreatedSubject,
+			PriceBookUpdatedSubject,
+			PriceBookDeletedSubject,
+			// Promotion Events
+			PromotionCreatedSubject,
+			PromotionUpdatedSubject,
+			PromotionDeletedSubject,
+			// Coupon Events
+			CouponCreatedSubject,
+			CouponUpdatedSubject,
+			CouponDeletedSubject,
 		},
 	},
 }
