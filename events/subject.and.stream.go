@@ -4,13 +4,14 @@ type StreamName string
 
 // Stream names as constants
 const (
-	SeedAppStream     StreamName = "SeedAppStream"
-	AuthStream        StreamName = "AuthStream"
-	TenantStream      StreamName = "TenantStream"
-	TenantUserStream  StreamName = "TenantUserStream"
-	InventoryStream   StreamName = "InventoryStream"
-	SubscriberStream  StreamName = "SubscriberStream"
-	AccountDataStream StreamName = "AccountDataStream"
+	SeedAppStream       StreamName = "SeedAppStream"
+	AuthStream          StreamName = "AuthStream"
+	TenantStream        StreamName = "TenantStream"
+	TenantUserStream    StreamName = "TenantUserStream"
+	InventoryStream     StreamName = "InventoryStream"
+	SubscriberStream    StreamName = "SubscriberStream"
+	AccountDataStream   StreamName = "AccountDataStream"
+	CaptivePortalStream StreamName = "CaptivePortalStream"
 )
 
 // Global Stream names as constants
@@ -129,6 +130,15 @@ const (
 	AccountDataRadusergroupCreatedSubject Subject = "accountdata.radusergroup.created"
 	AccountDataRadusergroupUpdatedSubject Subject = "accountdata.radusergroup.updated"
 	AccountDataRadusergroupDeletedSubject Subject = "accountdata.radusergroup.deleted"
+
+	// Captive Portal Events
+	NASCreatedSubject                    Subject = "captiveportal.nas.created"
+	NASUpdatedSubject                    Subject = "captiveportal.nas.updated"
+	NASDeletedSubject                    Subject = "captiveportal.nas.deleted"
+	GuestHotspotSubscriberCreatedSubject Subject = "subscriber.guest.hotspot.created"
+	GuestHotspotSubscriberUpdatedSubject Subject = "subscriber.guest.hotspot.updated"
+	GuestHotspotSubscriberDeletedSubject Subject = "subscriber.guest.hotspot.deleted"
+	CouponDetailsSubject                 Subject = "captiveportal.coupon.details"
 )
 
 // Global Subjects - Cross-service events that any service can publish
@@ -291,6 +301,19 @@ var Streams = map[StreamName]StreamMetadata{
 			AccountDataRadusergroupCreatedSubject,
 			AccountDataRadusergroupUpdatedSubject,
 			AccountDataRadusergroupDeletedSubject,
+		},
+	},
+	CaptivePortalStream: {
+		Name:        CaptivePortalStream,
+		Description: "Stream for captive portal service events",
+		Subjects: []Subject{
+			NASCreatedSubject,
+			NASUpdatedSubject,
+			NASDeletedSubject,
+			GuestHotspotSubscriberCreatedSubject,
+			GuestHotspotSubscriberUpdatedSubject,
+			GuestHotspotSubscriberDeletedSubject,
+			CouponDetailsSubject,
 		},
 	},
 }
