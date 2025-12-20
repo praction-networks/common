@@ -92,7 +92,7 @@ type PlanType string
 const (
 	PlanTypePrepaid  PlanType = "PREPAID"
 	PlanTypePostpaid PlanType = "POSTPAID"
-	PlanTypeHybrid   PlanType = "HYBRID"
+	PlanTypeFlexi    PlanType = "FLEXI"
 )
 
 type BillingCycle string

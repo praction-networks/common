@@ -129,3 +129,65 @@ type RadusergroupDeletedEvent struct {
 	Timestamp time.Time `json:"timestamp"` // When detected via CDC
 }
 
+// RadAcctEvent represents a RADIUS accounting event from FreeRADIUS
+// This is the typed representation of CDC events from the radAcct table
+type RadAcctEvent struct {
+	RadAcctID           string     `json:"radAcctId"`
+	TenantID            string     `json:"tenantId"`
+	AcctSessionID       string     `json:"acctSessionId"`
+	AcctUniqueID        string     `json:"acctUniqueId"`
+	UserName            string     `json:"userName"`
+	Realm               string     `json:"realm,omitempty"`
+	NasIPAddress        string     `json:"nasIpAddress"`
+	NasPortID           string     `json:"nasPortId,omitempty"`
+	NasPortType         string     `json:"nasPortType,omitempty"`
+	AcctStartTime       *time.Time `json:"acctStartTime,omitempty"`
+	AcctUpdateTime      *time.Time `json:"acctUpdateTime,omitempty"`
+	AcctStopTime        *time.Time `json:"acctStopTime,omitempty"`
+	AcctInterval        *int       `json:"acctInterval,omitempty"`
+	AcctSessionTime     *int       `json:"acctSessionTime,omitempty"`
+	AcctAuthentic       string     `json:"acctAuthentic,omitempty"`
+	ConnectInfoStart    string     `json:"connectInfoStart,omitempty"`
+	ConnectInfoStop     string     `json:"connectInfoStop,omitempty"`
+	AcctInputOctets     *int64     `json:"acctInputOctets,omitempty"`
+	AcctOutputOctets    *int64     `json:"acctOutputOctets,omitempty"`
+	CalledStationID     string     `json:"calledStationId,omitempty"`
+	CallingStationID    string     `json:"callingStationId,omitempty"`
+	AcctTerminateCause  string     `json:"acctTerminateCause,omitempty"`
+	ServiceType         string     `json:"serviceType,omitempty"`
+	FramedProtocol      string     `json:"framedProtocol,omitempty"`
+	FramedIPAddress     string     `json:"framedIpAddress,omitempty"`
+	FramedIPv6Address   string     `json:"framedIpv6Address,omitempty"`
+	FramedIPv6Prefix    string     `json:"framedIpv6Prefix,omitempty"`
+	FramedInterfaceID   string     `json:"framedInterfaceId,omitempty"`
+	DelegatedIPv6Prefix string     `json:"delegatedIpv6Prefix,omitempty"`
+	Version             int        `json:"version"`
+	CreatedAt           *time.Time `json:"createdAt,omitempty"`
+	Timestamp           time.Time  `json:"timestamp"` // When detected via CDC
+}
+
+// RadAcctSessionStartEvent represents a new RADIUS session start (INSERT on radAcct)
+type RadAcctSessionStartEvent struct {
+	RadAcctEvent
+}
+
+// RadAcctSessionUpdateEvent represents a RADIUS session update (UPDATE on radAcct)
+// This includes interim updates and session stops
+type RadAcctSessionUpdateEvent struct {
+	RadAcctEvent
+	IsSessionStop bool `json:"isSessionStop"` // True if acctStopTime is set
+}
+
+// RadAcctSessionEndEvent represents a RADIUS session end (DELETE on radAcct or session with stop time)
+type RadAcctSessionEndEvent struct {
+	RadAcctID       string    `json:"radAcctId"`
+	TenantID        string    `json:"tenantId"`
+	AcctSessionID   string    `json:"acctSessionId"`
+	UserName        string    `json:"userName"`
+	AcctSessionTime *int      `json:"acctSessionTime,omitempty"` // Total session duration in seconds
+	AcctInputOctets *int64    `json:"acctInputOctets,omitempty"` // Total bytes downloaded
+	AcctOutputOctets *int64   `json:"acctOutputOctets,omitempty"` // Total bytes uploaded
+	AcctTerminateCause string `json:"acctTerminateCause,omitempty"`
+	Timestamp       time.Time `json:"timestamp"` // When detected via CDC
+}
+

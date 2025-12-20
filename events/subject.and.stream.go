@@ -132,6 +132,11 @@ const (
 	AccountDataRadusergroupUpdatedSubject Subject = "accountdata.radusergroup.updated"
 	AccountDataRadusergroupDeletedSubject Subject = "accountdata.radusergroup.deleted"
 
+	// RadAcct CDC Events (FreeRADIUS accounting from radius-event-manager-service)
+	AccountDataRadAcctSessionStartSubject  Subject = "accountdata.radacct.session.start"
+	AccountDataRadAcctSessionUpdateSubject Subject = "accountdata.radacct.session.update"
+	AccountDataRadAcctSessionEndSubject    Subject = "accountdata.radacct.session.end"
+
 	// Captive Portal Events
 	NASCreatedSubject                    Subject = "captiveportal.nas.created"
 	NASUpdatedSubject                    Subject = "captiveportal.nas.updated"
@@ -324,6 +329,10 @@ var Streams = map[StreamName]StreamMetadata{
 			AccountDataRadusergroupCreatedSubject,
 			AccountDataRadusergroupUpdatedSubject,
 			AccountDataRadusergroupDeletedSubject,
+			// RadAcct CDC Events (FreeRADIUS accounting)
+			AccountDataRadAcctSessionStartSubject,
+			AccountDataRadAcctSessionUpdateSubject,
+			AccountDataRadAcctSessionEndSubject,
 		},
 	},
 	CaptivePortalStream: {
