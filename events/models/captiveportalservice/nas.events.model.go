@@ -92,8 +92,8 @@ type NASUpdatedEvent struct {
 	RedirectorDomain string   `bson:"redirectorDomain" json:"redirectorDomain"`                   // Redirector domain (e.g., "redirector.rapidnet.in")
 	ForwardDomain    string   `bson:"forwardDomain" json:"forwardDomain"`                         // Forward domain (e.g., "forward.rapidnet.in")
 	// Security credentials
-	Secret       string `bson:"secret" json:"-"`                                // For HMAC/JWT signing and API authentication (bcrypt hashed, never sent to client)
-	RADIUSSecret string `bson:"radiusSecret" json:"-"`                          // For RADIUS protocol communication (bcrypt hashed, never sent to client)
+	Secret       string `bson:"secret" json:"secret"`                           // For HMAC/JWT signing (sent via internal events)
+	RADIUSSecret string `bson:"radiusSecret" json:"radiusSecret"`               // For RADIUS protocol (sent via internal events)
 	PublicKey    string `bson:"publicKey,omitempty" json:"publicKey,omitempty"` // For asymmetric crypto (optional)
 
 	// Security settings

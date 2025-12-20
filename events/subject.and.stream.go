@@ -94,6 +94,11 @@ const (
 	FieldConfigUpdatedSubject Subject = "subscriber.fieldconfig.updated"
 	FieldConfigDeletedSubject Subject = "subscriber.fieldconfig.deleted"
 
+	// Form Configuration Events
+	FormConfigCreatedSubject Subject = "subscriber.formconfig.created"
+	FormConfigUpdatedSubject Subject = "subscriber.formconfig.updated"
+	FormConfigDeletedSubject Subject = "subscriber.formconfig.deleted"
+
 	// Theme Events (Tenant Service) - Unified subjects, portalType in event payload
 	ThemeCreatedSubject    Subject = "theme.created"
 	ThemeUpdatedSubject    Subject = "theme.updated"
@@ -231,6 +236,10 @@ var Streams = map[StreamName]StreamMetadata{
 			FieldConfigCreatedSubject,
 			FieldConfigUpdatedSubject,
 			FieldConfigDeletedSubject,
+			// Form Configuration Events
+			FormConfigCreatedSubject,
+			FormConfigUpdatedSubject,
+			FormConfigDeletedSubject,
 		},
 	},
 }
