@@ -4,16 +4,12 @@ type StreamName string
 
 // Stream names as constants
 const (
-	SeedAppStream       StreamName = "SeedAppStream"
-	AuthStream          StreamName = "AuthStream"
-	TenantStream        StreamName = "TenantStream"
-	TenantUserStream    StreamName = "TenantUserStream"
-	InventoryStream     StreamName = "InventoryStream"
-	SubscriberStream    StreamName = "SubscriberStream"
-	CaptivePortalStream StreamName = "CaptivePortalStream"
-	AccountDataStream   StreamName = "AccountDataStream"
-	PlanStream          StreamName = "PlanStream"
-	TicketStream        StreamName = "TicketStream"
+	SeedAppStream    StreamName = "SeedAppStream"
+	AuthStream       StreamName = "AuthStream"
+	TenantStream     StreamName = "TenantStream"
+	TenantUserStream StreamName = "TenantUserStream"
+	InventoryStream  StreamName = "InventoryStream"
+	SubscriberStream StreamName = "SubscriberStream"
 )
 
 // Global Stream names as constants
@@ -28,7 +24,7 @@ type Subject string
 
 const (
 
-	//Tenant Service Event Initialization
+	//Domain Service Event Initialization
 	TenantCreatedSubject         Subject = "tenant.created"
 	TenantUpdatedSubject         Subject = "tenant.updated"
 	TenantDeletedSubject         Subject = "tenant.deleted"
@@ -76,11 +72,6 @@ const (
 	TenantUserRoleUpdatedSubject Subject = "tenantuserrole.updated"
 	TenantUserRoleDeletedSubject Subject = "tenantuserrole.deleted"
 
-	// NAS Createa in captive portal service
-	NASCreatedSubject Subject = "captiveportal.nas.created"
-	NASUpdatedSubject Subject = "captiveportal.nas.updated"
-	NASDeletedSubject Subject = "captiveportal.nas.deleted"
-
 	// Subscriber Service Event Initialization
 	SubscriberCreatedSubject Subject = "subscriber.created"
 	SubscriberUpdatedSubject Subject = "subscriber.updated"
@@ -91,10 +82,6 @@ const (
 	BroadbandSubscriptionUpdatedSubject Subject = "subscriber.broadband.updated"
 	BroadbandSubscriptionDeletedSubject Subject = "subscriber.broadband.deleted"
 
-	GuestHotspotSubscriberCreatedSubject Subject = "subscriber.guest.hotspot.created"
-	GuestHotspotSubscriberUpdatedSubject Subject = "subscriber.guest.hotspot.updated"
-	GuestHotspotSubscriberDeletedSubject Subject = "subscriber.guest.hotspot.deleted"
-
 	// Hotspot Profile Events
 	HotspotProfileCreatedSubject Subject = "subscriber.hotspot.created"
 	HotspotProfileUpdatedSubject Subject = "subscriber.hotspot.updated"
@@ -102,91 +89,16 @@ const (
 	HotspotDeviceAddedSubject    Subject = "subscriber.hotspot.device.added"
 	HotspotDeviceRemovedSubject  Subject = "subscriber.hotspot.device.removed"
 
-	// Form Configuration Events (replaces FieldConfig - fields are now stored in FormConfig)
-	FormConfigCreatedSubject Subject = "subscriber.formconfig.created"
-	FormConfigUpdatedSubject Subject = "subscriber.formconfig.updated"
-	FormConfigDeletedSubject Subject = "subscriber.formconfig.deleted"
-
-	// Voucher Template Events
-	VoucherTemplateCreatedSubject Subject = "subscriber.voucher.template.created"
-	VoucherTemplateUpdatedSubject Subject = "subscriber.voucher.template.updated"
-	VoucherTemplateDeletedSubject Subject = "subscriber.voucher.template.deleted"
-
-	// Voucher Instance Events
-	VoucherInstanceCreatedSubject     Subject = "subscriber.voucher.instance.created"
-	VoucherInstanceBulkCreatedSubject Subject = "subscriber.voucher.instance.bulk.created"
-	VoucherInstanceUsedSubject        Subject = "subscriber.voucher.instance.used"
-	VoucherInstanceExpiredSubject     Subject = "subscriber.voucher.instance.expired"
-	VoucherInstanceRevokedSubject     Subject = "subscriber.voucher.instance.revoked"
-	VoucherInstanceExtendedSubject    Subject = "subscriber.voucher.instance.extended"
+	// Field Configuration Events
+	FieldConfigCreatedSubject Subject = "subscriber.fieldconfig.created"
+	FieldConfigUpdatedSubject Subject = "subscriber.fieldconfig.updated"
+	FieldConfigDeletedSubject Subject = "subscriber.fieldconfig.deleted"
 
 	// Theme Events (Tenant Service) - Unified subjects, portalType in event payload
 	ThemeCreatedSubject    Subject = "theme.created"
 	ThemeUpdatedSubject    Subject = "theme.updated"
 	ThemeDeletedSubject    Subject = "theme.deleted"
 	ThemeSetDefaultSubject Subject = "theme.set_default"
-
-	// Account Data CDC Events (from PostgreSQL CDC)
-	AccountDataUserProfileCreatedSubject  Subject = "accountdata.userprofile.created"
-	AccountDataUserProfileUpdatedSubject  Subject = "accountdata.userprofile.updated"
-	AccountDataUserProfileDeletedSubject  Subject = "accountdata.userprofile.deleted"
-	AccountDataRadcheckCreatedSubject     Subject = "accountdata.radcheck.created"
-	AccountDataRadcheckUpdatedSubject     Subject = "accountdata.radcheck.updated"
-	AccountDataRadcheckDeletedSubject     Subject = "accountdata.radcheck.deleted"
-	AccountDataRadusergroupCreatedSubject Subject = "accountdata.radusergroup.created"
-	AccountDataRadusergroupUpdatedSubject Subject = "accountdata.radusergroup.updated"
-	AccountDataRadusergroupDeletedSubject Subject = "accountdata.radusergroup.deleted"
-
-	// Captive Portal Voucher Events
-	CouponDetailsSubject Subject = "captiveportal.coupon.details"
-
-	// Plan Service Event Initialization
-	// Plan Tenant Pricing Events (CRITICAL - consumed by billing/subscription services)
-	PlanTenantPricingCreatedSubject Subject = "plan.tenant.pricing.created"
-	PlanTenantPricingUpdatedSubject Subject = "plan.tenant.pricing.updated"
-	PlanTenantPricingDeletedSubject Subject = "plan.tenant.pricing.deleted"
-
-	// Plan Events (consumed by subscriber/billing services)
-	PlanCreatedSubject Subject = "plan.created"
-	PlanUpdatedSubject Subject = "plan.updated"
-	PlanDeletedSubject Subject = "plan.deleted"
-
-	// Price Book Events (may be consumed by billing services)
-	PriceBookCreatedSubject Subject = "pricebook.created"
-	PriceBookUpdatedSubject Subject = "pricebook.updated"
-	PriceBookDeletedSubject Subject = "pricebook.deleted"
-
-	// Promotion Events
-	PromotionCreatedSubject Subject = "promotion.created"
-	PromotionUpdatedSubject Subject = "promotion.updated"
-	PromotionDeletedSubject Subject = "promotion.deleted"
-
-	// Coupon Events
-	CouponCreatedSubject Subject = "coupon.created"
-	CouponUpdatedSubject Subject = "coupon.updated"
-	CouponDeletedSubject Subject = "coupon.deleted"
-
-	// Ticket Events
-	TicketCreatedSubject                Subject = "ticket.created"
-	TicketUpdatedSubject                Subject = "ticket.updated"
-	TicketResolvedSubject               Subject = "ticket.resolved"
-	TicketClosedSubject                 Subject = "ticket.closed"
-	TicketCommentAddedSubject           Subject = "ticket.comment.added"
-	TicketCustomerRepliedSubject        Subject = "ticket.customer.replied"
-	TicketTechnicianStatusUpdateSubject Subject = "ticket.technician.status.update"
-	TicketAttachmentAddedSubject        Subject = "ticket.attachment.added"
-	TicketStatusChangedSubject          Subject = "ticket.status.changed"
-	TicketAssignedSubject               Subject = "ticket.assigned"
-	TicketEscalatedSubject              Subject = "ticket.escalated"
-	AssignmentRequestedSubject          Subject = "ticket.assignment.requested"
-	AssignmentApprovedSubject           Subject = "ticket.assignment.approved"
-	AssignmentDeniedSubject             Subject = "ticket.assignment.denied"
-	AppointmentScheduledSubject         Subject = "ticket.appointment.scheduled"
-	AppointmentStatusChangedSubject     Subject = "ticket.appointment.status.changed"
-	ChecklistCreatedSubject             Subject = "ticket.checklist.created"
-	ChecklistItemCompletedSubject       Subject = "ticket.checklist.item.completed"
-	SLABreachedSubject                  Subject = "ticket.sla.breached"
-	SLAStateChangedSubject              Subject = "ticket.sla.changed"
 )
 
 // Global Subjects - Cross-service events that any service can publish
@@ -299,7 +211,7 @@ var Streams = map[StreamName]StreamMetadata{
 	},
 	SubscriberStream: {
 		Name:        SubscriberStream,
-		Description: "Stream for subscriber service events including broadband, hotspot, and form configurations",
+		Description: "Stream for subscriber service events including broadband, hotspot, and field configurations",
 		Subjects: []Subject{
 			// Subscriber Events
 			SubscriberCreatedSubject,
@@ -315,102 +227,10 @@ var Streams = map[StreamName]StreamMetadata{
 			HotspotProfileDeletedSubject,
 			HotspotDeviceAddedSubject,
 			HotspotDeviceRemovedSubject,
-			// Form Configuration Events (fields are now stored in FormConfig)
-			FormConfigCreatedSubject,
-			FormConfigUpdatedSubject,
-			FormConfigDeletedSubject,
-			// Voucher Template Events
-			VoucherTemplateCreatedSubject,
-			VoucherTemplateUpdatedSubject,
-			VoucherTemplateDeletedSubject,
-			// Voucher Instance Events
-			VoucherInstanceCreatedSubject,
-			VoucherInstanceBulkCreatedSubject,
-			VoucherInstanceUsedSubject,
-			VoucherInstanceExpiredSubject,
-			VoucherInstanceRevokedSubject,
-			VoucherInstanceExtendedSubject,
-		},
-	},
-	CaptivePortalStream: {
-		Name:        CaptivePortalStream,
-		Description: "Stream for captive portal service events",
-		Subjects: []Subject{
-			GuestHotspotSubscriberCreatedSubject,
-			GuestHotspotSubscriberUpdatedSubject,
-			GuestHotspotSubscriberDeletedSubject,
-			NASCreatedSubject,
-			NASUpdatedSubject,
-			NASDeletedSubject,
-			CouponDetailsSubject,
-		},
-	},
-	AccountDataStream: {
-		Name:        AccountDataStream,
-		Description: "Stream for account data CDC events from PostgreSQL",
-		Subjects: []Subject{
-			AccountDataUserProfileCreatedSubject,
-			AccountDataUserProfileUpdatedSubject,
-			AccountDataUserProfileDeletedSubject,
-			AccountDataRadcheckCreatedSubject,
-			AccountDataRadcheckUpdatedSubject,
-			AccountDataRadcheckDeletedSubject,
-			AccountDataRadusergroupCreatedSubject,
-			AccountDataRadusergroupUpdatedSubject,
-			AccountDataRadusergroupDeletedSubject,
-		},
-	},
-	PlanStream: {
-		Name:        PlanStream,
-		Description: "Stream for plan service events consumed by other services",
-		Subjects: []Subject{
-			// Plan Tenant Pricing Events (CRITICAL - consumed by billing/subscription services)
-			PlanTenantPricingCreatedSubject,
-			PlanTenantPricingUpdatedSubject,
-			PlanTenantPricingDeletedSubject,
-			// Plan Events (consumed by subscriber/billing services)
-			PlanCreatedSubject,
-			PlanUpdatedSubject,
-			PlanDeletedSubject,
-			// Price Book Events (may be consumed by billing services)
-			PriceBookCreatedSubject,
-			PriceBookUpdatedSubject,
-			PriceBookDeletedSubject,
-			// Promotion Events
-			PromotionCreatedSubject,
-			PromotionUpdatedSubject,
-			PromotionDeletedSubject,
-			// Coupon Events
-			CouponCreatedSubject,
-			CouponUpdatedSubject,
-			CouponDeletedSubject,
-		},
-	},
-	TicketStream: {
-		Name:        TicketStream,
-		Description: "Stream for ticket lifecycle events",
-		Subjects: []Subject{
-			// Ticket Events
-			TicketCreatedSubject,
-			TicketUpdatedSubject,
-			TicketResolvedSubject,
-			TicketClosedSubject,
-			TicketCommentAddedSubject,
-			TicketCustomerRepliedSubject,
-			TicketTechnicianStatusUpdateSubject,
-			TicketAttachmentAddedSubject,
-			TicketStatusChangedSubject,
-			TicketAssignedSubject,
-			TicketEscalatedSubject,
-			AssignmentRequestedSubject,
-			AssignmentApprovedSubject,
-			AssignmentDeniedSubject,
-			AppointmentScheduledSubject,
-			AppointmentStatusChangedSubject,
-			ChecklistCreatedSubject,
-			ChecklistItemCompletedSubject,
-			SLABreachedSubject,
-			SLAStateChangedSubject,
+			// Field Configuration Events
+			FieldConfigCreatedSubject,
+			FieldConfigUpdatedSubject,
+			FieldConfigDeletedSubject,
 		},
 	},
 }
