@@ -15,6 +15,7 @@ type FieldConfigItem struct {
 	CustomPlaceholder *string               `json:"customPlaceholder,omitempty" bson:"customPlaceholder,omitempty"` // Override default placeholder
 	ValidationRules   *FieldValidationRules `json:"validationRules,omitempty" bson:"validationRules,omitempty"`     // Custom validation
 	ConditionalRules  *ConditionalRules     `json:"conditionalRules,omitempty" bson:"conditionalRules,omitempty"`   // Show/hide based on conditions
+	AuthMethods       []AuthMethod          `json:"authMethods,omitempty" bson:"authMethods,omitempty"`             // Which auth methods this field belongs to (empty = appears in all forms)
 }
 
 // FieldValidationRules represents validation rules for a field in events
