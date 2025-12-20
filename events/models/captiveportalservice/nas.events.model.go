@@ -48,7 +48,7 @@ type NASCreatedEvent struct {
 	ForwardDomain    string   `bson:"forwardDomain" json:"forwardDomain"`                         // Forward domain (e.g., "forward.rapidnet.in")
 
 	// Security credentials
-	Secret       string `bson:"secret" json:"radiusSecret"`                                // For HMAC/JWT signing and API authentication (bcrypt hashed, never sent to client)
+	Secret       string `bson:"secret" json:"secret"`                                // For HMAC/JWT signing and API authentication (bcrypt hashed, never sent to client)
 	RADIUSSecret string `bson:"radiusSecret" json:"radiusSecret"`                          // For RADIUS protocol communication (bcrypt hashed, never sent to client)
 	PublicKey    string `bson:"publicKey,omitempty" json:"publicKey,omitempty"` // For asymmetric crypto (optional)
 
