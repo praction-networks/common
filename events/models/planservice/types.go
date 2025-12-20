@@ -20,6 +20,8 @@ const (
 	ProductTypeService      ProductType = "SERVICE"
 	ProductTypeGoods        ProductType = "GOODS"
 	ProductTypeBundle       ProductType = "BUNDLE"       // Product bundle (multiple products)
+	ProductTypeSecurityDeposit ProductType = "SECURITY_DEPOSIT"
+	ProductTypeOTC          ProductType = "OTC"
 	ProductTypeInstallation ProductType = "INSTALLATION" // Fixed typo: was INSTLALATION
 	ProductTypeOther        ProductType = "OTHER"
 )
