@@ -95,6 +95,15 @@ const (
 	PlanTypeFlexi    PlanType = "FLEXI"
 )
 
+type PlanSubType string
+
+const (
+	PlanSubTypeEnterprise PlanSubType = "ENTERPRISE"
+	PlanSubTypeSMB        PlanSubType = "SMB"
+	PlanSubTypeHome       PlanSubType = "HOME"
+	PlanSubTypeHotspot    PlanSubType = "HOTSPOT"
+)
+
 type BillingCycle string
 
 const (
