@@ -71,6 +71,13 @@ func NewListener(
 	}
 }
 
+// Consumer operation constants
+const (
+	consumerOperationTimeout = 30 * time.Second // Increased timeout for NATS cluster consensus
+	consumerCreateMaxRetries = 3                // Number of retry attempts for consumer creation
+	consumerRetryBaseDelay   = 2 * time.Second  // Base delay between retries (exponential backoff)
+)
+
 // Listen initializes the consumer and starts message processing.
 func (l *Listener) Listen(ctx context.Context) error {
 	// Ensure stream exists
@@ -89,50 +96,18 @@ func (l *Listener) Listen(ctx context.Context) error {
 	// we replay ALL messages from the beginning, including seed events that may have been
 	// published before the service started. Since handlers are idempotent, replaying is safe.
 	// This ensures notification-service and tenant-user-service catch up on seed tenant events.
-	existingConsumer, _ := stream.Consumer(ctx, l.Durable)
-	if existingConsumer != nil && l.DeliverPolicy == jetstream.DeliverAllPolicy {
-		logger.Info("Deleting existing consumer to ensure replay of all messages with DeliverAllPolicy",
+	if err := l.deleteExistingConsumerIfNeeded(ctx, stream); err != nil {
+		logger.Warn("Failed to delete existing consumer, will try to update",
 			"consumer", l.Durable,
 			"stream", string(l.StreamName),
-			"reason", "Need to catch up on all messages including seed events")
-		if err := stream.DeleteConsumer(ctx, l.Durable); err != nil {
-			logger.Warn("Failed to delete existing consumer, will try to update",
-				"consumer", l.Durable,
-				"stream", string(l.StreamName),
-				err)
-			// Continue anyway - CreateOrUpdateConsumer might still work
-		} else {
-			logger.Info("Existing consumer deleted successfully, will create new one to replay all messages",
-				"consumer", l.Durable,
-				"stream", string(l.StreamName))
-		}
+			err)
+		// Continue anyway - CreateOrUpdateConsumer might still work
 	}
 
-	// Create or update the consumer (use fields available in your ConsumerConfig)
-	cc := jetstream.ConsumerConfig{
-		Name:          l.Durable,
-		Durable:       l.Durable,
-		DeliverPolicy: l.DeliverPolicy,
-		AckPolicy:     l.AckPolicy,
-		AckWait:       l.AckWait,
-		MaxDeliver:    l.MaxDeliver, // -1 or 0 => unlimited
-		MaxAckPending: l.MaxAckPending,
-		BackOff:       l.Backoff, // NOTE: capital O (BackOff)
-		// Replicas:    0 (inherit stream), MemoryStorage: false (inherit), etc.
-	}
-	if l.FilterSubject != nil {
-		cc.FilterSubject = string(*l.FilterSubject)
-	} else if len(l.FilterSubjects) > 0 {
-		subjects := make([]string, len(l.FilterSubjects))
-		for i, s := range l.FilterSubjects {
-			subjects[i] = string(s)
-		}
-		cc.FilterSubjects = subjects
-	}
-
-	consumer, err := stream.CreateOrUpdateConsumer(ctx, cc)
+	// Create or update the consumer with retry logic
+	consumer, err := l.createConsumerWithRetry(ctx, stream)
 	if err != nil {
-		logger.Error("Failed to create or update consumer", err, "streamName", l.StreamName)
+		logger.Error("Failed to create or update consumer after retries", err, "streamName", l.StreamName)
 		return fmt.Errorf("failed to create or update consumer: %w", err)
 	}
 
@@ -270,6 +245,108 @@ func (l *Listener) Stop(ctx context.Context) error {
 	logger.Info("Stopping listener", "StreamName", l.StreamName)
 	close(l.stopCh)
 	return nil
+}
+
+// deleteExistingConsumerIfNeeded deletes the existing consumer if DeliverAllPolicy is set
+// Uses an extended timeout to handle NATS cluster consensus delays
+func (l *Listener) deleteExistingConsumerIfNeeded(ctx context.Context, stream jetstream.Stream) error {
+	// Use extended timeout for consumer operations
+	opCtx, cancel := context.WithTimeout(ctx, consumerOperationTimeout)
+	defer cancel()
+
+	existingConsumer, _ := stream.Consumer(opCtx, l.Durable)
+	if existingConsumer != nil && l.DeliverPolicy == jetstream.DeliverAllPolicy {
+		logger.Info("Deleting existing consumer to ensure replay of all messages with DeliverAllPolicy",
+			"consumer", l.Durable,
+			"stream", string(l.StreamName),
+			"reason", "Need to catch up on all messages including seed events")
+
+		deleteCtx, deleteCancel := context.WithTimeout(ctx, consumerOperationTimeout)
+		defer deleteCancel()
+
+		if err := stream.DeleteConsumer(deleteCtx, l.Durable); err != nil {
+			return err
+		}
+		logger.Info("Existing consumer deleted successfully, will create new one to replay all messages",
+			"consumer", l.Durable,
+			"stream", string(l.StreamName))
+	}
+	return nil
+}
+
+// createConsumerWithRetry creates or updates the consumer with retry logic and exponential backoff
+func (l *Listener) createConsumerWithRetry(ctx context.Context, stream jetstream.Stream) (jetstream.Consumer, error) {
+	// Build consumer config
+	cc := jetstream.ConsumerConfig{
+		Name:          l.Durable,
+		Durable:       l.Durable,
+		DeliverPolicy: l.DeliverPolicy,
+		AckPolicy:     l.AckPolicy,
+		AckWait:       l.AckWait,
+		MaxDeliver:    l.MaxDeliver,
+		MaxAckPending: l.MaxAckPending,
+		BackOff:       l.Backoff,
+	}
+	if l.FilterSubject != nil {
+		cc.FilterSubject = string(*l.FilterSubject)
+	} else if len(l.FilterSubjects) > 0 {
+		subjects := make([]string, len(l.FilterSubjects))
+		for i, s := range l.FilterSubjects {
+			subjects[i] = string(s)
+		}
+		cc.FilterSubjects = subjects
+	}
+
+	var lastErr error
+	for attempt := 1; attempt <= consumerCreateMaxRetries; attempt++ {
+		// Use extended timeout for each attempt
+		opCtx, cancel := context.WithTimeout(ctx, consumerOperationTimeout)
+
+		consumer, err := stream.CreateOrUpdateConsumer(opCtx, cc)
+		cancel() // Always cancel the context after operation
+
+		if err == nil {
+			if attempt > 1 {
+				logger.Info("Consumer created successfully after retry",
+					"consumer", l.Durable,
+					"stream", string(l.StreamName),
+					"attempt", attempt)
+			}
+			return consumer, nil
+		}
+
+		lastErr = err
+		logger.Warn("Failed to create consumer, will retry",
+			"consumer", l.Durable,
+			"stream", string(l.StreamName),
+			"attempt", attempt,
+			"maxRetries", consumerCreateMaxRetries,
+			err)
+
+		// Don't retry if context is already cancelled
+		if ctx.Err() != nil {
+			return nil, fmt.Errorf("context cancelled during consumer creation: %w", ctx.Err())
+		}
+
+		// Don't sleep after the last attempt
+		if attempt < consumerCreateMaxRetries {
+			// Exponential backoff: 2s, 4s, 8s...
+			backoffDelay := consumerRetryBaseDelay * time.Duration(1<<(attempt-1))
+			logger.Info("Waiting before retry",
+				"consumer", l.Durable,
+				"delay", backoffDelay,
+				"nextAttempt", attempt+1)
+
+			select {
+			case <-time.After(backoffDelay):
+				// Continue to next attempt
+			case <-ctx.Done():
+				return nil, fmt.Errorf("context cancelled while waiting for retry: %w", ctx.Err())
+			}
+		}
+	}
+
+	return nil, fmt.Errorf("failed to create consumer after %d attempts: %w", consumerCreateMaxRetries, lastErr)
 }
 
 func waitForStream(ctx context.Context, streamManager *JsStreamManager, streamName string) (jetstream.Stream, error) {
