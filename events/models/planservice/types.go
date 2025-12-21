@@ -98,10 +98,10 @@ const (
 type PlanSubType string
 
 const (
-	PlanSubTypeEnterprise PlanSubType = "ENTERPRISE"
-	PlanSubTypeSMB        PlanSubType = "SMB"
-	PlanSubTypeHome       PlanSubType = "HOME"
-	PlanSubTypeHotspot    PlanSubType = "HOTSPOT"
+	PlanSubTypeEnterprise PlanSubType = "enterprise"
+	PlanSubTypeSMB        PlanSubType = "smb"
+	PlanSubTypeHome       PlanSubType = "home"
+	PlanSubTypeHotspot    PlanSubType = "hotspot"
 )
 
 type BillingCycle string
