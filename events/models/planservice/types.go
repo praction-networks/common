@@ -104,19 +104,23 @@ const (
 	PlanSubTypeHotspot    PlanSubType = "HOTSPOT"
 )
 
-type BillingCycle string
+// BillingCycleUnit represents the unit for billing cycles
+type BillingCycleUnit string
 
 const (
-	BillingCycleMinute    BillingCycle = "MINUTE"       // For short-duration access (cafe/hotel WiFi - 15/30/60 min plans)
-	BillingCycleHourly    BillingCycle = "HOURLY"
-	BillingCycleDaily     BillingCycle = "DAILY"
-	BillingCycleWeekly    BillingCycle = "WEEKLY"
-	BillingCycleMonthly   BillingCycle = "MONTHLY"
-	BillingCycleQuarterly BillingCycle = "QUARTERLY"
-	BillingCycleSemiAnnually BillingCycle = "SEMI_ANNUALLY"
-	BillingCycleYearly    BillingCycle = "YEARLY"
-	BillingCycleOneTime   BillingCycle = "ONE_TIME"
+	BillingCycleUnitMinute BillingCycleUnit = "MINUTE"
+	BillingCycleUnitHour   BillingCycleUnit = "HOUR"
+	BillingCycleUnitDay     BillingCycleUnit = "DAY"
+	BillingCycleUnitMonth   BillingCycleUnit = "MONTH"
+	BillingCycleUnitYear    BillingCycleUnit = "YEAR"
 )
+
+// BillingCycle represents a billing cycle with quantity and unit
+// This allows flexible combinations like "2 hours", "3 days", "6 months", etc.
+type BillingCycle struct {
+	Quantity int              `json:"quantity" bson:"quantity"` // e.g., 2, 3, 6
+	Unit     BillingCycleUnit `json:"unit" bson:"unit"`         // MINUTE, HOUR, DAY, MONTH, YEAR
+}
 
 type PriceStrategy string
 

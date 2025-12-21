@@ -275,6 +275,7 @@ func (l *Listener) deleteExistingConsumerIfNeeded(ctx context.Context, stream je
 }
 
 // createConsumerWithRetry creates or updates the consumer with retry logic and exponential backoff
+// If all retries fail, the process exits to trigger container restart by Kubernetes
 func (l *Listener) createConsumerWithRetry(ctx context.Context, stream jetstream.Stream) (jetstream.Consumer, error) {
 	// Build consumer config
 	cc := jetstream.ConsumerConfig{
@@ -325,7 +326,10 @@ func (l *Listener) createConsumerWithRetry(ctx context.Context, stream jetstream
 
 		// Don't retry if context is already cancelled
 		if ctx.Err() != nil {
-			return nil, fmt.Errorf("context cancelled during consumer creation: %w", ctx.Err())
+			logger.Fatal("Context cancelled during consumer creation, exiting to trigger container restart",
+				fmt.Errorf("context cancelled: %w", ctx.Err()),
+				"consumer", l.Durable,
+				"stream", string(l.StreamName))
 		}
 
 		// Don't sleep after the last attempt
@@ -341,11 +345,22 @@ func (l *Listener) createConsumerWithRetry(ctx context.Context, stream jetstream
 			case <-time.After(backoffDelay):
 				// Continue to next attempt
 			case <-ctx.Done():
-				return nil, fmt.Errorf("context cancelled while waiting for retry: %w", ctx.Err())
+				logger.Fatal("Context cancelled while waiting for retry, exiting to trigger container restart",
+					fmt.Errorf("context cancelled: %w", ctx.Err()),
+					"consumer", l.Durable,
+					"stream", string(l.StreamName))
 			}
 		}
 	}
 
+	// All retries exhausted - exit process to trigger Kubernetes container restart
+	logger.Fatal("Failed to create consumer after all retries, exiting to trigger container restart",
+		lastErr,
+		"consumer", l.Durable,
+		"stream", string(l.StreamName),
+		"attempts", consumerCreateMaxRetries)
+
+	// This line won't be reached as logger.Fatal calls os.Exit(1)
 	return nil, fmt.Errorf("failed to create consumer after %d attempts: %w", consumerCreateMaxRetries, lastErr)
 }
 
