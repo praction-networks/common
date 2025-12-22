@@ -2,6 +2,16 @@ package planservice
 
 type Status string
 
+// CatalogScope defines whether an item is global (platform) or tenant-specific
+type CatalogScope string
+
+const (
+	// ScopeGlobal - Item is available to all tenants (platform-level)
+	ScopeGlobal CatalogScope = "GLOBAL"
+	// ScopeTenant - Item is restricted to specific tenants in TenantIDs
+	ScopeTenant CatalogScope = "TENANT"
+)
+
 const (
 	StatusActive         Status = "ACTIVE"
 	StatusInactive       Status = "INACTIVE"
