@@ -4,8 +4,6 @@ package subscriberevent
 
 import "time"
 
-
-
 type SubscriberStatus string
 
 const (

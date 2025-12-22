@@ -13,27 +13,26 @@ const (
 )
 
 const (
-	StatusActive         Status = "ACTIVE"
-	StatusInactive       Status = "INACTIVE"
-	StatusDraft          Status = "DRAFT"
-	StatusAssigned       Status = "ASSIGNED" // Fixed typo: was StautsAssigned
+	StatusActive          Status = "ACTIVE"
+	StatusInactive        Status = "INACTIVE"
+	StatusDraft           Status = "DRAFT"
+	StatusAssigned        Status = "ASSIGNED" // Fixed typo: was StautsAssigned
 	StatusPendingApproval Status = "PENDING_APPROVAL"
-	StatusArchived       Status = "ARCHIVED"
-	StatusDeprecated     Status = "DEPRECATED" // Old plan, no new subscriptions
-	StatusSunset         Status = "SUNSET"     // Being phased out
+	StatusArchived        Status = "ARCHIVED"
+	StatusDeprecated      Status = "DEPRECATED" // Old plan, no new subscriptions
+	StatusSunset          Status = "SUNSET"     // Being phased out
 )
-
 
 type ProductType string
 
 const (
-	ProductTypeService      ProductType = "SERVICE"
-	ProductTypeGoods        ProductType = "GOODS"
-	ProductTypeBundle       ProductType = "BUNDLE"       // Product bundle (multiple products)
+	ProductTypeService         ProductType = "SERVICE"
+	ProductTypeGoods           ProductType = "GOODS"
+	ProductTypeBundle          ProductType = "BUNDLE" // Product bundle (multiple products)
 	ProductTypeSecurityDeposit ProductType = "SECURITY_DEPOSIT"
-	ProductTypeOTC          ProductType = "OTC"
-	ProductTypeInstallation ProductType = "INSTALLATION" // Fixed typo: was INSTLALATION
-	ProductTypeOther        ProductType = "OTHER"
+	ProductTypeOTC             ProductType = "OTC"
+	ProductTypeInstallation    ProductType = "INSTALLATION" // Fixed typo: was INSTLALATION
+	ProductTypeOther           ProductType = "OTHER"
 )
 
 type Unit string
@@ -45,32 +44,32 @@ const (
 	UnitDay    Unit = "DAY"
 	UnitHour   Unit = "HOUR"
 	UnitMinute Unit = "MINUTE"
-	
+
 	// Data units
-	UnitGB     Unit = "GB"
-	UnitMB     Unit = "MB"
-	UnitTB     Unit = "TB"     // Terabytes
-	UnitKB     Unit = "KB"     // Kilobytes
-	
+	UnitGB Unit = "GB"
+	UnitMB Unit = "MB"
+	UnitTB Unit = "TB" // Terabytes
+	UnitKB Unit = "KB" // Kilobytes
+
 	// Bandwidth units
-	UnitMbps   Unit = "MBPS"   // Megabits per second
-	UnitKbps   Unit = "KBPS"   // Kilobits per second
-	UnitGbps   Unit = "GBPS"   // Gigabits per second
-	
+	UnitMbps Unit = "MBPS" // Megabits per second
+	UnitKbps Unit = "KBPS" // Kilobits per second
+	UnitGbps Unit = "GBPS" // Gigabits per second
+
 	// Voice/Communication units
 	UnitMinutes Unit = "MINUTES" // Voice minutes (separate from time)
 	UnitSMS     Unit = "SMS"     // SMS count
 	UnitMMS     Unit = "MMS"     // MMS count
 	UnitCall    Unit = "CALL"    // Call count
-	
+
 	// Hardware/Resource units
 	UnitSim        Unit = "SIM"        // SIM card count
-	UnitDevice     Unit = "DEVICE"      // Device count
+	UnitDevice     Unit = "DEVICE"     // Device count
 	UnitLocation   Unit = "LOCATION"   // Site/location count
-	UnitConcurrent Unit = "CONCURRENT"  // Concurrent connections
-	
+	UnitConcurrent Unit = "CONCURRENT" // Concurrent connections
+
 	// Generic
-	UnitCount  Unit = "COUNT"
+	UnitCount Unit = "COUNT"
 )
 
 type BillingModel string
@@ -120,9 +119,9 @@ type BillingCycleUnit string
 const (
 	BillingCycleUnitMinute BillingCycleUnit = "MINUTE"
 	BillingCycleUnitHour   BillingCycleUnit = "HOUR"
-	BillingCycleUnitDay     BillingCycleUnit = "DAY"
-	BillingCycleUnitMonth   BillingCycleUnit = "MONTH"
-	BillingCycleUnitYear    BillingCycleUnit = "YEAR"
+	BillingCycleUnitDay    BillingCycleUnit = "DAY"
+	BillingCycleUnitMonth  BillingCycleUnit = "MONTH"
+	BillingCycleUnitYear   BillingCycleUnit = "YEAR"
 )
 
 // BillingCycle represents a billing cycle with quantity and unit
@@ -143,8 +142,8 @@ const (
 type OverrideTargetType string
 
 const (
-	OverrideTargetProduct OverrideTargetType = "PRODUCT"
-	OverrideTargetPlan    OverrideTargetType = "PLAN"
+	OverrideTargetProduct   OverrideTargetType = "PRODUCT"
+	OverrideTargetPlan      OverrideTargetType = "PLAN"
 	OverrideTargetPriceBook OverrideTargetType = "PRICE_BOOK"
 )
 
@@ -154,7 +153,7 @@ type PricingModelType string
 const (
 	PricingModelTypeFlat   PricingModelType = "FLAT"   // Single flat price
 	PricingModelTypeTiered PricingModelType = "TIERED" // Tiered pricing (quantity-based)
-	PricingModelTypeVolume PricingModelType = "VOLUME"  // Volume discount pricing
+	PricingModelTypeVolume PricingModelType = "VOLUME" // Volume discount pricing
 	PricingModelTypeBundle PricingModelType = "BUNDLE" // Bundle pricing
 )
 
@@ -164,15 +163,15 @@ type ActivationMethodType string
 const (
 	ActivationMethodTypeImmediate ActivationMethodType = "IMMEDIATE" // Activate immediately
 	ActivationMethodTypeScheduled ActivationMethodType = "SCHEDULED" // Schedule activation
-	ActivationMethodTypeManual    ActivationMethodType = "MANUAL"   // Manual activation required
+	ActivationMethodTypeManual    ActivationMethodType = "MANUAL"    // Manual activation required
 )
 
 // ProrationMethodType represents proration calculation method
 type ProrationMethodType string
 
 const (
-	ProrationMethodTypeDaily       ProrationMethodType = "DAILY"       // Daily proration
-	ProrationMethodTypeHourly      ProrationMethodType = "HOURLY"      // Hourly proration
+	ProrationMethodTypeDaily        ProrationMethodType = "DAILY"        // Daily proration
+	ProrationMethodTypeHourly       ProrationMethodType = "HOURLY"       // Hourly proration
 	ProrationMethodTypeProportional ProrationMethodType = "PROPORTIONAL" // Proportional proration
 )
 
@@ -181,7 +180,7 @@ type ProrationRoundingType string
 
 const (
 	ProrationRoundingTypeUp      ProrationRoundingType = "UP"      // Round up
-	ProrationRoundingTypeDown    ProrationRoundingType = "DOWN"   // Round down
+	ProrationRoundingTypeDown    ProrationRoundingType = "DOWN"    // Round down
 	ProrationRoundingTypeNearest ProrationRoundingType = "NEAREST" // Round to nearest
 )
 
@@ -197,8 +196,8 @@ const (
 type RenewalMethodType string
 
 const (
-	RenewalMethodTypeAuto    RenewalMethodType = "AUTO"    // Automatic renewal
-	RenewalMethodTypeManual  RenewalMethodType = "MANUAL"  // Manual renewal required
+	RenewalMethodTypeAuto     RenewalMethodType = "AUTO"     // Automatic renewal
+	RenewalMethodTypeManual   RenewalMethodType = "MANUAL"   // Manual renewal required
 	RenewalMethodTypeOptional RenewalMethodType = "OPTIONAL" // Optional renewal
 )
 
@@ -206,8 +205,8 @@ const (
 type UpgradeType string
 
 const (
-	UpgradeTypeAuto       UpgradeType = "AUTO"       // Automatic upgrade
-	UpgradeTypeOptional   UpgradeType = "OPTIONAL"   // Optional upgrade
+	UpgradeTypeAuto        UpgradeType = "AUTO"        // Automatic upgrade
+	UpgradeTypeOptional    UpgradeType = "OPTIONAL"    // Optional upgrade
 	UpgradeTypeRecommended UpgradeType = "RECOMMENDED" // Recommended upgrade
 )
 
@@ -323,11 +322,11 @@ const (
 type PromotionType string
 
 const (
-	PromotionTypeDiscount  PromotionType = "DISCOUNT"
-	PromotionTypeCashback  PromotionType = "CASHBACK"
-	PromotionTypeFreeItem  PromotionType = "FREE_ITEM"
-	PromotionTypeUpgrade   PromotionType = "UPGRADE"
-	PromotionTypeBundle    PromotionType = "BUNDLE"
+	PromotionTypeDiscount PromotionType = "DISCOUNT"
+	PromotionTypeCashback PromotionType = "CASHBACK"
+	PromotionTypeFreeItem PromotionType = "FREE_ITEM"
+	PromotionTypeUpgrade  PromotionType = "UPGRADE"
+	PromotionTypeBundle   PromotionType = "BUNDLE"
 )
 
 // PromotionScope represents promotion scope
@@ -351,8 +350,7 @@ const (
 type BandwidthRestrictionTemplate string
 
 const (
-	BandwidthRestrictionTemplateAlways                    BandwidthRestrictionTemplate = "ALWAYS"                      // Always apply bandwidth restriction
-	BandwidthRestrictionTemplateFupLimitNotExceeded       BandwidthRestrictionTemplate = "FUP_LIMIT_NOT_EXCEEDED"    // Apply when FUP limit doesn't exceed
+	BandwidthRestrictionTemplateAlways                      BandwidthRestrictionTemplate = "ALWAYS"                          // Always apply bandwidth restriction
+	BandwidthRestrictionTemplateFupLimitNotExceeded         BandwidthRestrictionTemplate = "FUP_LIMIT_NOT_EXCEEDED"          // Apply when FUP limit doesn't exceed
 	BandwidthRestrictionTemplateUploadOrDownloadNotExceeded BandwidthRestrictionTemplate = "UPLOAD_OR_DOWNLOAD_NOT_EXCEEDED" // Apply when either upload or download doesn't exceed
 )
-

@@ -20,7 +20,7 @@ type AccountDataUpdatedEvent struct {
 // AccountDataDeletedEvent represents an account data deletion event from PostgreSQL CDC
 type AccountDataDeletedEvent struct {
 	TableName string                 `json:"tableName"` // e.g., "user_profiles", "radcheck", "radusergroup"
-	Data      map[string]interface{} `json:"data"`     // Deleted row values
+	Data      map[string]interface{} `json:"data"`      // Deleted row values
 	Timestamp time.Time              `json:"timestamp"` // When the change was detected
 }
 
@@ -180,14 +180,13 @@ type RadAcctSessionUpdateEvent struct {
 
 // RadAcctSessionEndEvent represents a RADIUS session end (DELETE on radAcct or session with stop time)
 type RadAcctSessionEndEvent struct {
-	RadAcctID       string    `json:"radAcctId"`
-	TenantID        string    `json:"tenantId"`
-	AcctSessionID   string    `json:"acctSessionId"`
-	UserName        string    `json:"userName"`
-	AcctSessionTime *int      `json:"acctSessionTime,omitempty"` // Total session duration in seconds
-	AcctInputOctets *int64    `json:"acctInputOctets,omitempty"` // Total bytes downloaded
-	AcctOutputOctets *int64   `json:"acctOutputOctets,omitempty"` // Total bytes uploaded
-	AcctTerminateCause string `json:"acctTerminateCause,omitempty"`
-	Timestamp       time.Time `json:"timestamp"` // When detected via CDC
+	RadAcctID          string    `json:"radAcctId"`
+	TenantID           string    `json:"tenantId"`
+	AcctSessionID      string    `json:"acctSessionId"`
+	UserName           string    `json:"userName"`
+	AcctSessionTime    *int      `json:"acctSessionTime,omitempty"`  // Total session duration in seconds
+	AcctInputOctets    *int64    `json:"acctInputOctets,omitempty"`  // Total bytes downloaded
+	AcctOutputOctets   *int64    `json:"acctOutputOctets,omitempty"` // Total bytes uploaded
+	AcctTerminateCause string    `json:"acctTerminateCause,omitempty"`
+	Timestamp          time.Time `json:"timestamp"` // When detected via CDC
 }
-

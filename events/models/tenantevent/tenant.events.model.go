@@ -304,8 +304,6 @@ type ExternalRadiusSettings struct {
 	IPACTID string `bson:"ipactEnabled,omitempty" json:"ipactEnabled,omitempty"`
 }
 
-
-
 type ISPSettings struct {
 	Plans            []string `json:"plans,omitempty" bson:"plans,omitempty"`
 	MaxBandwidthMbps int      `json:"maxBandwidthMbps,omitempty" bson:"maxBandwidthMbps,omitempty"`

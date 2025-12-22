@@ -6,18 +6,18 @@ import "time"
 type VoucherTemplateStatus string
 
 const (
-	VoucherTemplateStatusCreated    VoucherTemplateStatus = "CREATED"
+	VoucherTemplateStatusCreated   VoucherTemplateStatus = "CREATED"
 	VoucherTemplateStatusIssued    VoucherTemplateStatus = "ISSUED"
-	VoucherTemplateStatusApproved    VoucherTemplateStatus = "APPROVED"
-	VoucherTemplateStatusRejected    VoucherTemplateStatus = "REJECTED"
-	VoucherTemplateStatusCancelled    VoucherTemplateStatus = "CANCELLED"
+	VoucherTemplateStatusApproved  VoucherTemplateStatus = "APPROVED"
+	VoucherTemplateStatusRejected  VoucherTemplateStatus = "REJECTED"
+	VoucherTemplateStatusCancelled VoucherTemplateStatus = "CANCELLED"
 	VoucherTemplateStatusUnused    VoucherTemplateStatus = "UNUSED"
-	VoucherTemplateStatusExhausted    VoucherTemplateStatus = "EXHAUSTED"
-	VoucherTemplateStatusDisabled    VoucherTemplateStatus = "DISABLED"
-	VoucherTemplateStatusExpired    VoucherTemplateStatus = "EXPIRED"
-	VoucherTemplateStatusDeleted    VoucherTemplateStatus = "DELETED"
-	VoucherTemplateStatusActive   VoucherTemplateStatus = "ACTIVE"
-	VoucherTemplateStatusArchived VoucherTemplateStatus = "ARCHIVED"
+	VoucherTemplateStatusExhausted VoucherTemplateStatus = "EXHAUSTED"
+	VoucherTemplateStatusDisabled  VoucherTemplateStatus = "DISABLED"
+	VoucherTemplateStatusExpired   VoucherTemplateStatus = "EXPIRED"
+	VoucherTemplateStatusDeleted   VoucherTemplateStatus = "DELETED"
+	VoucherTemplateStatusActive    VoucherTemplateStatus = "ACTIVE"
+	VoucherTemplateStatusArchived  VoucherTemplateStatus = "ARCHIVED"
 )
 
 // VoucherStatus represents the lifecycle state of a voucher instance
@@ -30,7 +30,7 @@ const (
 	VoucherStatusActive    VoucherStatus = "ACTIVE"    // Currently in use
 	VoucherStatusExhausted VoucherStatus = "EXHAUSTED" // Limit reached (time/data)
 	VoucherStatusExpired   VoucherStatus = "EXPIRED"   // Validity expired
-	VoucherStatusRevoked   VoucherStatus = "REVOKED"  // Manually revoked
+	VoucherStatusRevoked   VoucherStatus = "REVOKED"   // Manually revoked
 	VoucherStatusArchived  VoucherStatus = "ARCHIVED"  // Immutable, audit-only
 )
 
@@ -61,11 +61,11 @@ const (
 	TerminationReasonNormal         TerminationReason = "NORMAL"          // User disconnected
 	TerminationReasonTimeLimit      TerminationReason = "TIME_LIMIT"      // Time limit reached
 	TerminationReasonDataLimit      TerminationReason = "DATA_LIMIT"      // Data limit reached
-	TerminationReasonManual         TerminationReason = "MANUAL"         // Admin terminated
+	TerminationReasonManual         TerminationReason = "MANUAL"          // Admin terminated
 	TerminationReasonNewSession     TerminationReason = "NEW_SESSION"     // New session started (single-use)
-	TerminationReasonMACMismatch    TerminationReason = "MAC_MISMATCH"   // MAC address changed
+	TerminationReasonMACMismatch    TerminationReason = "MAC_MISMATCH"    // MAC address changed
 	TerminationReasonLocationDenied TerminationReason = "LOCATION_DENIED" // Location not allowed
-	TerminationReasonDeviceLimit    TerminationReason = "DEVICE_LIMIT"   // Device limit exceeded
+	TerminationReasonDeviceLimit    TerminationReason = "DEVICE_LIMIT"    // Device limit exceeded
 	TerminationReasonExpired        TerminationReason = "EXPIRED"         // Voucher expired
 	TerminationReasonRevoked        TerminationReason = "REVOKED"         // Voucher revoked
 )
@@ -89,7 +89,6 @@ const (
 	VoucherScopeLocationBound VoucherScope = "LOCATION_BOUND" // Only one AP/NAS
 	VoucherScopeGlobal        VoucherScope = "GLOBAL"         // Any AP under tenant
 )
-
 
 // VoucherLimits defines the access limits for vouchers generated from this template
 type VoucherLimits struct {
@@ -178,4 +177,3 @@ type DistributionSettings struct {
 	// Suffix - optional suffix for all codes
 	Suffix string `bson:"suffix,omitempty" json:"suffix,omitempty"`
 }
-

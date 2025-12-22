@@ -47,35 +47,35 @@ type SubscriberDeletedEvent struct {
 
 // BroadbandSubscriptionCreatedEvent represents a broadband subscription creation event
 type BroadbandSubscriptionCreatedEvent struct {
-	ID                    string    `json:"id" bson:"id"`
-	SubscriberID          string    `json:"subscriberId" bson:"subscriberId"`
-	TenantID              string    `json:"tenantId" bson:"tenantId"`
-	AccountNumber         string    `json:"accountNumber" bson:"accountNumber"`
-	Status                string    `json:"status" bson:"status"`
-	AccessType            string    `json:"accessType" bson:"accessType"`
-	PlanID                string    `json:"planId" bson:"planId"`
-	PlanName              string    `json:"planName,omitempty" bson:"planName,omitempty"`
-	SpeedDownMbps         int       `json:"speedDownMbps" bson:"speedDownMbps"`
-	SpeedUpMbps           int       `json:"speedUpMbps" bson:"speedUpMbps"`
-	InstallationAddressID string    `json:"installationAddressId,omitempty" bson:"installationAddressId,omitempty"`
-	BillingProfileID      string    `json:"billingProfileId,omitempty" bson:"billingProfileId,omitempty"`
-	PPPoEUsername         string    `json:"pppoeUsername,omitempty" bson:"pppoeUsername,omitempty"`
-	OLTDeviceID           string    `json:"oltDeviceId,omitempty" bson:"oltDeviceId,omitempty"`
-	OLTPort               string    `json:"oltPort,omitempty" bson:"oltPort,omitempty"`
+	ID                    string `json:"id" bson:"id"`
+	SubscriberID          string `json:"subscriberId" bson:"subscriberId"`
+	TenantID              string `json:"tenantId" bson:"tenantId"`
+	AccountNumber         string `json:"accountNumber" bson:"accountNumber"`
+	Status                string `json:"status" bson:"status"`
+	AccessType            string `json:"accessType" bson:"accessType"`
+	PlanID                string `json:"planId" bson:"planId"`
+	PlanName              string `json:"planName,omitempty" bson:"planName,omitempty"`
+	SpeedDownMbps         int    `json:"speedDownMbps" bson:"speedDownMbps"`
+	SpeedUpMbps           int    `json:"speedUpMbps" bson:"speedUpMbps"`
+	InstallationAddressID string `json:"installationAddressId,omitempty" bson:"installationAddressId,omitempty"`
+	BillingProfileID      string `json:"billingProfileId,omitempty" bson:"billingProfileId,omitempty"`
+	PPPoEUsername         string `json:"pppoeUsername,omitempty" bson:"pppoeUsername,omitempty"`
+	OLTDeviceID           string `json:"oltDeviceId,omitempty" bson:"oltDeviceId,omitempty"`
+	OLTPort               string `json:"oltPort,omitempty" bson:"oltPort,omitempty"`
 }
 
 // BroadbandSubscriptionUpdatedEvent represents a broadband subscription update event
 type BroadbandSubscriptionUpdatedEvent struct {
-	ID                    string    `json:"id" bson:"id"`
-	SubscriberID          string    `json:"subscriberId" bson:"subscriberId"`
-	TenantID              string    `json:"tenantId" bson:"tenantId"`
-	AccountNumber         string    `json:"accountNumber,omitempty" bson:"accountNumber,omitempty"`
-	Status                string    `json:"status,omitempty" bson:"status,omitempty"`
-	PlanID                string    `json:"planId,omitempty" bson:"planId,omitempty"`
-	SpeedDownMbps         int       `json:"speedDownMbps,omitempty" bson:"speedDownMbps,omitempty"`
-	SpeedUpMbps           int       `json:"speedUpMbps,omitempty" bson:"speedUpMbps,omitempty"`
-	InstallationAddressID string    `json:"installationAddressId,omitempty" bson:"installationAddressId,omitempty"`
-	Version               int       `json:"version" bson:"version"`
+	ID                    string `json:"id" bson:"id"`
+	SubscriberID          string `json:"subscriberId" bson:"subscriberId"`
+	TenantID              string `json:"tenantId" bson:"tenantId"`
+	AccountNumber         string `json:"accountNumber,omitempty" bson:"accountNumber,omitempty"`
+	Status                string `json:"status,omitempty" bson:"status,omitempty"`
+	PlanID                string `json:"planId,omitempty" bson:"planId,omitempty"`
+	SpeedDownMbps         int    `json:"speedDownMbps,omitempty" bson:"speedDownMbps,omitempty"`
+	SpeedUpMbps           int    `json:"speedUpMbps,omitempty" bson:"speedUpMbps,omitempty"`
+	InstallationAddressID string `json:"installationAddressId,omitempty" bson:"installationAddressId,omitempty"`
+	Version               int    `json:"version" bson:"version"`
 }
 
 // BroadbandSubscriptionDeletedEvent represents a broadband subscription deletion event
@@ -90,18 +90,18 @@ type BroadbandSubscriptionDeletedEvent struct {
 
 // HotspotProfileCreatedEvent represents a hotspot profile creation event
 type HotspotProfileCreatedEvent struct {
-	ID                string    `json:"id" bson:"id"`
-	SubscriberID      string    `json:"subscriberId" bson:"subscriberId"`
-	TenantID          string    `json:"tenantId" bson:"tenantId"`
-	Status            string    `json:"status" bson:"status"`
-	UserID            string    `json:"userId,omitempty" bson:"userId,omitempty"`
-	Username          string    `json:"username,omitempty" bson:"username,omitempty"` // RADIUS username
-	Password          string    `json:"password,omitempty" bson:"password,omitempty"` // RADIUS password
-	DefaultAuthMethod string    `json:"defaultAuthMethod" bson:"defaultAuthMethod"`
-	MaxDevices        int       `json:"maxDevices" bson:"maxDevices"`
-	AutoLoginEnabled  bool      `json:"autoLoginEnabled" bson:"autoLoginEnabled"`
-	CreationSource    string    `json:"creationSource,omitempty" bson:"creationSource,omitempty"` // "CAPTIVE_PORTAL", "ADMIN", "API", "IMPORT"
-	Version           int       `json:"version" bson:"version"`
+	ID                string `json:"id" bson:"id"`
+	SubscriberID      string `json:"subscriberId" bson:"subscriberId"`
+	TenantID          string `json:"tenantId" bson:"tenantId"`
+	Status            string `json:"status" bson:"status"`
+	UserID            string `json:"userId,omitempty" bson:"userId,omitempty"`
+	Username          string `json:"username,omitempty" bson:"username,omitempty"` // RADIUS username
+	Password          string `json:"password,omitempty" bson:"password,omitempty"` // RADIUS password
+	DefaultAuthMethod string `json:"defaultAuthMethod" bson:"defaultAuthMethod"`
+	MaxDevices        int    `json:"maxDevices" bson:"maxDevices"`
+	AutoLoginEnabled  bool   `json:"autoLoginEnabled" bson:"autoLoginEnabled"`
+	CreationSource    string `json:"creationSource,omitempty" bson:"creationSource,omitempty"` // "CAPTIVE_PORTAL", "ADMIN", "API", "IMPORT"
+	Version           int    `json:"version" bson:"version"`
 }
 
 // HotspotProfileUpdatedEvent represents a hotspot profile update event
@@ -119,30 +119,30 @@ type HotspotProfileUpdatedEvent struct {
 
 // HotspotProfileDeletedEvent represents a hotspot profile deletion event
 type HotspotProfileDeletedEvent struct {
-	ID           string    `json:"id" bson:"id"`
-	SubscriberID string    `json:"subscriberId" bson:"subscriberId"`
-	TenantID     string    `json:"tenantId" bson:"tenantId"`
-	Version      int       `json:"version" bson:"version"`
+	ID           string `json:"id" bson:"id"`
+	SubscriberID string `json:"subscriberId" bson:"subscriberId"`
+	TenantID     string `json:"tenantId" bson:"tenantId"`
+	Version      int    `json:"version" bson:"version"`
 }
 
 // HotspotDeviceAddedEvent represents when a device is added to a hotspot profile
 type HotspotDeviceAddedEvent struct {
-	ProfileID    string    `json:"profileId" bson:"profileId"`
-	SubscriberID string    `json:"subscriberId" bson:"subscriberId"`
-	TenantID     string    `json:"tenantId" bson:"tenantId"`
-	MACAddress   string    `json:"macAddress" bson:"macAddress"`
-	DeviceName   string    `json:"deviceName,omitempty" bson:"deviceName,omitempty"`
-	DeviceType   string    `json:"deviceType,omitempty" bson:"deviceType,omitempty"`
-	Trusted      bool      `json:"trusted" bson:"trusted"`
-	IsPrimary    bool      `json:"isPrimary,omitempty" bson:"isPrimary,omitempty"` // Is this the primary device for this profile?
-	Version      int       `json:"version" bson:"version"`
+	ProfileID    string `json:"profileId" bson:"profileId"`
+	SubscriberID string `json:"subscriberId" bson:"subscriberId"`
+	TenantID     string `json:"tenantId" bson:"tenantId"`
+	MACAddress   string `json:"macAddress" bson:"macAddress"`
+	DeviceName   string `json:"deviceName,omitempty" bson:"deviceName,omitempty"`
+	DeviceType   string `json:"deviceType,omitempty" bson:"deviceType,omitempty"`
+	Trusted      bool   `json:"trusted" bson:"trusted"`
+	IsPrimary    bool   `json:"isPrimary,omitempty" bson:"isPrimary,omitempty"` // Is this the primary device for this profile?
+	Version      int    `json:"version" bson:"version"`
 }
 
 // HotspotDeviceRemovedEvent represents when a device is removed from a hotspot profile
 type HotspotDeviceRemovedEvent struct {
-	ProfileID    string    `json:"profileId" bson:"profileId"`
-	SubscriberID string    `json:"subscriberId" bson:"subscriberId"`
-	TenantID     string    `json:"tenantId" bson:"tenantId"`
-	MACAddress   string    `json:"macAddress" bson:"macAddress"`
-	Version      int       `json:"version" bson:"version"`
+	ProfileID    string `json:"profileId" bson:"profileId"`
+	SubscriberID string `json:"subscriberId" bson:"subscriberId"`
+	TenantID     string `json:"tenantId" bson:"tenantId"`
+	MACAddress   string `json:"macAddress" bson:"macAddress"`
+	Version      int    `json:"version" bson:"version"`
 }

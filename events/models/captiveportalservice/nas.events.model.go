@@ -6,25 +6,25 @@ import (
 
 // NAS Device field constants
 const (
-	NASFieldID              = "_id"
-	NASFieldNASId           = "nasId"
-	NASFieldTenantIDs       = "tenantIds"
-	NASFieldLocationAddress = "locationAddress"
-	NASFieldName            = "name"
-	NASFieldIPAddress       = "ipAddress"
-	NASFieldIsActive        = "isActive"
-	NASFieldSSIDs           = "ssids"
+	NASFieldID               = "_id"
+	NASFieldNASId            = "nasId"
+	NASFieldTenantIDs        = "tenantIds"
+	NASFieldLocationAddress  = "locationAddress"
+	NASFieldName             = "name"
+	NASFieldIPAddress        = "ipAddress"
+	NASFieldIsActive         = "isActive"
+	NASFieldSSIDs            = "ssids"
 	NASFieldRedirectorDomain = "redirectorDomain"
 	NASFieldForwardDomain    = "forwardDomain"
-	NASFieldCreatedAt       = "createdAt"
-	NASFieldUpdatedAt       = "updatedAt"
-	NASFieldCreatedBy       = "createdBy"
-	NASFieldUpdatedBy       = "updatedBy"
-	NASFieldVersion         = "version"
-	NASFieldTags            = "tags"
-	NASFieldNotes           = "notes"
-	NASFieldStats           = "stats"
-	NASFieldLastSeen        = "lastSeen"
+	NASFieldCreatedAt        = "createdAt"
+	NASFieldUpdatedAt        = "updatedAt"
+	NASFieldCreatedBy        = "createdBy"
+	NASFieldUpdatedBy        = "updatedBy"
+	NASFieldVersion          = "version"
+	NASFieldTags             = "tags"
+	NASFieldNotes            = "notes"
+	NASFieldStats            = "stats"
+	NASFieldLastSeen         = "lastSeen"
 )
 
 // NASDevice represents a Network Access Server (WiFi access point, router, etc.)
@@ -40,16 +40,16 @@ type NASCreatedEvent struct {
 	Model        string `bson:"model,omitempty" json:"model,omitempty"`               // Device model
 
 	// Network configuration
-	Ports           *int      `bson:"ports" json:"ports"`                                       // NAS ports (e.g., 3799)
-	IPAddress       string   `bson:"ipAddress" json:"ipAddress"`                                 // NAS IP address
-	AllowedIPRanges []string `bson:"allowedIPRanges,omitempty" json:"allowedIPRanges,omitempty"` // Client IP ranges (e.g., ["10.0.0.0/24"])
-	SSIDs           []string `bson:"ssids" json:"ssids"`                                         // WiFi SSIDs broadcasted by this NAS
+	Ports            *int     `bson:"ports" json:"ports"`                                         // NAS ports (e.g., 3799)
+	IPAddress        string   `bson:"ipAddress" json:"ipAddress"`                                 // NAS IP address
+	AllowedIPRanges  []string `bson:"allowedIPRanges,omitempty" json:"allowedIPRanges,omitempty"` // Client IP ranges (e.g., ["10.0.0.0/24"])
+	SSIDs            []string `bson:"ssids" json:"ssids"`                                         // WiFi SSIDs broadcasted by this NAS
 	RedirectorDomain string   `bson:"redirectorDomain" json:"redirectorDomain"`                   // Redirector domain (e.g., "redirector.rapidnet.in")
 	ForwardDomain    string   `bson:"forwardDomain" json:"forwardDomain"`                         // Forward domain (e.g., "forward.rapidnet.in")
 
 	// Security credentials
-	Secret       string `bson:"secret" json:"secret"`                                // For HMAC/JWT signing and API authentication (bcrypt hashed, never sent to client)
-	RADIUSSecret string `bson:"radiusSecret" json:"radiusSecret"`                          // For RADIUS protocol communication (bcrypt hashed, never sent to client)
+	Secret       string `bson:"secret" json:"secret"`                           // For HMAC/JWT signing and API authentication (bcrypt hashed, never sent to client)
+	RADIUSSecret string `bson:"radiusSecret" json:"radiusSecret"`               // For RADIUS protocol communication (bcrypt hashed, never sent to client)
 	PublicKey    string `bson:"publicKey,omitempty" json:"publicKey,omitempty"` // For asymmetric crypto (optional)
 
 	// Security settings
@@ -86,9 +86,9 @@ type NASUpdatedEvent struct {
 	Model        string `bson:"model,omitempty" json:"model,omitempty"`               // Device model
 
 	// Network configuration
-	IPAddress       string   `bson:"ipAddress" json:"ipAddress"`                                 // NAS IP address
-	AllowedIPRanges []string `bson:"allowedIPRanges,omitempty" json:"allowedIPRanges,omitempty"` // Client IP ranges (e.g., ["10.0.0.0/24"])
-	SSIDs           []string `bson:"ssids" json:"ssids"`                                         // WiFi SSIDs broadcasted by this NAS
+	IPAddress        string   `bson:"ipAddress" json:"ipAddress"`                                 // NAS IP address
+	AllowedIPRanges  []string `bson:"allowedIPRanges,omitempty" json:"allowedIPRanges,omitempty"` // Client IP ranges (e.g., ["10.0.0.0/24"])
+	SSIDs            []string `bson:"ssids" json:"ssids"`                                         // WiFi SSIDs broadcasted by this NAS
 	RedirectorDomain string   `bson:"redirectorDomain" json:"redirectorDomain"`                   // Redirector domain (e.g., "redirector.rapidnet.in")
 	ForwardDomain    string   `bson:"forwardDomain" json:"forwardDomain"`                         // Forward domain (e.g., "forward.rapidnet.in")
 	// Security credentials

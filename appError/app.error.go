@@ -91,20 +91,20 @@ const (
 	RequestCanceled                  ErrorCode = "REQUEST_CANCELED"         // Request canceled by client/upstream
 
 	// Database Errors
-	DBConnectionError   ErrorCode = "DB_CONNECTION_ERROR"    // Failed to connect to the database
-	DBConnectionTimeOut ErrorCode = "DB_CONNECTION_TIMEOUT"  // Database connection timeout
-	DBFetchError        ErrorCode = "DB_FETCH_ERROR"         // Error while fetching data from the database
-	DBInsertError       ErrorCode = "DB_INSERT_ERROR"        // Error while inserting data into the database
-	DBUpdateError       ErrorCode = "DB_UPDATE_ERROR"        // Error while updating data in the database
-	DBDeleteError       ErrorCode = "DB_DELETE_ERROR"        // Error while deleting data from the database
-	DBTransactionError  ErrorCode = "DB_TRANSACTION_ERROR"   // Error during a database transaction
-	DBWriteConcernError ErrorCode = "DB_WRITE_CONCERN_ERROR" // Write concern not satisfied
-	DBRetryableError    ErrorCode = "DB_RETRYABLE_ERROR"     // Temporary/retryable database error
-	DBQueryError        ErrorCode = "DB_QUERY_ERROR"         // Error while executing a query on the database
-	DBQueryTimeoutError ErrorCode = "DB_QUERY_TIMEOUT_ERROR" // Query timed out
-	DBQueryCanceledError ErrorCode = "DB_QUERY_CANCELED_ERROR" // Query canceled
+	DBConnectionError       ErrorCode = "DB_CONNECTION_ERROR"        // Failed to connect to the database
+	DBConnectionTimeOut     ErrorCode = "DB_CONNECTION_TIMEOUT"      // Database connection timeout
+	DBFetchError            ErrorCode = "DB_FETCH_ERROR"             // Error while fetching data from the database
+	DBInsertError           ErrorCode = "DB_INSERT_ERROR"            // Error while inserting data into the database
+	DBUpdateError           ErrorCode = "DB_UPDATE_ERROR"            // Error while updating data in the database
+	DBDeleteError           ErrorCode = "DB_DELETE_ERROR"            // Error while deleting data from the database
+	DBTransactionError      ErrorCode = "DB_TRANSACTION_ERROR"       // Error during a database transaction
+	DBWriteConcernError     ErrorCode = "DB_WRITE_CONCERN_ERROR"     // Write concern not satisfied
+	DBRetryableError        ErrorCode = "DB_RETRYABLE_ERROR"         // Temporary/retryable database error
+	DBQueryError            ErrorCode = "DB_QUERY_ERROR"             // Error while executing a query on the database
+	DBQueryTimeoutError     ErrorCode = "DB_QUERY_TIMEOUT_ERROR"     // Query timed out
+	DBQueryCanceledError    ErrorCode = "DB_QUERY_CANCELED_ERROR"    // Query canceled
 	DBQueryInterruptedError ErrorCode = "DB_QUERY_INTERRUPTED_ERROR" // Query interrupted
-	DBQueryFailedError ErrorCode = "DB_QUERY_FAILED_ERROR" // Query failed
+	DBQueryFailedError      ErrorCode = "DB_QUERY_FAILED_ERROR"      // Query failed
 
 	// NATS (Messaging System) Errors
 	NATSConnectionError   ErrorCode = "NATS_CONNECTION_ERROR"   // Failed to connect to NATS

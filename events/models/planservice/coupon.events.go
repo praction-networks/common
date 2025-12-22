@@ -4,15 +4,15 @@ import "time"
 
 // CouponCreatedEvent represents a coupon creation event
 type CouponCreatedEvent struct {
-	ID           string    `json:"id" bson:"_id"`
-	Code         string    `json:"code" bson:"code"`
-	PromotionID  string    `json:"promotionId" bson:"promotionId"`
-	GlobalLimit  *int      `json:"globalLimit,omitempty" bson:"globalLimit,omitempty"`
-	PerUserLimit *int      `json:"perUserLimit,omitempty" bson:"perUserLimit,omitempty"`
-	ValidFrom    time.Time `json:"validFrom" bson:"validFrom"`
+	ID           string     `json:"id" bson:"_id"`
+	Code         string     `json:"code" bson:"code"`
+	PromotionID  string     `json:"promotionId" bson:"promotionId"`
+	GlobalLimit  *int       `json:"globalLimit,omitempty" bson:"globalLimit,omitempty"`
+	PerUserLimit *int       `json:"perUserLimit,omitempty" bson:"perUserLimit,omitempty"`
+	ValidFrom    time.Time  `json:"validFrom" bson:"validFrom"`
 	ValidTo      *time.Time `json:"validTo,omitempty" bson:"validTo,omitempty"`
-	Status       Status    `json:"status" bson:"status"`
-	Version      int       `json:"version" bson:"version"`
+	Status       Status     `json:"status" bson:"status"`
+	Version      int        `json:"version" bson:"version"`
 }
 
 // CouponUpdatedEvent represents a coupon update event
@@ -30,8 +30,7 @@ type CouponUpdatedEvent struct {
 
 // CouponDeletedEvent represents a coupon deletion event
 type CouponDeletedEvent struct {
-	ID       string    `json:"id" bson:"_id"`
-	Code     string    `json:"code" bson:"code"`
-	Version  int       `json:"version" bson:"version"`
+	ID      string `json:"id" bson:"_id"`
+	Code    string `json:"code" bson:"code"`
+	Version int    `json:"version" bson:"version"`
 }
-
