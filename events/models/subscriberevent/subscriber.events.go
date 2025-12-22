@@ -16,6 +16,8 @@ type SubscriberCreatedEvent struct {
 	PrimaryEmail           string                 `json:"primaryEmail,omitempty" bson:"primaryEmail,omitempty"`
 	WhatsAppNumber         string                 `json:"whatsAppNumber,omitempty" bson:"whatsAppNumber,omitempty"`
 	PrimaryUserID          string                 `json:"primaryUserId,omitempty" bson:"primaryUserId,omitempty"`
+	MaxMacAddresses        int                    `json:"maxMacAddresses,omitempty" bson:"maxMacAddresses,omitempty"`
+	MaxSimultaneousUse     int                    `json:"maxSimultaneousUse,omitempty" bson:"maxSimultaneousUse,omitempty"`
 	CustomerSpecificFields map[string]interface{} `json:"customerSpecificFields,omitempty" bson:"customerSpecificFields,omitempty"`
 	Version                int                    `json:"version" bson:"version"`
 }
@@ -31,6 +33,8 @@ type SubscriberUpdatedEvent struct {
 	PrimaryMobile          string                 `json:"primaryMobile,omitempty" bson:"primaryMobile,omitempty"`
 	PrimaryEmail           string                 `json:"primaryEmail,omitempty" bson:"primaryEmail,omitempty"`
 	WhatsAppNumber         string                 `json:"whatsAppNumber,omitempty" bson:"whatsAppNumber,omitempty"`
+	MaxMacAddresses        int                    `json:"maxMacAddresses,omitempty" bson:"maxMacAddresses,omitempty"`
+	MaxSimultaneousUse     int                    `json:"maxSimultaneousUse,omitempty" bson:"maxSimultaneousUse,omitempty"`
 	CustomerSpecificFields map[string]interface{} `json:"customerSpecificFields,omitempty" bson:"customerSpecificFields,omitempty"`
 	FirstHotspotLoginAt    *time.Time             `json:"firstHotspotLoginAt,omitempty" bson:"firstHotspotLoginAt,omitempty"` // When subscriber first logged into hotspot
 	LastHotspotLoginAt     *time.Time             `json:"lastHotspotLoginAt,omitempty" bson:"lastHotspotLoginAt,omitempty"`   // When subscriber last logged into hotspot
@@ -90,30 +94,40 @@ type BroadbandSubscriptionDeletedEvent struct {
 
 // HotspotProfileCreatedEvent represents a hotspot profile creation event
 type HotspotProfileCreatedEvent struct {
-	ID                string `json:"id" bson:"id"`
-	SubscriberID      string `json:"subscriberId" bson:"subscriberId"`
-	TenantID          string `json:"tenantId" bson:"tenantId"`
-	Status            string `json:"status" bson:"status"`
-	UserID            string `json:"userId,omitempty" bson:"userId,omitempty"`
-	Username          string `json:"username,omitempty" bson:"username,omitempty"` // RADIUS username
-	Password          string `json:"password,omitempty" bson:"password,omitempty"` // RADIUS password
-	DefaultAuthMethod string `json:"defaultAuthMethod" bson:"defaultAuthMethod"`
-	MaxDevices        int    `json:"maxDevices" bson:"maxDevices"`
-	AutoLoginEnabled  bool   `json:"autoLoginEnabled" bson:"autoLoginEnabled"`
-	CreationSource    string `json:"creationSource,omitempty" bson:"creationSource,omitempty"` // "CAPTIVE_PORTAL", "ADMIN", "API", "IMPORT"
-	Version           int    `json:"version" bson:"version"`
+	ID                string     `json:"id" bson:"id"`
+	SubscriberID      string     `json:"subscriberId" bson:"subscriberId"`
+	MACAddress        string     `json:"macAddress" bson:"macAddress"`
+	TenantID          string     `json:"tenantId" bson:"tenantId"`
+	Status            string     `json:"status" bson:"status"`
+	UserID            string     `json:"userId,omitempty" bson:"userId,omitempty"`
+	Username          string     `json:"username,omitempty" bson:"username,omitempty"` // RADIUS username
+	Password          string     `json:"password,omitempty" bson:"password,omitempty"` // RADIUS password
+	DefaultAuthMethod string     `json:"defaultAuthMethod" bson:"defaultAuthMethod"`
+	MaxDevices        int        `json:"maxDevices" bson:"maxDevices"`
+	AutoLoginEnabled  bool       `json:"autoLoginEnabled" bson:"autoLoginEnabled"`
+	CreationSource    string     `json:"creationSource,omitempty" bson:"creationSource,omitempty"` // "CAPTIVE_PORTAL", "ADMIN", "API", "IMPORT"
+	ValidFrom         time.Time  `json:"validFrom,omitempty" bson:"validFrom,omitempty"`           // When this profile becomes valid
+	ValidUntil        *time.Time `json:"validUntil,omitempty" bson:"validUntil,omitempty"`        // When this profile expires (nil = no expiration)
+	PlanCode          string     `json:"planCode,omitempty" bson:"planCode,omitempty"`            // Plan code used for this hotspot profile
+	Version           int        `json:"version" bson:"version"`
 }
 
 // HotspotProfileUpdatedEvent represents a hotspot profile update event
 type HotspotProfileUpdatedEvent struct {
 	ID                string     `json:"id" bson:"id"`
 	SubscriberID      string     `json:"subscriberId" bson:"subscriberId"`
+	MACAddress        string     `json:"macAddress,omitempty" bson:"macAddress,omitempty"`
 	TenantID          string     `json:"tenantId" bson:"tenantId"`
 	Status            string     `json:"status,omitempty" bson:"status,omitempty"`
 	UserID            string     `json:"userId,omitempty" bson:"userId,omitempty"`
+	Username          string     `json:"username,omitempty" bson:"username,omitempty"` // RADIUS username
+	Password          string     `json:"password,omitempty" bson:"password,omitempty"` // RADIUS password
 	DefaultAuthMethod string     `json:"defaultAuthMethod,omitempty" bson:"defaultAuthMethod,omitempty"`
 	MaxDevices        int        `json:"maxDevices,omitempty" bson:"maxDevices,omitempty"`
 	FirstLoginAt      *time.Time `json:"firstLoginAt,omitempty" bson:"firstLoginAt,omitempty"` // When was the first successful login
+	ValidFrom         *time.Time `json:"validFrom,omitempty" bson:"validFrom,omitempty"`        // When this profile becomes valid (optional update)
+	ValidUntil        *time.Time `json:"validUntil,omitempty" bson:"validUntil,omitempty"`      // When this profile expires (optional update)
+	PlanCode          string     `json:"planCode,omitempty" bson:"planCode,omitempty"`          // Plan code used for this hotspot profile (optional update)
 	Version           int        `json:"version" bson:"version"`
 }
 
