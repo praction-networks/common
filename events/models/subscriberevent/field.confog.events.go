@@ -44,7 +44,7 @@ type Condition struct {
 
 // FieldConfigCreatedEvent represents a field configuration creation event
 type FieldConfigCreatedEvent struct {
-	ID       string            `json:"id" bson:"id"`
+	ID       string            `json:"id" bson:"_id"`
 	TenantID string            `json:"tenantId" bson:"tenantId"`
 	FormType string            `json:"formType" bson:"formType"` // subscriber, broadband, hotspot
 	Fields   []FieldConfigItem `json:"fields" bson:"fields"`
@@ -52,7 +52,7 @@ type FieldConfigCreatedEvent struct {
 
 // FieldConfigUpdatedEvent represents a field configuration update event
 type FieldConfigUpdatedEvent struct {
-	ID       string            `json:"id" bson:"id"`
+	ID       string            `json:"id" bson:"_id"`
 	TenantID string            `json:"tenantId" bson:"tenantId"`
 	FormType string            `json:"formType" bson:"formType"`
 	Fields   []FieldConfigItem `json:"fields" bson:"fields"`
@@ -61,7 +61,7 @@ type FieldConfigUpdatedEvent struct {
 
 // FieldConfigDeletedEvent represents a field configuration deletion event
 type FieldConfigDeletedEvent struct {
-	ID       string `json:"id" bson:"id"`
+	ID       string `json:"id" bson:"_id"`
 	TenantID string `json:"tenantId" bson:"tenantId"`
 	FormType string `json:"formType" bson:"formType"`
 }

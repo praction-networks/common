@@ -4,7 +4,7 @@ import "time"
 
 // SubscriberCreatedEvent represents a subscriber creation event
 type SubscriberCreatedEvent struct {
-	ID                     string                 `json:"id" bson:"id"`
+	ID                     string                 `json:"id" bson:"_id"`
 	TenantID               string                 `json:"tenantId" bson:"tenantId"`
 	DomainID               string                 `json:"domainId,omitempty" bson:"domainId,omitempty"`
 	Type                   string                 `json:"type" bson:"type"`
@@ -24,7 +24,7 @@ type SubscriberCreatedEvent struct {
 
 // SubscriberUpdatedEvent represents a subscriber update event
 type SubscriberUpdatedEvent struct {
-	ID                     string                 `json:"id" bson:"id"`
+	ID                     string                 `json:"id" bson:"_id"`
 	TenantID               string                 `json:"tenantId" bson:"tenantId"`
 	Type                   string                 `json:"type,omitempty" bson:"type,omitempty"`
 	Status                 string                 `json:"status,omitempty" bson:"status,omitempty"`
@@ -43,7 +43,7 @@ type SubscriberUpdatedEvent struct {
 
 // SubscriberDeletedEvent represents a subscriber deletion event
 type SubscriberDeletedEvent struct {
-	ID        string    `json:"id" bson:"id"`
+	ID        string    `json:"id" bson:"_id"`
 	TenantID  string    `json:"tenantId" bson:"tenantId"`
 	DeletedAt time.Time `json:"deletedAt" bson:"deletedAt"`
 	DeletedBy string    `json:"deletedBy,omitempty" bson:"deletedBy,omitempty"`
@@ -51,7 +51,7 @@ type SubscriberDeletedEvent struct {
 
 // BroadbandSubscriptionCreatedEvent represents a broadband subscription creation event
 type BroadbandSubscriptionCreatedEvent struct {
-	ID                    string `json:"id" bson:"id"`
+	ID                    string `json:"id" bson:"_id"`
 	SubscriberID          string `json:"subscriberId" bson:"subscriberId"`
 	TenantID              string `json:"tenantId" bson:"tenantId"`
 	AccountNumber         string `json:"accountNumber" bson:"accountNumber"`
@@ -70,7 +70,7 @@ type BroadbandSubscriptionCreatedEvent struct {
 
 // BroadbandSubscriptionUpdatedEvent represents a broadband subscription update event
 type BroadbandSubscriptionUpdatedEvent struct {
-	ID                    string `json:"id" bson:"id"`
+	ID                    string `json:"id" bson:"_id"`
 	SubscriberID          string `json:"subscriberId" bson:"subscriberId"`
 	TenantID              string `json:"tenantId" bson:"tenantId"`
 	AccountNumber         string `json:"accountNumber,omitempty" bson:"accountNumber,omitempty"`
@@ -84,7 +84,7 @@ type BroadbandSubscriptionUpdatedEvent struct {
 
 // BroadbandSubscriptionDeletedEvent represents a broadband subscription deletion event
 type BroadbandSubscriptionDeletedEvent struct {
-	ID            string    `json:"id" bson:"id"`
+	ID            string    `json:"id" bson:"_id"`
 	SubscriberID  string    `json:"subscriberId" bson:"subscriberId"`
 	TenantID      string    `json:"tenantId" bson:"tenantId"`
 	AccountNumber string    `json:"accountNumber" bson:"accountNumber"`
@@ -94,7 +94,7 @@ type BroadbandSubscriptionDeletedEvent struct {
 
 // HotspotProfileCreatedEvent represents a hotspot profile creation event
 type HotspotProfileCreatedEvent struct {
-	ID                string     `json:"id" bson:"id"`
+	ID                string     `json:"id" bson:"_id"`
 	SubscriberID      string     `json:"subscriberId" bson:"subscriberId"`
 	MACAddress        string     `json:"macAddress" bson:"macAddress"`
 	TenantID          string     `json:"tenantId" bson:"tenantId"`
@@ -114,7 +114,7 @@ type HotspotProfileCreatedEvent struct {
 
 // HotspotProfileUpdatedEvent represents a hotspot profile update event
 type HotspotProfileUpdatedEvent struct {
-	ID                string     `json:"id" bson:"id"`
+	ID                string     `json:"id" bson:"_id"`
 	SubscriberID      string     `json:"subscriberId" bson:"subscriberId"`
 	MACAddress        string     `json:"macAddress,omitempty" bson:"macAddress,omitempty"`
 	TenantID          string     `json:"tenantId" bson:"tenantId"`
@@ -133,7 +133,7 @@ type HotspotProfileUpdatedEvent struct {
 
 // HotspotProfileDeletedEvent represents a hotspot profile deletion event
 type HotspotProfileDeletedEvent struct {
-	ID           string `json:"id" bson:"id"`
+	ID           string `json:"id" bson:"_id"`
 	SubscriberID string `json:"subscriberId" bson:"subscriberId"`
 	TenantID     string `json:"tenantId" bson:"tenantId"`
 	Version      int    `json:"version" bson:"version"`

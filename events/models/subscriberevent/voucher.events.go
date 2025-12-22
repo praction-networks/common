@@ -4,7 +4,7 @@ import "time"
 
 // VoucherTemplateCreatedEvent represents a voucher template creation event
 type VoucherTemplateCreatedEvent struct {
-	ID          string `json:"id" bson:"id"`
+	ID          string `json:"id" bson:"_id"`
 	TenantID    string `json:"tenantId" bson:"tenantId"`
 	Name        string `json:"name" bson:"name"`
 	Description string `json:"description,omitempty" bson:"description,omitempty"`
@@ -15,7 +15,7 @@ type VoucherTemplateCreatedEvent struct {
 
 // VoucherTemplateUpdatedEvent represents a voucher template update event
 type VoucherTemplateUpdatedEvent struct {
-	ID          string `json:"id" bson:"id"`
+	ID          string `json:"id" bson:"_id"`
 	TenantID    string `json:"tenantId" bson:"tenantId"`
 	Name        string `json:"name,omitempty" bson:"name,omitempty"`
 	Description string `json:"description,omitempty" bson:"description,omitempty"`
@@ -25,7 +25,7 @@ type VoucherTemplateUpdatedEvent struct {
 
 // VoucherTemplateDeletedEvent represents a voucher template deletion event
 type VoucherTemplateDeletedEvent struct {
-	ID        string    `json:"id" bson:"id"`
+	ID        string    `json:"id" bson:"_id"`
 	TenantID  string    `json:"tenantId" bson:"tenantId"`
 	DeletedAt time.Time `json:"deletedAt" bson:"deletedAt"`
 	DeletedBy string    `json:"deletedBy,omitempty" bson:"deletedBy,omitempty"`
@@ -34,7 +34,7 @@ type VoucherTemplateDeletedEvent struct {
 // VoucherInstanceCreatedEvent represents a voucher instance creation event
 // Includes limits and restrictions from template for local caching in captive-portal-service
 type VoucherInstanceCreatedEvent struct {
-	ID           string     `json:"id" bson:"id"`
+	ID           string     `json:"id" bson:"_id"`
 	TenantID     string     `json:"tenantId" bson:"tenantId"`
 	TemplateID   string     `json:"templateId" bson:"templateId"`
 	CouponCode   string     `json:"couponCode" bson:"couponCode"`
@@ -61,7 +61,7 @@ type VoucherInstanceBulkCreatedEvent struct {
 
 // VoucherInstanceUsedEvent represents a voucher instance usage event
 type VoucherInstanceUsedEvent struct {
-	ID         string    `json:"id" bson:"id"`
+	ID         string    `json:"id" bson:"_id"`
 	TenantID   string    `json:"tenantId" bson:"tenantId"`
 	TemplateID string    `json:"templateId" bson:"templateId"`
 	CouponCode string    `json:"couponCode" bson:"couponCode"`
@@ -82,7 +82,7 @@ type VoucherInstanceUsedEvent struct {
 
 // VoucherInstanceExpiredEvent represents a voucher instance expiration event
 type VoucherInstanceExpiredEvent struct {
-	ID         string    `json:"id" bson:"id"`
+	ID         string    `json:"id" bson:"_id"`
 	TenantID   string    `json:"tenantId" bson:"tenantId"`
 	TemplateID string    `json:"templateId" bson:"templateId"`
 	CouponCode string    `json:"couponCode" bson:"couponCode"`
@@ -94,7 +94,7 @@ type VoucherInstanceExpiredEvent struct {
 
 // VoucherInstanceRevokedEvent represents a voucher instance revocation event
 type VoucherInstanceRevokedEvent struct {
-	ID         string    `json:"id" bson:"id"`
+	ID         string    `json:"id" bson:"_id"`
 	TenantID   string    `json:"tenantId" bson:"tenantId"`
 	TemplateID string    `json:"templateId" bson:"templateId"`
 	CouponCode string    `json:"couponCode" bson:"couponCode"`
@@ -108,7 +108,7 @@ type VoucherInstanceRevokedEvent struct {
 
 // VoucherInstanceExtendedEvent represents a voucher instance validity extension event
 type VoucherInstanceExtendedEvent struct {
-	ID           string    `json:"id" bson:"id"`
+	ID           string    `json:"id" bson:"_id"`
 	TenantID     string    `json:"tenantId" bson:"tenantId"`
 	TemplateID   string    `json:"templateId" bson:"templateId"`
 	CouponCode   string    `json:"couponCode" bson:"couponCode"`
@@ -122,7 +122,7 @@ type VoucherInstanceExtendedEvent struct {
 
 // VoucherSessionCreatedEvent represents a voucher session creation event
 type VoucherSessionCreatedEvent struct {
-	ID                string    `json:"id" bson:"id"`
+	ID                string    `json:"id" bson:"_id"`
 	TenantID          string    `json:"tenantId" bson:"tenantId"`
 	VoucherInstanceID string    `json:"voucherInstanceId" bson:"voucherInstanceId"`
 	CouponCode        string    `json:"couponCode" bson:"couponCode"`
@@ -138,7 +138,7 @@ type VoucherSessionCreatedEvent struct {
 
 // VoucherSessionEndedEvent represents a voucher session end event
 type VoucherSessionEndedEvent struct {
-	ID                string    `json:"id" bson:"id"`
+	ID                string    `json:"id" bson:"_id"`
 	TenantID          string    `json:"tenantId" bson:"tenantId"`
 	VoucherInstanceID string    `json:"voucherInstanceId" bson:"voucherInstanceId"`
 	CouponCode        string    `json:"couponCode" bson:"couponCode"`
