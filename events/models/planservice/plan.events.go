@@ -13,8 +13,7 @@ type PlanCreatedEvent struct {
 	Name                string                `json:"name" bson:"name"`
 	PlanType            PlanType              `json:"planType" bson:"planType"`
 	PlanSubType         PlanSubType           `json:"planSubType,omitempty" bson:"planSubType,omitempty"`
-	BillingCycle        BillingCycle          `json:"billingCycle" bson:"billingCycle"`                                   // Default/primary cycle
-	BillingCyclePricing []BillingCyclePricing `json:"billingCyclePricing,omitempty" bson:"billingCyclePricing,omitempty"` // Multiple cycles with pricing
+	BillingCyclePricing []BillingCyclePricing `json:"billingCyclePricing" bson:"billingCyclePricing"` // Billing cycles with pricing (fixed or percentage-based)
 	ValidityDays        *int                  `json:"validityDays,omitempty" bson:"validityDays,omitempty"`               // Optional override (mainly for ONE_TIME)
 	RenewalPolicy       *RenewalPolicy        `json:"renewalPolicy,omitempty" bson:"renewalPolicy,omitempty"`
 	ContractTerms       *ContractTerms        `json:"contractTerms,omitempty" bson:"contractTerms,omitempty"` // Contract and commitment terms
@@ -36,8 +35,7 @@ type PlanUpdateEvent struct {
 	Name                string                `json:"name" bson:"name"`
 	PlanType            PlanType              `json:"planType" bson:"planType"`
 	PlanSubType         PlanSubType           `json:"planSubType,omitempty" bson:"planSubType,omitempty"`
-	BillingCycle        BillingCycle          `json:"billingCycle" bson:"billingCycle"`                                   // Default/primary cycle
-	BillingCyclePricing []BillingCyclePricing `json:"billingCyclePricing,omitempty" bson:"billingCyclePricing,omitempty"` // Multiple cycles with pricing
+	BillingCyclePricing []BillingCyclePricing `json:"billingCyclePricing" bson:"billingCyclePricing"` // Billing cycles with pricing (fixed or percentage-based)
 	ValidityDays        *int                  `json:"validityDays,omitempty" bson:"validityDays,omitempty"`               // Optional override (mainly for ONE_TIME)
 	RenewalPolicy       *RenewalPolicy        `json:"renewalPolicy,omitempty" bson:"renewalPolicy,omitempty"`
 	ContractTerms       *ContractTerms        `json:"contractTerms,omitempty" bson:"contractTerms,omitempty"` // Contract and commitment terms
@@ -58,20 +56,12 @@ type PlanDeletedEvent struct {
 }
 
 type PlanItem struct {
-	ItemID        string           `json:"itemId" bson:"itemId"`
-	ProductID     string           `json:"productId" bson:"productId"`
-	Unit          Unit             `json:"unit" bson:"unit"`
-	Qty           int              `json:"qty" bson:"qty"`
-	PriceStrategy PriceStrategy    `json:"priceStrategy" bson:"priceStrategy"`
-	PricingModel  PricingModelType `json:"pricingModel" bson:"pricingModel"`                       // "FLAT", "TIERED", "VOLUME", "BUNDLE"
-	OverridePrice *float64         `json:"overridePrice,omitempty" bson:"overridePrice,omitempty"` // Flat price (for FLAT model)
-	// PricingTiers        []PricingTier                `json:"pricingTiers,omitempty" bson:"pricingTiers,omitempty"`               // Tiered pricing (for TIERED model)
-	// VolumeDiscounts     []VolumeDiscount             `json:"volumeDiscounts,omitempty" bson:"volumeDiscounts,omitempty"`         // Volume discounts (for VOLUME model)
-	// ResourceAllocations []ResourceAllocation         `json:"resourceAllocations,omitempty" bson:"resourceAllocations,omitempty"` // Resource allocation tracking
-	// ResourceConstraints []ResourceConstraint         `json:"resourceConstraints,omitempty" bson:"resourceConstraints,omitempty"` // Resource constraints
-	Role     PlanItemRole   `json:"role" bson:"role"` // "BASE", "ADDON", "BUNDLE", "OPTIONAL"
-	Metadata map[string]any `json:"metadata,omitempty" bson:"metadata,omitempty"`
+	ProductID   string                   `json:"productId" bson:"productId"`   // Product ID reference
+	ProductCode string                   `json:"productCode" bson:"productCode"` // Product code for display/reference
+	BasePrice   *float64                 `json:"basePrice,omitempty" bson:"basePrice,omitempty"` // Base price for this product in the plan
+	Role        PlanItemRole `json:"role" bson:"role"`             // "BASE", "ADDON", "BUNDLE", "OPTIONAL"
 }
+
 
 // BillingCyclePricing defines pricing for a specific billing cycle
 type BillingCyclePricing struct {
