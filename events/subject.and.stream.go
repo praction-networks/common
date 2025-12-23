@@ -10,7 +10,7 @@ const (
 	TenantUserStream    StreamName = "TenantUserStream"
 	InventoryStream     StreamName = "InventoryStream"
 	SubscriberStream    StreamName = "SubscriberStream"
-	AccountDataStream   StreamName = "AccountDataStream"
+	RadiusAccountingStream   StreamName = "RadiusAccountingStream"
 	CaptivePortalStream StreamName = "CaptivePortalStream"
 	PlanStream          StreamName = "PlanStream"
 )
@@ -121,21 +121,10 @@ const (
 	ThemeDeletedSubject    Subject = "theme.deleted"
 	ThemeSetDefaultSubject Subject = "theme.set_default"
 
-	// AccountData CDC Events (radius-event-manager-service)
-	AccountDataUserProfileCreatedSubject  Subject = "accountdata.userprofile.created"
-	AccountDataUserProfileUpdatedSubject  Subject = "accountdata.userprofile.updated"
-	AccountDataUserProfileDeletedSubject  Subject = "accountdata.userprofile.deleted"
-	AccountDataRadcheckCreatedSubject     Subject = "accountdata.radcheck.created"
-	AccountDataRadcheckUpdatedSubject     Subject = "accountdata.radcheck.updated"
-	AccountDataRadcheckDeletedSubject     Subject = "accountdata.radcheck.deleted"
-	AccountDataRadusergroupCreatedSubject Subject = "accountdata.radusergroup.created"
-	AccountDataRadusergroupUpdatedSubject Subject = "accountdata.radusergroup.updated"
-	AccountDataRadusergroupDeletedSubject Subject = "accountdata.radusergroup.deleted"
-
 	// RadAcct CDC Events (FreeRADIUS accounting from radius-event-manager-service)
-	AccountDataRadAcctSessionStartSubject  Subject = "accountdata.radacct.session.start"
-	AccountDataRadAcctSessionUpdateSubject Subject = "accountdata.radacct.session.update"
-	AccountDataRadAcctSessionEndSubject    Subject = "accountdata.radacct.session.end"
+	RadiusAccountingRadAcctSessionStartSubject  Subject = "radiusaccounting.radacct.session.start"
+	RadiusAccountingRadAcctSessionUpdateSubject Subject = "radiusaccounting.radacct.session.update"
+	RadiusAccountingRadAcctSessionEndSubject    Subject = "radiusaccounting.radacct.session.end"
 
 	// Captive Portal Events
 	NASCreatedSubject                    Subject = "captiveportal.nas.created"
@@ -316,23 +305,13 @@ var Streams = map[StreamName]StreamMetadata{
 			VoucherInstanceExtendedSubject,
 		},
 	},
-	AccountDataStream: {
-		Name:        AccountDataStream,
-		Description: "Stream for account data CDC events from radius-event-manager-service",
+	RadiusAccountingStream: {
+		Name:        RadiusAccountingStream,
+		Description: "Stream for radius accounting CDC events from radius-event-manager-service",
 		Subjects: []Subject{
-			AccountDataUserProfileCreatedSubject,
-			AccountDataUserProfileUpdatedSubject,
-			AccountDataUserProfileDeletedSubject,
-			AccountDataRadcheckCreatedSubject,
-			AccountDataRadcheckUpdatedSubject,
-			AccountDataRadcheckDeletedSubject,
-			AccountDataRadusergroupCreatedSubject,
-			AccountDataRadusergroupUpdatedSubject,
-			AccountDataRadusergroupDeletedSubject,
-			// RadAcct CDC Events (FreeRADIUS accounting)
-			AccountDataRadAcctSessionStartSubject,
-			AccountDataRadAcctSessionUpdateSubject,
-			AccountDataRadAcctSessionEndSubject,
+			RadiusAccountingRadAcctSessionStartSubject,
+			RadiusAccountingRadAcctSessionUpdateSubject,
+			RadiusAccountingRadAcctSessionEndSubject,
 		},
 	},
 	CaptivePortalStream: {
