@@ -101,7 +101,7 @@ type FormSettings struct {
 // This must match the structure in subscriber-service/internal/models/form.config.model.go
 // Example: Toggle between "mobile" and "email" - when toggle is ON, show mobile field; when OFF, show email field
 type FormToggle struct {
-	ID           string         `json:"id" bson:"_id"`                                         // Unique toggle ID (e.g., "contact-method-toggle")
+	ID           string         `json:"id" bson:"_id"`                                        // Unique toggle ID (e.g., "contact-method-toggle")
 	Label        string         `json:"label" bson:"label"`                                   // Toggle label (e.g., "Contact Method")
 	Description  string         `json:"description,omitempty" bson:"description,omitempty"`   // Toggle description
 	Type         string         `json:"type" bson:"type"`                                     // "radio", "toggle", "select" (default: "toggle")
@@ -120,7 +120,7 @@ type ToggleOption struct {
 
 // FieldGroup represents a group of fields that are shown/hidden together based on toggle state in events
 type FieldGroup struct {
-	ID          string   `json:"id" bson:"_id"`                   // Unique group ID
+	ID          string   `json:"id" bson:"_id"`                  // Unique group ID
 	ToggleValue string   `json:"toggleValue" bson:"toggleValue"` // Toggle value that activates this group (e.g., "mobile", "email", "on", "off")
 	FieldKeys   []string `json:"fieldKeys" bson:"fieldKeys"`     // Fields in this group (e.g., ["primaryMobile", "alternateMobile"])
 	IsVisible   bool     `json:"isVisible" bson:"isVisible"`     // Should this group be visible when toggle value matches?

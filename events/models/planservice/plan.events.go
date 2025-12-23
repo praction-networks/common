@@ -5,49 +5,49 @@ import (
 )
 
 type PlanCreatedEvent struct {
-	ID                  string                `json:"id" bson:"_id"`
-	OwnerTenantID       *string               `json:"ownerTenantId,omitempty" bson:"ownerTenantId,omitempty"` // Tenant who created/owns this (has edit rights)
-	TenantIDs           []string              `json:"tenantIds,omitempty" bson:"tenantIds,omitempty"`         // Tenants who can access/use this plan (ISP, reseller, distributor, partner)
-	Scope               CatalogScope          `json:"scope" bson:"scope"`                                     // GLOBAL or TENANT
-	Code                string                `json:"code" bson:"code"`
-	Name                string                `json:"name" bson:"name"`
-	PlanType            PlanType              `json:"planType" bson:"planType"`
-	PlanSubType         PlanSubType           `json:"planSubType,omitempty" bson:"planSubType,omitempty"`
-	BillingCyclePricing []BillingCyclePricing `json:"billingCyclePricing" bson:"billingCyclePricing"` // Billing cycles with pricing (fixed or percentage-based)
+	ID                   string                `json:"id" bson:"_id"`
+	OwnerTenantID        *string               `json:"ownerTenantId,omitempty" bson:"ownerTenantId,omitempty"` // Tenant who created/owns this (has edit rights)
+	TenantIDs            []string              `json:"tenantIds,omitempty" bson:"tenantIds,omitempty"`         // Tenants who can access/use this plan (ISP, reseller, distributor, partner)
+	Scope                CatalogScope          `json:"scope" bson:"scope"`                                     // GLOBAL or TENANT
+	Code                 string                `json:"code" bson:"code"`
+	Name                 string                `json:"name" bson:"name"`
+	PlanType             PlanType              `json:"planType" bson:"planType"`
+	PlanSubType          PlanSubType           `json:"planSubType,omitempty" bson:"planSubType,omitempty"`
+	BillingCyclePricing  []BillingCyclePricing `json:"billingCyclePricing" bson:"billingCyclePricing"`                       // Billing cycles with pricing (fixed or percentage-based)
 	HotspotBillingConfig *HotspotBillingConfig `json:"hotspotBillingConfig,omitempty" bson:"hotspotBillingConfig,omitempty"` // HOTSPOT-specific: session duration, connection frequency, post-expiration action
-	ValidityDays        *int                  `json:"validityDays,omitempty" bson:"validityDays,omitempty"`               // Optional override (mainly for ONE_TIME)
-	RenewalPolicy       *RenewalPolicy        `json:"renewalPolicy,omitempty" bson:"renewalPolicy,omitempty"`
-	ContractTerms       *ContractTerms        `json:"contractTerms,omitempty" bson:"contractTerms,omitempty"` // Contract and commitment terms
-	SLAs                []SLA                 `json:"slas,omitempty" bson:"slas,omitempty"`                   // Service Level Agreements
-	CreditPolicy        *CreditPolicy         `json:"creditPolicy,omitempty" bson:"creditPolicy,omitempty"`   // Credit limits and financial controls
-	Items               []PlanItem            `json:"items" bson:"items"`
-	AttachedPromotions  []string              `json:"attachedPromotions,omitempty" bson:"attachedPromotions,omitempty"`
-	Status              Status                `json:"status" bson:"status"`
-	NASAttributes       NASAttributes         `json:"nasAttributes,omitempty" bson:"nasAttributes,omitempty"` // RADIUS attributes per NAS vendor type
-	Version             int                   `json:"version" bson:"version"`
+	ValidityDays         *int                  `json:"validityDays,omitempty" bson:"validityDays,omitempty"`                 // Optional override (mainly for ONE_TIME)
+	RenewalPolicy        *RenewalPolicy        `json:"renewalPolicy,omitempty" bson:"renewalPolicy,omitempty"`
+	ContractTerms        *ContractTerms        `json:"contractTerms,omitempty" bson:"contractTerms,omitempty"` // Contract and commitment terms
+	SLAs                 []SLA                 `json:"slas,omitempty" bson:"slas,omitempty"`                   // Service Level Agreements
+	CreditPolicy         *CreditPolicy         `json:"creditPolicy,omitempty" bson:"creditPolicy,omitempty"`   // Credit limits and financial controls
+	Items                []PlanItem            `json:"items" bson:"items"`
+	AttachedPromotions   []string              `json:"attachedPromotions,omitempty" bson:"attachedPromotions,omitempty"`
+	Status               Status                `json:"status" bson:"status"`
+	NASAttributes        NASAttributes         `json:"nasAttributes,omitempty" bson:"nasAttributes,omitempty"` // RADIUS attributes per NAS vendor type
+	Version              int                   `json:"version" bson:"version"`
 }
 
 type PlanUpdateEvent struct {
-	ID                  string                `json:"id" bson:"_id"`
-	OwnerTenantID       *string               `json:"ownerTenantId,omitempty" bson:"ownerTenantId,omitempty"` // Tenant who created/owns this (has edit rights)
-	TenantIDs           []string              `json:"tenantIds,omitempty" bson:"tenantIds,omitempty"`         // Tenants who can access/use this plan (ISP, reseller, distributor, partner)
-	Scope               CatalogScope          `json:"scope" bson:"scope"`                                     // GLOBAL or TENANT
-	Code                string                `json:"code" bson:"code"`
-	Name                string                `json:"name" bson:"name"`
-	PlanType            PlanType              `json:"planType" bson:"planType"`
-	PlanSubType         PlanSubType           `json:"planSubType,omitempty" bson:"planSubType,omitempty"`
-	BillingCyclePricing []BillingCyclePricing `json:"billingCyclePricing" bson:"billingCyclePricing"` // Billing cycles with pricing (fixed or percentage-based)
+	ID                   string                `json:"id" bson:"_id"`
+	OwnerTenantID        *string               `json:"ownerTenantId,omitempty" bson:"ownerTenantId,omitempty"` // Tenant who created/owns this (has edit rights)
+	TenantIDs            []string              `json:"tenantIds,omitempty" bson:"tenantIds,omitempty"`         // Tenants who can access/use this plan (ISP, reseller, distributor, partner)
+	Scope                CatalogScope          `json:"scope" bson:"scope"`                                     // GLOBAL or TENANT
+	Code                 string                `json:"code" bson:"code"`
+	Name                 string                `json:"name" bson:"name"`
+	PlanType             PlanType              `json:"planType" bson:"planType"`
+	PlanSubType          PlanSubType           `json:"planSubType,omitempty" bson:"planSubType,omitempty"`
+	BillingCyclePricing  []BillingCyclePricing `json:"billingCyclePricing" bson:"billingCyclePricing"`                       // Billing cycles with pricing (fixed or percentage-based)
 	HotspotBillingConfig *HotspotBillingConfig `json:"hotspotBillingConfig,omitempty" bson:"hotspotBillingConfig,omitempty"` // HOTSPOT-specific: session duration, connection frequency, post-expiration action
-	ValidityDays        *int                  `json:"validityDays,omitempty" bson:"validityDays,omitempty"`               // Optional override (mainly for ONE_TIME)
-	RenewalPolicy       *RenewalPolicy        `json:"renewalPolicy,omitempty" bson:"renewalPolicy,omitempty"`
-	ContractTerms       *ContractTerms        `json:"contractTerms,omitempty" bson:"contractTerms,omitempty"` // Contract and commitment terms
-	SLAs                []SLA                 `json:"slas,omitempty" bson:"slas,omitempty"`                   // Service Level Agreements
-	CreditPolicy        *CreditPolicy         `json:"creditPolicy,omitempty" bson:"creditPolicy,omitempty"`   // Credit limits and financial controls
-	Items               []PlanItem            `json:"items" bson:"items"`
-	AttachedPromotions  []string              `json:"attachedPromotions,omitempty" bson:"attachedPromotions,omitempty"`
-	Status              Status                `json:"status" bson:"status"`
-	NASAttributes       NASAttributes         `json:"nasAttributes,omitempty" bson:"nasAttributes,omitempty"` // RADIUS attributes per NAS vendor type
-	Version             int                   `json:"version" bson:"version"`
+	ValidityDays         *int                  `json:"validityDays,omitempty" bson:"validityDays,omitempty"`                 // Optional override (mainly for ONE_TIME)
+	RenewalPolicy        *RenewalPolicy        `json:"renewalPolicy,omitempty" bson:"renewalPolicy,omitempty"`
+	ContractTerms        *ContractTerms        `json:"contractTerms,omitempty" bson:"contractTerms,omitempty"` // Contract and commitment terms
+	SLAs                 []SLA                 `json:"slas,omitempty" bson:"slas,omitempty"`                   // Service Level Agreements
+	CreditPolicy         *CreditPolicy         `json:"creditPolicy,omitempty" bson:"creditPolicy,omitempty"`   // Credit limits and financial controls
+	Items                []PlanItem            `json:"items" bson:"items"`
+	AttachedPromotions   []string              `json:"attachedPromotions,omitempty" bson:"attachedPromotions,omitempty"`
+	Status               Status                `json:"status" bson:"status"`
+	NASAttributes        NASAttributes         `json:"nasAttributes,omitempty" bson:"nasAttributes,omitempty"` // RADIUS attributes per NAS vendor type
+	Version              int                   `json:"version" bson:"version"`
 }
 
 // PlanDeletedEvent represents a plan deletion event
@@ -58,12 +58,11 @@ type PlanDeletedEvent struct {
 }
 
 type PlanItem struct {
-	ProductID   string                   `json:"productId" bson:"productId"`   // Product ID reference
-	ProductCode string                   `json:"productCode" bson:"productCode"` // Product code for display/reference
-	BasePrice   *float64                 `json:"basePrice,omitempty" bson:"basePrice,omitempty"` // Base price for this product in the plan
-	Role        PlanItemRole `json:"role" bson:"role"`             // "BASE", "ADDON", "BUNDLE", "OPTIONAL"
+	ProductID   string       `json:"productId" bson:"productId"`                     // Product ID reference
+	ProductCode string       `json:"productCode" bson:"productCode"`                 // Product code for display/reference
+	BasePrice   *float64     `json:"basePrice,omitempty" bson:"basePrice,omitempty"` // Base price for this product in the plan
+	Role        PlanItemRole `json:"role" bson:"role"`                               // "BASE", "ADDON", "BUNDLE", "OPTIONAL"
 }
-
 
 // BillingCyclePricing defines pricing for a specific billing cycle
 type BillingCyclePricing struct {
@@ -84,13 +83,12 @@ type HotspotBillingConfig struct {
 	// Example: {quantity: 30, unit: "MINUTE"} = 30-minute sessions
 	SessionDuration BillingCycle `json:"sessionDuration" bson:"sessionDuration"`
 
-	// ConnectionFrequency defines how many times per period user can connect
-	// ONCE_PER_DAY: User can connect once per day
-	// TWICE_PER_DAY: User can connect twice per day
-	// ONCE_PER_WEEK: User can connect once per week
-	// UNLIMITED: Unlimited connections within validity period
-	// ON_DEMAND: User manually purchases each connection
-	ConnectionFrequency HotspotSessionFrequency `json:"connectionFrequency" bson:"connectionFrequency"`
+	// ConnectionQuota defines how many times per period user can connect (dynamic)
+	// Example: {quantity: 2, unit: "DAY"} = 2 times per day
+	// Example: {quantity: 1, unit: "WEEK"} = 1 time per week
+	// Example: {quantity: 3, unit: "MONTH"} = 3 times per month
+	// When both quantity and unit are nil, it means unlimited connections within validity period
+	ConnectionQuota HotspotConnectionQuota `json:"connectionQuota" bson:"connectionQuota"`
 
 	// PostExpirationAction defines what happens when session expires
 	// DISCONNECT: Immediately disconnect user (most common)

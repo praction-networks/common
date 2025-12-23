@@ -355,25 +355,34 @@ const (
 	BandwidthRestrictionTemplateUploadOrDownloadNotExceeded BandwidthRestrictionTemplate = "UPLOAD_OR_DOWNLOAD_NOT_EXCEEDED" // Apply when either upload or download doesn't exceed
 )
 
-// HotspotSessionFrequency represents how many times per period a user can connect
-type HotspotSessionFrequency string
+
+
+
+// BillingCycleUnit represents the unit for billing cycles
+type BillingCycleUnitHotspot string
 
 const (
-	HotspotFrequencyOncePerDay    HotspotSessionFrequency = "ONCE_PER_DAY"     // One connection per day
-	HotspotFrequencyTwicePerDay   HotspotSessionFrequency = "TWICE_PER_DAY"    // Two connections per day
-	HotspotFrequencyThricePerDay  HotspotSessionFrequency = "THRICE_PER_DAY"   // Three connections per day
-	HotspotFrequencyOncePerWeek   HotspotSessionFrequency = "ONCE_PER_WEEK"    // One connection per week
-	HotspotFrequencyTwicePerWeek  HotspotSessionFrequency = "TWICE_PER_WEEK"   // Two connections per week
-	HotspotFrequencyOncePerMonth  HotspotSessionFrequency = "ONCE_PER_MONTH"   // One connection per month
-	HotspotFrequencyUnlimited     HotspotSessionFrequency = "UNLIMITED"        // Unlimited connections within validity period
-	HotspotFrequencyOnDemand      HotspotSessionFrequency = "ON_DEMAND"         // User manually purchases each connection
+	BillingCycleUnitHotspotOnce   BillingCycleUnitHotspot = "ONCE"
+	BillingCycleUnitHotspotWeek  BillingCycleUnitHotspot = "WEEK"
+	BillingCycleUnitHotspotMonth BillingCycleUnitHotspot = "MONTH"
+	BillingCycleUnitHotspotYear  BillingCycleUnitHotspot = "YEAR"
 )
+
+// HotspotConnectionQuota defines how many times per period a user can connect (dynamic)
+// Example: {quantity: 2, unit: "ONCE"} = 2 times per day
+// Example: {quantity: 1, unit: "WEEK"} = 1 time per week
+// Example: {quantity: 3, unit: "MONTH"} = 3 times per month
+// When both quantity and unit are nil, it means unlimited connections within validity period
+type HotspotConnectionQuota struct {
+	Quantity *int                     `json:"quantity,omitempty" bson:"quantity,omitempty"` // Number of connections allowed (e.g., 1, 2, 3). Nil = unlimited
+	Unit     *BillingCycleUnitHotspot `json:"unit,omitempty" bson:"unit,omitempty"`       // Time period unit (DAY, WEEK, MONTH, YEAR). Nil = unlimited
+}
 
 // HotspotPostExpirationAction represents what happens after session expires
 type HotspotPostExpirationAction string
 
 const (
-	HotspotActionDisconnect HotspotPostExpirationAction = "DISCONNECT" // Immediately disconnect user
+	HotspotActionDisconnect HotspotPostExpirationAction = "DISCONNECT"  // Immediately disconnect user
 	HotspotActionRedirect   HotspotPostExpirationAction = "REDIRECT"    // Redirect to payment/upgrade page
 	HotspotActionAllowRenew HotspotPostExpirationAction = "ALLOW_RENEW" // Allow user to manually purchase new session
 )
