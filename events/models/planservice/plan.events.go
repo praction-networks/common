@@ -14,6 +14,7 @@ type PlanCreatedEvent struct {
 	PlanType            PlanType              `json:"planType" bson:"planType"`
 	PlanSubType         PlanSubType           `json:"planSubType,omitempty" bson:"planSubType,omitempty"`
 	BillingCyclePricing []BillingCyclePricing `json:"billingCyclePricing" bson:"billingCyclePricing"` // Billing cycles with pricing (fixed or percentage-based)
+	HotspotBillingConfig *HotspotBillingConfig `json:"hotspotBillingConfig,omitempty" bson:"hotspotBillingConfig,omitempty"` // HOTSPOT-specific: session duration, connection frequency, post-expiration action
 	ValidityDays        *int                  `json:"validityDays,omitempty" bson:"validityDays,omitempty"`               // Optional override (mainly for ONE_TIME)
 	RenewalPolicy       *RenewalPolicy        `json:"renewalPolicy,omitempty" bson:"renewalPolicy,omitempty"`
 	ContractTerms       *ContractTerms        `json:"contractTerms,omitempty" bson:"contractTerms,omitempty"` // Contract and commitment terms
@@ -36,6 +37,7 @@ type PlanUpdateEvent struct {
 	PlanType            PlanType              `json:"planType" bson:"planType"`
 	PlanSubType         PlanSubType           `json:"planSubType,omitempty" bson:"planSubType,omitempty"`
 	BillingCyclePricing []BillingCyclePricing `json:"billingCyclePricing" bson:"billingCyclePricing"` // Billing cycles with pricing (fixed or percentage-based)
+	HotspotBillingConfig *HotspotBillingConfig `json:"hotspotBillingConfig,omitempty" bson:"hotspotBillingConfig,omitempty"` // HOTSPOT-specific: session duration, connection frequency, post-expiration action
 	ValidityDays        *int                  `json:"validityDays,omitempty" bson:"validityDays,omitempty"`               // Optional override (mainly for ONE_TIME)
 	RenewalPolicy       *RenewalPolicy        `json:"renewalPolicy,omitempty" bson:"renewalPolicy,omitempty"`
 	ContractTerms       *ContractTerms        `json:"contractTerms,omitempty" bson:"contractTerms,omitempty"` // Contract and commitment terms
@@ -70,6 +72,35 @@ type BillingCyclePricing struct {
 	DiscountPct  *float64     `json:"discountPct,omitempty" bson:"discountPct,omitempty"` // Optional discount percentage
 	IsDefault    bool         `json:"isDefault" bson:"isDefault"`                         // Mark one as default
 	IsActive     bool         `json:"isActive" bson:"isActive"`                           // Enable/disable this cycle
+}
+
+// HotspotBillingConfig defines connection time management for HOTSPOT plan subtype
+// Handles session duration, connection frequency, and post-expiration behavior
+// Example: 4-hour sessions, once per day, disconnect after expiry
+type HotspotBillingConfig struct {
+	// SessionDuration defines how long each connection session lasts
+	// Example: {quantity: 4, unit: "HOUR"} = 4-hour sessions
+	// Example: {quantity: 1, unit: "HOUR"} = 1-hour sessions
+	// Example: {quantity: 30, unit: "MINUTE"} = 30-minute sessions
+	SessionDuration BillingCycle `json:"sessionDuration" bson:"sessionDuration"`
+
+	// ConnectionFrequency defines how many times per period user can connect
+	// ONCE_PER_DAY: User can connect once per day
+	// TWICE_PER_DAY: User can connect twice per day
+	// ONCE_PER_WEEK: User can connect once per week
+	// UNLIMITED: Unlimited connections within validity period
+	// ON_DEMAND: User manually purchases each connection
+	ConnectionFrequency HotspotSessionFrequency `json:"connectionFrequency" bson:"connectionFrequency"`
+
+	// PostExpirationAction defines what happens when session expires
+	// DISCONNECT: Immediately disconnect user (most common)
+	// REDIRECT: Redirect to payment/upgrade page
+	// ALLOW_RENEW: Allow user to manually purchase new session
+	PostExpirationAction HotspotPostExpirationAction `json:"postExpirationAction" bson:"postExpirationAction"`
+
+	// RedirectURL is used when PostExpirationAction is REDIRECT
+	// URL to redirect user for payment/upgrade
+	RedirectURL *string `json:"redirectUrl,omitempty" bson:"redirectUrl,omitempty"`
 }
 
 type RenewalPolicy struct {
