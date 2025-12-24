@@ -68,6 +68,12 @@ func RequestIDMiddleware(next http.Handler) http.Handler {
 // MetricsMiddleware captures metrics
 func MetricsMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Skip wrapping ResponseWriter for WebSocket upgrade requests to preserve http.Hijacker interface
+		if isWebSocketUpgrade(r) {
+			next.ServeHTTP(w, r)
+			return
+		}
+
 		start := time.Now()
 		rw := metrics.NewResponseWriter(w)
 
@@ -95,6 +101,28 @@ func MetricsMiddleware(next http.Handler) http.Handler {
 // LoggingMiddleware logs HTTP requests
 func LoggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Skip wrapping ResponseWriter for WebSocket upgrade requests to preserve http.Hijacker interface
+		if isWebSocketUpgrade(r) {
+			reqID := GetRequestID(r.Context())
+			userID := r.Header.Get("X-User-ID")
+
+			// Set default request logger with context fields (only if not empty)
+			requestLoggerFields := []zap.Field{}
+			if reqID != "" {
+				requestLoggerFields = append(requestLoggerFields, zap.String("reqID", reqID))
+			}
+			if userID != "" {
+				requestLoggerFields = append(requestLoggerFields, zap.String("userId", userID))
+			}
+			if len(requestLoggerFields) > 0 {
+				logger.SetDefaultRequestLogger(requestLoggerFields...)
+				defer logger.ClearDefaultRequestLogger()
+			}
+
+			next.ServeHTTP(w, r)
+			return
+		}
+
 		start := time.Now()
 		rw := metrics.NewResponseWriter(w)
 
@@ -171,6 +199,12 @@ func GetRequestID(ctx context.Context) string {
 		return requestID
 	}
 	return ""
+}
+
+// isWebSocketUpgrade checks if the request is a WebSocket upgrade request
+func isWebSocketUpgrade(r *http.Request) bool {
+	return strings.ToLower(r.Header.Get("Upgrade")) == "websocket" &&
+		strings.Contains(strings.ToLower(r.Header.Get("Connection")), "upgrade")
 }
 
 // GetUserID retrieves the user ID from the context

@@ -1,6 +1,9 @@
 package metrics
 
 import (
+	"bufio"
+	"fmt"
+	"net"
 	"net/http"
 	"os"
 	"runtime"
@@ -299,6 +302,7 @@ var (
 )
 
 // ResponseWriter tracks response status and size
+// It preserves http.Hijacker interface for WebSocket support
 type ResponseWriter struct {
 	http.ResponseWriter
 	status int
@@ -326,6 +330,15 @@ func (rw *ResponseWriter) Status() int {
 
 func (rw *ResponseWriter) Size() int {
 	return rw.size
+}
+
+// Hijack implements http.Hijacker interface for WebSocket support
+// It delegates to the underlying ResponseWriter if it implements Hijacker
+func (rw *ResponseWriter) Hijack() (net.Conn, *bufio.ReadWriter, error) {
+	if hijacker, ok := rw.ResponseWriter.(http.Hijacker); ok {
+		return hijacker.Hijack()
+	}
+	return nil, nil, fmt.Errorf("underlying ResponseWriter does not implement http.Hijacker")
 }
 
 // RegisterAllMetrics registers all metrics with the registry
