@@ -88,21 +88,19 @@ type BroadbandSubscriptionDeletedEvent struct {
 	SubscriberID  string    `json:"subscriberId" bson:"subscriberId"`
 	TenantID      string    `json:"tenantId" bson:"tenantId"`
 	AccountNumber string    `json:"accountNumber" bson:"accountNumber"`
-	DeletedAt     time.Time `json:"deletedAt" bson:"deletedAt"`
-	DeletedBy     string    `json:"deletedBy,omitempty" bson:"deletedBy,omitempty"`
 }
 
 // HotspotProfileCreatedEvent represents a hotspot profile creation event
 type HotspotProfileCreatedEvent struct {
 	ID                string     `json:"id" bson:"id"`
 	SubscriberID      string     `json:"subscriberId" bson:"subscriberId"`
-	MACAddress        string     `json:"macAddress" bson:"macAddress"`
+	MACAddress        string     `json:"macAddress,omitempty" bson:"macAddress,omitempty"`
 	TenantID          string     `json:"tenantId" bson:"tenantId"`
-	Status            string     `json:"status" bson:"status"`
+	Status            HotspotProfileStatus     `json:"status" bson:"status"`
 	UserID            string     `json:"userId,omitempty" bson:"userId,omitempty"`
 	Username          string     `json:"username,omitempty" bson:"username,omitempty"` // RADIUS username
 	Password          string     `json:"password,omitempty" bson:"password,omitempty"` // RADIUS password
-	DefaultAuthMethod string     `json:"defaultAuthMethod" bson:"defaultAuthMethod"`
+	DefaultAuthMethod HotspotAuthMethod     `json:"defaultAuthMethod" bson:"defaultAuthMethod"`
 	MaxDevices        int        `json:"maxDevices" bson:"maxDevices"`
 	AutoLoginEnabled  bool       `json:"autoLoginEnabled" bson:"autoLoginEnabled"`
 	CreationSource    string     `json:"creationSource,omitempty" bson:"creationSource,omitempty"` // "CAPTIVE_PORTAL", "ADMIN", "API", "IMPORT"
@@ -118,11 +116,11 @@ type HotspotProfileUpdatedEvent struct {
 	SubscriberID      string     `json:"subscriberId" bson:"subscriberId"`
 	MACAddress        string     `json:"macAddress,omitempty" bson:"macAddress,omitempty"`
 	TenantID          string     `json:"tenantId" bson:"tenantId"`
-	Status            string     `json:"status,omitempty" bson:"status,omitempty"`
+	Status            HotspotProfileStatus     `json:"status,omitempty" bson:"status,omitempty"`
 	UserID            string     `json:"userId,omitempty" bson:"userId,omitempty"`
 	Username          string     `json:"username,omitempty" bson:"username,omitempty"` // RADIUS username
 	Password          string     `json:"password,omitempty" bson:"password,omitempty"` // RADIUS password
-	DefaultAuthMethod string     `json:"defaultAuthMethod,omitempty" bson:"defaultAuthMethod,omitempty"`
+	DefaultAuthMethod HotspotAuthMethod     `json:"defaultAuthMethod,omitempty" bson:"defaultAuthMethod,omitempty"`
 	MaxDevices        int        `json:"maxDevices,omitempty" bson:"maxDevices,omitempty"`
 	FirstLoginAt      *time.Time `json:"firstLoginAt,omitempty" bson:"firstLoginAt,omitempty"` // When was the first successful login
 	ValidFrom         *time.Time `json:"validFrom,omitempty" bson:"validFrom,omitempty"`       // When this profile becomes valid (optional update)
@@ -136,27 +134,5 @@ type HotspotProfileDeletedEvent struct {
 	ID           string `json:"id" bson:"id"`
 	SubscriberID string `json:"subscriberId" bson:"subscriberId"`
 	TenantID     string `json:"tenantId" bson:"tenantId"`
-	Version      int    `json:"version" bson:"version"`
-}
-
-// HotspotDeviceAddedEvent represents when a device is added to a hotspot profile
-type HotspotDeviceAddedEvent struct {
-	ProfileID    string `json:"profileId" bson:"profileId"`
-	SubscriberID string `json:"subscriberId" bson:"subscriberId"`
-	TenantID     string `json:"tenantId" bson:"tenantId"`
-	MACAddress   string `json:"macAddress" bson:"macAddress"`
-	DeviceName   string `json:"deviceName,omitempty" bson:"deviceName,omitempty"`
-	DeviceType   string `json:"deviceType,omitempty" bson:"deviceType,omitempty"`
-	Trusted      bool   `json:"trusted" bson:"trusted"`
-	IsPrimary    bool   `json:"isPrimary,omitempty" bson:"isPrimary,omitempty"` // Is this the primary device for this profile?
-	Version      int    `json:"version" bson:"version"`
-}
-
-// HotspotDeviceRemovedEvent represents when a device is removed from a hotspot profile
-type HotspotDeviceRemovedEvent struct {
-	ProfileID    string `json:"profileId" bson:"profileId"`
-	SubscriberID string `json:"subscriberId" bson:"subscriberId"`
-	TenantID     string `json:"tenantId" bson:"tenantId"`
-	MACAddress   string `json:"macAddress" bson:"macAddress"`
 	Version      int    `json:"version" bson:"version"`
 }
