@@ -10,6 +10,7 @@ import (
 // This event is published by captive-portal-service when a guest hotspot subscriber is created through the portal
 type GuestHotspotSubscriberCreatedEvent struct {
 	// Subscriber information (mapped from form/signup fields)
+	SubscriberID     string                            `json:"subscriberId,omitempty" bson:"subscriberId,omitempty"`
 	TenantID         string                            `json:"tenantId" bson:"tenantId"`
 	Type             string                            `json:"type" bson:"type"`           // "GUEST_HOTSPOT" - mapped from form
 	Status           string                            `json:"status" bson:"status"`       // "ACTIVE" - mapped from form
