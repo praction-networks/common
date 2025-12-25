@@ -7,8 +7,8 @@ type SubscriberCreatedEvent struct {
 	ID                     string                 `json:"id" bson:"id"`
 	TenantID               string                 `json:"tenantId" bson:"tenantId"`
 	DomainID               string                 `json:"domainId,omitempty" bson:"domainId,omitempty"`
-	Type                   string                 `json:"type" bson:"type"`
-	Status                 string                 `json:"status" bson:"status"`
+	Type                   SubscriberType         `json:"type" bson:"type"`
+	Status                 SubscriberStatus       `json:"status" bson:"status"`
 	ExternalRef            string                 `json:"externalRef,omitempty" bson:"externalRef,omitempty"`
 	FullName               string                 `json:"fullName,omitempty" bson:"fullName,omitempty"`
 	OrganizationName       string                 `json:"organizationName,omitempty" bson:"organizationName,omitempty"`
@@ -26,8 +26,8 @@ type SubscriberCreatedEvent struct {
 type SubscriberUpdatedEvent struct {
 	ID                     string                 `json:"id" bson:"id"`
 	TenantID               string                 `json:"tenantId" bson:"tenantId"`
-	Type                   string                 `json:"type,omitempty" bson:"type,omitempty"`
-	Status                 string                 `json:"status,omitempty" bson:"status,omitempty"`
+	Type                   SubscriberType         `json:"type,omitempty" bson:"type,omitempty"`
+	Status                 SubscriberStatus       `json:"status,omitempty" bson:"status,omitempty"`
 	FullName               string                 `json:"fullName,omitempty" bson:"fullName,omitempty"`
 	OrganizationName       string                 `json:"organizationName,omitempty" bson:"organizationName,omitempty"`
 	PrimaryMobile          string                 `json:"primaryMobile,omitempty" bson:"primaryMobile,omitempty"`
@@ -107,8 +107,8 @@ type HotspotProfileCreatedEvent struct {
 	AutoLoginEnabled  bool       `json:"autoLoginEnabled" bson:"autoLoginEnabled"`
 	CreationSource    string     `json:"creationSource,omitempty" bson:"creationSource,omitempty"` // "CAPTIVE_PORTAL", "ADMIN", "API", "IMPORT"
 	ValidFrom         time.Time  `json:"validFrom,omitempty" bson:"validFrom,omitempty"`           // When this profile becomes valid
-	ValidUntil        *time.Time `json:"validUntil,omitempty" bson:"validUntil,omitempty"`        // When this profile expires (nil = no expiration)
-	PlanCode          string     `json:"planCode,omitempty" bson:"planCode,omitempty"`            // Plan code used for this hotspot profile
+	ValidUntil        *time.Time `json:"validUntil,omitempty" bson:"validUntil,omitempty"`         // When this profile expires (nil = no expiration)
+	PlanCode          string     `json:"planCode,omitempty" bson:"planCode,omitempty"`             // Plan code used for this hotspot profile
 	Version           int        `json:"version" bson:"version"`
 }
 
@@ -125,9 +125,9 @@ type HotspotProfileUpdatedEvent struct {
 	DefaultAuthMethod string     `json:"defaultAuthMethod,omitempty" bson:"defaultAuthMethod,omitempty"`
 	MaxDevices        int        `json:"maxDevices,omitempty" bson:"maxDevices,omitempty"`
 	FirstLoginAt      *time.Time `json:"firstLoginAt,omitempty" bson:"firstLoginAt,omitempty"` // When was the first successful login
-	ValidFrom         *time.Time `json:"validFrom,omitempty" bson:"validFrom,omitempty"`        // When this profile becomes valid (optional update)
-	ValidUntil        *time.Time `json:"validUntil,omitempty" bson:"validUntil,omitempty"`      // When this profile expires (optional update)
-	PlanCode          string     `json:"planCode,omitempty" bson:"planCode,omitempty"`          // Plan code used for this hotspot profile (optional update)
+	ValidFrom         *time.Time `json:"validFrom,omitempty" bson:"validFrom,omitempty"`       // When this profile becomes valid (optional update)
+	ValidUntil        *time.Time `json:"validUntil,omitempty" bson:"validUntil,omitempty"`     // When this profile expires (optional update)
+	PlanCode          string     `json:"planCode,omitempty" bson:"planCode,omitempty"`         // Plan code used for this hotspot profile (optional update)
 	Version           int        `json:"version" bson:"version"`
 }
 

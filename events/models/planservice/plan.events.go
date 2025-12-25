@@ -24,7 +24,7 @@ type PlanCreatedEvent struct {
 	AttachedPromotions   []string              `json:"attachedPromotions,omitempty" bson:"attachedPromotions,omitempty"`
 	Status               Status                `json:"status" bson:"status"`
 	NASAttributes        NASAttributes         `json:"nasAttributes,omitempty" bson:"nasAttributes,omitempty"` // RADIUS attributes per NAS vendor type
-	IsDefault            bool                  `json:"isDefault" bson:"isDefault"`             // Whether this is the default plan for the tenant
+	IsDefault            bool                  `json:"isDefault" bson:"isDefault"`                             // Whether this is the default plan for the tenant
 	Version              int                   `json:"version" bson:"version"`
 }
 
@@ -48,16 +48,16 @@ type PlanUpdateEvent struct {
 	AttachedPromotions   []string              `json:"attachedPromotions,omitempty" bson:"attachedPromotions,omitempty"`
 	Status               Status                `json:"status" bson:"status"`
 	NASAttributes        NASAttributes         `json:"nasAttributes,omitempty" bson:"nasAttributes,omitempty"` // RADIUS attributes per NAS vendor type
-	IsDefault            bool                  `json:"isDefault" bson:"isDefault"`             // Whether this is the default plan for the tenant
+	IsDefault            bool                  `json:"isDefault" bson:"isDefault"`                             // Whether this is the default plan for the tenant
 	Version              int                   `json:"version" bson:"version"`
 }
 
 // PlanDeletedEvent represents a plan deletion event
 type PlanDeletedEvent struct {
-	ID      string `json:"id" bson:"_id"`
-	Code    string `json:"code" bson:"code"`
-	IsDefault bool `json:"isDefault" bson:"isDefault"`             // Whether this is the default plan for the tenant
-	Version int    `json:"version" bson:"version"`
+	ID        string `json:"id" bson:"_id"`
+	Code      string `json:"code" bson:"code"`
+	IsDefault bool   `json:"isDefault" bson:"isDefault"` // Whether this is the default plan for the tenant
+	Version   int    `json:"version" bson:"version"`
 }
 
 type PlanItem struct {
@@ -85,7 +85,6 @@ type HotspotBillingConfig struct {
 
 	//Max Connecurent Session defines the maximum number of concurrent sessions that can be connected to the plan
 	MaxConcurrentSession int `json:"maxConcurrentSession" bson:"maxConcurrentSession"`
-
 
 	//Max Concurrent Session Value defines the value of the max concurrent session
 	MaxConcurrentSessionValue int `json:"maxConcurrentSessionValue" bson:"maxConcurrentSessionValue"`

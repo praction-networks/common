@@ -4,15 +4,15 @@ type StreamName string
 
 // Stream names as constants
 const (
-	SeedAppStream       StreamName = "SeedAppStream"
-	AuthStream          StreamName = "AuthStream"
-	TenantStream        StreamName = "TenantStream"
-	TenantUserStream    StreamName = "TenantUserStream"
-	InventoryStream     StreamName = "InventoryStream"
-	SubscriberStream    StreamName = "SubscriberStream"
-	RadiusAccountingStream   StreamName = "RadiusAccountingStream"
-	CaptivePortalStream StreamName = "CaptivePortalStream"
-	PlanStream          StreamName = "PlanStream"
+	SeedAppStream          StreamName = "SeedAppStream"
+	AuthStream             StreamName = "AuthStream"
+	TenantStream           StreamName = "TenantStream"
+	TenantUserStream       StreamName = "TenantUserStream"
+	InventoryStream        StreamName = "InventoryStream"
+	SubscriberStream       StreamName = "SubscriberStream"
+	RadiusAccountingStream StreamName = "RadiusAccountingStream"
+	CaptivePortalStream    StreamName = "CaptivePortalStream"
+	PlanStream             StreamName = "PlanStream"
 )
 
 // Global Stream names as constants

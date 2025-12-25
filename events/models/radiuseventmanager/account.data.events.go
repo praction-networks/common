@@ -67,25 +67,25 @@ type RadAcctSessionUpdateEvent struct {
 // Contains final session statistics and termination information
 type RadAcctSessionEndEvent struct {
 	RadAcctID          string     `json:"radAcctId"`                    // Unique RADIUS accounting record ID
-	TenantID           string     `json:"tenantId"`                    // Tenant identifier
-	AcctSessionID      string     `json:"acctSessionId"`               // RADIUS accounting session ID
-	AcctUniqueID       string     `json:"acctUniqueId"`                // Unique accounting identifier
-	UserName           string     `json:"userName"`                    // RADIUS username
+	TenantID           string     `json:"tenantId"`                     // Tenant identifier
+	AcctSessionID      string     `json:"acctSessionId"`                // RADIUS accounting session ID
+	AcctUniqueID       string     `json:"acctUniqueId"`                 // Unique accounting identifier
+	UserName           string     `json:"userName"`                     // RADIUS username
 	Realm              string     `json:"realm,omitempty"`              // RADIUS realm
-	NasIPAddress       string     `json:"nasIpAddress"`                // NAS IP address
-	NasPortID          string     `json:"nasPortId,omitempty"`         // NAS port identifier
-	NasPortType        string     `json:"nasPortType,omitempty"`       // NAS port type (e.g., "Wireless-802.11")
+	NasIPAddress       string     `json:"nasIpAddress"`                 // NAS IP address
+	NasPortID          string     `json:"nasPortId,omitempty"`          // NAS port identifier
+	NasPortType        string     `json:"nasPortType,omitempty"`        // NAS port type (e.g., "Wireless-802.11")
 	AcctStartTime      *time.Time `json:"acctStartTime,omitempty"`      // Session start time
-	AcctStopTime       *time.Time `json:"acctStopTime,omitempty"`      // Session stop time
-	AcctSessionTime    *int       `json:"acctSessionTime,omitempty"`  // Total session duration in seconds
-	AcctInputOctets    *int64     `json:"acctInputOctets,omitempty"`  // Total bytes downloaded
-	AcctOutputOctets   *int64     `json:"acctOutputOctets,omitempty"` // Total bytes uploaded
+	AcctStopTime       *time.Time `json:"acctStopTime,omitempty"`       // Session stop time
+	AcctSessionTime    *int       `json:"acctSessionTime,omitempty"`    // Total session duration in seconds
+	AcctInputOctets    *int64     `json:"acctInputOctets,omitempty"`    // Total bytes downloaded
+	AcctOutputOctets   *int64     `json:"acctOutputOctets,omitempty"`   // Total bytes uploaded
 	AcctTerminateCause string     `json:"acctTerminateCause,omitempty"` // Session termination cause
-	CalledStationID    string     `json:"calledStationId,omitempty"`   // Called station ID (SSID/AP name)
+	CalledStationID    string     `json:"calledStationId,omitempty"`    // Called station ID (SSID/AP name)
 	CallingStationID   string     `json:"callingStationId,omitempty"`   // Calling station ID (MAC address)
-	FramedIPAddress    string     `json:"framedIpAddress,omitempty"`   // IP address assigned to user
-	ServiceType         string     `json:"serviceType,omitempty"`      // Service type
-	FramedProtocol      string     `json:"framedProtocol,omitempty"`  // Framed protocol
-	Version             int        `json:"version"`                    // Record version
-	Timestamp           time.Time  `json:"timestamp"`                  // When detected via CDC
+	FramedIPAddress    string     `json:"framedIpAddress,omitempty"`    // IP address assigned to user
+	ServiceType        string     `json:"serviceType,omitempty"`        // Service type
+	FramedProtocol     string     `json:"framedProtocol,omitempty"`     // Framed protocol
+	Version            int        `json:"version"`                      // Record version
+	Timestamp          time.Time  `json:"timestamp"`                    // When detected via CDC
 }
