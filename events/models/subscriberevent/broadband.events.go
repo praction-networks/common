@@ -18,8 +18,8 @@ type BroadbandSubscriptionCreatedEvent struct {
 	BillingProfileID      string                      `json:"billingProfileId,omitempty" bson:"billingProfileId,omitempty"`
 	OLTDeviceID           string                      `json:"oltDeviceId,omitempty" bson:"oltDeviceId,omitempty"`
 	OLTPort               string                      `json:"oltPort,omitempty" bson:"oltPort,omitempty"`
-	CPEMetadata           BroadbandCPEMetadata         `json:"cpeMetadata,omitempty" bson:"cpeMetadata,omitempty"`
-	HistoryCPEMetadata     []BroadbandCPEMetadata     `json:"historyCpeMetadata,omitempty" bson:"historyCpeMetadata,omitempty"`
+	CPEMetadata           BroadbandCPEMetadata        `json:"cpeMetadata,omitempty" bson:"cpeMetadata,omitempty"`
+	HistoryCPEMetadata    []BroadbandCPEMetadata      `json:"historyCpeMetadata,omitempty" bson:"historyCpeMetadata,omitempty"`
 	Notes                 string                      `json:"notes,omitempty" bson:"notes,omitempty"`
 	Version               int                         `json:"version" bson:"version"`
 }
@@ -43,4 +43,3 @@ type BroadbandSubscriptionDeletedEvent struct {
 	TenantID      string `json:"tenantId" bson:"tenantId"`
 	AccountNumber string `json:"accountNumber" bson:"accountNumber"`
 }
-

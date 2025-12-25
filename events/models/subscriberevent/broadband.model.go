@@ -30,8 +30,6 @@ const (
 	BroabandAuthMethodDHCP   BroabandAuthMethod = "DHCP"
 )
 
-
-
 type BroadbandCPEMetadata struct {
 	SerialNumber        string                `json:"serialNumber,omitempty" bson:"serialNumber,omitempty"`
 	Model               string                `json:"model,omitempty" bson:"model,omitempty"`
@@ -57,17 +55,17 @@ type CPEWirelessMetadata struct {
 type PPPoEAuthConfig struct {
 	Username string `json:"username,omitempty" bson:"username,omitempty"` // PPPoE username
 	Password string `json:"password,omitempty" bson:"password,omitempty"` // PPPoE password
-	IP       string `json:"ip,omitempty" bson:"ip,omitempty"`           // Assigned IP address (if static)
-	MAC      string `json:"mac,omitempty" bson:"mac,omitempty"`         // MAC address for authentication
+	IP       string `json:"ip,omitempty" bson:"ip,omitempty"`             // Assigned IP address (if static)
+	MAC      string `json:"mac,omitempty" bson:"mac,omitempty"`           // MAC address for authentication
 }
 
 // StaticIPAuthConfig contains configuration for Static IP authentication method
 type StaticIPAuthConfig struct {
-	IP         string `json:"ip,omitempty" bson:"ip,omitempty"`                 // Static IP address
-	MAC        string `json:"mac,omitempty" bson:"mac,omitempty"`               // MAC address for authentication
-	Gateway    string `json:"gateway,omitempty" bson:"gateway,omitempty"`       // Gateway IP address
-	SubnetMask string `json:"subnetMask,omitempty" bson:"subnetMask,omitempty"` // Subnet mask
-	DNS       []string `json:"dns,omitempty" bson:"dns,omitempty"`             // Primary DNS server
+	IP         string   `json:"ip,omitempty" bson:"ip,omitempty"`                 // Static IP address
+	MAC        string   `json:"mac,omitempty" bson:"mac,omitempty"`               // MAC address for authentication
+	Gateway    string   `json:"gateway,omitempty" bson:"gateway,omitempty"`       // Gateway IP address
+	SubnetMask string   `json:"subnetMask,omitempty" bson:"subnetMask,omitempty"` // Subnet mask
+	DNS        []string `json:"dns,omitempty" bson:"dns,omitempty"`               // Primary DNS server
 }
 
 // DHCPAuthConfig contains configuration for DHCP authentication method
@@ -78,7 +76,7 @@ type DHCPAuthConfig struct {
 // BroadbandAuthConfig is a union type that can hold any of the three authentication config types
 // Based on the AuthMethod, only one of the fields should be populated
 type BroadbandAuthConfig struct {
-	PPPoE   *PPPoEAuthConfig   `json:"pppoe,omitempty" bson:"pppoe,omitempty"`     // PPPoE configuration (when AuthMethod is PPPOE)
+	PPPoE    *PPPoEAuthConfig    `json:"pppoe,omitempty" bson:"pppoe,omitempty"`       // PPPoE configuration (when AuthMethod is PPPOE)
 	StaticIP *StaticIPAuthConfig `json:"staticIp,omitempty" bson:"staticIp,omitempty"` // Static IP configuration (when AuthMethod is STATIC_IP)
-	DHCP    *DHCPAuthConfig    `json:"dhcp,omitempty" bson:"dhcp,omitempty"`      // DHCP configuration (when AuthMethod is DHCP)
+	DHCP     *DHCPAuthConfig     `json:"dhcp,omitempty" bson:"dhcp,omitempty"`         // DHCP configuration (when AuthMethod is DHCP)
 }

@@ -4,21 +4,21 @@ import "time"
 
 // HotspotProfileCreatedEvent represents a hotspot profile creation event
 type HotspotProfileCreatedEvent struct {
-	ID                string               `json:"id" bson:"id"`
-	SubscriberID      string               `json:"subscriberId" bson:"subscriberId"`
-	MACAddress        string               `json:"macAddress,omitempty" bson:"macAddress,omitempty"`
-	TenantID          string               `json:"tenantId" bson:"tenantId"`
-	Status            HotspotProfileStatus `json:"status" bson:"status"`
+	ID           string               `json:"id" bson:"id"`
+	SubscriberID string               `json:"subscriberId" bson:"subscriberId"`
+	MACAddress   string               `json:"macAddress,omitempty" bson:"macAddress,omitempty"`
+	TenantID     string               `json:"tenantId" bson:"tenantId"`
+	Status       HotspotProfileStatus `json:"status" bson:"status"`
 
-	Username          string               `json:"username,omitempty" bson:"username,omitempty"` // RADIUS username
-	Password          string               `json:"password,omitempty" bson:"password,omitempty"` // RADIUS password
-	DefaultAuthMethod HotspotAuthMethod    `json:"defaultAuthMethod" bson:"defaultAuthMethod"`
-	AutoLoginEnabled  bool                 `json:"autoLoginEnabled" bson:"autoLoginEnabled"`
-	CreationSource    string               `json:"creationSource,omitempty" bson:"creationSource,omitempty"` // "CAPTIVE_PORTAL", "ADMIN", "API", "IMPORT"
-	ValidFrom         time.Time            `json:"validFrom,omitempty" bson:"validFrom,omitempty"`           // When this profile becomes valid
-	ValidUntil        *time.Time           `json:"validUntil,omitempty" bson:"validUntil,omitempty"`         // When this profile expires (nil = no expiration)
-	PlanCode          string               `json:"planCode,omitempty" bson:"planCode,omitempty"`             // Plan code used for this hotspot profile
-	Version           int                  `json:"version" bson:"version"`
+	Username          string            `json:"username,omitempty" bson:"username,omitempty"` // RADIUS username
+	Password          string            `json:"password,omitempty" bson:"password,omitempty"` // RADIUS password
+	DefaultAuthMethod HotspotAuthMethod `json:"defaultAuthMethod" bson:"defaultAuthMethod"`
+	AutoLoginEnabled  bool              `json:"autoLoginEnabled" bson:"autoLoginEnabled"`
+	CreationSource    string            `json:"creationSource,omitempty" bson:"creationSource,omitempty"` // "CAPTIVE_PORTAL", "ADMIN", "API", "IMPORT"
+	ValidFrom         time.Time         `json:"validFrom,omitempty" bson:"validFrom,omitempty"`           // When this profile becomes valid
+	ValidUntil        *time.Time        `json:"validUntil,omitempty" bson:"validUntil,omitempty"`         // When this profile expires (nil = no expiration)
+	PlanCode          string            `json:"planCode,omitempty" bson:"planCode,omitempty"`             // Plan code used for this hotspot profile
+	Version           int               `json:"version" bson:"version"`
 }
 
 // HotspotProfileUpdatedEvent represents a hotspot profile update event
@@ -47,4 +47,3 @@ type HotspotProfileDeletedEvent struct {
 	TenantID     string `json:"tenantId" bson:"tenantId"`
 	Version      int    `json:"version" bson:"version"`
 }
-
