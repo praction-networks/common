@@ -9,9 +9,21 @@ import (
 // GuestHotspotSubscriberCreatedEvent represents a guest hotspot subscriber creation event
 // This event is published by captive-portal-service when a guest hotspot subscriber is created through the portal
 type GuestHotspotSubscriberCreatedEvent struct {
-	TenantID   string                            `json:"tenantId" bson:"tenantId"`
-	Username   string                            `json:"username" bson:"username"`   // RADIUS username
-	Password   string                            `json:"password" bson:"password"`   // RADIUS password
+	// Subscriber information (mapped from form/signup fields)
+	SubscriberID     string `json:"subscriberId,omitempty" bson:"subscriberId,omitempty"`         // Subscriber-service will generate this if empty
+	HotspotProfileID string `json:"hotspotProfileId,omitempty" bson:"hotspotProfileId,omitempty"` // Subscriber-service will generate this if empty
+	TenantID         string `json:"tenantId" bson:"tenantId"`
+	Type             string `json:"type" bson:"type"`                   // "GUEST_HOTSPOT" - mapped from form
+	Status           string `json:"status" bson:"status"`               // "ACTIVE" - mapped from form
+	PrimaryMobile    string `json:"primaryMobile" bson:"primaryMobile"` // Required - mapped from form
+	FullName         string `json:"fullName,omitempty" bson:"fullName,omitempty"` // Mapped from form
+	PrimaryEmail     string `json:"primaryEmail,omitempty" bson:"primaryEmail,omitempty"` // Mapped from form
+
+	// RADIUS credentials
+	Username string `json:"username" bson:"username"`   // RADIUS username
+	Password string `json:"password" bson:"password"`   // RADIUS password
+
+	// Session and device information
 	SessionID  string                            `json:"sessionId" bson:"sessionId"` // Portal session ID
 	MAC        string                            `json:"mac" bson:"mac"`             // Device MAC address
 	IPAddress  string                            `json:"ipAddress,omitempty" bson:"ipAddress,omitempty"`
@@ -20,9 +32,14 @@ type GuestHotspotSubscriberCreatedEvent struct {
 	APMac      string                            `json:"apMac,omitempty" bson:"apMac,omitempty"` // Access Point MAC
 	DeviceInfo DeviceInfo                        `json:"deviceInfo,omitempty" bson:"deviceInfo,omitempty"`
 	AuthMethod subscriberevent.HotspotAuthMethod `json:"authMethod" bson:"authMethod"` // e.g., "OTP"
-	UserData   map[string]interface{}            `json:"userData,omitempty" bson:"userData,omitempty"`
-	Consent    ConsentInfo                       `json:"consent,omitempty" bson:"consent,omitempty"`
-	CreatedBy  string                            `json:"createdBy,omitempty" bson:"createdBy,omitempty"` // "captive_portal"
+
+	// Additional form data
+	UserData map[string]interface{} `json:"userData,omitempty" bson:"userData,omitempty"`
+	Consent  ConsentInfo            `json:"consent,omitempty" bson:"consent,omitempty"`
+
+	// Audit fields
+	CreatedAt time.Time `json:"createdAt" bson:"createdAt"`
+	CreatedBy string    `json:"createdBy,omitempty" bson:"createdBy,omitempty"` // "captive_portal"
 }
 
 // GuestHotspotSubscriberUpdatedEvent represents a guest hotspot subscriber update event

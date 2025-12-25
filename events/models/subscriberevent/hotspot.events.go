@@ -9,7 +9,6 @@ type HotspotProfileCreatedEvent struct {
 	MACAddress   string               `json:"macAddress,omitempty" bson:"macAddress,omitempty"`
 	TenantID     string               `json:"tenantId" bson:"tenantId"`
 	Status       HotspotProfileStatus `json:"status" bson:"status"`
-
 	Username          string            `json:"username,omitempty" bson:"username,omitempty"` // RADIUS username
 	Password          string            `json:"password,omitempty" bson:"password,omitempty"` // RADIUS password
 	DefaultAuthMethod HotspotAuthMethod `json:"defaultAuthMethod" bson:"defaultAuthMethod"`
