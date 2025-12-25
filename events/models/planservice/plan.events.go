@@ -24,6 +24,7 @@ type PlanCreatedEvent struct {
 	AttachedPromotions   []string              `json:"attachedPromotions,omitempty" bson:"attachedPromotions,omitempty"`
 	Status               Status                `json:"status" bson:"status"`
 	NASAttributes        NASAttributes         `json:"nasAttributes,omitempty" bson:"nasAttributes,omitempty"` // RADIUS attributes per NAS vendor type
+	IsDefault            bool                  `json:"isDefault" bson:"isDefault"`             // Whether this is the default plan for the tenant
 	Version              int                   `json:"version" bson:"version"`
 }
 
@@ -47,6 +48,7 @@ type PlanUpdateEvent struct {
 	AttachedPromotions   []string              `json:"attachedPromotions,omitempty" bson:"attachedPromotions,omitempty"`
 	Status               Status                `json:"status" bson:"status"`
 	NASAttributes        NASAttributes         `json:"nasAttributes,omitempty" bson:"nasAttributes,omitempty"` // RADIUS attributes per NAS vendor type
+	IsDefault            bool                  `json:"isDefault" bson:"isDefault"`             // Whether this is the default plan for the tenant
 	Version              int                   `json:"version" bson:"version"`
 }
 
@@ -54,6 +56,7 @@ type PlanUpdateEvent struct {
 type PlanDeletedEvent struct {
 	ID      string `json:"id" bson:"_id"`
 	Code    string `json:"code" bson:"code"`
+	IsDefault bool `json:"isDefault" bson:"isDefault"`             // Whether this is the default plan for the tenant
 	Version int    `json:"version" bson:"version"`
 }
 

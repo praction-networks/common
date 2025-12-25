@@ -355,17 +355,7 @@ const (
 	BandwidthRestrictionTemplateUploadOrDownloadNotExceeded BandwidthRestrictionTemplate = "UPLOAD_OR_DOWNLOAD_NOT_EXCEEDED" // Apply when either upload or download doesn't exceed
 )
 
-// BillingCycleUnit represents the unit for billing cycles
-type BillingCycleUnitHotspot string
-
-const (
-	BillingCycleUnitHotspotOnce  BillingCycleUnitHotspot = "ONCE"
-	BillingCycleUnitHotspotWeek  BillingCycleUnitHotspot = "WEEK"
-	BillingCycleUnitHotspotMonth BillingCycleUnitHotspot = "MONTH"
-	BillingCycleUnitHotspotYear  BillingCycleUnitHotspot = "YEAR"
-)
-
-// HotspotPostExpirationAction represents what happens after session expires
+// HotspotPostExpirationAction defines what happens when hotspot session expires
 type HotspotPostExpirationAction string
 
 const (
@@ -374,15 +364,9 @@ const (
 	HotspotActionAllowRenew HotspotPostExpirationAction = "ALLOW_RENEW" // Allow user to manually purchase new session
 )
 
-// HotspotConnectionQuota defines how many times per period a user can connect (dynamic)
-// Example: {quantity: 2, unit: "ONCE"} = 2 times per day
-// Example: {quantity: 1, unit: "WEEK"} = 1 time per week
-// Example: {quantity: 3, unit: "MONTH"} = 3 times per month
+// HotspotConnectionQuota defines how many times per period user can connect
 // When both quantity and unit are nil, it means unlimited connections within validity period
 type HotspotConnectionQuota struct {
-	Quantity *int                     `json:"quantity,omitempty" bson:"quantity,omitempty"` // Number of connections allowed (e.g., 1, 2, 3). Nil = unlimited
-	Unit     *BillingCycleUnitHotspot `json:"unit,omitempty" bson:"unit,omitempty"`         // Time period unit (DAY, WEEK, MONTH, YEAR). Nil = unlimited
-
+	Quantity *int              `json:"quantity,omitempty" bson:"quantity,omitempty"` // e.g., 2, 3, nil for unlimited
+	Unit     *BillingCycleUnit `json:"unit,omitempty" bson:"unit,omitempty"`         // MINUTE, HOUR, DAY, MONTH, YEAR, nil for unlimited
 }
-
-
