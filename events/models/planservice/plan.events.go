@@ -80,14 +80,8 @@ type BillingCyclePricing struct {
 // Handles session duration, connection frequency, and post-expiration behavior
 // Example: 4-hour sessions, once per day, disconnect after expiry
 type HotspotBillingConfig struct {
-	//Max Device Limit defines the maximum number of devices that can be connected to the plan
-	MaxDeviceLimit int `json:"maxDeviceLimit" bson:"maxDeviceLimit"`
-
 	//Max Connecurent Session defines the maximum number of concurrent sessions that can be connected to the plan
 	MaxConcurrentSession int `json:"maxConcurrentSession" bson:"maxConcurrentSession"`
-
-	//Max Concurrent Session Value defines the value of the max concurrent session
-	MaxConcurrentSessionValue int `json:"maxConcurrentSessionValue" bson:"maxConcurrentSessionValue"`
 
 	// SessionDuration defines how long each connection session lasts
 	// Example: {quantity: 4, unit: "HOUR"} = 4-hour sessions
