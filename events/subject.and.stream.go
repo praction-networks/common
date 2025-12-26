@@ -88,7 +88,7 @@ const (
 	// Hotspot Profile Events
 	HotspotProfileCreatedSubject                  Subject = "subscriber.hotspot.created"
 	HotspotProfileUpdatedSubject                  Subject = "subscriber.hotspot.updated"
-	GuestHotspotSubscriberValidityExtendedSubject Subject = "subscriber.hotspot.update.validity.extended"
+	HotspotProfileDeletedSubject                  Subject = "subscriber.hotspot.deleted"
 	HotspotDeviceAddedSubject                     Subject = "subscriber.hotspot.device.added"
 	HotspotDeviceRemovedSubject                   Subject = "subscriber.hotspot.device.removed"
 
@@ -132,7 +132,7 @@ const (
 	NASDeletedSubject                    Subject = "captiveportal.nas.deleted"
 	GuestHotspotSubscriberCreatedSubject Subject = "subscriber.guest.hotspot.created"
 	GuestHotspotSubscriberUpdatedSubject Subject = "subscriber.guest.hotspot.updated"
-	GuestHotspotSubscriberDeletedSubject Subject = "subscriber.guest.hotspot.deleted"
+	GuestHotspotSubscriberValidityExtendedSubject Subject = "subscriber.guest.hotspot.validity.extended"
 	CouponDetailsSubject                 Subject = "captiveportal.coupon.details"
 
 	// Plan Service Events
@@ -281,6 +281,7 @@ var Streams = map[StreamName]StreamMetadata{
 			// Hotspot Profile Events
 			HotspotProfileCreatedSubject,
 			HotspotProfileUpdatedSubject,
+			HotspotProfileDeletedSubject,
 			GuestHotspotSubscriberValidityExtendedSubject,
 			HotspotDeviceAddedSubject,
 			HotspotDeviceRemovedSubject,
