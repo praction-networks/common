@@ -86,11 +86,11 @@ const (
 	BroadbandSubscriptionDeletedSubject Subject = "subscriber.broadband.deleted"
 
 	// Hotspot Profile Events
-	HotspotProfileCreatedSubject                  Subject = "subscriber.hotspot.created"
-	HotspotProfileUpdatedSubject                  Subject = "subscriber.hotspot.updated"
-	HotspotProfileDeletedSubject                  Subject = "subscriber.hotspot.deleted"
-	HotspotDeviceAddedSubject                     Subject = "subscriber.hotspot.device.added"
-	HotspotDeviceRemovedSubject                   Subject = "subscriber.hotspot.device.removed"
+	HotspotProfileCreatedSubject Subject = "subscriber.hotspot.created"
+	HotspotProfileUpdatedSubject Subject = "subscriber.hotspot.updated"
+	HotspotProfileDeletedSubject Subject = "subscriber.hotspot.deleted"
+	HotspotDeviceAddedSubject    Subject = "subscriber.hotspot.device.added"
+	HotspotDeviceRemovedSubject  Subject = "subscriber.hotspot.device.removed"
 
 	// Field Configuration Events
 	FieldConfigCreatedSubject Subject = "subscriber.fieldconfig.created"
@@ -127,13 +127,13 @@ const (
 	RadiusAccountingRadAcctSessionEndSubject    Subject = "radiusaccounting.radacct.session.end"
 
 	// Captive Portal Events
-	NASCreatedSubject                    Subject = "captiveportal.nas.created"
-	NASUpdatedSubject                    Subject = "captiveportal.nas.updated"
-	NASDeletedSubject                    Subject = "captiveportal.nas.deleted"
-	GuestHotspotSubscriberCreatedSubject Subject = "subscriber.guest.hotspot.created"
-	GuestHotspotSubscriberUpdatedSubject Subject = "subscriber.guest.hotspot.updated"
+	NASCreatedSubject                             Subject = "captiveportal.nas.created"
+	NASUpdatedSubject                             Subject = "captiveportal.nas.updated"
+	NASDeletedSubject                             Subject = "captiveportal.nas.deleted"
+	GuestHotspotSubscriberCreatedSubject          Subject = "subscriber.guest.hotspot.created"
+	GuestHotspotSubscriberUpdatedSubject          Subject = "subscriber.guest.hotspot.updated"
 	GuestHotspotSubscriberValidityExtendedSubject Subject = "subscriber.guest.hotspot.validity.extended"
-	CouponDetailsSubject                 Subject = "captiveportal.coupon.details"
+	CouponDetailsSubject                          Subject = "captiveportal.coupon.details"
 
 	// Plan Service Events
 	// Plan Tenant Pricing Events (CRITICAL - consumed by billing/subscription services)
@@ -282,7 +282,6 @@ var Streams = map[StreamName]StreamMetadata{
 			HotspotProfileCreatedSubject,
 			HotspotProfileUpdatedSubject,
 			HotspotProfileDeletedSubject,
-			GuestHotspotSubscriberValidityExtendedSubject,
 			HotspotDeviceAddedSubject,
 			HotspotDeviceRemovedSubject,
 			// Field Configuration Events
@@ -324,7 +323,7 @@ var Streams = map[StreamName]StreamMetadata{
 			NASDeletedSubject,
 			GuestHotspotSubscriberCreatedSubject,
 			GuestHotspotSubscriberUpdatedSubject,
-			GuestHotspotSubscriberDeletedSubject,
+			GuestHotspotSubscriberValidityExtendedSubject,
 			CouponDetailsSubject,
 		},
 	},
