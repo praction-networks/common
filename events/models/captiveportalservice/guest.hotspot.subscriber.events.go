@@ -49,6 +49,15 @@ type GuestHotspotSubscriberUpdatedEvent struct {
 	Version          int                               `json:"version" bson:"version"`
 }
 
+type GuestHotSpotSubscriberValidityExtendedEvent struct {
+	SubscriberID     string                            `json:"subscriberId" bson:"subscriberId"`
+	TenantID         string                            `json:"tenantId" bson:"tenantId"`
+	HotspotProfileID string                            `json:"hotspotProfileId" bson:"hotspotProfileId"`
+	MAC              string                            `json:"mac" bson:"mac"` // Device MAC address
+	ValidUntil       time.Time                         `json:"validUntil,omitempty" bson:"validUntil,omitempty"`
+	Version          int                               `json:"version" bson:"version"`
+}
+
 // DeviceInfo contains information about the user's device
 type DeviceInfo struct {
 	UserAgent      string `json:"userAgent,omitempty" bson:"userAgent,omitempty"`
