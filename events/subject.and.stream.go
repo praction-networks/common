@@ -86,11 +86,11 @@ const (
 	BroadbandSubscriptionDeletedSubject Subject = "subscriber.broadband.deleted"
 
 	// Hotspot Profile Events
-	HotspotProfileCreatedSubject Subject = "subscriber.hotspot.created"
-	HotspotProfileUpdatedSubject Subject = "subscriber.hotspot.updated"
-	HotspotProfileDeletedSubject Subject = "subscriber.hotspot.deleted"
-	HotspotDeviceAddedSubject    Subject = "subscriber.hotspot.device.added"
-	HotspotDeviceRemovedSubject  Subject = "subscriber.hotspot.device.removed"
+	HotspotProfileCreatedSubject                  Subject = "subscriber.hotspot.created"
+	HotspotProfileUpdatedSubject                  Subject = "subscriber.hotspot.updated"
+	GuestHotspotSubscriberValidityExtendedSubject Subject = "subscriber.hotspot.update.validity.extended"
+	HotspotDeviceAddedSubject                     Subject = "subscriber.hotspot.device.added"
+	HotspotDeviceRemovedSubject                   Subject = "subscriber.hotspot.device.removed"
 
 	// Field Configuration Events
 	FieldConfigCreatedSubject Subject = "subscriber.fieldconfig.created"
@@ -281,7 +281,7 @@ var Streams = map[StreamName]StreamMetadata{
 			// Hotspot Profile Events
 			HotspotProfileCreatedSubject,
 			HotspotProfileUpdatedSubject,
-			HotspotProfileDeletedSubject,
+			GuestHotspotSubscriberValidityExtendedSubject,
 			HotspotDeviceAddedSubject,
 			HotspotDeviceRemovedSubject,
 			// Field Configuration Events
