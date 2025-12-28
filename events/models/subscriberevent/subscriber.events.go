@@ -18,7 +18,7 @@ type SubscriberCreatedEvent struct {
 	PrimaryUserID          string                 `json:"primaryUserId,omitempty" bson:"primaryUserId,omitempty"`
 	MaxMacAddresses        int                    `json:"maxMacAddresses,omitempty" bson:"maxMacAddresses,omitempty"`
 	MaxSimultaneousUse     int                    `json:"maxSimultaneousUse,omitempty" bson:"maxSimultaneousUse,omitempty"`
-	CustomerSpecificFields map[string]interface{} `json:"customerSpecificFields,omitempty" bson:"customerSpecificFields,omitempty"`
+	SubscriberFields       map[string]interface{} `json:"subscriberFields,omitempty" bson:"subscriberFields,omitempty"` // All dynamic fields from subscriber model
 	Version                int                    `json:"version" bson:"version"`
 }
 
@@ -35,7 +35,7 @@ type SubscriberUpdatedEvent struct {
 	WhatsAppNumber         string                 `json:"whatsAppNumber,omitempty" bson:"whatsAppNumber,omitempty"`
 	MaxMacAddresses        int                    `json:"maxMacAddresses,omitempty" bson:"maxMacAddresses,omitempty"`
 	MaxSimultaneousUse     int                    `json:"maxSimultaneousUse,omitempty" bson:"maxSimultaneousUse,omitempty"`
-	CustomerSpecificFields map[string]interface{} `json:"customerSpecificFields,omitempty" bson:"customerSpecificFields,omitempty"`
+	SubscriberFields       map[string]interface{} `json:"subscriberFields,omitempty" bson:"subscriberFields,omitempty"` // All dynamic fields from subscriber model
 	FirstHotspotLoginAt    *time.Time             `json:"firstHotspotLoginAt,omitempty" bson:"firstHotspotLoginAt,omitempty"` // When subscriber first logged into hotspot
 	LastHotspotLoginAt     *time.Time             `json:"lastHotspotLoginAt,omitempty" bson:"lastHotspotLoginAt,omitempty"`   // When subscriber last logged into hotspot
 	Version                int                    `json:"version" bson:"version"`
