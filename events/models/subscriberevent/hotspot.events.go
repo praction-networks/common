@@ -6,7 +6,7 @@ import "time"
 type HotspotProfileCreatedEvent struct {
 	ID                string               `json:"id" bson:"id"`
 	SubscriberID      string               `json:"subscriberId" bson:"subscriberId"`
-	MACAddress        string               `json:"macAddress,omitempty" bson:"macAddress,omitempty"`
+	MacAddresses          []string                             `bson:"macAddresses,omitempty" json:"macAddresses,omitempty"` 
 	TenantID          string               `json:"tenantId" bson:"tenantId"`
 	Status            HotspotProfileStatus `json:"status" bson:"status"`
 	Username          string               `json:"username,omitempty" bson:"username,omitempty"` // RADIUS username
@@ -24,7 +24,7 @@ type HotspotProfileCreatedEvent struct {
 type HotspotProfileUpdatedEvent struct {
 	ID                string               `json:"id" bson:"id"`
 	SubscriberID      string               `json:"subscriberId" bson:"subscriberId"`
-	MACAddress        string               `json:"macAddress,omitempty" bson:"macAddress,omitempty"`
+	MacAddresses          []string                             `bson:"macAddresses,omitempty" json:"macAddresses,omitempty"` 
 	TenantID          string               `json:"tenantId" bson:"tenantId"`
 	Status            HotspotProfileStatus `json:"status,omitempty" bson:"status,omitempty"`
 	UserID            string               `json:"userId,omitempty" bson:"userId,omitempty"`
