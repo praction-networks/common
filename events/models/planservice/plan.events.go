@@ -23,8 +23,8 @@ type PlanCreatedEvent struct {
 	Items                []PlanItem            `json:"items" bson:"items"`
 	AttachedPromotions   []string              `json:"attachedPromotions,omitempty" bson:"attachedPromotions,omitempty"`
 	Status               Status                `json:"status" bson:"status"`
-	NASAttributes        NASAttributes         `json:"nasAttributes,omitempty" bson:"nasAttributes,omitempty"` // RADIUS attributes per NAS vendor type
-	PlanDefaultFor      []string                  `json:"planDefaultFor,omitempty" bson:"planDefaultFor,omitempty"`                           // Whether this is the default plan for the tenant
+	NASAttributes        NASAttributes         `json:"nasAttributes,omitempty" bson:"nasAttributes,omitempty"`   // RADIUS attributes per NAS vendor type
+	PlanDefaultFor       []string              `json:"planDefaultFor,omitempty" bson:"planDefaultFor,omitempty"` // Whether this is the default plan for the tenant
 	Version              int                   `json:"version" bson:"version"`
 }
 
@@ -47,17 +47,17 @@ type PlanUpdateEvent struct {
 	Items                []PlanItem            `json:"items" bson:"items"`
 	AttachedPromotions   []string              `json:"attachedPromotions,omitempty" bson:"attachedPromotions,omitempty"`
 	Status               Status                `json:"status" bson:"status"`
-	NASAttributes        NASAttributes         `json:"nasAttributes,omitempty" bson:"nasAttributes,omitempty"` // RADIUS attributes per NAS vendor type
-	PlanDefaultFor      []string                  `json:"planDefaultFor,omitempty" bson:"planDefaultFor,omitempty"`                        // Whether this is the default plan for the tenant
+	NASAttributes        NASAttributes         `json:"nasAttributes,omitempty" bson:"nasAttributes,omitempty"`   // RADIUS attributes per NAS vendor type
+	PlanDefaultFor       []string              `json:"planDefaultFor,omitempty" bson:"planDefaultFor,omitempty"` // Whether this is the default plan for the tenant
 	Version              int                   `json:"version" bson:"version"`
 }
 
 // PlanDeletedEvent represents a plan deletion event
 type PlanDeletedEvent struct {
-	ID        string `json:"id" bson:"_id"`
-	Code      string `json:"code" bson:"code"`
-	PlanDefaultFor      []string                  `json:"planDefaultFor,omitempty" bson:"planDefaultFor,omitempty"`
-	Version   int    `json:"version" bson:"version"`
+	ID             string   `json:"id" bson:"_id"`
+	Code           string   `json:"code" bson:"code"`
+	PlanDefaultFor []string `json:"planDefaultFor,omitempty" bson:"planDefaultFor,omitempty"`
+	Version        int      `json:"version" bson:"version"`
 }
 
 type PlanItem struct {
