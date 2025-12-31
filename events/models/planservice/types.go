@@ -365,8 +365,9 @@ const (
 )
 
 // HotspotConnectionQuota defines how many times per period user can connect
-// When both quantity and unit are nil, it means unlimited connections within validity period
+// When quantity is nil or 0, it means one-time only (user can connect once and cannot connect further)
+// When quantity > 0, it means that many connections are allowed within the specified time period
 type HotspotConnectionQuota struct {
-	Quantity *int              `json:"quantity,omitempty" bson:"quantity,omitempty"` // e.g., 2, 3, nil for unlimited
-	Unit     *BillingCycleUnit `json:"unit,omitempty" bson:"unit,omitempty"`         // MINUTE, HOUR, DAY, MONTH, YEAR, nil for unlimited
+	Quantity *int              `json:"quantity,omitempty" bson:"quantity,omitempty"` // e.g., 2, 3, nil or 0 for one-time only
+	Unit     *BillingCycleUnit `json:"unit,omitempty" bson:"unit,omitempty"`         // MINUTE, HOUR, DAY, MONTH, YEAR, nil when quantity is 0 or nil
 }

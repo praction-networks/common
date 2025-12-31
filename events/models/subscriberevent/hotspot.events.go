@@ -33,7 +33,6 @@ type HotspotProfileUpdatedEvent struct {
 	Username                string               `json:"username,omitempty" bson:"username,omitempty"` // RADIUS username
 	Password                string               `json:"password,omitempty" bson:"password,omitempty"` // RADIUS password
 	DefaultAuthMethod       HotspotAuthMethod    `json:"defaultAuthMethod,omitempty" bson:"defaultAuthMethod,omitempty"`
-	MaxDevices              int                  `json:"maxDevices,omitempty" bson:"maxDevices,omitempty"`
 	FirstLoginAt            *time.Time           `json:"firstLoginAt,omitempty" bson:"firstLoginAt,omitempty"` // When was the first successful login
 	ValidFrom               *time.Time           `json:"validFrom,omitempty" bson:"validFrom,omitempty"`       // When this profile becomes valid (optional update)
 	ValidUntil              *time.Time           `json:"validUntil,omitempty" bson:"validUntil,omitempty"`     // When this profile expires (optional update)
