@@ -69,11 +69,14 @@ type PlanItem struct {
 
 // BillingCyclePricing defines pricing for a specific billing cycle
 type BillingCyclePricing struct {
-	BillingCycle BillingCycle `json:"billingCycle" bson:"billingCycle"`                   // Quantity + Unit (e.g., {quantity: 1, unit: "MONTH"})
-	BasePrice    float64      `json:"basePrice" bson:"basePrice"`                         // Base price for this cycle
-	DiscountPct  *float64     `json:"discountPct,omitempty" bson:"discountPct,omitempty"` // Optional discount percentage
-	IsDefault    bool         `json:"isDefault" bson:"isDefault"`                         // Mark one as default
-	IsActive     bool         `json:"isActive" bson:"isActive"`                           // Enable/disable this cycle
+	// Max Broadband Subscriptions defines the maximum number of broadband subscriptions that can be created for the plan
+	MaxSimultaneousSessions   int          `json:"maxSimultaneousSessions" bson:"maxSimultaneousSessions"`
+	MaxBroadbandSubscriptions int          `json:"maxBroadbandSubscriptions" bson:"maxBroadbandSubscriptions"`
+	BillingCycle              BillingCycle `json:"billingCycle" bson:"billingCycle"`                   // Quantity + Unit (e.g., {quantity: 1, unit: "MONTH"})
+	BasePrice                 float64      `json:"basePrice" bson:"basePrice"`                         // Base price for this cycle
+	DiscountPct               *float64     `json:"discountPct,omitempty" bson:"discountPct,omitempty"` // Optional discount percentage
+	IsDefault                 bool         `json:"isDefault" bson:"isDefault"`                         // Mark one as default
+	IsActive                  bool         `json:"isActive" bson:"isActive"`                           // Enable/disable this cycle
 }
 
 // HotspotBillingConfig defines connection time management for HOTSPOT plan subtype
@@ -82,6 +85,9 @@ type BillingCyclePricing struct {
 type HotspotBillingConfig struct {
 	//Max Connecurent Session defines the maximum number of concurrent sessions that can be connected to the plan
 	MaxConcurrentSession int `json:"maxConcurrentSession" bson:"maxConcurrentSession"`
+
+	// Max Hotspot Profiles defines the maximum number of hotspot profiles that can be created for the plan
+	MaxHotspotProfiles int `json:"maxHotspotProfiles" bson:"maxHotspotProfiles"`
 
 	// SessionDuration defines how long each connection session lasts
 	// Example: {quantity: 4, unit: "HOUR"} = 4-hour sessions
