@@ -81,3 +81,25 @@ type ConsentInfo struct {
 	MarketingOptIn    bool      `json:"marketingOptIn" bson:"marketingOptIn"`
 	IPAddress         string    `json:"ipAddress,omitempty" bson:"ipAddress,omitempty"` // IP where consent was given (for audit)
 }
+
+// HotspotDeviceAddedEvent represents a device (MAC address) addition event to an existing hotspot profile
+type GuestHotspotDeviceAddedEvent struct {
+	HotspotProfileID string   `json:"hotspotProfileId" bson:"hotspotProfileId"` // The hotspot profile ID from the event
+	SubscriberID     string   `json:"subscriberId" bson:"subscriberId"`           // The subscriber ID
+	TenantID         string   `json:"tenantId" bson:"tenantId"`                 // The tenant ID
+	MacAddresses     []string `json:"macAddresses" bson:"macAddresses"`          // New MAC addresses to add
+	UserProfileID    string   `json:"userProfileId" bson:"userProfileId"`        // The existing UserProfile ID in RADIUS
+	Username         string   `json:"username,omitempty" bson:"username,omitempty"` // RADIUS username
+	Password         string   `json:"password,omitempty" bson:"password,omitempty"` // RADIUS password
+	PlanCode         string   `json:"planCode,omitempty" bson:"planCode,omitempty"` // Plan code
+	ValidUntil       *time.Time `json:"validUntil,omitempty" bson:"validUntil,omitempty"` // Valid until timestamp
+}
+
+// HotspotDeviceRemovedEvent represents a device (MAC address) removal event from a hotspot profile
+type GuestHotspotDeviceRemovedEvent struct {
+	HotspotProfileID string   `json:"hotspotProfileId" bson:"hotspotProfileId"` // The hotspot profile ID
+	SubscriberID     string   `json:"subscriberId" bson:"subscriberId"`           // The subscriber ID
+	TenantID         string   `json:"tenantId" bson:"tenantId"`                 // The tenant ID
+	MacAddresses     []string `json:"macAddresses" bson:"macAddresses"`          // MAC addresses to remove
+	UserProfileID    string   `json:"userProfileId" bson:"userProfileId"`        // The UserProfile ID in RADIUS
+}

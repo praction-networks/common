@@ -47,3 +47,4 @@ type HotspotProfileDeletedEvent struct {
 	TenantID     string `json:"tenantId" bson:"tenantId"`
 	Version      int    `json:"version" bson:"version"`
 }
+
