@@ -86,6 +86,9 @@ type HotspotBillingConfig struct {
 	// MaxConcurrentSession defines the maximum number of concurrent sessions that can be connected to the plan
 	MaxConcurrentSession int `json:"maxConcurrentSession" bson:"maxConcurrentSession"`
 
+	// MaxDevices defines the maximum number of devices that can be connected to the plan
+	MaxDevices int `json:"maxDevices" bson:"maxDevices"`
+
 	// MaxHotspotProfiles defines the maximum number of hotspot profiles that can be created for the plan
 	MaxHotspotProfiles int `json:"maxHotspotProfiles" bson:"maxHotspotProfiles"`
 
