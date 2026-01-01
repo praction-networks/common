@@ -11,7 +11,6 @@ type SubscriberCreatedEvent struct {
 	Status                    SubscriberStatus       `json:"status" bson:"status"`
 	BroadbandSubscriptions    []string               `bson:"broadbandSubscriptions,omitempty" json:"broadbandSubscriptions,omitempty"`
 	HotspotProfiles           []string               `bson:"hotspotProfiles,omitempty" json:"hotspotProfiles,omitempty"`
-	MaxHotspotProfiles        int                    `bson:"maxHotspotProfiles,omitempty" json:"maxHotspotProfiles,omitempty"`
 	MaxBroadbandSubscriptions int                    `bson:"maxBroadbandSubscriptions,omitempty" json:"maxBroadbandSubscriptions,omitempty"`
 	ExternalRef               string                 `json:"externalRef,omitempty" bson:"externalRef,omitempty"`
 	FullName                  string                 `json:"fullName,omitempty" bson:"fullName,omitempty"`
@@ -33,7 +32,6 @@ type SubscriberUpdatedEvent struct {
 	Status                    SubscriberStatus       `json:"status,omitempty" bson:"status,omitempty"`
 	BroadbandSubscriptions    []string               `bson:"broadbandSubscriptions,omitempty" json:"broadbandSubscriptions,omitempty"`
 	HotspotProfiles           []string               `bson:"hotspotProfiles,omitempty" json:"hotspotProfiles,omitempty"`
-	MaxHotspotProfiles        int                    `bson:"maxHotspotProfiles,omitempty" json:"maxHotspotProfiles,omitempty"`
 	MaxBroadbandSubscriptions int                    `bson:"maxBroadbandSubscriptions,omitempty" json:"maxBroadbandSubscriptions,omitempty"`
 	FullName                  string                 `json:"fullName,omitempty" bson:"fullName,omitempty"`
 	OrganizationName          string                 `json:"organizationName,omitempty" bson:"organizationName,omitempty"`
