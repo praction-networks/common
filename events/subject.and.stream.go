@@ -324,6 +324,7 @@ var Streams = map[StreamName]StreamMetadata{
 			GuestHotspotSubscriberCreatedSubject,
 			GuestHotspotSubscriberUpdatedSubject,
 			GuestHotspotSubscriberValidityExtendedSubject,
+			HotspotDeviceAddedSubject,
 			CouponDetailsSubject,
 		},
 	},
