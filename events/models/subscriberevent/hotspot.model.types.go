@@ -24,4 +24,5 @@ const (
 	HotspotProfileDisconnected HotspotProfileStatus = "DISCONNECTED"
 	HotspotProfileChurned      HotspotProfileStatus = "CHURNED"
 	HotspotProfileBlacklisted  HotspotProfileStatus = "BLACKLISTED"
+	HotspotProfileExpired      HotspotProfileStatus = "EXPIRED"
 )
