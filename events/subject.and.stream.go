@@ -133,6 +133,7 @@ const (
 	GuestHotspotSubscriberCreatedSubject          Subject = "subscriber.guest.hotspot.created"
 	GuestHotspotSubscriberUpdatedSubject          Subject = "subscriber.guest.hotspot.updated"
 	GuestHotspotSubscriberValidityExtendedSubject Subject = "subscriber.guest.hotspot.validity.extended"
+	GuestHotspotDeviceAddedSubject               Subject = "subscriber.guest.hotspot.device.added"
 	CouponDetailsSubject                          Subject = "captiveportal.coupon.details"
 
 	// Plan Service Events
@@ -324,6 +325,7 @@ var Streams = map[StreamName]StreamMetadata{
 			GuestHotspotSubscriberCreatedSubject,
 			GuestHotspotSubscriberUpdatedSubject,
 			GuestHotspotSubscriberValidityExtendedSubject,
+			GuestHotspotDeviceAddedSubject,
 			HotspotDeviceAddedSubject,
 			CouponDetailsSubject,
 		},
