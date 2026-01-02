@@ -2,10 +2,7 @@ package response
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
-	"os"
-	"time"
 )
 
 type APIResponseSuccess struct {
@@ -31,46 +28,6 @@ type ErrorDetail struct {
 func writeResponseSuccess(w http.ResponseWriter, status string, message string, data any, statusCode int) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(statusCode)
-
-	// #region agent log
-	dataJSON, _ := json.Marshal(data)
-	dataType := fmt.Sprintf("%T", data)
-	var dataMap map[string]interface{}
-	hasDataField := false
-	if json.Unmarshal(dataJSON, &dataMap) == nil {
-		_, hasDataField = dataMap["data"]
-	}
-	logFile, _ := os.OpenFile("/home/praction/development/hotspot/.cursor/debug.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-	if logFile != nil {
-		logEntry := map[string]interface{}{
-			"location":    "response.go:28",
-			"message":     "writeResponseSuccess - data being wrapped",
-			"data": map[string]interface{}{
-				"dataType": dataType,
-				"dataJSON": string(dataJSON),
-				"hasDataField": hasDataField,
-				"dataKeys": func() []string {
-					if dataMap != nil {
-						keys := make([]string, 0, len(dataMap))
-						for k := range dataMap {
-							keys = append(keys, k)
-						}
-						return keys
-					}
-					return []string{}
-				}(),
-			},
-			"timestamp":   time.Now().UnixMilli(),
-			"sessionId":   "debug-session",
-			"runId":       "run1",
-			"hypothesisId": "N",
-		}
-		logBytes, _ := json.Marshal(logEntry)
-		logFile.Write(logBytes)
-		logFile.WriteString("\n")
-		logFile.Close()
-	}
-	// #endregion
 
 	response := APIResponseSuccess{
 		Status:     status,

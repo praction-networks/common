@@ -49,6 +49,7 @@ type NASCreatedEvent struct {
 
 	// Security credentials
 	Secret       string `bson:"secret" json:"secret"`                           // For HMAC/JWT signing and API authentication (bcrypt hashed, never sent to client)
+	RadiusIP    []string `bson:"radiusIp" json:"radiusIp"`                       // RADIUS server IP addresses
 	RADIUSSecret string `bson:"radiusSecret" json:"radiusSecret"`               // For RADIUS protocol communication (bcrypt hashed, never sent to client)
 	PublicKey    string `bson:"publicKey,omitempty" json:"publicKey,omitempty"` // For asymmetric crypto (optional)
 
@@ -94,6 +95,7 @@ type NASUpdatedEvent struct {
 	// Security credentials
 	Secret       string `bson:"secret" json:"secret"`                           // For HMAC/JWT signing (sent via internal events)
 	RADIUSSecret string `bson:"radiusSecret" json:"radiusSecret"`               // For RADIUS protocol (sent via internal events)
+	RadiusIP     []string `bson:"radiusIp" json:"radiusIp"`                       // RADIUS server IP addresses
 	PublicKey    string `bson:"publicKey,omitempty" json:"publicKey,omitempty"` // For asymmetric crypto (optional)
 
 	// Security settings
