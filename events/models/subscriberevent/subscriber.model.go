@@ -7,23 +7,13 @@ import "time"
 type SubscriberStatus string
 
 const (
-	// Funnel / early stages
-	SubscriberStatusTrial SubscriberStatus = "TRIAL" // free/demo hotspot, trial broadband, etc.
+	// SubscriberStatusActive indicates the subscriber is active and can have services
+	// Service-level status (e.g., HotspotProfile, BroadbandSubscription) determines actual service availability
+	SubscriberStatusActive SubscriberStatus = "ACTIVE"
 
-	// Normal lifecycle
-	SubscriberStatusPendingActivation SubscriberStatus = "PENDING_ACTIVATION" // KYC / install / payment pending
-	SubscriberStatusActive            SubscriberStatus = "ACTIVE"             // fully active subscriber
-
-	// Temporarily blocked
-	SubscriberStatusGrace     SubscriberStatus = "GRACE"     // grace period after due date
-	SubscriberStatusSuspended SubscriberStatus = "SUSPENDED" // non-payment, abuse, admin hold
-
-	// End of relationship
-	SubscriberStatusTerminated SubscriberStatus = "TERMINATED" // normal closure, not necessarily churn
-	SubscriberStatusChurned    SubscriberStatus = "CHURNED"    // confirmed lost to competitor / no comeback expected
-
-	// Risk / fraud
-	SubscriberStatusBlacklisted SubscriberStatus = "BLACKLISTED" // fraud / abuse, do not re-activate
+	// SubscriberStatusInactive indicates the subscriber is disabled/archived (soft delete)
+	// Inactive subscribers cannot have new services created, but existing services remain in their current state
+	SubscriberStatusInactive SubscriberStatus = "INACTIVE"
 )
 
 type SubscriberType string
@@ -36,9 +26,7 @@ const (
 
 	// Special cases
 	SubscriberTypeGuestHotspot SubscriberType = "GUEST_HOTSPOT" // hotspot-only guest users
-	SubscriberTypePartner      SubscriberType = "PARTNER"       // LCO, reseller, channel partner
-	SubscriberTypeWholesale    SubscriberType = "WHOLESALE"     // carrier, NNI, interconnect
-	SubscriberTypeInternal     SubscriberType = "INTERNAL"      // lab, test, demo accounts
+	SubscriberTypeDemo        SubscriberType = "DEMO"        // lab, test, demo accounts
 )
 
 type AddressType string
