@@ -15,7 +15,6 @@ type PlanCreatedEvent struct {
 	PlanSubType          PlanSubType           `json:"planSubType,omitempty" bson:"planSubType,omitempty"`
 	BillingCyclePricing  []BillingCyclePricing `json:"billingCyclePricing" bson:"billingCyclePricing"`                       // Billing cycles with pricing (fixed or percentage-based)
 	HotspotBillingConfig *HotspotBillingConfig `json:"hotspotBillingConfig,omitempty" bson:"hotspotBillingConfig,omitempty"` // HOTSPOT-specific: session duration, connection frequency, post-expiration action
-	ValidityDays         *int                  `json:"validityDays,omitempty" bson:"validityDays,omitempty"`                 // Optional override (mainly for ONE_TIME)
 	RenewalPolicy        *RenewalPolicy        `json:"renewalPolicy,omitempty" bson:"renewalPolicy,omitempty"`
 	ContractTerms        *ContractTerms        `json:"contractTerms,omitempty" bson:"contractTerms,omitempty"` // Contract and commitment terms
 	SLAs                 []SLA                 `json:"slas,omitempty" bson:"slas,omitempty"`                   // Service Level Agreements
@@ -39,7 +38,6 @@ type PlanUpdateEvent struct {
 	PlanSubType          PlanSubType           `json:"planSubType,omitempty" bson:"planSubType,omitempty"`
 	BillingCyclePricing  []BillingCyclePricing `json:"billingCyclePricing" bson:"billingCyclePricing"`                       // Billing cycles with pricing (fixed or percentage-based)
 	HotspotBillingConfig *HotspotBillingConfig `json:"hotspotBillingConfig,omitempty" bson:"hotspotBillingConfig,omitempty"` // HOTSPOT-specific: session duration, connection frequency, post-expiration action
-	ValidityDays         *int                  `json:"validityDays,omitempty" bson:"validityDays,omitempty"`                 // Optional override (mainly for ONE_TIME)
 	RenewalPolicy        *RenewalPolicy        `json:"renewalPolicy,omitempty" bson:"renewalPolicy,omitempty"`
 	ContractTerms        *ContractTerms        `json:"contractTerms,omitempty" bson:"contractTerms,omitempty"` // Contract and commitment terms
 	SLAs                 []SLA                 `json:"slas,omitempty" bson:"slas,omitempty"`                   // Service Level Agreements
