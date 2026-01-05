@@ -13,6 +13,7 @@ const (
 	RadiusAccountingStream StreamName = "RadiusAccountingStream"
 	CaptivePortalStream    StreamName = "CaptivePortalStream"
 	PlanStream             StreamName = "PlanStream"
+	LogEngineStream        StreamName = "LogEngineStream"
 )
 
 // Global Stream names as constants
@@ -157,6 +158,26 @@ const (
 	CouponCreatedSubject Subject = "coupon.created"
 	CouponUpdatedSubject Subject = "coupon.updated"
 	CouponDeletedSubject Subject = "coupon.deleted"
+
+	// Log Engine - Device Config Events
+	LogEngineDeviceCreatedSubject Subject = "logengine.device.created"
+	LogEngineDeviceUpdatedSubject Subject = "logengine.device.updated"
+	LogEngineDeviceDeletedSubject Subject = "logengine.device.deleted"
+
+	// Log Engine - Port Exclusion Filter Events
+	LogEngineFilterCreatedSubject Subject = "logengine.filter.created"
+	LogEngineFilterUpdatedSubject Subject = "logengine.filter.updated"
+	LogEngineFilterDeletedSubject Subject = "logengine.filter.deleted"
+
+	// Log Engine - Storage Config Events (per-tenant storage backend)
+	LogEngineStorageConfigCreatedSubject Subject = "logengine.storage.created"
+	LogEngineStorageConfigUpdatedSubject Subject = "logengine.storage.updated"
+	LogEngineStorageConfigDeletedSubject Subject = "logengine.storage.deleted"
+
+	// Log Engine - Tenant Config Events
+	LogEngineTenantConfigCreatedSubject Subject = "logengine.tenant.config.created"
+	LogEngineTenantConfigUpdatedSubject Subject = "logengine.tenant.config.updated"
+	LogEngineTenantConfigDeletedSubject Subject = "logengine.tenant.config.deleted"
 )
 
 // Global Subjects - Cross-service events that any service can publish
@@ -354,6 +375,28 @@ var Streams = map[StreamName]StreamMetadata{
 			CouponCreatedSubject,
 			CouponUpdatedSubject,
 			CouponDeletedSubject,
+		},
+	},
+	LogEngineStream: {
+		Name:        LogEngineStream,
+		Description: "Stream for log engine (IPDR/NAT logging) configuration events",
+		Subjects: []Subject{
+			// Device Config Events
+			LogEngineDeviceCreatedSubject,
+			LogEngineDeviceUpdatedSubject,
+			LogEngineDeviceDeletedSubject,
+			// Port Exclusion Filter Events
+			LogEngineFilterCreatedSubject,
+			LogEngineFilterUpdatedSubject,
+			LogEngineFilterDeletedSubject,
+			// Storage Config Events (per-tenant storage backend)
+			LogEngineStorageConfigCreatedSubject,
+			LogEngineStorageConfigUpdatedSubject,
+			LogEngineStorageConfigDeletedSubject,
+			// Tenant Config Events
+			LogEngineTenantConfigCreatedSubject,
+			LogEngineTenantConfigUpdatedSubject,
+			LogEngineTenantConfigDeletedSubject,
 		},
 	},
 }
