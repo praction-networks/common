@@ -47,15 +47,31 @@ const (
 	// -----------------------------------------------------
 	// 4. Billing, Payments & Finance Actions
 	// -----------------------------------------------------
-	TemplateActionCodeBillingInvoiceGenerated    TemplateActionCode = "BILLING.INVOICE_GENERATED"
-	TemplateActionCodeBillingPaymentReceipt      TemplateActionCode = "BILLING.PAYMENT_RECEIPT"
-	TemplateActionCodeBillingPaymentFailed       TemplateActionCode = "BILLING.PAYMENT_FAILED"
-	TemplateActionCodeBillingSubscriptionExpired TemplateActionCode = "BILLING.SUBSCRIPTION_EXPIRED"
-	TemplateActionCodeBillingOrderConfirmation   TemplateActionCode = "BILLING.ORDER_CONFIRMATION"
-	TemplateActionCodeBillingRefundIssued        TemplateActionCode = "BILLING.REFUND_ISSUED"
-	TemplateActionCodeBillingUpcomingRenewal     TemplateActionCode = "BILLING.UPCOMING_RENEWAL"
-	TemplateActionCodeBillingAutoDebitFailed     TemplateActionCode = "BILLING.AUTO_DEBIT_FAILED"
-	TemplateActionCodeBillingLowBalance          TemplateActionCode = "BILLING.LOW_BALANCE"
+	TemplateActionCodeBillingInvoiceGenerated           TemplateActionCode = "BILLING.INVOICE_GENERATED"
+	TemplateActionCodeBillingPaymentReceipt             TemplateActionCode = "BILLING.PAYMENT_RECEIPT"
+	TemplateActionCodeBillingPaymentFailed              TemplateActionCode = "BILLING.PAYMENT_FAILED"
+	TemplateActionCodeBillingSubscriptionExpiring       TemplateActionCode = "BILLING.SUBSCRIPTION_EXPIRING"
+	TemplateActionCodeBillingSubscriptionExpired        TemplateActionCode = "BILLING.SUBSCRIPTION_EXPIRED"
+	TemplateActionCodeBillingOrderConfirmation          TemplateActionCode = "BILLING.ORDER_CONFIRMATION"
+	TemplateActionCodeBillingRefundIssued               TemplateActionCode = "BILLING.REFUND_ISSUED"
+	TemplateActionCodeBillingUpcomingRenewal            TemplateActionCode = "BILLING.UPCOMING_RENEWAL"
+	TemplateActionCodeBillingAutoDebitFailed            TemplateActionCode = "BILLING.AUTO_DEBIT_FAILED"
+	TemplateActionCodeBillingLowBalance                 TemplateActionCode = "BILLING.LOW_BALANCE"
+	TemplateActionCodeBillingSubscriptionRenewal        TemplateActionCode = "BILLING.SUBSCRIPTION_RENEWAL"
+	TemplateActionCodeBillingSubscriptionRenewalFailed  TemplateActionCode = "BILLING.SUBSCRIPTION_RENEWAL_FAILED"
+	TemplateActionCodeBillingSubscriptionRenewalSuccess TemplateActionCode = "BILLING.SUBSCRIPTION_RENEWAL_SUCCESS"
+	TemplateActionCodeBillingInvoiceOverdue             TemplateActionCode = "BILLING.INVOICE_OVERDUE"
+	TemplateActionCodeBillingInvoicePaid                TemplateActionCode = "BILLING.INVOICE_PAID"
+	TemplateActionCodeBillingInvoiceGeneratedOverdue    TemplateActionCode = "BILLING.INVOICE_GENERATED_OVERDUE"
+	TemplateActionCodeBillingPaymentInitiated           TemplateActionCode = "BILLING.PAYMENT_INITIATED"
+	TemplateActionCodeBillingPaymentProcessing          TemplateActionCode = "BILLING.PAYMENT_PROCESSING"
+	TemplateActionCodeBillingPaymentReversed            TemplateActionCode = "BILLING.PAYMENT_REVERSED"
+	TemplateActionCodeBillingPaymentRefundRequested     TemplateActionCode = "BILLING.REFUND_REQUESTED"
+	TemplateActionCodeBillingLateFeeApplied             TemplateActionCode = "BILLING.LATE_FEE_APPLIED"
+	TemplateActionCodeBillingCreditApplied              TemplateActionCode = "BILLING.CREDIT_APPLIED"
+	TemplateActionCodeBillingAutoDebitSuccess           TemplateActionCode = "BILLING.AUTO_DEBIT_SUCCESS"
+
+
 
 	// -----------------------------------------------------
 	// 5. Network Management System (NMS) — SNMP / Poller / Alarms Actions
@@ -244,12 +260,26 @@ func GetAllActionCodes() map[TemplateActionCode]bool {
 		TemplateActionCodeBillingInvoiceGenerated:           true,
 		TemplateActionCodeBillingPaymentReceipt:             true,
 		TemplateActionCodeBillingPaymentFailed:              true,
+		TemplateActionCodeBillingSubscriptionExpiring:       true,
 		TemplateActionCodeBillingSubscriptionExpired:        true,
 		TemplateActionCodeBillingOrderConfirmation:          true,
 		TemplateActionCodeBillingRefundIssued:               true,
 		TemplateActionCodeBillingUpcomingRenewal:            true,
 		TemplateActionCodeBillingAutoDebitFailed:            true,
 		TemplateActionCodeBillingLowBalance:                 true,
+		TemplateActionCodeBillingSubscriptionRenewal:        true,
+		TemplateActionCodeBillingSubscriptionRenewalFailed:  true,
+		TemplateActionCodeBillingSubscriptionRenewalSuccess: true,
+		TemplateActionCodeBillingInvoiceOverdue:             true,
+		TemplateActionCodeBillingInvoicePaid:                true,
+		TemplateActionCodeBillingInvoiceGeneratedOverdue:    true,
+		TemplateActionCodeBillingPaymentInitiated:           true,
+		TemplateActionCodeBillingPaymentProcessing:          true,
+		TemplateActionCodeBillingPaymentReversed:            true,
+		TemplateActionCodeBillingPaymentRefundRequested:     true,
+		TemplateActionCodeBillingLateFeeApplied:             true,
+		TemplateActionCodeBillingCreditApplied:              true,
+		TemplateActionCodeBillingAutoDebitSuccess:           true,
 		TemplateActionCodeNMSDeviceDown:                     true,
 		TemplateActionCodeNMSDeviceUp:                       true,
 		TemplateActionCodeNMSMaintenanceAlert:               true,
@@ -375,12 +405,26 @@ func GetActionCodeDescriptions() map[TemplateActionCode]string {
 		TemplateActionCodeBillingInvoiceGenerated:           "Invoice generated",
 		TemplateActionCodeBillingPaymentReceipt:             "Payment receipt confirmation",
 		TemplateActionCodeBillingPaymentFailed:              "Payment failed",
+		TemplateActionCodeBillingSubscriptionExpiring:       "Subscription expiring",
 		TemplateActionCodeBillingSubscriptionExpired:        "Subscription expired",
 		TemplateActionCodeBillingOrderConfirmation:          "Order confirmation",
 		TemplateActionCodeBillingRefundIssued:               "Refund issued",
 		TemplateActionCodeBillingUpcomingRenewal:            "Upcoming subscription renewal",
 		TemplateActionCodeBillingAutoDebitFailed:            "Auto debit failed",
 		TemplateActionCodeBillingLowBalance:                 "Low balance alert",
+		TemplateActionCodeBillingSubscriptionRenewal:        "Subscription renewal",
+		TemplateActionCodeBillingSubscriptionRenewalFailed:  "Subscription renewal failed",
+		TemplateActionCodeBillingSubscriptionRenewalSuccess: "Subscription renewal successful",
+		TemplateActionCodeBillingInvoiceOverdue:             "Invoice overdue",
+		TemplateActionCodeBillingInvoicePaid:                "Invoice paid",
+		TemplateActionCodeBillingInvoiceGeneratedOverdue:    "Invoice generated overdue",
+		TemplateActionCodeBillingPaymentInitiated:           "Payment initiated",
+		TemplateActionCodeBillingPaymentProcessing:          "Payment processing",
+		TemplateActionCodeBillingPaymentReversed:            "Payment reversed",
+		TemplateActionCodeBillingPaymentRefundRequested:     "Payment refund requested",
+		TemplateActionCodeBillingLateFeeApplied:             "Late fee applied",
+		TemplateActionCodeBillingCreditApplied:              "Credit applied",
+		TemplateActionCodeBillingAutoDebitSuccess:           "Auto debit successful",	
 		TemplateActionCodeNMSDeviceDown:                     "Device offline alert",
 		TemplateActionCodeNMSDeviceUp:                       "Device online alert",
 		TemplateActionCodeNMSMaintenanceAlert:               "Maintenance scheduled alert",

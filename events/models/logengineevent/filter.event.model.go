@@ -4,13 +4,13 @@ import "time"
 
 // PortExclusionConfigEvent represents a port exclusion configuration event
 type PortExclusionConfigEvent struct {
-	ID                  string               `json:"id"`
-	TenantID            string               `json:"tenantId"`
-	ExcludedPorts       []PortExclusionRule  `json:"excludedPorts"`
-	ApplySystemDefaults bool                 `json:"applySystemDefaults"`
-	Enabled             bool                 `json:"enabled"`
-	CreatedAt           time.Time            `json:"createdAt"`
-	UpdatedAt           time.Time            `json:"updatedAt"`
+	ID                  string              `json:"id"`
+	TenantID            string              `json:"tenantId"`
+	ExcludedPorts       []PortExclusionRule `json:"excludedPorts"`
+	ApplySystemDefaults bool                `json:"applySystemDefaults"`
+	Enabled             bool                `json:"enabled"`
+	CreatedAt           time.Time           `json:"createdAt"`
+	UpdatedAt           time.Time           `json:"updatedAt"`
 }
 
 // PortExclusionRule represents a single port exclusion rule
@@ -27,4 +27,3 @@ const (
 	ProtocolFilterUDP = "UDP"
 	ProtocolFilterAny = "ANY"
 )
-

@@ -20,9 +20,9 @@ type TenantLogConfigEvent struct {
 	CompactionIntervalHr int  `json:"compactionIntervalHr"`
 
 	// Query settings
-	QueryEnabled         bool `json:"queryEnabled"`
-	MaxQueryRangeDays    int  `json:"maxQueryRangeDays"`    // Max time range for queries
-	MaxResultsPerQuery   int  `json:"maxResultsPerQuery"`
+	QueryEnabled       bool `json:"queryEnabled"`
+	MaxQueryRangeDays  int  `json:"maxQueryRangeDays"` // Max time range for queries
+	MaxResultsPerQuery int  `json:"maxResultsPerQuery"`
 
 	// Alert/notification settings
 	AlertsEnabled bool   `json:"alertsEnabled"`
@@ -34,9 +34,8 @@ type TenantLogConfigEvent struct {
 
 // RetentionPolicy constants
 const (
-	RetentionPolicyStandard  = "STANDARD"   // Keep in hot storage
-	RetentionPolicyTiered    = "TIERED"     // Move to warm/cold over time
-	RetentionPolicyArchive   = "ARCHIVE"    // Move to cold storage quickly
+	RetentionPolicyStandard   = "STANDARD"   // Keep in hot storage
+	RetentionPolicyTiered     = "TIERED"     // Move to warm/cold over time
+	RetentionPolicyArchive    = "ARCHIVE"    // Move to cold storage quickly
 	RetentionPolicyCompliance = "COMPLIANCE" // Extended retention for compliance
 )
-

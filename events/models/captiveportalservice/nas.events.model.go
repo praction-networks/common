@@ -48,10 +48,10 @@ type NASCreatedEvent struct {
 	ForwardDomain    string   `bson:"forwardDomain" json:"forwardDomain"`                         // Forward domain (e.g., "forward.rapidnet.in")
 
 	// Security credentials
-	Secret       string `bson:"secret" json:"secret"`                           // For HMAC/JWT signing and API authentication (bcrypt hashed, never sent to client)
-	RadiusIP    []string `bson:"radiusIp" json:"radiusIp"`                       // RADIUS server IP addresses
-	RADIUSSecret string `bson:"radiusSecret" json:"radiusSecret"`               // For RADIUS protocol communication (bcrypt hashed, never sent to client)
-	PublicKey    string `bson:"publicKey,omitempty" json:"publicKey,omitempty"` // For asymmetric crypto (optional)
+	Secret       string   `bson:"secret" json:"secret"`                           // For HMAC/JWT signing and API authentication (bcrypt hashed, never sent to client)
+	RadiusIP     []string `bson:"radiusIp" json:"radiusIp"`                       // RADIUS server IP addresses
+	RADIUSSecret string   `bson:"radiusSecret" json:"radiusSecret"`               // For RADIUS protocol communication (bcrypt hashed, never sent to client)
+	PublicKey    string   `bson:"publicKey,omitempty" json:"publicKey,omitempty"` // For asymmetric crypto (optional)
 
 	// Security settings
 	TokenExpirySeconds int  `bson:"tokenExpirySeconds" json:"tokenExpirySeconds"` // How long NAS tokens are valid (default: 300)
@@ -93,10 +93,10 @@ type NASUpdatedEvent struct {
 	RedirectorDomain string   `bson:"redirectorDomain" json:"redirectorDomain"`                   // Redirector domain (e.g., "redirector.rapidnet.in")
 	ForwardDomain    string   `bson:"forwardDomain" json:"forwardDomain"`                         // Forward domain (e.g., "forward.rapidnet.in")
 	// Security credentials
-	Secret       string `bson:"secret" json:"secret"`                           // For HMAC/JWT signing (sent via internal events)
-	RADIUSSecret string `bson:"radiusSecret" json:"radiusSecret"`               // For RADIUS protocol (sent via internal events)
+	Secret       string   `bson:"secret" json:"secret"`                           // For HMAC/JWT signing (sent via internal events)
+	RADIUSSecret string   `bson:"radiusSecret" json:"radiusSecret"`               // For RADIUS protocol (sent via internal events)
 	RadiusIP     []string `bson:"radiusIp" json:"radiusIp"`                       // RADIUS server IP addresses
-	PublicKey    string `bson:"publicKey,omitempty" json:"publicKey,omitempty"` // For asymmetric crypto (optional)
+	PublicKey    string   `bson:"publicKey,omitempty" json:"publicKey,omitempty"` // For asymmetric crypto (optional)
 
 	// Security settings
 	TokenExpirySeconds int  `bson:"tokenExpirySeconds" json:"tokenExpirySeconds"` // How long NAS tokens are valid (default: 300)

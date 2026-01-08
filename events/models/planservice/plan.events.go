@@ -87,7 +87,6 @@ type HotspotBillingConfig struct {
 	// MaxDevices defines the maximum number of devices that can be connected to the plan
 	MaxDevices int `json:"maxDevices" bson:"maxDevices"`
 
-
 	// SessionDuration defines how long each connection session lasts
 	// Example: {quantity: 4, unit: "HOUR"} = 4-hour sessions
 	// Example: {quantity: 1, unit: "HOUR"} = 1-hour sessions

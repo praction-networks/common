@@ -17,9 +17,9 @@ const (
 type HotspotProfileStatus string
 
 const (
-	HotspotProfilePending      HotspotProfileStatus = "PENDING"
-	HotspotProfileActive       HotspotProfileStatus = "ACTIVE"
-	HotspotProfileTerminated   HotspotProfileStatus = "TERMINATED"
-	HotspotProfileBlacklisted  HotspotProfileStatus = "BLACKLISTED"
-	HotspotProfileExpired      HotspotProfileStatus = "EXPIRED"
+	HotspotProfilePending     HotspotProfileStatus = "PENDING"
+	HotspotProfileActive      HotspotProfileStatus = "ACTIVE"
+	HotspotProfileTerminated  HotspotProfileStatus = "TERMINATED"
+	HotspotProfileBlacklisted HotspotProfileStatus = "BLACKLISTED"
+	HotspotProfileExpired     HotspotProfileStatus = "EXPIRED"
 )

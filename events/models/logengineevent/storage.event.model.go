@@ -4,11 +4,11 @@ import "time"
 
 // StorageConfigEvent represents a per-tenant storage backend configuration
 type StorageConfigEvent struct {
-	ID        string    `json:"id"`
-	TenantID  string    `json:"tenantId"`
-	Provider  string    `json:"provider"`  // S3, GCS, AZURE_BLOB, SFTP, LOCAL, GOOGLE_DRIVE
-	Enabled   bool      `json:"enabled"`
-	IsDefault bool      `json:"isDefault"` // If true, this is the tenant's default storage
+	ID        string `json:"id"`
+	TenantID  string `json:"tenantId"`
+	Provider  string `json:"provider"` // S3, GCS, AZURE_BLOB, SFTP, LOCAL, GOOGLE_DRIVE
+	Enabled   bool   `json:"enabled"`
+	IsDefault bool   `json:"isDefault"` // If true, this is the tenant's default storage
 
 	// Common settings
 	PathPrefix string `json:"pathPrefix"` // Base path/prefix for this tenant
@@ -50,7 +50,7 @@ const (
 type S3StorageConfig struct {
 	Bucket       string `json:"bucket"`
 	Region       string `json:"region"`
-	Endpoint     string `json:"endpoint,omitempty"`     // For MinIO or S3-compatible
+	Endpoint     string `json:"endpoint,omitempty"` // For MinIO or S3-compatible
 	AccessKey    string `json:"accessKey"`
 	SecretKey    string `json:"secretKey"`              // Encrypted in transit
 	UsePathStyle bool   `json:"usePathStyle,omitempty"` // For MinIO
@@ -97,4 +97,3 @@ type GoogleDriveConfig struct {
 	SharedDrive     bool   `json:"sharedDrive"`     // If using shared drive
 	SharedDriveID   string `json:"sharedDriveId,omitempty"`
 }
-

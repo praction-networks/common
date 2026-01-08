@@ -16,7 +16,7 @@ type HotspotProfileCreatedEvent struct {
 	DefaultAuthMethod       HotspotAuthMethod    `json:"defaultAuthMethod" bson:"defaultAuthMethod"`
 	AllowedAuthMethods      []HotspotAuthMethod  `bson:"allowedAuthMethods,omitempty" json:"allowedAuthMethods,omitempty"`
 	MaxConcurrentSessions   int                  `json:"maxConcurrentSessions,omitempty" bson:"maxConcurrentSessions,omitempty"` // max concurrent logins for this profile
-	MaxDevices               int                  `json:"maxDevices,omitempty" bson:"maxDevices,omitempty"`             // max devices allowed (policy)
+	MaxDevices              int                  `json:"maxDevices,omitempty" bson:"maxDevices,omitempty"`                       // max devices allowed (policy)
 	RememberDeviceDays      int                  `json:"rememberDeviceDays,omitempty" bson:"rememberDeviceDays,omitempty"`       // days to remember each device for auto-login
 	CreationSource          string               `json:"creationSource,omitempty" bson:"creationSource,omitempty"`               // "CAPTIVE_PORTAL", "ADMIN", "API", "IMPORT"
 	ValidFrom               time.Time            `json:"validFrom,omitempty" bson:"validFrom,omitempty"`                         // When this profile becomes valid
@@ -40,9 +40,9 @@ type HotspotProfileUpdatedEvent struct {
 	DefaultAuthMethod       HotspotAuthMethod    `json:"defaultAuthMethod,omitempty" bson:"defaultAuthMethod,omitempty"`
 	AllowedAuthMethods      []HotspotAuthMethod  `bson:"allowedAuthMethods,omitempty" json:"allowedAuthMethods,omitempty"`
 	MaxConcurrentSessions   int                  `json:"maxConcurrentSessions,omitempty" bson:"maxConcurrentSessions,omitempty"` // max concurrent logins for this profile
-	MaxDevices               int                  `json:"maxDevices,omitempty" bson:"maxDevices,omitempty"`             // max devices allowed (policy)
+	MaxDevices              int                  `json:"maxDevices,omitempty" bson:"maxDevices,omitempty"`                       // max devices allowed (policy)
 	RememberDeviceDays      int                  `json:"rememberDeviceDays,omitempty" bson:"rememberDeviceDays,omitempty"`       // days to remember each device for auto-login
-	FirstLoginAt            *time.Time           `json:"firstLoginAt,omitempty" bson:"firstLoginAt,omitempty"`                 // When was the first successful login
+	FirstLoginAt            *time.Time           `json:"firstLoginAt,omitempty" bson:"firstLoginAt,omitempty"`                   // When was the first successful login
 	ValidFrom               *time.Time           `json:"validFrom,omitempty" bson:"validFrom,omitempty"`                         // When this profile becomes valid (optional update)
 	ValidUntil              *time.Time           `json:"validUntil,omitempty" bson:"validUntil,omitempty"`                       // When this profile expires (optional update)
 	PlanCode                string               `json:"planCode,omitempty" bson:"planCode,omitempty"`                           // Plan code used for this hotspot profile (optional update)
@@ -56,4 +56,3 @@ type HotspotProfileDeletedEvent struct {
 	TenantID     string `json:"tenantId" bson:"tenantId"`
 	Version      int    `json:"version" bson:"version"`
 }
-
