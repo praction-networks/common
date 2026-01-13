@@ -23,3 +23,20 @@ func HashSourceIP(sourceIP string) string {
 	return hashStr
 }
 
+// HashUsername creates a SHA256 hash of the username and encodes it as base64url (URL-safe)
+// This is used for file organization of authentication logs by username
+// Returns a 44-character base64url-encoded hash
+func HashUsername(username string) string {
+	if username == "" {
+		return ""
+	}
+
+	// Create SHA256 hash
+	hash := sha256.Sum256([]byte(username))
+
+	// Encode as base64url (URL-safe, no padding)
+	hashStr := base64.RawURLEncoding.EncodeToString(hash[:])
+
+	return hashStr
+}
+

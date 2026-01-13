@@ -20,6 +20,7 @@ type contextKey struct{ name string }
 var (
 	RequestIDKey = &contextKey{"request_id"}
 	UserIDKey    = &contextKey{"user_id"}
+	TenantIDKey  = &contextKey{"tenant_id"}
 )
 
 var (
@@ -62,6 +63,19 @@ func RequestIDMiddleware(next http.Handler) http.Handler {
 		w.Header().Set("X-Request-ID", reqID)
 
 		next.ServeHTTP(w, r.WithContext(ctx))
+	})
+}
+
+// TenantIDMiddleware extracts tenant ID from X-Tenant-ID header and adds it to request context
+func TenantIDMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		tenantID := r.Header.Get("X-Tenant-ID")
+		if tenantID != "" {
+			ctx := context.WithValue(r.Context(), TenantIDKey, tenantID)
+			next.ServeHTTP(w, r.WithContext(ctx))
+		} else {
+			next.ServeHTTP(w, r)
+		}
 	})
 }
 
@@ -211,6 +225,14 @@ func isWebSocketUpgrade(r *http.Request) bool {
 func GetUserID(ctx context.Context) string {
 	if userID, ok := ctx.Value(UserIDKey).(string); ok {
 		return userID
+	}
+	return ""
+}
+
+// GetTenantID retrieves the tenant ID from the context
+func GetTenantID(ctx context.Context) string {
+	if tenantID, ok := ctx.Value(TenantIDKey).(string); ok {
+		return tenantID
 	}
 	return ""
 }
