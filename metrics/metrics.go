@@ -407,6 +407,20 @@ func RegisterAllMetrics() {
 		RedirectorMongoDBPoolSize,
 		RedirectorRedisPoolSize,
 
+		// Log Storage Re-Encoding metrics
+		ReEncodingOperationsTotal,
+		ReEncodingDuration,
+		ReEncodingFilesProcessed,
+		ReEncodingRecordsProcessed,
+		ReEncodingBytesProcessed,
+		ReEncodingBytesAfter,
+		ReEncodingCompressionRatio,
+		ReEncodingErrors,
+		ReEncodingScheduledRuns,
+		ReEncodingScheduledRunDuration,
+		ReEncodingActiveWorkers,
+		ReEncodingQueueSize,
+
 		// Default collectors
 		collectors.NewGoCollector(),
 		collectors.NewProcessCollector(collectors.ProcessCollectorOpts{}),
@@ -618,6 +632,110 @@ var (
 	)
 )
 
+// Log Storage Re-Encoding Metrics
+var (
+	// Re-encoding operations
+	ReEncodingOperationsTotal = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "log_storage_reencoding_operations_total",
+			Help: "Total re-encoding operations",
+		},
+		[]string{"status"}, // status: "success", "failure"
+	)
+
+	// Re-encoding performance
+	ReEncodingDuration = prometheus.NewHistogramVec(
+		prometheus.HistogramOpts{
+			Name:    "log_storage_reencoding_duration_seconds",
+			Help:    "Re-encoding operation duration in seconds",
+			Buckets: []float64{1, 5, 10, 30, 60, 120, 300, 600, 1800, 3600}, // 1s to 1h
+		},
+		[]string{"log_type"}, // log_type: "SESSION", "NAT_EVENT", "FLOW"
+	)
+
+	// Re-encoding results
+	ReEncodingFilesProcessed = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "log_storage_reencoding_files_processed_total",
+			Help: "Total files processed by re-encoding",
+		},
+		[]string{"log_type", "status"}, // status: "created", "replaced", "skipped"
+	)
+
+	ReEncodingRecordsProcessed = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "log_storage_reencoding_records_processed_total",
+			Help: "Total records processed by re-encoding",
+		},
+		[]string{"log_type"},
+	)
+
+	ReEncodingBytesProcessed = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "log_storage_reencoding_bytes_processed_total",
+			Help: "Total bytes processed by re-encoding (before compression)",
+		},
+		[]string{"log_type"},
+	)
+
+	ReEncodingBytesAfter = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "log_storage_reencoding_bytes_after_total",
+			Help: "Total bytes after re-encoding (after compression)",
+		},
+		[]string{"log_type"},
+	)
+
+	ReEncodingCompressionRatio = prometheus.NewHistogramVec(
+		prometheus.HistogramOpts{
+			Name:    "log_storage_reencoding_compression_ratio",
+			Help:    "Compression ratio achieved by re-encoding (before/after)",
+			Buckets: []float64{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 15, 20, 25, 30},
+		},
+		[]string{"log_type"},
+	)
+
+	// Re-encoding errors
+	ReEncodingErrors = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "log_storage_reencoding_errors_total",
+			Help: "Total re-encoding errors",
+		},
+		[]string{"log_type", "error_type"}, // error_type: "read_failed", "write_failed", "sort_failed", "replace_failed"
+	)
+
+	// Re-encoding scheduler
+	ReEncodingScheduledRuns = prometheus.NewCounter(
+		prometheus.CounterOpts{
+			Name: "log_storage_reencoding_scheduled_runs_total",
+			Help: "Total scheduled re-encoding runs",
+		},
+	)
+
+	ReEncodingScheduledRunDuration = prometheus.NewHistogram(
+		prometheus.HistogramOpts{
+			Name:    "log_storage_reencoding_scheduled_run_duration_seconds",
+			Help:    "Duration of scheduled re-encoding runs",
+			Buckets: []float64{60, 300, 600, 1800, 3600, 7200, 10800}, // 1m to 3h
+		},
+	)
+
+	// Re-encoding worker metrics
+	ReEncodingActiveWorkers = prometheus.NewGauge(
+		prometheus.GaugeOpts{
+			Name: "log_storage_reencoding_active_workers",
+			Help: "Current number of active re-encoding workers",
+		},
+	)
+
+	ReEncodingQueueSize = prometheus.NewGauge(
+		prometheus.GaugeOpts{
+			Name: "log_storage_reencoding_queue_size",
+			Help: "Current number of file groups in re-encoding queue",
+		},
+	)
+)
+
 // Redirector Metrics Helpers
 func RecordRedirectorRequest(nasId string, status string) {
 	RedirectorRequests.WithLabelValues(nasId, status).Inc()
@@ -670,4 +788,53 @@ func SetRedirectorMongoDBPoolSize(metricType string, value float64) {
 
 func SetRedirectorRedisPoolSize(metricType string, value float64) {
 	RedirectorRedisPoolSize.WithLabelValues(metricType).Set(value)
+}
+
+// Re-Encoding Metrics Helpers
+func RecordReEncodingOperation(status string) {
+	ReEncodingOperationsTotal.WithLabelValues(status).Inc()
+}
+
+func RecordReEncodingDuration(logType string, duration time.Duration) {
+	ReEncodingDuration.WithLabelValues(logType).Observe(duration.Seconds())
+}
+
+func RecordReEncodingFilesProcessed(logType string, status string, count int) {
+	ReEncodingFilesProcessed.WithLabelValues(logType, status).Add(float64(count))
+}
+
+func RecordReEncodingRecordsProcessed(logType string, count int64) {
+	ReEncodingRecordsProcessed.WithLabelValues(logType).Add(float64(count))
+}
+
+func RecordReEncodingBytesProcessed(logType string, bytes int64) {
+	ReEncodingBytesProcessed.WithLabelValues(logType).Add(float64(bytes))
+}
+
+func RecordReEncodingBytesAfter(logType string, bytes int64) {
+	ReEncodingBytesAfter.WithLabelValues(logType).Add(float64(bytes))
+}
+
+func RecordReEncodingCompressionRatio(logType string, ratio float64) {
+	ReEncodingCompressionRatio.WithLabelValues(logType).Observe(ratio)
+}
+
+func RecordReEncodingError(logType string, errorType string) {
+	ReEncodingErrors.WithLabelValues(logType, errorType).Inc()
+}
+
+func RecordReEncodingScheduledRun() {
+	ReEncodingScheduledRuns.Inc()
+}
+
+func RecordReEncodingScheduledRunDuration(duration time.Duration) {
+	ReEncodingScheduledRunDuration.Observe(duration.Seconds())
+}
+
+func SetReEncodingActiveWorkers(count float64) {
+	ReEncodingActiveWorkers.Set(count)
+}
+
+func SetReEncodingQueueSize(size float64) {
+	ReEncodingQueueSize.Set(size)
 }
