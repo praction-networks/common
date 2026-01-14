@@ -50,6 +50,9 @@ const (
 	SMSGatewayCreatedSubject     Subject = "smsgateway.created"
 	SMSGatewayUpdateSubject      Subject = "smsgateway.updated"
 	SMSGatewayDeleteSubject      Subject = "smsgateway.deleted"
+	DeviceCreatedSubject         Subject = "device.created"
+	DeviceUpdatedSubject         Subject = "device.updated"
+	DeviceDeletedSubject         Subject = "device.deleted"
 
 	// Tenant Provider Binding Events
 	TenantSMSProviderBindingCreatedSubject  Subject = "tenant.smsbinding.created"
@@ -229,6 +232,9 @@ var Streams = map[StreamName]StreamMetadata{
 			SMSGatewayCreatedSubject,
 			SMSGatewayUpdateSubject,
 			SMSGatewayDeleteSubject,
+			DeviceCreatedSubject,
+			DeviceUpdatedSubject,
+			DeviceDeletedSubject,
 			// Tenant Provider Binding Events
 			TenantSMSProviderBindingCreatedSubject,
 			TenantSMSProviderBindingUpdatedSubject,
