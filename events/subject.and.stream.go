@@ -131,9 +131,6 @@ const (
 	RadiusAccountingRadAcctSessionEndSubject    Subject = "radiusaccounting.radacct.session.end"
 
 	// Captive Portal Events
-	NASCreatedSubject                             Subject = "captiveportal.nas.created"
-	NASUpdatedSubject                             Subject = "captiveportal.nas.updated"
-	NASDeletedSubject                             Subject = "captiveportal.nas.deleted"
 	GuestHotspotSubscriberCreatedSubject          Subject = "subscriber.guest.hotspot.created"
 	GuestHotspotSubscriberUpdatedSubject          Subject = "subscriber.guest.hotspot.updated"
 	GuestHotspotSubscriberValidityExtendedSubject Subject = "subscriber.guest.hotspot.validity.extended"
@@ -346,9 +343,6 @@ var Streams = map[StreamName]StreamMetadata{
 		Name:        CaptivePortalStream,
 		Description: "Stream for captive portal service events",
 		Subjects: []Subject{
-			NASCreatedSubject,
-			NASUpdatedSubject,
-			NASDeletedSubject,
 			GuestHotspotSubscriberCreatedSubject,
 			GuestHotspotSubscriberUpdatedSubject,
 			GuestHotspotSubscriberValidityExtendedSubject,
