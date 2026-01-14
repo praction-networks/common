@@ -16,6 +16,8 @@ type DeviceInsertEventModel struct {
 	RedirectorDomain  string   `bson:"redirectorDomain" json:"redirectorDomain"`
 	ForwardDomain     string   `bson:"forwardDomain" json:"forwardDomain"`
 	RadiusIP          []string `bson:"radiusIp,omitempty" json:"radiusIp,omitempty"`
+	Secret            string   `bson:"secret" json:"secret"`                           // For HMAC/JWT signing and API authentication
+	RADIUSSecret      string   `bson:"radiusSecret" json:"radiusSecret"`               // For RADIUS protocol communication
 	TokenExpirySeconds int     `bson:"tokenExpirySeconds" json:"tokenExpirySeconds"`
 	RequireMutualTLS   bool    `bson:"requireMutualTLS" json:"requireMutualTLS"`
 	EnableRateLimit    bool    `bson:"enableRateLimit" json:"enableRateLimit"`
@@ -44,6 +46,8 @@ type DeviceUpdateEventModel struct {
 	RedirectorDomain  string   `bson:"redirectorDomain,omitempty" json:"redirectorDomain,omitempty"`
 	ForwardDomain     string   `bson:"forwardDomain,omitempty" json:"forwardDomain,omitempty"`
 	RadiusIP          []string `bson:"radiusIp,omitempty" json:"radiusIp,omitempty"`
+	Secret            string   `bson:"secret,omitempty" json:"secret,omitempty"`                           // For HMAC/JWT signing and API authentication
+	RADIUSSecret      string   `bson:"radiusSecret,omitempty" json:"radiusSecret,omitempty"`               // For RADIUS protocol communication
 	TokenExpirySeconds *int    `bson:"tokenExpirySeconds,omitempty" json:"tokenExpirySeconds,omitempty"`
 	RequireMutualTLS   *bool   `bson:"requireMutualTLS,omitempty" json:"requireMutualTLS,omitempty"`
 	EnableRateLimit    *bool   `bson:"enableRateLimit,omitempty" json:"enableRateLimit,omitempty"`
