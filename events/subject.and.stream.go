@@ -72,8 +72,8 @@ const (
 	TenantUserCreatedSubject          Subject = "tenantuser.created"
 	TenantUserUpdatedSubject          Subject = "tenantuser.updated"
 	TenantUserDeletedSubject          Subject = "tenantuser.deleted"
-	TenantUserPasswordSetSubject      Subject = "tenantuser.password.set"
-	TenantUserPreferencesUpdatedSubject Subject = "tenantuser.preferences.updated" // Initial password set during onboarding
+	TenantUserPasswordSetSubject      Subject = "tenantuser.password.set" // Initial password set during onboarding
+	TenantUserPreferencesUpdatedSubject Subject = "tenantuser.preferences.updated" 
 
 	// Tenant Auth Role Event Initialization
 	TenantUserRoleCreatedSubject Subject = "tenantuserrole.created"
