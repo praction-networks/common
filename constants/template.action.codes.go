@@ -1,5 +1,7 @@
 package constants
 
+import "strings"
+
 // TemplateActionCode represents a template action code following the <DOMAIN>.<ACTION>[.<VARIANT>] format
 type TemplateActionCode string
 
@@ -205,6 +207,22 @@ const (
 	TemplateActionCodeCustomerRenewalReminder      TemplateActionCode = "CUSTOMER.RENEWAL_REMINDER"
 	TemplateActionCodeCustomerChurnRisk            TemplateActionCode = "CUSTOMER.CHURN_RISK"
 	TemplateActionCodeCustomerDisconnected         TemplateActionCode = "CUSTOMER.DISCONNECTED"
+
+	// -----------------------------------------------------
+	// 15. System Templates (System-level notifications)
+	// These templates are owned by System tenants only
+	// Format: System.<DOMAIN>.<ACTION>
+	// -----------------------------------------------------
+	SystemTemplateActionCodeOTPLogin            TemplateActionCode = "System.AUTH.OTP_LOGIN"
+	SystemTemplateActionCodePasswordRecovery    TemplateActionCode = "System.AUTH.PASSWORD_RECOVERY"
+	SystemTemplateActionCodePasswordChanged     TemplateActionCode = "System.AUTH.PASSWORD_CHANGED"
+	SystemTemplateActionCodeNewDeviceLogin      TemplateActionCode = "System.AUTH.NEW_DEVICE_LOGIN"
+	SystemTemplateActionCodeAccountVerification TemplateActionCode = "System.AUTH.ACCOUNT_VERIFICATION"
+	SystemTemplateActionCodeMFAEnabled          TemplateActionCode = "System.AUTH.MFA_ENABLED"
+	SystemTemplateActionCodeMFADisabled         TemplateActionCode = "System.AUTH.MFA_DISABLED"
+	SystemTemplateActionCodeSuspiciousLogin     TemplateActionCode = "System.AUTH.SUSPICIOUS_LOGIN"
+	SystemTemplateActionCodeLockedOut           TemplateActionCode = "System.AUTH.LOCKED_OUT"
+	SystemTemplateActionCodeUnlocked            TemplateActionCode = "System.AUTH.UNLOCKED"
 )
 
 // String returns the string representation of the action code
@@ -369,6 +387,17 @@ func GetAllActionCodes() map[TemplateActionCode]bool {
 		TemplateActionCodeCustomerChurnRisk:                 true,
 		TemplateActionCodeCustomerDisconnected:              true,
 		TemplateActionCodeHotSpotLoginOTP:                   true,
+		// System templates (System.* prefix)
+		SystemTemplateActionCodeOTPLogin:                     true,
+		SystemTemplateActionCodePasswordRecovery:             true,
+		SystemTemplateActionCodePasswordChanged:              true,
+		SystemTemplateActionCodeNewDeviceLogin:               true,
+		SystemTemplateActionCodeAccountVerification:          true,
+		SystemTemplateActionCodeMFAEnabled:                   true,
+		SystemTemplateActionCodeMFADisabled:                  true,
+		SystemTemplateActionCodeSuspiciousLogin:              true,
+		SystemTemplateActionCodeLockedOut:                    true,
+		SystemTemplateActionCodeUnlocked:                     true,
 	}
 }
 
@@ -514,6 +543,17 @@ func GetActionCodeDescriptions() map[TemplateActionCode]string {
 		TemplateActionCodeCustomerChurnRisk:                 "Churn Risk Alert - At-risk customer detected",
 		TemplateActionCodeCustomerDisconnected:              "Customer Disconnected - Permanent disconnection",
 		TemplateActionCodeHotSpotLoginOTP:                   "Hotspot Login OTP - One-Time Password for login",
+		// System template descriptions
+		SystemTemplateActionCodeOTPLogin:                    "System OTP Login - One-Time Password for login (System template)",
+		SystemTemplateActionCodePasswordRecovery:           "System Password Recovery - Password recovery token (System template)",
+		SystemTemplateActionCodePasswordChanged:            "System Password Changed - Password change confirmation (System template)",
+		SystemTemplateActionCodeNewDeviceLogin:             "System New Device Login - Login alert for new device (System template)",
+		SystemTemplateActionCodeAccountVerification:        "System Account Verification - Verification link (System template)",
+		SystemTemplateActionCodeMFAEnabled:                 "System MFA Enabled - Multi-factor authentication activated (System template)",
+		SystemTemplateActionCodeMFADisabled:                "System MFA Disabled - Multi-factor authentication disabled (System template)",
+		SystemTemplateActionCodeSuspiciousLogin:           "System Suspicious Login - Unusual login detected (System template)",
+		SystemTemplateActionCodeLockedOut:                   "System Account Locked - Too many failed login attempts (System template)",
+		SystemTemplateActionCodeUnlocked:                   "System Account Unlocked - Unlock confirmation (System template)",
 	}
 }
 
@@ -525,4 +565,11 @@ func GetAllActionCodeStrings() []string {
 		result = append(result, code.String())
 	}
 	return result
+}
+
+// IsSystemTemplateCode checks if a template action code is a system template
+// System templates have the "System." prefix (e.g., "System.AUTH.OTP_LOGIN")
+// Tenant templates do not have the "System." prefix (e.g., "AUTH.OTP_LOGIN", "BILLING.INVOICE_GENERATED")
+func IsSystemTemplateCode(code string) bool {
+	return strings.HasPrefix(code, "System.")
 }
