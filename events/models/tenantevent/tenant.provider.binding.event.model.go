@@ -173,3 +173,47 @@ type TenantAppMessagingBindingDeleteEventModel struct {
 	ID       string `bson:"_id" json:"id"`
 	TenantID string `bson:"tenantId" json:"tenantId"`
 }
+
+// ==================== CDN PROVIDER BINDING EVENTS ====================
+
+// TenantCDNProviderBindingInsertEventModel represents a CDN provider binding creation event
+type TenantCDNProviderBindingInsertEventModel struct {
+	ID               string                  `bson:"_id" json:"id"`
+	TenantID         string                  `bson:"tenantId" json:"tenantId"`
+	ProviderID       string                  `bson:"providerId,omitempty" json:"providerId,omitempty"`
+	UseTemplate      bool                    `bson:"useTemplate" json:"useTemplate"`
+	UseParent        bool                    `bson:"useParent,omitempty" json:"useParent,omitempty"`
+	ParentTenantID   string                  `bson:"parentTenantId,omitempty" json:"parentTenantId,omitempty"` // Explicit parent tenant ID when useParent is true
+	TenantConfig     *TenantCDNProviderConfig `bson:"tenantConfig,omitempty" json:"tenantConfig,omitempty"`
+	Priority         int                     `bson:"priority" json:"priority"`
+	IsActive         bool                    `bson:"isActive" json:"isActive"`
+	FailoverOn       bool                    `bson:"failoverOn" json:"failoverOn"`
+	MaxRetries       int                     `bson:"maxRetries,omitempty" json:"maxRetries,omitempty"`
+	Weight           int                     `bson:"weight,omitempty" json:"weight,omitempty"`
+	ResolvedSortCode string                  `bson:"resolvedSortCode,omitempty" json:"resolvedSortCode,omitempty"`
+	Version          int                     `bson:"version" json:"version"`
+}
+
+// TenantCDNProviderBindingUpdateEventModel represents a CDN provider binding update event
+type TenantCDNProviderBindingUpdateEventModel struct {
+	ID               string                  `bson:"_id" json:"id"`
+	TenantID         string                  `bson:"tenantId" json:"tenantId"`
+	ProviderID       string                  `bson:"providerId,omitempty" json:"providerId,omitempty"`
+	UseTemplate      bool                    `bson:"useTemplate" json:"useTemplate"`
+	UseParent        bool                    `bson:"useParent,omitempty" json:"useParent,omitempty"`
+	ParentTenantID   string                  `bson:"parentTenantId,omitempty" json:"parentTenantId,omitempty"` // Explicit parent tenant ID when useParent is true
+	TenantConfig     *TenantCDNProviderConfig `bson:"tenantConfig,omitempty" json:"tenantConfig,omitempty"`
+	Priority         int                     `bson:"priority" json:"priority"`
+	IsActive         bool                    `bson:"isActive" json:"isActive"`
+	FailoverOn       bool                    `bson:"failoverOn" json:"failoverOn"`
+	MaxRetries       int                     `bson:"maxRetries,omitempty" json:"maxRetries,omitempty"`
+	Weight           int                     `bson:"weight,omitempty" json:"weight,omitempty"`
+	ResolvedSortCode string                  `bson:"resolvedSortCode,omitempty" json:"resolvedSortCode,omitempty"`
+	Version          int                     `bson:"version" json:"version"`
+}
+
+// TenantCDNProviderBindingDeleteEventModel represents a CDN provider binding deletion event
+type TenantCDNProviderBindingDeleteEventModel struct {
+	ID       string `bson:"_id" json:"id"`
+	TenantID string `bson:"tenantId" json:"tenantId"`
+}

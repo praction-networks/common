@@ -41,6 +41,9 @@ const (
 	MailServerCreatedSubject     Subject = "mailserver.created"
 	MailServerUpdateSubject      Subject = "mailserver.updated"
 	MailServerDeleteSubject      Subject = "mailserver.deleted"
+	CDNProviderCreatedSubject    Subject = "cdnprovider.created"
+	CDNProviderUpdateSubject     Subject = "cdnprovider.updated"
+	CDNProviderDeleteSubject     Subject = "cdnprovider.deleted"
 	PaymentGatewayCreatedSubject Subject = "paymentgateway.created"
 	PaymentGatewayUpdateSubject  Subject = "paymentgateway.updated"
 	PaymentGatewayDeleteSubject  Subject = "paymentgateway.deleted"
@@ -67,6 +70,9 @@ const (
 	TenantAppMessagingBindingCreatedSubject Subject = "tenant.appmessagingbinding.created"
 	TenantAppMessagingBindingUpdatedSubject Subject = "tenant.appmessagingbinding.updated"
 	TenantAppMessagingBindingDeletedSubject Subject = "tenant.appmessagingbinding.deleted"
+	TenantCDNProviderBindingCreatedSubject  Subject = "tenant.cdnbinding.created"
+	TenantCDNProviderBindingUpdatedSubject  Subject = "tenant.cdnbinding.updated"
+	TenantCDNProviderBindingDeletedSubject  Subject = "tenant.cdnbinding.deleted"
 
 	//Domain User Service Event Initialization
 	TenantUserCreatedSubject          Subject = "tenantuser.created"

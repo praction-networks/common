@@ -216,6 +216,16 @@ type TenantMailServerConfig struct {
 	MailchimpConfig *MailchimpConfig `bson:"mailchimp,omitempty" json:"mailchimp,omitempty"`
 }
 
+type TenantCDNProviderConfig struct {
+	SortCode           string                 `bson:"sortCode" json:"sortCode"`
+	CloudflareConfig   map[string]interface{} `bson:"cloudflare,omitempty" json:"cloudflare,omitempty"`
+	AWSConfig          map[string]interface{} `bson:"aws,omitempty" json:"aws,omitempty"`
+	GCPConfig          map[string]interface{} `bson:"gcp,omitempty" json:"gcp,omitempty"`
+	AzureConfig        map[string]interface{} `bson:"azure,omitempty" json:"azure,omitempty"`
+	DigitalOceanConfig map[string]interface{} `bson:"digitalOcean,omitempty" json:"digitalOcean,omitempty"`
+	BackblazeConfig    map[string]interface{} `bson:"backblaze,omitempty" json:"backblaze,omitempty"`
+}
+
 type KYCProviderTenantConfig struct {
 	ProviderID   string                   `bson:"providerID,omitempty" json:"providerID,omitempty"`
 	UseTemplate  bool                     `bson:"useTemplate" json:"useTemplate"`
