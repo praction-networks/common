@@ -1,5 +1,7 @@
 package constants
 
+import "strings"
+
 // TemplateActionCode represents a template action code following the <DOMAIN>.<ACTION>[.<VARIANT>] format
 type TemplateActionCode string
 
@@ -47,15 +49,31 @@ const (
 	// -----------------------------------------------------
 	// 4. Billing, Payments & Finance Actions
 	// -----------------------------------------------------
-	TemplateActionCodeBillingInvoiceGenerated    TemplateActionCode = "BILLING.INVOICE_GENERATED"
-	TemplateActionCodeBillingPaymentReceipt      TemplateActionCode = "BILLING.PAYMENT_RECEIPT"
-	TemplateActionCodeBillingPaymentFailed       TemplateActionCode = "BILLING.PAYMENT_FAILED"
-	TemplateActionCodeBillingSubscriptionExpired TemplateActionCode = "BILLING.SUBSCRIPTION_EXPIRED"
-	TemplateActionCodeBillingOrderConfirmation   TemplateActionCode = "BILLING.ORDER_CONFIRMATION"
-	TemplateActionCodeBillingRefundIssued        TemplateActionCode = "BILLING.REFUND_ISSUED"
-	TemplateActionCodeBillingUpcomingRenewal     TemplateActionCode = "BILLING.UPCOMING_RENEWAL"
-	TemplateActionCodeBillingAutoDebitFailed     TemplateActionCode = "BILLING.AUTO_DEBIT_FAILED"
-	TemplateActionCodeBillingLowBalance          TemplateActionCode = "BILLING.LOW_BALANCE"
+	TemplateActionCodeBillingInvoiceGenerated           TemplateActionCode = "BILLING.INVOICE_GENERATED"
+	TemplateActionCodeBillingPaymentReceipt             TemplateActionCode = "BILLING.PAYMENT_RECEIPT"
+	TemplateActionCodeBillingPaymentFailed              TemplateActionCode = "BILLING.PAYMENT_FAILED"
+	TemplateActionCodeBillingSubscriptionExpiring       TemplateActionCode = "BILLING.SUBSCRIPTION_EXPIRING"
+	TemplateActionCodeBillingSubscriptionExpired        TemplateActionCode = "BILLING.SUBSCRIPTION_EXPIRED"
+	TemplateActionCodeBillingOrderConfirmation          TemplateActionCode = "BILLING.ORDER_CONFIRMATION"
+	TemplateActionCodeBillingRefundIssued               TemplateActionCode = "BILLING.REFUND_ISSUED"
+	TemplateActionCodeBillingUpcomingRenewal            TemplateActionCode = "BILLING.UPCOMING_RENEWAL"
+	TemplateActionCodeBillingAutoDebitFailed            TemplateActionCode = "BILLING.AUTO_DEBIT_FAILED"
+	TemplateActionCodeBillingLowBalance                 TemplateActionCode = "BILLING.LOW_BALANCE"
+	TemplateActionCodeBillingSubscriptionRenewal        TemplateActionCode = "BILLING.SUBSCRIPTION_RENEWAL"
+	TemplateActionCodeBillingSubscriptionRenewalFailed  TemplateActionCode = "BILLING.SUBSCRIPTION_RENEWAL_FAILED"
+	TemplateActionCodeBillingSubscriptionRenewalSuccess TemplateActionCode = "BILLING.SUBSCRIPTION_RENEWAL_SUCCESS"
+	TemplateActionCodeBillingInvoiceOverdue             TemplateActionCode = "BILLING.INVOICE_OVERDUE"
+	TemplateActionCodeBillingInvoicePaid                TemplateActionCode = "BILLING.INVOICE_PAID"
+	TemplateActionCodeBillingInvoiceGeneratedOverdue    TemplateActionCode = "BILLING.INVOICE_GENERATED_OVERDUE"
+	TemplateActionCodeBillingPaymentInitiated           TemplateActionCode = "BILLING.PAYMENT_INITIATED"
+	TemplateActionCodeBillingPaymentProcessing          TemplateActionCode = "BILLING.PAYMENT_PROCESSING"
+	TemplateActionCodeBillingPaymentReversed            TemplateActionCode = "BILLING.PAYMENT_REVERSED"
+	TemplateActionCodeBillingPaymentRefundRequested     TemplateActionCode = "BILLING.REFUND_REQUESTED"
+	TemplateActionCodeBillingLateFeeApplied             TemplateActionCode = "BILLING.LATE_FEE_APPLIED"
+	TemplateActionCodeBillingCreditApplied              TemplateActionCode = "BILLING.CREDIT_APPLIED"
+	TemplateActionCodeBillingAutoDebitSuccess           TemplateActionCode = "BILLING.AUTO_DEBIT_SUCCESS"
+
+
 
 	// -----------------------------------------------------
 	// 5. Network Management System (NMS) — SNMP / Poller / Alarms Actions
@@ -189,6 +207,22 @@ const (
 	TemplateActionCodeCustomerRenewalReminder      TemplateActionCode = "CUSTOMER.RENEWAL_REMINDER"
 	TemplateActionCodeCustomerChurnRisk            TemplateActionCode = "CUSTOMER.CHURN_RISK"
 	TemplateActionCodeCustomerDisconnected         TemplateActionCode = "CUSTOMER.DISCONNECTED"
+
+	// -----------------------------------------------------
+	// 15. System Templates (System-level notifications)
+	// These templates are owned by System tenants only
+	// Format: System.<DOMAIN>.<ACTION>
+	// -----------------------------------------------------
+	SystemTemplateActionCodeOTPLogin            TemplateActionCode = "System.AUTH.OTP_LOGIN"
+	SystemTemplateActionCodePasswordRecovery    TemplateActionCode = "System.AUTH.PASSWORD_RECOVERY"
+	SystemTemplateActionCodePasswordChanged     TemplateActionCode = "System.AUTH.PASSWORD_CHANGED"
+	SystemTemplateActionCodeNewDeviceLogin      TemplateActionCode = "System.AUTH.NEW_DEVICE_LOGIN"
+	SystemTemplateActionCodeAccountVerification TemplateActionCode = "System.AUTH.ACCOUNT_VERIFICATION"
+	SystemTemplateActionCodeMFAEnabled          TemplateActionCode = "System.AUTH.MFA_ENABLED"
+	SystemTemplateActionCodeMFADisabled         TemplateActionCode = "System.AUTH.MFA_DISABLED"
+	SystemTemplateActionCodeSuspiciousLogin     TemplateActionCode = "System.AUTH.SUSPICIOUS_LOGIN"
+	SystemTemplateActionCodeLockedOut           TemplateActionCode = "System.AUTH.LOCKED_OUT"
+	SystemTemplateActionCodeUnlocked            TemplateActionCode = "System.AUTH.UNLOCKED"
 )
 
 // String returns the string representation of the action code
@@ -244,12 +278,26 @@ func GetAllActionCodes() map[TemplateActionCode]bool {
 		TemplateActionCodeBillingInvoiceGenerated:           true,
 		TemplateActionCodeBillingPaymentReceipt:             true,
 		TemplateActionCodeBillingPaymentFailed:              true,
+		TemplateActionCodeBillingSubscriptionExpiring:       true,
 		TemplateActionCodeBillingSubscriptionExpired:        true,
 		TemplateActionCodeBillingOrderConfirmation:          true,
 		TemplateActionCodeBillingRefundIssued:               true,
 		TemplateActionCodeBillingUpcomingRenewal:            true,
 		TemplateActionCodeBillingAutoDebitFailed:            true,
 		TemplateActionCodeBillingLowBalance:                 true,
+		TemplateActionCodeBillingSubscriptionRenewal:        true,
+		TemplateActionCodeBillingSubscriptionRenewalFailed:  true,
+		TemplateActionCodeBillingSubscriptionRenewalSuccess: true,
+		TemplateActionCodeBillingInvoiceOverdue:             true,
+		TemplateActionCodeBillingInvoicePaid:                true,
+		TemplateActionCodeBillingInvoiceGeneratedOverdue:    true,
+		TemplateActionCodeBillingPaymentInitiated:           true,
+		TemplateActionCodeBillingPaymentProcessing:          true,
+		TemplateActionCodeBillingPaymentReversed:            true,
+		TemplateActionCodeBillingPaymentRefundRequested:     true,
+		TemplateActionCodeBillingLateFeeApplied:             true,
+		TemplateActionCodeBillingCreditApplied:              true,
+		TemplateActionCodeBillingAutoDebitSuccess:           true,
 		TemplateActionCodeNMSDeviceDown:                     true,
 		TemplateActionCodeNMSDeviceUp:                       true,
 		TemplateActionCodeNMSMaintenanceAlert:               true,
@@ -339,6 +387,17 @@ func GetAllActionCodes() map[TemplateActionCode]bool {
 		TemplateActionCodeCustomerChurnRisk:                 true,
 		TemplateActionCodeCustomerDisconnected:              true,
 		TemplateActionCodeHotSpotLoginOTP:                   true,
+		// System templates (System.* prefix)
+		SystemTemplateActionCodeOTPLogin:                     true,
+		SystemTemplateActionCodePasswordRecovery:             true,
+		SystemTemplateActionCodePasswordChanged:              true,
+		SystemTemplateActionCodeNewDeviceLogin:               true,
+		SystemTemplateActionCodeAccountVerification:          true,
+		SystemTemplateActionCodeMFAEnabled:                   true,
+		SystemTemplateActionCodeMFADisabled:                  true,
+		SystemTemplateActionCodeSuspiciousLogin:              true,
+		SystemTemplateActionCodeLockedOut:                    true,
+		SystemTemplateActionCodeUnlocked:                     true,
 	}
 }
 
@@ -375,12 +434,26 @@ func GetActionCodeDescriptions() map[TemplateActionCode]string {
 		TemplateActionCodeBillingInvoiceGenerated:           "Invoice generated",
 		TemplateActionCodeBillingPaymentReceipt:             "Payment receipt confirmation",
 		TemplateActionCodeBillingPaymentFailed:              "Payment failed",
+		TemplateActionCodeBillingSubscriptionExpiring:       "Subscription expiring",
 		TemplateActionCodeBillingSubscriptionExpired:        "Subscription expired",
 		TemplateActionCodeBillingOrderConfirmation:          "Order confirmation",
 		TemplateActionCodeBillingRefundIssued:               "Refund issued",
 		TemplateActionCodeBillingUpcomingRenewal:            "Upcoming subscription renewal",
 		TemplateActionCodeBillingAutoDebitFailed:            "Auto debit failed",
 		TemplateActionCodeBillingLowBalance:                 "Low balance alert",
+		TemplateActionCodeBillingSubscriptionRenewal:        "Subscription renewal",
+		TemplateActionCodeBillingSubscriptionRenewalFailed:  "Subscription renewal failed",
+		TemplateActionCodeBillingSubscriptionRenewalSuccess: "Subscription renewal successful",
+		TemplateActionCodeBillingInvoiceOverdue:             "Invoice overdue",
+		TemplateActionCodeBillingInvoicePaid:                "Invoice paid",
+		TemplateActionCodeBillingInvoiceGeneratedOverdue:    "Invoice generated overdue",
+		TemplateActionCodeBillingPaymentInitiated:           "Payment initiated",
+		TemplateActionCodeBillingPaymentProcessing:          "Payment processing",
+		TemplateActionCodeBillingPaymentReversed:            "Payment reversed",
+		TemplateActionCodeBillingPaymentRefundRequested:     "Payment refund requested",
+		TemplateActionCodeBillingLateFeeApplied:             "Late fee applied",
+		TemplateActionCodeBillingCreditApplied:              "Credit applied",
+		TemplateActionCodeBillingAutoDebitSuccess:           "Auto debit successful",	
 		TemplateActionCodeNMSDeviceDown:                     "Device offline alert",
 		TemplateActionCodeNMSDeviceUp:                       "Device online alert",
 		TemplateActionCodeNMSMaintenanceAlert:               "Maintenance scheduled alert",
@@ -470,6 +543,17 @@ func GetActionCodeDescriptions() map[TemplateActionCode]string {
 		TemplateActionCodeCustomerChurnRisk:                 "Churn Risk Alert - At-risk customer detected",
 		TemplateActionCodeCustomerDisconnected:              "Customer Disconnected - Permanent disconnection",
 		TemplateActionCodeHotSpotLoginOTP:                   "Hotspot Login OTP - One-Time Password for login",
+		// System template descriptions
+		SystemTemplateActionCodeOTPLogin:                    "System OTP Login - One-Time Password for login (System template)",
+		SystemTemplateActionCodePasswordRecovery:           "System Password Recovery - Password recovery token (System template)",
+		SystemTemplateActionCodePasswordChanged:            "System Password Changed - Password change confirmation (System template)",
+		SystemTemplateActionCodeNewDeviceLogin:             "System New Device Login - Login alert for new device (System template)",
+		SystemTemplateActionCodeAccountVerification:        "System Account Verification - Verification link (System template)",
+		SystemTemplateActionCodeMFAEnabled:                 "System MFA Enabled - Multi-factor authentication activated (System template)",
+		SystemTemplateActionCodeMFADisabled:                "System MFA Disabled - Multi-factor authentication disabled (System template)",
+		SystemTemplateActionCodeSuspiciousLogin:           "System Suspicious Login - Unusual login detected (System template)",
+		SystemTemplateActionCodeLockedOut:                   "System Account Locked - Too many failed login attempts (System template)",
+		SystemTemplateActionCodeUnlocked:                   "System Account Unlocked - Unlock confirmation (System template)",
 	}
 }
 
@@ -481,4 +565,11 @@ func GetAllActionCodeStrings() []string {
 		result = append(result, code.String())
 	}
 	return result
+}
+
+// IsSystemTemplateCode checks if a template action code is a system template
+// System templates have the "System." prefix (e.g., "System.AUTH.OTP_LOGIN")
+// Tenant templates do not have the "System." prefix (e.g., "AUTH.OTP_LOGIN", "BILLING.INVOICE_GENERATED")
+func IsSystemTemplateCode(code string) bool {
+	return strings.HasPrefix(code, "System.")
 }
