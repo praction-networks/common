@@ -14,6 +14,7 @@ const (
 	CaptivePortalStream    StreamName = "CaptivePortalStream"
 	PlanStream             StreamName = "PlanStream"
 	LogEngineStream        StreamName = "LogEngineStream"
+	TicketStream           StreamName = "TicketStream"
 )
 
 // Global Stream names as constants
@@ -165,6 +166,34 @@ const (
 	CouponCreatedSubject Subject = "coupon.created"
 	CouponUpdatedSubject Subject = "coupon.updated"
 	CouponDeletedSubject Subject = "coupon.deleted"
+
+	// Ticket Service Events
+	TicketCreatedSubject            Subject = "ticket.created"
+	TicketUpdatedSubject            Subject = "ticket.updated"
+	TicketAssignedSubject           Subject = "ticket.assigned"
+	TicketStatusChangedSubject      Subject = "ticket.status.changed"
+	TicketResolvedSubject           Subject = "ticket.resolved"
+	TicketClosedSubject             Subject = "ticket.closed"
+	TicketEscalatedSubject          Subject = "ticket.escalated"
+	TicketReopenedSubject           Subject = "ticket.reopened"
+	TicketMergedSubject             Subject = "ticket.merged"
+	TicketSplitSubject              Subject = "ticket.split"
+	TicketCommentAddedSubject       Subject = "ticket.comment.added"
+	TicketCustomerRepliedSubject    Subject = "ticket.customer.replied"
+	TicketAttachmentAddedSubject    Subject = "ticket.attachment.added"
+	TicketSLABreachedSubject        Subject = "ticket.sla.breached"
+	TicketSLAChangedSubject         Subject = "ticket.sla.changed"
+	TicketAppointmentScheduledSubject     Subject = "ticket.appointment.scheduled"
+	TicketAppointmentStatusChangedSubject  Subject = "ticket.appointment.status.changed"
+	TicketChecklistCreatedSubject          Subject = "ticket.checklist.created"
+	TicketChecklistItemCompletedSubject    Subject = "ticket.checklist.item.completed"
+	TicketAssignmentRequestedSubject       Subject = "ticket.assignment.requested"
+	TicketAssignmentApprovedSubject        Subject = "ticket.assignment.approved"
+	TicketAssignmentDeniedSubject          Subject = "ticket.assignment.denied"
+	TicketTechnicianStatusUpdateSubject     Subject = "ticket.technician.status.update"
+	TicketClassifiedSubject                Subject = "ticket.classified"
+	TicketAutoLinkedSubject                Subject = "ticket.auto.linked"
+	TicketCreatedFromEmailSubject          Subject = "ticket.created.from.email"
 
 )
 
@@ -370,6 +399,45 @@ var Streams = map[StreamName]StreamMetadata{
 			CouponCreatedSubject,
 			CouponUpdatedSubject,
 			CouponDeletedSubject,
+		},
+	},
+	TicketStream: {
+		Name:        TicketStream,
+		Description: "Stream for ticket service events",
+		Subjects: []Subject{
+			// Core Ticket Events
+			TicketCreatedSubject,
+			TicketUpdatedSubject,
+			TicketAssignedSubject,
+			TicketStatusChangedSubject,
+			TicketResolvedSubject,
+			TicketClosedSubject,
+			TicketEscalatedSubject,
+			TicketReopenedSubject,
+			TicketMergedSubject,
+			TicketSplitSubject,
+			// Ticket Interaction Events
+			TicketCommentAddedSubject,
+			TicketCustomerRepliedSubject,
+			TicketAttachmentAddedSubject,
+			// Ticket SLA Events
+			TicketSLABreachedSubject,
+			TicketSLAChangedSubject,
+			// Ticket Appointment Events
+			TicketAppointmentScheduledSubject,
+			TicketAppointmentStatusChangedSubject,
+			// Ticket Checklist Events
+			TicketChecklistCreatedSubject,
+			TicketChecklistItemCompletedSubject,
+			// Ticket Assignment Events
+			TicketAssignmentRequestedSubject,
+			TicketAssignmentApprovedSubject,
+			TicketAssignmentDeniedSubject,
+			// Ticket System Events
+			TicketTechnicianStatusUpdateSubject,
+			TicketClassifiedSubject,
+			TicketAutoLinkedSubject,
+			TicketCreatedFromEmailSubject,
 		},
 	},
 }

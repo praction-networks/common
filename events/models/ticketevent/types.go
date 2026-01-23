@@ -24,6 +24,12 @@ const (
 	SLAStateChangedEventName          EventName = "ticket.sla.changed"
 	AssignmentApprovedEventName       EventName = "ticket.assignment.approved"
 	AssignmentDeniedEventName         EventName = "ticket.assignment.denied"
+	TicketReopenedEventName           EventName = "ticket.reopened"
+	TicketMergedEventName             EventName = "ticket.merged"
+	TicketSplitEventName              EventName = "ticket.split"
+	TicketClassifiedEventName         EventName = "ticket.classified"
+	TicketAutoLinkedEventName         EventName = "ticket.auto.linked"
+	TicketCreatedFromEmailEventName   EventName = "ticket.created.from.email"
 )
 
 // EventHeaders carries metadata accompanying every ticket-domain event.
