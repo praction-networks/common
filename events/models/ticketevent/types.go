@@ -7,7 +7,8 @@ const (
 	TicketCreatedEventName            EventName = "ticket.created"
 	TicketUpdatedEventName            EventName = "ticket.updated"
 	AssignmentRequestedEventName      EventName = "ticket.assignment.requested"
-	TicketCommentAddedEventName       EventName = "ticket.comment.added"
+	TicketCommentAddedEventName       EventName = "ticket.comment.added" // DEPRECATED: Use TicketMessageAddedEventName
+	TicketMessageAddedEventName       EventName = "ticket.message.added"
 	CustomerRepliedEventName          EventName = "ticket.customer.replied"
 	TicketClosedEventName             EventName = "ticket.closed"
 	TicketAttachmentAddedEventName    EventName = "ticket.attachment.added"

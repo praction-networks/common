@@ -1,6 +1,7 @@
 package ticketevent
 
 // TicketCommentAddedEvent captures comments or notes.
+// DEPRECATED: Use TicketMessageAddedEvent instead for better alignment with message naming convention.
 type TicketCommentAddedEvent struct {
 	BaseEvent `json:",inline" bson:",inline"`
 	Payload   TicketCommentAddedPayload `json:"payload" bson:"payload"`
@@ -13,6 +14,25 @@ type TicketCommentAddedPayload struct {
 	AuthorID  string `json:"authorId,omitempty" bson:"authorId,omitempty"`
 	Type      string `json:"type" bson:"type"`
 	Text      string `json:"text" bson:"text"`
+}
+
+// TicketMessageAddedEvent captures messages added to tickets (replaces TicketCommentAddedEvent).
+type TicketMessageAddedEvent struct {
+	BaseEvent `json:",inline" bson:",inline"`
+	Payload   TicketMessageAddedPayload `json:"payload" bson:"payload"`
+}
+
+type TicketMessageAddedPayload struct {
+	TicketID      string  `json:"ticketId" bson:"ticketId"`
+	TenantID      string  `json:"tenantId" bson:"tenantId"`
+	MessageID     string  `json:"messageId" bson:"messageId"`
+	Direction     string  `json:"direction" bson:"direction"` // INBOUND, OUTBOUND, INTERNAL
+	Channel       string  `json:"channel" bson:"channel"`
+	SenderType    string  `json:"senderType" bson:"senderType"` // customer, agent, system
+	SenderID      *string `json:"senderId,omitempty" bson:"senderId,omitempty"`
+	Body          *string `json:"body,omitempty" bson:"body,omitempty"`
+	IsInternal    bool    `json:"isInternal" bson:"isInternal"`
+	AttachmentIDs []string `json:"attachmentIds" bson:"attachmentIds"`
 }
 
 // CustomerRepliedEvent follows inbound replies on tickets.

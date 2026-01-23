@@ -178,7 +178,8 @@ const (
 	TicketReopenedSubject           Subject = "ticket.reopened"
 	TicketMergedSubject             Subject = "ticket.merged"
 	TicketSplitSubject              Subject = "ticket.split"
-	TicketCommentAddedSubject       Subject = "ticket.comment.added"
+	TicketCommentAddedSubject       Subject = "ticket.comment.added" // DEPRECATED: Use TicketMessageAddedSubject
+	TicketMessageAddedSubject       Subject = "ticket.message.added"
 	TicketCustomerRepliedSubject    Subject = "ticket.customer.replied"
 	TicketAttachmentAddedSubject    Subject = "ticket.attachment.added"
 	TicketSLABreachedSubject        Subject = "ticket.sla.breached"
@@ -417,7 +418,8 @@ var Streams = map[StreamName]StreamMetadata{
 			TicketMergedSubject,
 			TicketSplitSubject,
 			// Ticket Interaction Events
-			TicketCommentAddedSubject,
+			TicketCommentAddedSubject, // DEPRECATED: kept for backward compatibility
+			TicketMessageAddedSubject,
 			TicketCustomerRepliedSubject,
 			TicketAttachmentAddedSubject,
 			// Ticket SLA Events
