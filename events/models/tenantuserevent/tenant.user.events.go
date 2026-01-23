@@ -76,6 +76,7 @@ type TenantUserPasswordSetEvent struct {
 type UserPreferences struct {
 	SidebarMenu     *SidebarMenuPreferences     `json:"sidebarMenu,omitempty"`
 	TenantFavorites *TenantFavoritesPreferences `json:"tenantFavorites,omitempty"`
+	Theme           *UserThemePreferences        `json:"theme,omitempty"`
 }
 
 // SidebarMenuPreferences represents sidebar menu organization preferences
@@ -91,6 +92,19 @@ type TenantFavoritesPreferences struct {
 	FavoriteTenantIds []string `json:"favoriteTenantIds,omitempty"` // Starred tenant IDs
 	TenantOrder       []string `json:"tenantOrder,omitempty"`       // Custom ordered tenant IDs
 	UseFavoritesOrder bool     `json:"useFavoritesOrder,omitempty"` // If true, favorites first
+}
+
+// UserThemePreferences represents user-specific theme overrides
+type UserThemePreferences struct {
+	OverrideTenantTheme bool   `json:"overrideTenantTheme,omitempty"`
+	PrimaryColor        string `json:"primaryColor,omitempty"`
+	TextOnPrimary       string `json:"textOnPrimary,omitempty"`
+	AccentColor         string `json:"accentColor,omitempty"`
+	BackgroundColor     string `json:"backgroundColor,omitempty"`
+	SurfaceColor        string `json:"surfaceColor,omitempty"`
+	BorderColor         string `json:"borderColor,omitempty"`
+	PreferredLanguage   string `json:"preferredLanguage,omitempty"`
+	// Note: Timezone is tenant-specific only, not user-specific
 }
 
 // TenantUserPreferencesUpdatedEvent is published when user preferences are updated
