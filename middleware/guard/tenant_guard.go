@@ -162,3 +162,54 @@ func ExtractFromPath(paramName string) TenantIDExtractor {
 		return chi.URLParam(r, paramName)
 	}
 }
+
+// AccessibleTenantsMiddleware injects the list of accessible tenant IDs into the request context
+// This list includes the context tenant + all its descendants (children, grandchildren, etc.)
+// Handlers can use helpers.GetAccessibleTenants(ctx) to retrieve this list for query filtering
+//
+// Usage:
+//
+//	r.Use(guard.AccessibleTenantsMiddleware(cache))
+//
+// Then in handler/repository:
+//
+//	accessibleTenants := helpers.GetAccessibleTenants(ctx)
+//	filter := bson.M{"tenantId": bson.M{"$in": accessibleTenants}}
+//
+// Note: For system users, this middleware is SKIPPED (no list injected).
+// Handlers should check if GetAccessibleTenants returns nil (system user case) and handle accordingly.
+func AccessibleTenantsMiddleware(cache hierarchy.TenantHierarchyCache) func(http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			ctx := r.Context()
+
+			// System users: Skip injection (they have access to all tenants)
+			if helpers.IsSystemUser(ctx) {
+				next.ServeHTTP(w, r)
+				return
+			}
+
+			// Get context tenant ID
+			contextTenantID := helpers.GetTenantID(ctx)
+			if contextTenantID == "" {
+				// No tenant context - skip injection
+				next.ServeHTTP(w, r)
+				return
+			}
+
+			// Compute accessible tenants: self + all descendants
+			descendants := cache.GetDescendants(contextTenantID)
+			accessibleTenants := append([]string{contextTenantID}, descendants...)
+
+			// Inject into context
+			ctx = helpers.SetAccessibleTenants(ctx, accessibleTenants)
+
+			logger.Debug("Injected accessible tenants into context",
+				"contextTenant", contextTenantID,
+				"totalAccessible", len(accessibleTenants))
+
+			next.ServeHTTP(w, r.WithContext(ctx))
+		})
+	}
+}
+

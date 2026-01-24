@@ -72,28 +72,112 @@ graph LR
 
 ### **Integration Workflow for New Services**
 
-To add the guard to `ticket-service` or `auth-service`:
+To add the guard to any service (e.g., `subscriber-service`, `ticket-service`, `auth-service`):
 
-1.  **Wiring (`wire.go`)**:
-    -   Inject `hierarchy.NewInMemoryCache`.
-    -   Inject `events.NewNatsListener` (from common).
+#### **Step 1: Add to Container (`dependency/container.go`)**
+```go
+import "github.com/praction-networks/common/caching/hierarchy"
 
-2.  **Startup (`app.start.go`)**:
-    -   **Warm Up**: Fetch initial snapshot from `tenant-service` (optional but recommended for cold starts).
-    -   **Sync**: Start `cache.StartSync(streamManager)` to begin consuming real-time events.
+type AppContainer struct {
+    // ... other fields
+    TenantHierarchyCache hierarchy.TenantHierarchyCache
+}
+```
 
-3.  **Router (`api.go`)**:
-    -   Apply the middleware to tenant-scoped routes:
-    ```go
-    // Protect /api/v1/tickets/{tenantID}
-    r.Use(guard.TenantHierarchyGuardMiddleware(
-        container.CommonTenantCache,
-        guard.ExtractFromPath("tenantID"),
-    ))
-    ```
+#### **Step 2: Wire Provider (`cmd/wire/injector.go`)**
+```go
+import "github.com/praction-networks/common/caching/hierarchy"
 
-This ensures that `ticket-service` can independently assert:
-> *"I know for a fact that User from Tenant A is allowed to see Tenant B's tickets because my local graph says A is an ancestor of B."*
+var hierarchyCacheSet = wire.NewSet(
+    ProvideTenantHierarchyCache,
+    wire.Bind(new(hierarchy.TenantHierarchyCache), new(*hierarchy.InMemoryCache)),
+)
+
+func ProvideTenantHierarchyCache() *hierarchy.InMemoryCache {
+    return hierarchy.NewInMemoryCache()
+}
+
+// Add hierarchyCacheSet to InitializeContainer's wire.Build()
+```
+
+#### **Step 3: Repository Method (for MongoDB-based services)**
+Add `GetAllTenants()` to your tenant event repository to load initial cache data:
+```go
+// In TenantEventRepository interface:
+GetAllTenants(ctx context.Context) ([]*models.TenantEventModel, error)
+```
+
+#### **Step 4: App Startup (`app/app.start.go`)**
+Initialize cache with 2-phase pattern: MongoDB load → NATS sync
+```go
+import (
+    "github.com/praction-networks/common/events"
+    "github.com/praction-networks/common/helpers"
+)
+
+// Phase 1: Load from MongoDB (source of truth at startup)
+if a.container.TenantEventRepository != nil {
+    tenants, _ := a.container.TenantEventRepository.GetAllTenants(ctx)
+    hierarchyData := make([]*helpers.TenantHierarchyData, 0, len(tenants))
+    for _, t := range tenants {
+        hierarchyData = append(hierarchyData, &helpers.TenantHierarchyData{
+            ID:        t.ID,
+            Ancestors: t.Ancestors,
+            Level:     t.Level,
+            IsSystem:  t.IsSystem,
+        })
+    }
+    a.container.TenantHierarchyCache.LoadInitialData(hierarchyData)
+}
+
+// Phase 2: Start NATS sync for runtime updates
+js, _ := a.natsClient.GetJetStreamClient()
+streamManager := events.NewStreamManager(js)
+a.container.TenantHierarchyCache.StartSync(ctx, streamManager)
+```
+
+#### **Step 5: Router (`api.go`)**
+Apply middleware to protected routes:
+```go
+import "github.com/praction-networks/common/middleware/guard"
+
+// For routes with tenantID in path (e.g., /tenant/{tenantId}/resource)
+r.Use(guard.TenantHierarchyGuardMiddleware(
+    container.TenantHierarchyCache,
+    guard.ExtractFromPath("tenantId"),
+))
+
+// For routes using X-Tenant-ID header (e.g., subscriber-service)
+r.Use(guard.TenantHierarchyGuardMiddleware(
+    container.TenantHierarchyCache,
+    func(r *http.Request) string { return r.Header.Get("X-Tenant-ID") },
+))
+```
+
+### **Cache Lifecycle**
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                       Service Startup                           │
+├─────────────────────────────────────────────────────────────────┤
+│  1. NewInMemoryCache() → Empty cache created                    │
+│  2. GetAllTenants() → Fetch from local MongoDB collection       │
+│  3. LoadInitialData() → Populate cache with all tenants         │
+│  4. StartSync(streamManager) → Subscribe to NATS TenantStream   │
+├─────────────────────────────────────────────────────────────────┤
+│                       Runtime Updates                           │
+├─────────────────────────────────────────────────────────────────┤
+│  NATS TenantCreated → cache.Set()                               │
+│  NATS TenantUpdated → cache.Set() (merge with existing)         │
+│  NATS TenantDeleted → cache.Remove()                            │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+This ensures:
+- **Warm on Startup**: Cache is populated from existing data before serving traffic
+- **Eventually Consistent**: Runtime changes propagate via NATS events
+- **Decentralized**: Each service owns its cache; no network calls for auth checks
+
 
 ## 📈 **Production Readiness & Scaling Analysis**
 

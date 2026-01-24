@@ -18,10 +18,12 @@ import (
 type contextKey struct{ name string }
 
 var (
-	RequestIDKey = &contextKey{"request_id"}
-	UserIDKey    = &contextKey{"user_id"}
-	TenantIDKey  = &contextKey{"tenant_id"}
+	RequestIDKey         = &contextKey{"request_id"}
+	UserIDKey            = &contextKey{"user_id"}
+	TenantIDKey          = &contextKey{"tenant_id"}
+	AccessibleTenantsKey = &contextKey{"accessible_tenants"}
 )
+
 
 var (
 	chromeRegex         = regexp.MustCompile(`Chrome/([\d\.]+)`)
@@ -236,6 +238,23 @@ func GetTenantID(ctx context.Context) string {
 	}
 	return ""
 }
+
+// SetAccessibleTenants sets the list of accessible tenant IDs in the context
+// This includes the context tenant itself + all its descendants
+func SetAccessibleTenants(ctx context.Context, tenantIDs []string) context.Context {
+	return context.WithValue(ctx, AccessibleTenantsKey, tenantIDs)
+}
+
+// GetAccessibleTenants retrieves the list of accessible tenant IDs from the context
+// This list typically includes the user's context tenant + all its descendant tenants
+// Returns nil if not set (e.g., for system users who have access to all tenants)
+func GetAccessibleTenants(ctx context.Context) []string {
+	if tenantIDs, ok := ctx.Value(AccessibleTenantsKey).([]string); ok {
+		return tenantIDs
+	}
+	return nil
+}
+
 
 func simplifyUserAgent(ua string) string {
 	// Check for mobile browsers first (they often contain "Mobile" or "Android" or "iPhone")

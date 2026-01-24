@@ -27,12 +27,18 @@ type TenantHierarchyCache interface {
 	// IsChild checks if childID is a descendant of parentID (direct or indirect)
 	IsChild(parentID, childID string) bool
 
+	// GetDescendants returns all descendant tenant IDs for a given parent tenant
+	// This includes all children, grandchildren, etc. (recursive)
+	// Used for computing accessible tenants for query filtering
+	GetDescendants(parentID string) []string
+
 	// StartSync starts the NATS listener to keep the cache updated
 	StartSync(ctx context.Context, streamManager *events.JsStreamManager) error
 
 	// LoadInitialData populates the cache with initial data (e.g. from an API call)
 	LoadInitialData(tenants []*helpers.TenantHierarchyData)
 }
+
 
 // InMemoryCache implements TenantHierarchyCache using a thread-safe map
 type InMemoryCache struct {
@@ -91,7 +97,31 @@ func (c *InMemoryCache) IsChild(parentID, childID string) bool {
 	return false
 }
 
+// GetDescendants returns all descendant tenant IDs for a given parent tenant
+// This is computed by iterating through all tenants and checking if parentID is in their Ancestors
+func (c *InMemoryCache) GetDescendants(parentID string) []string {
+	c.mutex.RLock()
+	defer c.mutex.RUnlock()
+
+	var descendants []string
+	for tenantID, data := range c.cache {
+		// Skip the parent itself
+		if tenantID == parentID {
+			continue
+		}
+		// Check if parentID is in this tenant's ancestors (meaning this is a descendant)
+		for _, ancestorID := range data.Ancestors {
+			if ancestorID == parentID {
+				descendants = append(descendants, tenantID)
+				break
+			}
+		}
+	}
+	return descendants
+}
+
 func (c *InMemoryCache) LoadInitialData(tenants []*helpers.TenantHierarchyData) {
+
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 	for _, t := range tenants {
