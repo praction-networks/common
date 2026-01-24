@@ -178,6 +178,34 @@ This ensures:
 - **Eventually Consistent**: Runtime changes propagate via NATS events
 - **Decentralized**: Each service owns its cache; no network calls for auth checks
 
+### **Accessible Tenants for Query Filtering**
+
+Beyond access validation, the guard provides **accessible tenant lists** for filtering queries:
+
+```go
+// In api.go - apply after TenantHierarchyGuardMiddleware
+r.Use(guard.AccessibleTenantsMiddleware(container.TenantHierarchyCache))
+```
+
+**In Handler/Repository:**
+```go
+// Get list of tenants the user can access (self + all descendants)
+accessibleTenants := helpers.GetAccessibleTenants(ctx)
+
+if accessibleTenants != nil {
+    // Normal user: filter to accessible tenants only
+    filter := bson.M{"tenantId": bson.M{"$in": accessibleTenants}}
+} else {
+    // System user: no filtering (access to all)
+    filter := bson.M{}
+}
+```
+
+| User Type | `GetAccessibleTenants()` Returns | Query Behavior |
+|-----------|----------------------------------|----------------|
+| Normal User | `["TenantA", "ChildB", "ChildC"]` | Filter to accessible tenants |
+| System User | `nil` | No filter (all tenants) |
+
 
 ## 📈 **Production Readiness & Scaling Analysis**
 

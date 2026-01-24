@@ -176,21 +176,25 @@ func ExtractFromPath(paramName string) TenantIDExtractor {
 //	accessibleTenants := helpers.GetAccessibleTenants(ctx)
 //	filter := bson.M{"tenantId": bson.M{"$in": accessibleTenants}}
 //
-// Note: For system users, this middleware is SKIPPED (no list injected).
-// Handlers should check if GetAccessibleTenants returns nil (system user case) and handle accordingly.
+// Note: For system users WITHOUT a tenant context, this middleware is SKIPPED (no list injected).
+// For system users WITH a tenant context, accessible tenants are computed for that context.
+// Handlers should check if GetAccessibleTenants returns nil (global access case) and handle accordingly.
 func AccessibleTenantsMiddleware(cache hierarchy.TenantHierarchyCache) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			ctx := r.Context()
 
-			// System users: Skip injection (they have access to all tenants)
-			if helpers.IsSystemUser(ctx) {
+			// Get context tenant ID first
+			contextTenantID := helpers.GetTenantID(ctx)
+			
+			// System users WITHOUT a tenant context: Skip injection (global access)
+			// System users WITH a tenant context: Proceed to compute accessible tenants
+			if helpers.IsSystemUser(ctx) && contextTenantID == "" {
+				logger.Debug("System user without tenant context - granting global access")
 				next.ServeHTTP(w, r)
 				return
 			}
 
-			// Get context tenant ID
-			contextTenantID := helpers.GetTenantID(ctx)
 			if contextTenantID == "" {
 				// No tenant context - skip injection
 				next.ServeHTTP(w, r)
@@ -206,7 +210,8 @@ func AccessibleTenantsMiddleware(cache hierarchy.TenantHierarchyCache) func(http
 
 			logger.Debug("Injected accessible tenants into context",
 				"contextTenant", contextTenantID,
-				"totalAccessible", len(accessibleTenants))
+				"totalAccessible", len(accessibleTenants),
+				"isSystemUser", helpers.IsSystemUser(ctx))
 
 			next.ServeHTTP(w, r.WithContext(ctx))
 		})
