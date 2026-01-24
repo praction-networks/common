@@ -3,6 +3,7 @@ package guard
 import (
 	"net/http"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/praction-networks/common/appError"
 	"github.com/praction-networks/common/caching/hierarchy"
 	"github.com/praction-networks/common/helpers"
@@ -88,21 +89,76 @@ func TenantHierarchyGuardMiddleware(
 	}
 }
 
+// SystemLevelGuardMiddleware creates a middleware that protects system-level routes
+// Rules:
+// 1. System Users (SuperAdmin) -> ALLOW
+// 2. System Tenant -> ALLOW
+// 3. Otherwise -> DENY
+func SystemLevelGuardMiddleware(cache hierarchy.TenantHierarchyCache) func(http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			// 1. System Users: Allow
+			if helpers.IsSystemUser(r.Context()) {
+				next.ServeHTTP(w, r)
+				return
+			}
+
+			// 2. Get Context Tenant
+			contextTenantID := helpers.GetTenantID(r.Context())
+			if contextTenantID == "" {
+				helpers.HandleAppError(w, appError.New(
+					appError.UnauthorizedAccess,
+					"Tenant context is required",
+					http.StatusForbidden,
+					nil,
+				))
+				return
+			}
+
+			// 3. Check if Context Tenant is System Tenant
+			// We use the cache to look up the tenant details
+			tenantData, exists := cache.Get(contextTenantID)
+			if !exists {
+				// If not in cache, we cannot verify if it's system.
+				// For security, we must deny or fallback.
+				// Assuming cache is source of truth for "System" flag.
+				// However, if cache is partial, this might be issue.
+				// But we load FULL cache at startup.
+				logger.Warn("Access denied: Tenant not found in hierarchy cache during system check", "tenantID", contextTenantID)
+				helpers.HandleAppError(w, appError.New(
+					appError.UnauthorizedAccess,
+					"Access denied: Tenant verification failed",
+					http.StatusForbidden,
+					nil,
+				))
+				return
+			}
+
+			if tenantData.IsSystem {
+				// Allowed: System Tenant
+				next.ServeHTTP(w, r)
+				return
+			}
+
+			// 4. Access Denied
+			logger.Warn("Access denied: System-level resource requires system tenant or system user",
+				"contextTenant", contextTenantID)
+
+			helpers.HandleAppError(w, appError.New(
+				appError.UnauthorizedAccess,
+				"Access denied: system-level resources are only accessible by system tenant or system users",
+				http.StatusForbidden,
+				nil,
+			))
+		})
+	}
+}
+
 // Extractor Helpers
 
 // ExtractFromPath returns an extractor that pulls ID from URL path param (Chi style)
-// Note: This depends on Chi context being available.
-// If generic, might need to rely on request context values set by router.
 func ExtractFromPath(paramName string) TenantIDExtractor {
 	return func(r *http.Request) string {
-		// We rely on "github.com/go-chi/chi/v5" usually, but common shouldn't depend on chi if possible?
-		// But helpers already might.
-		// For standard library compatibility, we can leave this to the caller to implement the function.
-		// BUT, convenient helpers are good.
-		// Let's assume standard chi usage for now based on project standards.
-		// If we can't import chi here (circular or dep bloat), we leave it out.
-		// Let's implement a simple context key lookup just in case the router puts it there.
-		// Or easier: Service implements the extractor calling chi.URLParam.
-		return ""
+		return chi.URLParam(r, paramName)
 	}
 }
