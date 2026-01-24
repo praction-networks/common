@@ -3,7 +3,6 @@ package hierarchy
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"sync"
 	"time"
 

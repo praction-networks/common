@@ -21,11 +21,131 @@ Request → Custom Auth Service (Auth + Business) → Casbin (Authz) → Respons
 - **Permission Enforcement**: Context-aware permission validation
 - **Role Management**: Dynamic role and permission management
 
-## 🎯 **Multi-Zone/Department Assignment System**
+## 🛡️ **Universal Tenant Hierarchy Guard**
+
+The library enables a **Distributed Guard Pattern** to enforce tenant data isolation across all microservices (`ticket-service`, `billing-service`, etc.) without centralized bottlenecks.
+
+### **Core Concept: "Distributed In-Memory Replication"**
+
+Instead of calling Redis or `tenant-service` API for every request (Network Latency), each service maintains its own **Local In-Memory Tenant Database** that is event-driven and eventually consistent.
+
+**Why In-Memory > Redis for this use case?**
+1.  **Zero Latency**: Permission checks happen in nanoseconds (RAM lookup) vs milliseconds (Redis RTT).
+2.  **Decentralization**: If Redis or Tenant Service goes down, other services continue to function using their last known valid state (Cached).
+3.  **Isolation**: Each service owns its operational data; no "Noisy Neighbor" problems on a shared Redis instance.
+
+### **Architecture Topology**
+
+```mermaid
+graph LR
+    subgraph "Source of Truth"
+        TenantService[Tenant Service] -->|Publish| NATS((NATS Stream))
+    end
+
+    subgraph "Consumer Service 1"
+        TicketService[Ticket Service]
+        TicketCache[(Local RAM Cache)]
+        NATS -->|Consume| TicketService
+        TicketService -->|Update| TicketCache
+        TicketService -->|Read| TicketCache
+    end
+
+    subgraph "Consumer Service 2"
+        BillingService[Billing Service]
+        BillingCache[(Local RAM Cache)]
+        NATS -->|Consume| BillingService
+        BillingService -->|Update| BillingCache
+        BillingService -->|Read| BillingCache
+    end
+```
+
+### **Core Components**
+
+1.  **`caching/hierarchy` (The Local Database)**
+    -   Stores a lightweight graph of all tenants (`ID`, `Ancestors`, `Level`).
+    -   Kept in sync via `TenantStream` events (`TenantCreated`, `TenantUpdated`, `TenantDeleted`).
+    -   **Memory Efficient**: Only stores strictly necessary security context, not full profiles.
+
+2.  **`middleware/guard` (The Enforcer)**
+    -   **TenantHierarchyGuardMiddleware**: Blocks traffic unless `ResourceTenant` is a descendant of `ContextTenant`.
+    -   **SystemLevelGuardMiddleware**: Restricts access to System Tenants or Super Admins.
+
+### **Integration Workflow for New Services**
+
+To add the guard to `ticket-service` or `auth-service`:
+
+1.  **Wiring (`wire.go`)**:
+    -   Inject `hierarchy.NewInMemoryCache`.
+    -   Inject `events.NewNatsListener` (from common).
+
+2.  **Startup (`app.start.go`)**:
+    -   **Warm Up**: Fetch initial snapshot from `tenant-service` (optional but recommended for cold starts).
+    -   **Sync**: Start `cache.StartSync(streamManager)` to begin consuming real-time events.
+
+3.  **Router (`api.go`)**:
+    -   Apply the middleware to tenant-scoped routes:
+    ```go
+    // Protect /api/v1/tickets/{tenantID}
+    r.Use(guard.TenantHierarchyGuardMiddleware(
+        container.CommonTenantCache,
+        guard.ExtractFromPath("tenantID"),
+    ))
+    ```
+
+This ensures that `ticket-service` can independently assert:
+> *"I know for a fact that User from Tenant A is allowed to see Tenant B's tickets because my local graph says A is an ancestor of B."*
+
+## 📈 **Production Readiness & Scaling Analysis**
+
+### **1. Memory Footprint at Scale (1M - 10M Tenants)**
+
+The distributed in-memory pattern trades **Relatively Cheap RAM** for **Zero-Latency Authorization**.
+
+| Tenant Count | Struct Overhead (Est) | Ancillary Maps | Total RAM Usage | Feasibility |
+| :--- | :--- | :--- | :--- | :--- |
+| **10,000** | ~5 MB | ~2 MB | **~7 MB** | ✅ Trivial |
+| **100,000** | ~50 MB | ~20 MB | **~70 MB** | ✅ Very Low |
+| **1,000,000** | ~500 MB | ~200 MB | **~700 MB** | ✅ Standard Microservice (1GB pod) |
+| **10,000,000** | ~5 GB | ~2 GB | **~7 GB** | ⚠️ High Memory Node Required |
+
+**Conclusion**: For up to **5 Million Tenants**, this architecture fits comfortably within standard Kubernetes pod resource limits (2GB - 4GB RAM).
+
+### **2. Bandwidth & Startup Dynamics**
+
+**Cold Start "Dump and Load"**
+-   Fetching 1 Million tenants via JSON payload (~300MB uncompressed) can take 5-10 seconds.
+-   **Mitigation**: The `caching/hierarchy` module supports **GZIP Compression** and **Streaming decoders** to keep memory/cpu spikes low during startup.
+
+**NATS Update Volume**
+-   Assuming 1% daily churn (10k updates/day for 1M tenants) -> Extremely low load (<1 msg/sec).
+-   Even massive bulk updates (re-parenting a reseller) creates minimal traffic compared to application data logs.
+
+### **3. Scaling Beyond 10M Tenants (The "Meta-Scale" Strategy)**
+
+If the tenant base exceeds 10M+, the architecture supports scaling strategies without breaking the interface:
+
+1.  **Sharded Caching**:
+    -   Router middleware computes `hash(tenantID) % shards`.
+    -   Only load 1/Nth of the tenants into memory per pod (Stateless -> Stateful routing required).
+2.  **Hybrid LRU Cache**:
+    -   Keep "Active" tenants in RAM.
+    -   Fallback to Redis for "Cold" tenants (Accepting the latency penalty only for tail-end users).
+    -   *Note: This breaks the "Zero Latency" guarantee for cold tenants but saves RAM.*
+3.  **Optimized Data Structures**:
+    -   Replace `[]string` Ancestors with `Roaring Bitmaps` (using Integer IDs mapped to UUIDs).
+    -   Reduces memory footprint by ~90%.
+
+### **4. Resilience & Circuit Breaking**
+
+-   **NATS Outage**: Service continues serving traffic using *last known state*.
+-   **Tenant Service Down**: New tenants cannot be created/synced, but *existing traffic is unaffected*.
+-   **Memory Pressure**: Check `cache.Size()` metrics. If RAM > 90%, the service acts as a "Circuit Breaker" and can fail-open or fail-closed based on config (Fail-Closed recommended for security).
+
+## 🎯 **Multi-Tenant Assignment System**
 
 ### **User Access Structure**
 ```typescript
-// User with multiple zone/department assignments
+// User with multiple tenant assignments
 const user = {
   id: "user-123",
   firstName: "John",
@@ -34,22 +154,19 @@ const user = {
   password: "hashed_password",
   userAccess: [
     {
-      zone: "ZoneA",
-      department: "FieldTeam",
+      tenantID: "TenantA",
       role: "field-engineer",
       isPrimary: true,
       isActive: true
     },
     {
-      zone: "ZoneB",
-      department: "FieldTeam", 
+      tenantID: "TenantB", 
       role: "field-sales",
       isPrimary: false,
       isActive: true
     },
     {
-      zone: "ZoneA",
-      department: "SupportTeam",
+      tenantID: "TenantC",
       role: "support-engineer",
       isPrimary: false,
       isActive: true
@@ -79,21 +196,18 @@ const user = {
   "exp": 1640995200,
   
   // Multi-tenant context
-  "currentZone": "ZoneA",
-  "currentDepartment": "FieldTeam",
+  "currentTenantID": "TenantA",
   "currentRole": "field-engineer",
   "isPrimary": true,
   "allAssignments": [
     {
-      "zone": "ZoneA",
-      "department": "FieldTeam",
+      "tenantID": "TenantA",
       "role": "field-engineer",
       "isPrimary": true,
       "isActive": true
     },
     {
-      "zone": "ZoneB",
-      "department": "FieldTeam",
+      "tenantID": "TenantB",
       "role": "field-sales",
       "isPrimary": false,
       "isActive": true
@@ -106,7 +220,7 @@ const user = {
   // Business context
   "context": {
     "timeRestriction": "9:00-18:00",
-    "locationRestriction": "ZoneA",
+    "locationRestriction": "TenantA-Region",
     "deviceRestriction": "company-devices"
   }
 }
@@ -139,11 +253,11 @@ Response:
 ### **Permission Check Flow**
 ```typescript
 1. User makes request with JWT
-GET /api/zones/ZoneA/departments/FieldTeam/users
+GET /api/tenants/TenantA/users
 Headers: Authorization: Bearer jwt_token
 
 2. Custom Auth Service validates JWT
-3. Extracts current zone/department context
+3. Extracts current tenant context
 4. Checks Casbin permissions
 5. Applies business rules
 6. Returns response or error
@@ -151,11 +265,10 @@ Headers: Authorization: Bearer jwt_token
 
 ### **Context Switching Flow**
 ```typescript
-1. User switches to different zone/department
+1. User switches to different tenant
 POST /api/auth/context/switch
 {
-  "zone": "ZoneB",
-  "department": "FieldTeam"
+  "tenantID": "TenantB"
 }
 
 2. Custom Auth Service validates assignment
