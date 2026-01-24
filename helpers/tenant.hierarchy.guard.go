@@ -362,7 +362,11 @@ func InvalidateTenantHierarchyCache(ctx context.Context, redisClient RedisClient
 	}
 
 	cacheKey := TenantHierarchyCachePrefix + tenantID
-	if err := redisClient.Del(ctx, cacheKey).Err(); err != nil {
+	cmd := redisClient.Del(ctx, cacheKey)
+	if cmd == nil {
+		return nil
+	}
+	if err := cmd.Err(); err != nil {
 		logger.Warn("Failed to invalidate tenant hierarchy cache", err, "tenantID", tenantID)
 		return err
 	}
