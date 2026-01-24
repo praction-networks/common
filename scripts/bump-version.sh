@@ -5,8 +5,19 @@
 
 set -e
 
+# Fetch latest tags from remote
+git fetch --tags --quiet
+
 PACKAGE_NAME="github.com/praction-networks/common"
-CURRENT_VERSION=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+
+# Find the HIGHEST version tag from ALL tags (not just reachable from HEAD)
+# This prevents collisions with tags created by other developers/CI
+CURRENT_VERSION=$(git tag -l "v*" | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -n 1)
+
+if [[ -z "$CURRENT_VERSION" ]]; then
+    CURRENT_VERSION="v0.0.0"
+    echo "⚠️  No existing version tags found, starting from v0.0.0"
+fi
 
 # Extract version numbers
 VERSION_REGEX="v([0-9]+)\.([0-9]+)\.([0-9]+)"
@@ -39,6 +50,13 @@ esac
 
 echo "📊 Current version: $CURRENT_VERSION"
 echo "🚀 Next version: $NEXT_VERSION"
+
+# Check if tag exists
+if git rev-parse "$NEXT_VERSION" >/dev/null 2>&1; then
+    echo "❌ Error: Tag $NEXT_VERSION already exists locally or remotely (after fetch)."
+    echo "Please pull latest changes or manually tag the correct version."
+    exit 1
+fi
 
 # Check if there are any changes to commit
 if [[ -n $(git status --porcelain) ]]; then
