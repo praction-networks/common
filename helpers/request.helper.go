@@ -255,6 +255,56 @@ func GetAccessibleTenants(ctx context.Context) []string {
 	return nil
 }
 
+// IsTenantAccessible checks if a specific tenant ID is in the list of accessible tenants
+// Returns true if:
+// - accessibleTenants is nil (system user with access to all tenants)
+// - tenantID is in the accessibleTenants list
+func IsTenantAccessible(tenantID string, accessibleTenants []string) bool {
+	// If accessibleTenants is nil, the user is a system user with access to all tenants
+	if accessibleTenants == nil {
+		return true
+	}
+	// If accessibleTenants is empty (not nil), the user has no tenant access
+	if len(accessibleTenants) == 0 {
+		return false
+	}
+	// Check if tenantID is in the accessible list
+	for _, accessible := range accessibleTenants {
+		if accessible == tenantID {
+			return true
+		}
+	}
+	return false
+}
+
+// IsAnyTenantAccessible checks if any of the given tenant IDs are in the list of accessible tenants
+// Returns true if:
+// - accessibleTenants is nil (system user with access to all tenants)
+// - any tenantID is in the accessibleTenants list
+func IsAnyTenantAccessible(tenantIDs []string, accessibleTenants []string) bool {
+	// If accessibleTenants is nil, the user is a system user with access to all tenants
+	if accessibleTenants == nil {
+		return true
+	}
+	// If accessibleTenants is empty (not nil), the user has no tenant access
+	if len(accessibleTenants) == 0 {
+		return false
+	}
+	// If tenantIDs is empty, check is vacuously false
+	if len(tenantIDs) == 0 {
+		return false
+	}
+	// Check if any tenantID is in the accessible list
+	for _, tenantID := range tenantIDs {
+		for _, accessible := range accessibleTenants {
+			if accessible == tenantID {
+				return true
+			}
+		}
+	}
+	return false
+}
+
 
 func simplifyUserAgent(ua string) string {
 	// Check for mobile browsers first (they often contain "Mobile" or "Android" or "iPhone")
