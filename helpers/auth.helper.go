@@ -95,6 +95,13 @@ func (m *AuthMiddleware) ValidateServiceToken(next http.Handler) http.Handler {
 			return
 		}
 
+		// Extract X-User-ID header (set by auth-service via forward-auth)
+		userID := r.Header.Get("X-User-ID")
+		ctx := r.Context()
+		if userID != "" {
+			ctx = context.WithValue(ctx, UserIDKey, userID)
+		}
+
 		// Extract X-Is-System-User header (set by auth-service via forward-auth)
 		isSystemUser := false
 		if isSystemUserHeader := r.Header.Get("X-Is-System-User"); isSystemUserHeader != "" {
@@ -104,7 +111,7 @@ func (m *AuthMiddleware) ValidateServiceToken(next http.Handler) http.Handler {
 		}
 
 		// Set system user status in context for downstream handlers
-		ctx := context.WithValue(r.Context(), IsSystemUserKey, isSystemUser)
+		ctx = context.WithValue(ctx, IsSystemUserKey, isSystemUser)
 
 		// Service token signature is valid - request was validated by auth-service
 		// Proceed to next handler with updated context
