@@ -301,6 +301,80 @@ var (
 	)
 )
 
+// CWMP / ACS Metrics
+var (
+	// Inform messages received from CPE devices
+	CWMPInformsTotal = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "cwmp_informs_total",
+			Help: "Total CWMP Inform messages received",
+		},
+		[]string{"tenant_id", "event_code", "manufacturer"},
+	)
+
+	// Tasks executed via CWMP
+	CWMPTasksExecuted = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "cwmp_tasks_executed_total",
+			Help: "Total CWMP tasks executed",
+		},
+		[]string{"tenant_id", "action", "status"}, // action: "GetParameterValues", "SetParameterValues", etc.; status: "success", "failure"
+	)
+
+	// Active CWMP sessions gauge
+	CWMPActiveSessions = prometheus.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "cwmp_active_sessions",
+			Help: "Current number of active CWMP sessions",
+		},
+		[]string{"tenant_id"},
+	)
+
+	// CWMP session duration
+	CWMPSessionDuration = prometheus.NewHistogramVec(
+		prometheus.HistogramOpts{
+			Name:    "cwmp_session_duration_seconds",
+			Help:    "CWMP session duration from first Inform to session end",
+			Buckets: []float64{.1, .5, 1, 2.5, 5, 10, 30, 60, 120, 300},
+		},
+		[]string{"tenant_id"},
+	)
+
+	// SOAP parse errors
+	CWMPSOAPParseErrors = prometheus.NewCounter(
+		prometheus.CounterOpts{
+			Name: "cwmp_soap_parse_errors_total",
+			Help: "Total SOAP/XML parse errors in CWMP messages",
+		},
+	)
+
+	// Connection requests sent to CPE devices
+	CWMPConnectionRequests = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "cwmp_connection_requests_total",
+			Help: "Total connection requests sent to CPE devices",
+		},
+		[]string{"tenant_id", "auth_method", "result"}, // auth_method: "basic", "digest"; result: "success", "failure"
+	)
+
+	// Auto-provisioning events
+	CWMPAutoProvisioningTotal = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "cwmp_auto_provisioning_total",
+			Help: "Total auto-provisioning events triggered",
+		},
+		[]string{"tenant_id", "status"}, // status: "success", "failure", "no_match"
+	)
+
+	// Device registrations
+	CWMPDeviceRegistrations = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "cwmp_device_registrations_total",
+			Help: "Total new device registrations via CWMP Inform",
+		},
+		[]string{"tenant_id", "manufacturer"},
+	)
+)
 // ResponseWriter tracks response status and size
 // It preserves http.Hijacker interface for WebSocket support
 type ResponseWriter struct {
@@ -420,6 +494,16 @@ func RegisterAllMetrics() {
 		ReEncodingScheduledRunDuration,
 		ReEncodingActiveWorkers,
 		ReEncodingQueueSize,
+
+		// CWMP / ACS metrics
+		CWMPInformsTotal,
+		CWMPTasksExecuted,
+		CWMPActiveSessions,
+		CWMPSessionDuration,
+		CWMPSOAPParseErrors,
+		CWMPConnectionRequests,
+		CWMPAutoProvisioningTotal,
+		CWMPDeviceRegistrations,
 
 		// Default collectors
 		collectors.NewGoCollector(),
@@ -837,4 +921,37 @@ func SetReEncodingActiveWorkers(count float64) {
 
 func SetReEncodingQueueSize(size float64) {
 	ReEncodingQueueSize.Set(size)
+}
+
+// CWMP / ACS Metrics Helpers
+func RecordCWMPInform(tenantID, eventCode, manufacturer string) {
+	CWMPInformsTotal.WithLabelValues(tenantID, eventCode, manufacturer).Inc()
+}
+
+func RecordCWMPTaskExecuted(tenantID, action, status string) {
+	CWMPTasksExecuted.WithLabelValues(tenantID, action, status).Inc()
+}
+
+func SetCWMPActiveSessions(tenantID string, count float64) {
+	CWMPActiveSessions.WithLabelValues(tenantID).Set(count)
+}
+
+func RecordCWMPSessionDuration(tenantID string, duration time.Duration) {
+	CWMPSessionDuration.WithLabelValues(tenantID).Observe(duration.Seconds())
+}
+
+func RecordCWMPSOAPParseError() {
+	CWMPSOAPParseErrors.Inc()
+}
+
+func RecordCWMPConnectionRequest(tenantID, authMethod, result string) {
+	CWMPConnectionRequests.WithLabelValues(tenantID, authMethod, result).Inc()
+}
+
+func RecordCWMPAutoProvisioning(tenantID, status string) {
+	CWMPAutoProvisioningTotal.WithLabelValues(tenantID, status).Inc()
+}
+
+func RecordCWMPDeviceRegistration(tenantID, manufacturer string) {
+	CWMPDeviceRegistrations.WithLabelValues(tenantID, manufacturer).Inc()
 }
