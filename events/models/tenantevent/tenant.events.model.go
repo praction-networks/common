@@ -55,7 +55,6 @@ type TenantUpdateEventModel struct {
 	Code        string `bson:"code,omitempty" json:"code,omitempty"`
 	Type        string `bson:"type,omitempty" json:"type,omitempty"`
 	Fqdn        string `bson:"fqdn,omitempty" json:"fqdn,omitempty"`
-	Environment string `bson:"environment,omitempty" json:"environment,omitempty"`
 	EntType     string `bson:"entType,omitempty" json:"entType,omitempty"`
 
 	// Hierarchy Management
