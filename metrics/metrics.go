@@ -375,6 +375,275 @@ var (
 		[]string{"tenant_id", "manufacturer"},
 	)
 )
+
+// DNS Filtering / i9Shield Metrics
+var (
+	// ── DNS Query Lifecycle ──────────────────────────────────────────────
+
+	// Total DNS queries by type, tenant, and result
+	DNSQueriesTotal = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "dns_queries_total",
+			Help: "Total DNS queries processed",
+		},
+		[]string{"tenant_id", "qtype", "result"}, // result: "blocked", "allowed", "cached", "error"
+	)
+
+	// End-to-end DNS query latency
+	DNSQueryDuration = prometheus.NewHistogramVec(
+		prometheus.HistogramOpts{
+			Name:    "dns_query_duration_seconds",
+			Help:    "DNS query processing duration in seconds",
+			Buckets: []float64{.0001, .0005, .001, .005, .01, .025, .05, .1, .25, .5, 1},
+		},
+		[]string{"result"}, // result: "blocked", "allowed", "cached", "error"
+	)
+
+	// Currently processing DNS queries
+	DNSQueriesInflight = prometheus.NewGauge(
+		prometheus.GaugeOpts{
+			Name: "dns_queries_inflight",
+			Help: "Number of DNS queries currently being processed",
+		},
+	)
+
+	// ── DNS Blocking ────────────────────────────────────────────────────
+
+	// Blocked queries per tenant, category, and reason
+	DNSBlockedTotal = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "dns_blocked_total",
+			Help: "Total DNS queries blocked",
+		},
+		[]string{"tenant_id", "category", "reason"}, // reason: "category", "custom_blocklist", "custom_domain"
+	)
+
+	// Allowed queries per tenant
+	DNSAllowedTotal = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "dns_allowed_total",
+			Help: "Total DNS queries allowed (pass-through)",
+		},
+		[]string{"tenant_id"},
+	)
+
+	// ── DNS Cache Performance ───────────────────────────────────────────
+
+	DNSCacheHitsTotal = prometheus.NewCounter(
+		prometheus.CounterOpts{
+			Name: "dns_cache_hits_total",
+			Help: "Total DNS answer cache hits",
+		},
+	)
+
+	DNSCacheMissesTotal = prometheus.NewCounter(
+		prometheus.CounterOpts{
+			Name: "dns_cache_misses_total",
+			Help: "Total DNS answer cache misses",
+		},
+	)
+
+	DNSCacheSize = prometheus.NewGauge(
+		prometheus.GaugeOpts{
+			Name: "dns_cache_size",
+			Help: "Current number of entries in the DNS answer cache",
+		},
+	)
+
+	DNSCacheEvictionsTotal = prometheus.NewCounter(
+		prometheus.CounterOpts{
+			Name: "dns_cache_evictions_total",
+			Help: "Total DNS cache evictions",
+		},
+	)
+
+	// ── DNS Upstream Resolution ────────────────────────────────────────
+
+	// Per-upstream query counts
+	DNSUpstreamQueriesTotal = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "dns_upstream_queries_total",
+			Help: "Total queries sent to upstream DNS resolvers",
+		},
+		[]string{"upstream", "status"}, // status: "success", "failure"
+	)
+
+	// Per-upstream latency
+	DNSUpstreamLatency = prometheus.NewHistogramVec(
+		prometheus.HistogramOpts{
+			Name:    "dns_upstream_latency_seconds",
+			Help:    "Upstream DNS resolver latency in seconds",
+			Buckets: []float64{.0005, .001, .005, .01, .025, .05, .1, .25, .5, 1, 2.5, 5, 10},
+		},
+		[]string{"upstream"},
+	)
+
+	// TCP fallback count (truncated UDP → TCP)
+	DNSUpstreamTCPFallbacksTotal = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "dns_upstream_tcp_fallbacks_total",
+			Help: "Total truncated UDP responses that fell back to TCP",
+		},
+		[]string{"upstream"},
+	)
+
+	// All upstream resolvers failed
+	DNSUpstreamAllFailedTotal = prometheus.NewCounter(
+		prometheus.CounterOpts{
+			Name: "dns_upstream_all_failed_total",
+			Help: "Total times all upstream resolvers failed for a query",
+		},
+	)
+
+	// ── DNS Policy Engine ──────────────────────────────────────────────
+
+	// Policy resolution counts
+	DNSPolicyResolutionsTotal = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "dns_policy_resolutions_total",
+			Help: "Total policy resolution attempts",
+		},
+		[]string{"tenant_id", "result"}, // result: "hit", "miss", "error"
+	)
+
+	// Policy resolution latency
+	DNSPolicyResolutionDuration = prometheus.NewHistogram(
+		prometheus.HistogramOpts{
+			Name:    "dns_policy_resolution_duration_seconds",
+			Help:    "Policy resolution and merge duration in seconds",
+			Buckets: []float64{.0001, .0005, .001, .005, .01, .025, .05, .1},
+		},
+	)
+
+	// Policy cache hits/misses
+	DNSPolicyCacheHitsTotal = prometheus.NewCounter(
+		prometheus.CounterOpts{
+			Name: "dns_policy_cache_hits_total",
+			Help: "Total in-memory policy cache hits",
+		},
+	)
+
+	DNSPolicyCacheMissesTotal = prometheus.NewCounter(
+		prometheus.CounterOpts{
+			Name: "dns_policy_cache_misses_total",
+			Help: "Total in-memory policy cache misses (DB fetch required)",
+		},
+	)
+
+	// Policy cache invalidations
+	DNSPolicyCacheInvalidationsTotal = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "dns_policy_cache_invalidations_total",
+			Help: "Total policy cache invalidations",
+		},
+		[]string{"scope"}, // scope: "tenant", "subscriber"
+	)
+
+	// ── DNS Subscriber Resolution ──────────────────────────────────────
+
+	// Redis IP → subscriber lookups
+	DNSSubscriberLookupsTotal = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "dns_subscriber_lookups_total",
+			Help: "Total Redis IP-to-subscriber lookups",
+		},
+		[]string{"result"}, // result: "found", "not_found", "error"
+	)
+
+	// Subscriber lookup latency
+	DNSSubscriberLookupDuration = prometheus.NewHistogram(
+		prometheus.HistogramOpts{
+			Name:    "dns_subscriber_lookup_duration_seconds",
+			Help:    "Redis subscriber lookup duration in seconds",
+			Buckets: []float64{.0001, .0005, .001, .005, .01, .025, .05, .1},
+		},
+	)
+
+	// ── DNS Bloom Filter & Blocklist ───────────────────────────────────
+
+	// Bloom filter checks
+	DNSBloomChecksTotal = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "dns_bloom_checks_total",
+			Help: "Total bloom filter checks",
+		},
+		[]string{"result"}, // result: "positive", "negative"
+	)
+
+	// Bloom false positives (bloom=yes, hashmap=no)
+	DNSBloomFalsePositivesTotal = prometheus.NewCounter(
+		prometheus.CounterOpts{
+			Name: "dns_bloom_false_positives_total",
+			Help: "Total bloom filter false positives (bloom positive, hash map negative)",
+		},
+	)
+
+	// Loaded domains per category
+	DNSBlocklistDomainsLoaded = prometheus.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "dns_blocklist_domains_loaded",
+			Help: "Number of domains loaded per blocklist category",
+		},
+		[]string{"category"},
+	)
+
+	// Bloom filter memory per category
+	DNSBlocklistMemoryBytes = prometheus.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "dns_blocklist_memory_bytes",
+			Help: "Bloom filter memory usage in bytes per category",
+		},
+		[]string{"category"},
+	)
+
+	// Number of active blocking categories
+	DNSBlocklistCategoriesActive = prometheus.NewGauge(
+		prometheus.GaugeOpts{
+			Name: "dns_blocklist_categories_active",
+			Help: "Number of active blocklist categories",
+		},
+	)
+
+	// ── DNS Blocklist Refresh ──────────────────────────────────────────
+
+	// Refresh operations per category
+	DNSBlocklistRefreshTotal = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "dns_blocklist_refresh_total",
+			Help: "Total blocklist refresh operations",
+		},
+		[]string{"category", "status"}, // status: "success", "failure"
+	)
+
+	// Refresh duration per category
+	DNSBlocklistRefreshDuration = prometheus.NewHistogramVec(
+		prometheus.HistogramOpts{
+			Name:    "dns_blocklist_refresh_duration_seconds",
+			Help:    "Blocklist refresh duration (fetch + load) in seconds",
+			Buckets: []float64{.5, 1, 2.5, 5, 10, 30, 60, 120, 300},
+		},
+		[]string{"category"},
+	)
+
+	// Domains fetched per refresh
+	DNSBlocklistRefreshDomainsFetched = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "dns_blocklist_refresh_domains_fetched_total",
+			Help: "Total domains fetched during blocklist refreshes",
+		},
+		[]string{"category"},
+	)
+
+	// Last successful refresh timestamp
+	DNSBlocklistLastRefreshTimestamp = prometheus.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "dns_blocklist_last_refresh_timestamp",
+			Help: "Unix timestamp of last successful blocklist refresh",
+		},
+		[]string{"category"},
+	)
+)
+
 // ResponseWriter tracks response status and size
 // It preserves http.Hijacker interface for WebSocket support
 type ResponseWriter struct {
@@ -504,6 +773,37 @@ func RegisterAllMetrics() {
 		CWMPConnectionRequests,
 		CWMPAutoProvisioningTotal,
 		CWMPDeviceRegistrations,
+
+		// DNS Filtering / i9Shield metrics
+		DNSQueriesTotal,
+		DNSQueryDuration,
+		DNSQueriesInflight,
+		DNSBlockedTotal,
+		DNSAllowedTotal,
+		DNSCacheHitsTotal,
+		DNSCacheMissesTotal,
+		DNSCacheSize,
+		DNSCacheEvictionsTotal,
+		DNSUpstreamQueriesTotal,
+		DNSUpstreamLatency,
+		DNSUpstreamTCPFallbacksTotal,
+		DNSUpstreamAllFailedTotal,
+		DNSPolicyResolutionsTotal,
+		DNSPolicyResolutionDuration,
+		DNSPolicyCacheHitsTotal,
+		DNSPolicyCacheMissesTotal,
+		DNSPolicyCacheInvalidationsTotal,
+		DNSSubscriberLookupsTotal,
+		DNSSubscriberLookupDuration,
+		DNSBloomChecksTotal,
+		DNSBloomFalsePositivesTotal,
+		DNSBlocklistDomainsLoaded,
+		DNSBlocklistMemoryBytes,
+		DNSBlocklistCategoriesActive,
+		DNSBlocklistRefreshTotal,
+		DNSBlocklistRefreshDuration,
+		DNSBlocklistRefreshDomainsFetched,
+		DNSBlocklistLastRefreshTimestamp,
 
 		// Default collectors
 		collectors.NewGoCollector(),
@@ -954,4 +1254,130 @@ func RecordCWMPAutoProvisioning(tenantID, status string) {
 
 func RecordCWMPDeviceRegistration(tenantID, manufacturer string) {
 	CWMPDeviceRegistrations.WithLabelValues(tenantID, manufacturer).Inc()
+}
+
+// DNS Filtering Metrics Helpers
+
+// ── Query Lifecycle ─────────────────────────────────────────────────
+
+func RecordDNSQuery(tenantID, qtype, result string, duration time.Duration) {
+	DNSQueriesTotal.WithLabelValues(tenantID, qtype, result).Inc()
+	DNSQueryDuration.WithLabelValues(result).Observe(duration.Seconds())
+}
+
+func IncDNSInflight() {
+	DNSQueriesInflight.Inc()
+}
+
+func DecDNSInflight() {
+	DNSQueriesInflight.Dec()
+}
+
+// ── Blocking ────────────────────────────────────────────────────────
+
+func RecordDNSBlocked(tenantID, category, reason string) {
+	DNSBlockedTotal.WithLabelValues(tenantID, category, reason).Inc()
+}
+
+func RecordDNSAllowed(tenantID string) {
+	DNSAllowedTotal.WithLabelValues(tenantID).Inc()
+}
+
+// ── Cache ───────────────────────────────────────────────────────────
+
+func RecordDNSCacheHit() {
+	DNSCacheHitsTotal.Inc()
+}
+
+func RecordDNSCacheMiss() {
+	DNSCacheMissesTotal.Inc()
+}
+
+func SetDNSCacheSize(size float64) {
+	DNSCacheSize.Set(size)
+}
+
+func RecordDNSCacheEviction() {
+	DNSCacheEvictionsTotal.Inc()
+}
+
+// ── Upstream ────────────────────────────────────────────────────────
+
+func RecordDNSUpstreamQuery(upstream, status string, duration time.Duration) {
+	DNSUpstreamQueriesTotal.WithLabelValues(upstream, status).Inc()
+	DNSUpstreamLatency.WithLabelValues(upstream).Observe(duration.Seconds())
+}
+
+func RecordDNSUpstreamTCPFallback(upstream string) {
+	DNSUpstreamTCPFallbacksTotal.WithLabelValues(upstream).Inc()
+}
+
+func RecordDNSUpstreamAllFailed() {
+	DNSUpstreamAllFailedTotal.Inc()
+}
+
+// ── Policy Engine ───────────────────────────────────────────────────
+
+func RecordDNSPolicyResolution(tenantID, result string) {
+	DNSPolicyResolutionsTotal.WithLabelValues(tenantID, result).Inc()
+}
+
+func RecordDNSPolicyResolutionDuration(duration time.Duration) {
+	DNSPolicyResolutionDuration.Observe(duration.Seconds())
+}
+
+func RecordDNSPolicyCacheHit() {
+	DNSPolicyCacheHitsTotal.Inc()
+}
+
+func RecordDNSPolicyCacheMiss() {
+	DNSPolicyCacheMissesTotal.Inc()
+}
+
+func RecordDNSPolicyCacheInvalidation(scope string) {
+	DNSPolicyCacheInvalidationsTotal.WithLabelValues(scope).Inc()
+}
+
+// ── Subscriber Resolution ───────────────────────────────────────────
+
+func RecordDNSSubscriberLookup(result string, duration time.Duration) {
+	DNSSubscriberLookupsTotal.WithLabelValues(result).Inc()
+	DNSSubscriberLookupDuration.Observe(duration.Seconds())
+}
+
+// ── Bloom Filter & Blocklist ────────────────────────────────────────
+
+func RecordDNSBloomCheck(result string) {
+	DNSBloomChecksTotal.WithLabelValues(result).Inc()
+}
+
+func RecordDNSBloomFalsePositive() {
+	DNSBloomFalsePositivesTotal.Inc()
+}
+
+func SetDNSBlocklistDomainsLoaded(category string, count float64) {
+	DNSBlocklistDomainsLoaded.WithLabelValues(category).Set(count)
+}
+
+func SetDNSBlocklistMemoryBytes(category string, bytes float64) {
+	DNSBlocklistMemoryBytes.WithLabelValues(category).Set(bytes)
+}
+
+func SetDNSBlocklistCategoriesActive(count float64) {
+	DNSBlocklistCategoriesActive.Set(count)
+}
+
+// ── Blocklist Refresh ───────────────────────────────────────────────
+
+func RecordDNSBlocklistRefresh(category, status string, duration time.Duration) {
+	DNSBlocklistRefreshTotal.WithLabelValues(category, status).Inc()
+	DNSBlocklistRefreshDuration.WithLabelValues(category).Observe(duration.Seconds())
+}
+
+func RecordDNSBlocklistRefreshDomainsFetched(category string, count int) {
+	DNSBlocklistRefreshDomainsFetched.WithLabelValues(category).Add(float64(count))
+}
+
+func SetDNSBlocklistLastRefreshTimestamp(category string) {
+	DNSBlocklistLastRefreshTimestamp.WithLabelValues(category).SetToCurrentTime()
 }
