@@ -152,11 +152,5 @@ func GeneratePrefixCodeFromIP(ipStr string) []IPPrefixCode {
 	return CalculateIPv6PrefixCodes(ip.To16())
 }
 
-// min returns the minimum of two integers
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
-}
+
 

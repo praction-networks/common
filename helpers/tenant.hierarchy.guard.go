@@ -100,7 +100,7 @@ func getTenantHierarchyFromCache(ctx context.Context, redisClient RedisClientInt
 
 // setTenantHierarchyCache stores tenant hierarchy data in Redis cache
 // Fire-and-forget: doesn't block on cache failure
-func setTenantHierarchyCache(ctx context.Context, redisClient RedisClientInterface, tenantID string, data *TenantHierarchyData) {
+func setTenantHierarchyCache(_ context.Context, redisClient RedisClientInterface, tenantID string, data *TenantHierarchyData) {
 	if redisClient == nil {
 		return // Redis not available
 	}

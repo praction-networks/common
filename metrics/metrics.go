@@ -578,6 +578,14 @@ var (
 		},
 	)
 
+	// Allowlist short-circuit counter
+	DNSAllowlistShortCircuitTotal = prometheus.NewCounter(
+		prometheus.CounterOpts{
+			Name: "dns_allowlist_shortcircuit_total",
+			Help: "Total queries short-circuited by global allowlist (skipped bloom checks)",
+		},
+	)
+
 	// Loaded domains per category
 	DNSBlocklistDomainsLoaded = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
@@ -797,6 +805,7 @@ func RegisterAllMetrics() {
 		DNSSubscriberLookupDuration,
 		DNSBloomChecksTotal,
 		DNSBloomFalsePositivesTotal,
+		DNSAllowlistShortCircuitTotal,
 		DNSBlocklistDomainsLoaded,
 		DNSBlocklistMemoryBytes,
 		DNSBlocklistCategoriesActive,
@@ -1353,6 +1362,10 @@ func RecordDNSBloomCheck(result string) {
 
 func RecordDNSBloomFalsePositive() {
 	DNSBloomFalsePositivesTotal.Inc()
+}
+
+func RecordDNSAllowlistShortCircuit() {
+	DNSAllowlistShortCircuitTotal.Inc()
 }
 
 func SetDNSBlocklistDomainsLoaded(category string, count float64) {
