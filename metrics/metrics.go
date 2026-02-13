@@ -650,6 +650,59 @@ var (
 		},
 		[]string{"category"},
 	)
+
+	// ── DNS Resilience / Rate Limiting ─────────────────────────────────
+
+	// Stale cache hits (served expired entry because upstream failed)
+	DNSStaleCacheHitsTotal = prometheus.NewCounter(
+		prometheus.CounterOpts{
+			Name: "dns_stale_cache_hits_total",
+			Help: "Total DNS queries served from stale (expired) cache entries due to upstream failure",
+		},
+	)
+
+	// NXDOMAIN cache hits (cached negative response)
+	DNSNXDOMAINCacheHitsTotal = prometheus.NewCounter(
+		prometheus.CounterOpts{
+			Name: "dns_nxdomain_cache_hits_total",
+			Help: "Total DNS queries served from cached NXDOMAIN responses",
+		},
+	)
+
+	// Rate limiter: tracked IPs (memory pressure indicator)
+	DNSRateLimiterTrackedIPs = prometheus.NewGauge(
+		prometheus.GaugeOpts{
+			Name: "dns_rate_limiter_tracked_ips",
+			Help: "Number of client IPs currently tracked by the rate limiter",
+		},
+	)
+
+	// Rate limiter: rejections by tier
+	DNSRateLimitRejectionsTotal = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "dns_rate_limit_rejections_total",
+			Help: "Total DNS queries rejected by rate limiting",
+		},
+		[]string{"tier"}, // "global", "tenant"
+	)
+
+	// Circuit breaker: current state per upstream
+	DNSCircuitBreakerState = prometheus.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "dns_circuit_breaker_state",
+			Help: "Current circuit breaker state per upstream (0=closed, 1=open, 2=half-open)",
+		},
+		[]string{"upstream"},
+	)
+
+	// Circuit breaker: state transitions
+	DNSCircuitBreakerTransitionsTotal = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "dns_circuit_breaker_transitions_total",
+			Help: "Total circuit breaker state transitions",
+		},
+		[]string{"upstream", "from", "to"}, // e.g., "closed" → "open"
+	)
 )
 
 // ResponseWriter tracks response status and size
@@ -813,6 +866,14 @@ func RegisterAllMetrics() {
 		DNSBlocklistRefreshDuration,
 		DNSBlocklistRefreshDomainsFetched,
 		DNSBlocklistLastRefreshTimestamp,
+
+		// DNS Resilience metrics
+		DNSStaleCacheHitsTotal,
+		DNSNXDOMAINCacheHitsTotal,
+		DNSRateLimiterTrackedIPs,
+		DNSRateLimitRejectionsTotal,
+		DNSCircuitBreakerState,
+		DNSCircuitBreakerTransitionsTotal,
 
 		// Default collectors
 		collectors.NewGoCollector(),
@@ -1393,4 +1454,30 @@ func RecordDNSBlocklistRefreshDomainsFetched(category string, count int) {
 
 func SetDNSBlocklistLastRefreshTimestamp(category string) {
 	DNSBlocklistLastRefreshTimestamp.WithLabelValues(category).SetToCurrentTime()
+}
+
+// ── DNS Resilience / Rate Limiting ──────────────────────────────────
+
+func RecordDNSStaleCacheHit() {
+	DNSStaleCacheHitsTotal.Inc()
+}
+
+func RecordDNSNXDOMAINCacheHit() {
+	DNSNXDOMAINCacheHitsTotal.Inc()
+}
+
+func SetDNSRateLimiterTrackedIPs(count float64) {
+	DNSRateLimiterTrackedIPs.Set(count)
+}
+
+func RecordDNSRateLimitRejection(tier string) {
+	DNSRateLimitRejectionsTotal.WithLabelValues(tier).Inc()
+}
+
+func SetDNSCircuitBreakerState(upstream string, state float64) {
+	DNSCircuitBreakerState.WithLabelValues(upstream).Set(state)
+}
+
+func RecordDNSCircuitBreakerTransition(upstream, from, to string) {
+	DNSCircuitBreakerTransitionsTotal.WithLabelValues(upstream, from, to).Inc()
 }
