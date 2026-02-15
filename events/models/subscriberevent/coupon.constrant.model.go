@@ -101,6 +101,9 @@ type DistributionSettings struct {
 	// Example: "https://login.example.com/voucher/{code}"
 	QRCodeURLTemplate string `bson:"qrCodeUrlTemplate,omitempty" json:"qrCodeUrlTemplate,omitempty"`
 
+	// Logo URL for QR code center overlay — fetched at generation time
+	LogoURL string `bson:"logoUrl,omitempty" json:"logoUrl,omitempty"`
+
 	// WiFi SSID - when set, QR codes encode a WiFi auto-connect string (WIFI:T:...;S:<SSID>;;)
 	// This allows guests to scan and auto-connect to the hotspot WiFi network
 	WifiSSID string `bson:"wifiSSID,omitempty" json:"wifiSSID,omitempty"`
