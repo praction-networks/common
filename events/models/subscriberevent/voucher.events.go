@@ -32,7 +32,7 @@ type VoucherTemplateDeletedEvent struct {
 }
 
 // VoucherInstanceCreatedEvent represents a voucher instance creation event
-// Includes limits and restrictions from template for local caching in captive-portal-service
+// Captive-portal caches: couponCode, status, expiresAt, boundMac for fast validation
 type VoucherInstanceCreatedEvent struct {
 	ID           string     `json:"id" bson:"_id"`
 	TenantID     string     `json:"tenantId" bson:"tenantId"`
@@ -44,10 +44,6 @@ type VoucherInstanceCreatedEvent struct {
 	BatchID      *string    `json:"batchId,omitempty" bson:"batchId,omitempty"`
 	Distribution string     `json:"distributionType" bson:"distributionType"`
 	Version      int        `json:"version" bson:"version"`
-
-	// Template data for local caching (limits and restrictions)
-	Limits       VoucherLimits       `json:"limits" bson:"limits"`
-	Restrictions VoucherRestrictions `json:"restrictions" bson:"restrictions"`
 }
 
 // VoucherInstanceBulkCreatedEvent represents a bulk voucher instance creation event
