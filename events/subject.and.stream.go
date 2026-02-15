@@ -138,7 +138,7 @@ const (
 	GuestHotspotSubscriberUpdatedSubject          Subject = "subscriber.guest.hotspot.updated"
 	GuestHotspotSubscriberValidityExtendedSubject Subject = "subscriber.guest.hotspot.validity.extended"
 	GuestHotspotDeviceAddedSubject                Subject = "subscriber.guest.hotspot.device.added"
-	CouponDetailsSubject                          Subject = "captiveportal.coupon.details"
+	VoucherDetailsSubject                         Subject = "captiveportal.voucher.details"
 
 	// Plan Service Events
 	// Plan Tenant Pricing Events (CRITICAL - consumed by billing/subscription services)
@@ -363,7 +363,7 @@ var Streams = map[StreamName]StreamMetadata{
 			GuestHotspotSubscriberValidityExtendedSubject,
 			GuestHotspotDeviceAddedSubject,
 			HotspotDeviceAddedSubject,
-			CouponDetailsSubject,
+			VoucherDetailsSubject,
 		},
 	},
 	PlanStream: {

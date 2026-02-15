@@ -1,10 +1,10 @@
 package captiveportalevent
 
-// CouponDetailsEvent represents voucher validation details for captive portal
-// Published after coupon code validation during authentication flow
-type CouponDetailsEvent struct {
-	// Coupon information
-	CouponCode        string `json:"couponCode" bson:"couponCode"`
+// VoucherDetailsEvent represents voucher validation details for captive portal
+// Published after voucher code validation during authentication flow
+type VoucherDetailsEvent struct {
+	// Voucher information
+	VoucherCode       string `json:"voucherCode" bson:"voucherCode"`
 	VoucherInstanceID string `json:"voucherInstanceId,omitempty" bson:"voucherInstanceId,omitempty"`
 	TemplateID        string `json:"templateId,omitempty" bson:"templateId,omitempty"`
 
