@@ -101,8 +101,19 @@ type DistributionSettings struct {
 	// Example: "https://login.example.com/voucher/{code}"
 	QRCodeURLTemplate string `bson:"qrCodeUrlTemplate,omitempty" json:"qrCodeUrlTemplate,omitempty"`
 
+	// WiFi SSID - when set, QR codes encode a WiFi auto-connect string (WIFI:T:...;S:<SSID>;;)
+	// This allows guests to scan and auto-connect to the hotspot WiFi network
+	WifiSSID string `bson:"wifiSSID,omitempty" json:"wifiSSID,omitempty"`
+
+	// WiFi password - optional WPA password for the WiFi network
+	// If empty, auth type is "nopass" (open network with captive portal)
+	WifiPassword string `bson:"wifiPassword,omitempty" json:"wifiPassword,omitempty"`
+
 	// Batch size - default batch size for bulk generation
 	BatchSize int `bson:"batchSize" json:"batchSize"` // e.g., 1000
+
+	// Separator - character between prefix, code, and suffix (e.g., "-", "_", ".")
+	Separator string `bson:"separator,omitempty" json:"separator,omitempty"`
 
 	// Prefix - optional prefix for all codes (e.g., "HOTEL", "CAFE")
 	Prefix string `bson:"prefix,omitempty" json:"prefix,omitempty"`
