@@ -32,11 +32,12 @@ type VoucherTemplateDeletedEvent struct {
 }
 
 // VoucherInstanceCreatedEvent represents a voucher instance creation event
-// Captive-portal caches: couponCode, status, expiresAt, boundMac for fast validation
+// Captive-portal caches: couponCode, status, expiresAt, planId for fast validation
 type VoucherInstanceCreatedEvent struct {
 	ID           string     `json:"id" bson:"_id"`
 	TenantID     string     `json:"tenantId" bson:"tenantId"`
 	TemplateID   string     `json:"templateId" bson:"templateId"`
+	PlanID       string     `json:"planId" bson:"planId"`
 	CouponCode   string     `json:"couponCode" bson:"couponCode"`
 	Status       string     `json:"status" bson:"status"`
 	IssuedAt     *time.Time `json:"issuedAt,omitempty" bson:"issuedAt,omitempty"`
