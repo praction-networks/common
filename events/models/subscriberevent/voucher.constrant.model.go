@@ -77,10 +77,6 @@ type VoucherValidity struct {
 	// Template validity - when this template can be used to generate vouchers
 	Start time.Time `bson:"start" json:"start"` // Template valid from
 	End   time.Time `bson:"end" json:"end"`     // Template valid until
-
-	// Default TTL for voucher instances generated from this template
-	// Number of days from generation/issue date until voucher expires
-	DefaultTTLDays int `bson:"defaultTTLDays" json:"defaultTTLDays"` // e.g., 1 (expires 1 day after issue)
 }
 
 // DistributionSettings defines how vouchers are generated and distributed
