@@ -164,11 +164,6 @@ func LoggingMiddleware(next http.Handler) http.Handler {
 		status := rw.Status()
 		size := rw.Size()
 
-		// Skip logging for health check endpoints to reduce noise
-		if strings.HasSuffix(r.URL.Path, "/health") {
-			return
-		}
-
 		fields := []interface{}{
 			"reqID", reqID,
 			"method", r.Method,
@@ -180,6 +175,12 @@ func LoggingMiddleware(next http.Handler) http.Handler {
 			"status_code", status,
 			"protocol", r.Proto,
 			"host", r.Host,
+		}
+
+		// Log health/readiness probes at debug level to reduce noise
+		if isHealthCheckPath(r.URL.Path) {
+			logger.Debug("HTTP request", fields...)
+			return
 		}
 
 		if status >= 500 {
@@ -215,6 +216,13 @@ func GetRequestID(ctx context.Context) string {
 		return requestID
 	}
 	return ""
+}
+
+// isHealthCheckPath returns true for health/readiness probe paths
+func isHealthCheckPath(path string) bool {
+	return strings.HasSuffix(path, "/healthz") ||
+		strings.HasSuffix(path, "/readyz") ||
+		strings.HasSuffix(path, "/health")
 }
 
 // isWebSocketUpgrade checks if the request is a WebSocket upgrade request

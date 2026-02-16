@@ -104,10 +104,6 @@ type DistributionSettings struct {
 	// Logo URL for QR code center overlay — fetched at generation time
 	LogoURL string `bson:"logoUrl,omitempty" json:"logoUrl,omitempty"`
 
-	// LogoSizeMultiplier controls logo-to-QR width ratio (1/N). Lower = bigger logo.
-	// Default 5 means logo is 1/5 of QR width. Range: 3 (large) to 10 (tiny).
-	LogoSizeMultiplier int `bson:"logoSizeMultiplier,omitempty" json:"logoSizeMultiplier,omitempty"`
-
 	// WiFi SSID - when set, QR codes encode a WiFi auto-connect string (WIFI:T:...;S:<SSID>;;)
 	// This allows guests to scan and auto-connect to the hotspot WiFi network
 	WifiSSID string `bson:"wifiSSID,omitempty" json:"wifiSSID,omitempty"`
