@@ -13,6 +13,18 @@ type VoucherTemplateCreatedEvent struct {
 	Version     int    `json:"version" bson:"version"`
 }
 
+// VoucherBatchStatusChangedEvent represents a batch status change event
+type VoucherBatchStatusChangedEvent struct {
+	BatchID     string             `json:"batchId" bson:"batchId"`
+	TenantID    string             `json:"tenantId" bson:"tenantId"`
+	BatchName   string             `json:"batchName" bson:"batchName"`
+	OldStatus   VoucherBatchStatus `json:"oldStatus" bson:"oldStatus"`
+	NewStatus   VoucherBatchStatus `json:"newStatus" bson:"newStatus"`
+	Count       int64              `json:"count" bson:"count"` // Number of vouchers affected
+	ChangedAt   time.Time          `json:"changedAt" bson:"changedAt"`
+	ChangedBy   string             `json:"changedBy,omitempty" bson:"changedBy,omitempty"`
+}
+
 // VoucherTemplateUpdatedEvent represents a voucher template update event
 type VoucherTemplateUpdatedEvent struct {
 	ID          string `json:"id" bson:"_id"`
