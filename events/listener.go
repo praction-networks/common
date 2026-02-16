@@ -247,7 +247,10 @@ func (l *Listener) Stop(ctx context.Context) error {
 	return nil
 }
 
-// deleteExistingConsumerIfNeeded deletes the existing consumer if DeliverAllPolicy is set
+// deleteExistingConsumerIfNeeded deletes the existing consumer when:
+// 1. DeliverAllPolicy is set (to replay all messages on every restart)
+// 2. The existing consumer's deliver policy doesn't match the requested policy
+//    (NATS does not allow updating immutable consumer properties like DeliverPolicy)
 // Uses an extended timeout to handle NATS cluster consensus delays
 func (l *Listener) deleteExistingConsumerIfNeeded(ctx context.Context, stream jetstream.Stream) error {
 	// Use extended timeout for consumer operations
@@ -255,11 +258,33 @@ func (l *Listener) deleteExistingConsumerIfNeeded(ctx context.Context, stream je
 	defer cancel()
 
 	existingConsumer, _ := stream.Consumer(opCtx, l.Durable)
-	if existingConsumer != nil && l.DeliverPolicy == jetstream.DeliverAllPolicy {
-		logger.Info("Deleting existing consumer to ensure replay of all messages with DeliverAllPolicy",
+	if existingConsumer == nil {
+		return nil
+	}
+
+	shouldDelete := false
+	reason := ""
+
+	// Case 1: DeliverAllPolicy always replays from beginning
+	if l.DeliverPolicy == jetstream.DeliverAllPolicy {
+		shouldDelete = true
+		reason = "DeliverAllPolicy requires replay of all messages including seed events"
+	}
+
+	// Case 2: Deliver policy mismatch (immutable property)
+	if !shouldDelete {
+		info, err := existingConsumer.Info(opCtx)
+		if err == nil && info.Config.DeliverPolicy != l.DeliverPolicy {
+			shouldDelete = true
+			reason = fmt.Sprintf("deliver policy mismatch: existing=%d, requested=%d", info.Config.DeliverPolicy, l.DeliverPolicy)
+		}
+	}
+
+	if shouldDelete {
+		logger.Info("Deleting existing consumer",
 			"consumer", l.Durable,
 			"stream", string(l.StreamName),
-			"reason", "Need to catch up on all messages including seed events")
+			"reason", reason)
 
 		deleteCtx, deleteCancel := context.WithTimeout(ctx, consumerOperationTimeout)
 		defer deleteCancel()
@@ -267,7 +292,7 @@ func (l *Listener) deleteExistingConsumerIfNeeded(ctx context.Context, stream je
 		if err := stream.DeleteConsumer(deleteCtx, l.Durable); err != nil {
 			return err
 		}
-		logger.Info("Existing consumer deleted successfully, will create new one to replay all messages",
+		logger.Info("Existing consumer deleted successfully, will create new one",
 			"consumer", l.Durable,
 			"stream", string(l.StreamName))
 	}
