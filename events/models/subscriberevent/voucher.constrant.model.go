@@ -35,6 +35,15 @@ const (
 	DistributionTypeDigital    DistributionType = "DIGITAL"     // Digital (SMS/WhatsApp)
 )
 
+// VoucherScope defines who can use the voucher relative to the owner tenant
+type VoucherScope string
+
+const (
+	VoucherScopeSelfOnly    VoucherScope = "SELF_ONLY"     // Only the owner tenant can use
+	VoucherScopeAllChildren VoucherScope = "ALL_CHILDREN"  // Owner + all descendants in hierarchy
+	VoucherScopeExplicit    VoucherScope = "EXPLICIT"      // Owner + specific tenants listed in AllowedTenantIDs
+)
+
 // SessionStatus represents the status of a voucher session
 type SessionStatus string
 
