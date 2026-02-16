@@ -2,36 +2,27 @@ package subscriberevent
 
 import "time"
 
-// VoucherTemplateStatus represents the status of a voucher template
-type VoucherTemplateStatus string
+// VoucherBatchStatus represents the lifecycle state of a voucher batch
+type VoucherBatchStatus string
 
 const (
-	VoucherTemplateStatusCreated   VoucherTemplateStatus = "CREATED"
-	VoucherTemplateStatusIssued    VoucherTemplateStatus = "ISSUED"
-	VoucherTemplateStatusApproved  VoucherTemplateStatus = "APPROVED"
-	VoucherTemplateStatusRejected  VoucherTemplateStatus = "REJECTED"
-	VoucherTemplateStatusCancelled VoucherTemplateStatus = "CANCELLED"
-	VoucherTemplateStatusUnused    VoucherTemplateStatus = "UNUSED"
-	VoucherTemplateStatusExhausted VoucherTemplateStatus = "EXHAUSTED"
-	VoucherTemplateStatusDisabled  VoucherTemplateStatus = "DISABLED"
-	VoucherTemplateStatusExpired   VoucherTemplateStatus = "EXPIRED"
-	VoucherTemplateStatusDeleted   VoucherTemplateStatus = "DELETED"
-	VoucherTemplateStatusActive    VoucherTemplateStatus = "ACTIVE"
-	VoucherTemplateStatusArchived  VoucherTemplateStatus = "ARCHIVED"
+	VoucherBatchStatusCreated  VoucherBatchStatus = "CREATED"  // Batch generated, pending review
+	VoucherBatchStatusApproved VoucherBatchStatus = "APPROVED" // Ready for distribution
+	VoucherBatchStatusRejected VoucherBatchStatus = "REJECTED" // Batch rejected
+	VoucherBatchStatusExpired  VoucherBatchStatus = "EXPIRED"  // All vouchers expired
+	VoucherBatchStatusArchived VoucherBatchStatus = "ARCHIVED" // Immutable, audit-only
 )
 
-// VoucherStatus represents the lifecycle state of a voucher instance
+// VoucherStatus represents the lifecycle state of an individual voucher
 type VoucherStatus string
 
 const (
-	VoucherStatusCreated   VoucherStatus = "CREATED"   // Generated, not yet issued
-	VoucherStatusIssued    VoucherStatus = "ISSUED"    // Issued to user/printed
-	VoucherStatusUnused    VoucherStatus = "UNUSED"    // Issued but not used
-	VoucherStatusActive    VoucherStatus = "ACTIVE"    // Currently in use
-	VoucherStatusExhausted VoucherStatus = "EXHAUSTED" // Limit reached (time/data)
-	VoucherStatusExpired   VoucherStatus = "EXPIRED"   // Validity expired
-	VoucherStatusRevoked   VoucherStatus = "REVOKED"   // Manually revoked
-	VoucherStatusArchived  VoucherStatus = "ARCHIVED"  // Immutable, audit-only
+	VoucherStatusCreated    VoucherStatus = "CREATED"    // Generated, not yet used
+	VoucherStatusUsed       VoucherStatus = "USED"       // Voucher has been redeemed
+	VoucherStatusLive       VoucherStatus = "LIVE"       // Currently active session
+	VoucherStatusExpired    VoucherStatus = "EXPIRED"    // Validity period ended
+	VoucherStatusTerminated VoucherStatus = "TERMINATED" // Manually revoked/disabled
+	VoucherStatusExhausted  VoucherStatus = "EXHAUSTED"  // Usage/data/time limit reached
 )
 
 // DistributionType represents how the voucher is distributed
@@ -70,13 +61,10 @@ const (
 	TerminationReasonRevoked        TerminationReason = "REVOKED"         // Voucher revoked
 )
 
-
-
-// VoucherValidity defines the validity window for template and generated vouchers
+// VoucherValidity defines the validity window for voucher batches
 type VoucherValidity struct {
-	// Template validity - when this template can be used to generate vouchers
-	Start time.Time `bson:"start" json:"start"` // Template valid from
-	End   time.Time `bson:"end" json:"end"`     // Template valid until
+	Start time.Time `bson:"start" json:"start"` // Valid from
+	End   time.Time `bson:"end" json:"end"`     // Valid until
 }
 
 // DistributionSettings defines how vouchers are generated and distributed
