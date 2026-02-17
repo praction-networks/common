@@ -24,7 +24,6 @@ var (
 	AccessibleTenantsKey = &contextKey{"accessible_tenants"}
 )
 
-
 var (
 	chromeRegex         = regexp.MustCompile(`Chrome/([\d\.]+)`)
 	firefoxRegex        = regexp.MustCompile(`Firefox/([\d\.]+)`)
@@ -312,7 +311,6 @@ func IsAnyTenantAccessible(tenantIDs []string, accessibleTenants []string) bool 
 	}
 	return false
 }
-
 
 func simplifyUserAgent(ua string) string {
 	// Check for mobile browsers first (they often contain "Mobile" or "Android" or "iPhone")

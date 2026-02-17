@@ -392,4 +392,3 @@ func TestParseEventTimeFromDevice(t *testing.T) {
 		})
 	}
 }
-

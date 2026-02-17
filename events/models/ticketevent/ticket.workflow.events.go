@@ -46,13 +46,13 @@ type TicketClassifiedEvent struct {
 }
 
 type TicketClassifiedPayload struct {
-	TicketID     string  `json:"ticketId" bson:"ticketId"`
-	TenantID     string  `json:"tenantId" bson:"tenantId"`
-	CategoryKey  *string `json:"categoryKey,omitempty" bson:"categoryKey,omitempty"`
-	PriorityKey  *string `json:"priorityKey,omitempty" bson:"priorityKey,omitempty"`
-	Tags         []string `json:"tags,omitempty" bson:"tags,omitempty"`
-	Confidence   float64 `json:"confidence,omitempty" bson:"confidence,omitempty"`
-	Provider     string  `json:"provider,omitempty" bson:"provider,omitempty"` // e.g., "openai", "google"
+	TicketID    string   `json:"ticketId" bson:"ticketId"`
+	TenantID    string   `json:"tenantId" bson:"tenantId"`
+	CategoryKey *string  `json:"categoryKey,omitempty" bson:"categoryKey,omitempty"`
+	PriorityKey *string  `json:"priorityKey,omitempty" bson:"priorityKey,omitempty"`
+	Tags        []string `json:"tags,omitempty" bson:"tags,omitempty"`
+	Confidence  float64  `json:"confidence,omitempty" bson:"confidence,omitempty"`
+	Provider    string   `json:"provider,omitempty" bson:"provider,omitempty"` // e.g., "openai", "google"
 }
 
 // TicketAutoLinkedEvent captures requester auto-linking to customer/subscriber.
@@ -62,13 +62,13 @@ type TicketAutoLinkedEvent struct {
 }
 
 type TicketAutoLinkedPayload struct {
-	TicketID      string `json:"ticketId" bson:"ticketId"`
-	TenantID      string `json:"tenantId" bson:"tenantId"`
+	TicketID      string  `json:"ticketId" bson:"ticketId"`
+	TenantID      string  `json:"tenantId" bson:"tenantId"`
 	CustomerID    *string `json:"customerId,omitempty" bson:"customerId,omitempty"`
 	ContactID     *string `json:"contactId,omitempty" bson:"contactId,omitempty"`
 	SubscriberID  *string `json:"subscriberId,omitempty" bson:"subscriberId,omitempty"`
-	MatchType     string `json:"matchType" bson:"matchType"` // "exact", "fuzzy", "manual"
-	MatchedEntity string `json:"matchedEntity" bson:"matchedEntity"` // "customer", "subscriber", "tenant-user"
+	MatchType     string  `json:"matchType" bson:"matchType"`         // "exact", "fuzzy", "manual"
+	MatchedEntity string  `json:"matchedEntity" bson:"matchedEntity"` // "customer", "subscriber", "tenant-user"
 }
 
 // TicketCreatedFromEmailEvent captures ticket creation from inbound email.

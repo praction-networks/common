@@ -248,9 +248,10 @@ func (l *Listener) Stop(ctx context.Context) error {
 }
 
 // deleteExistingConsumerIfNeeded deletes the existing consumer when:
-// 1. DeliverAllPolicy is set (to replay all messages on every restart)
-// 2. The existing consumer's deliver policy doesn't match the requested policy
-//    (NATS does not allow updating immutable consumer properties like DeliverPolicy)
+//  1. DeliverAllPolicy is set (to replay all messages on every restart)
+//  2. The existing consumer's deliver policy doesn't match the requested policy
+//     (NATS does not allow updating immutable consumer properties like DeliverPolicy)
+//
 // Uses an extended timeout to handle NATS cluster consensus delays
 func (l *Listener) deleteExistingConsumerIfNeeded(ctx context.Context, stream jetstream.Stream) error {
 	// Use extended timeout for consumer operations

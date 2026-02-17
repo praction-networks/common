@@ -76,15 +76,15 @@ type TenantUserPasswordSetEvent struct {
 type UserPreferences struct {
 	SidebarMenu     *SidebarMenuPreferences     `json:"sidebarMenu,omitempty"`
 	TenantFavorites *TenantFavoritesPreferences `json:"tenantFavorites,omitempty"`
-	Theme           *UserThemePreferences        `json:"theme,omitempty"`
+	Theme           *UserThemePreferences       `json:"theme,omitempty"`
 }
 
 // SidebarMenuPreferences represents sidebar menu organization preferences
 type SidebarMenuPreferences struct {
-	GroupOrder        []string          `json:"groupOrder,omitempty"`        // Ordered group titles
-	ItemOrder         map[string][]string `json:"itemOrder,omitempty"`       // groupTitle -> ordered item hrefs
-	Favorites         []string          `json:"favorites,omitempty"`         // Starred item hrefs
-	UseFavoritesOrder bool             `json:"useFavoritesOrder,omitempty"` // If true, use favorites-based order
+	GroupOrder        []string            `json:"groupOrder,omitempty"`        // Ordered group titles
+	ItemOrder         map[string][]string `json:"itemOrder,omitempty"`         // groupTitle -> ordered item hrefs
+	Favorites         []string            `json:"favorites,omitempty"`         // Starred item hrefs
+	UseFavoritesOrder bool                `json:"useFavoritesOrder,omitempty"` // If true, use favorites-based order
 }
 
 // TenantFavoritesPreferences represents tenant favorites and ordering preferences
@@ -110,7 +110,7 @@ type UserThemePreferences struct {
 // TenantUserPreferencesUpdatedEvent is published when user preferences are updated
 // This event is consumed by auth-service to update the cached preferences
 type TenantUserPreferencesUpdatedEvent struct {
-	UserID      string          `json:"userId"`      // User ID (cuid2)
+	UserID      string           `json:"userId"`      // User ID (cuid2)
 	Preferences *UserPreferences `json:"preferences"` // Updated preferences
-	Timestamp   string          `json:"timestamp"`   // ISO 8601 timestamp
+	Timestamp   string           `json:"timestamp"`   // ISO 8601 timestamp
 }

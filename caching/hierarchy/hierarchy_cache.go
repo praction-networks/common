@@ -39,7 +39,6 @@ type TenantHierarchyCache interface {
 	LoadInitialData(tenants []*helpers.TenantHierarchyData)
 }
 
-
 // InMemoryCache implements TenantHierarchyCache using a thread-safe map
 type InMemoryCache struct {
 	cache map[string]*helpers.TenantHierarchyData

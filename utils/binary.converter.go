@@ -98,13 +98,13 @@ func MillisToTime(millis int64) time.Time {
 func ParseEventTimeFromDevice(deviceTimestamp string) (int64, error) {
 	// Common timestamp formats used by network devices
 	formats := []string{
-		time.RFC3339,        // 2006-01-02T15:04:05Z07:00
-		time.RFC3339Nano,    // 2006-01-02T15:04:05.999999999Z07:00
+		time.RFC3339,                // 2006-01-02T15:04:05Z07:00
+		time.RFC3339Nano,            // 2006-01-02T15:04:05.999999999Z07:00
 		"2006-01-02T15:04:05Z07:00", // RFC3339 without nanoseconds
-		"2006-01-02 15:04:05",        // MySQL format
-		"2006-01-02T15:04:05",        // ISO 8601 without timezone
-		"Jan 2 15:04:05 2006",        // Syslog format
-		"2006-01-02T15:04:05.000Z",   // ISO 8601 with milliseconds
+		"2006-01-02 15:04:05",       // MySQL format
+		"2006-01-02T15:04:05",       // ISO 8601 without timezone
+		"Jan 2 15:04:05 2006",       // Syslog format
+		"2006-01-02T15:04:05.000Z",  // ISO 8601 with milliseconds
 	}
 
 	for _, format := range formats {
@@ -116,4 +116,3 @@ func ParseEventTimeFromDevice(deviceTimestamp string) (int64, error) {
 
 	return 0, fmt.Errorf("failed to parse device timestamp: %s (tried %d formats)", deviceTimestamp, len(formats))
 }
-

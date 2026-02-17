@@ -7,12 +7,12 @@ import (
 )
 
 type TenantInsertEventModel struct {
-	ID          string `bson:"_id" json:"id"`
-	Name        string `bson:"name" json:"name"`
-	Code        string `bson:"code" json:"code"`
-	Type        string `bson:"type" json:"type"`
-	Fqdn        string `bson:"fqdn,omitempty" json:"fqdn,omitempty"`
-	EntType     string `bson:"entType,omitempty" json:"entType,omitempty"`
+	ID      string `bson:"_id" json:"id"`
+	Name    string `bson:"name" json:"name"`
+	Code    string `bson:"code" json:"code"`
+	Type    string `bson:"type" json:"type"`
+	Fqdn    string `bson:"fqdn,omitempty" json:"fqdn,omitempty"`
+	EntType string `bson:"entType,omitempty" json:"entType,omitempty"`
 
 	// Hierarchy Management
 	ParentTenantID string   `bson:"parentTenantId,omitempty" json:"parentTenantId,omitempty"`
@@ -50,12 +50,12 @@ type TenantInsertEventModel struct {
 }
 
 type TenantUpdateEventModel struct {
-	ID          string `bson:"_id" json:"id"`
-	Name        string `bson:"name,omitempty" json:"name,omitempty"`
-	Code        string `bson:"code,omitempty" json:"code,omitempty"`
-	Type        string `bson:"type,omitempty" json:"type,omitempty"`
-	Fqdn        string `bson:"fqdn,omitempty" json:"fqdn,omitempty"`
-	EntType     string `bson:"entType,omitempty" json:"entType,omitempty"`
+	ID      string `bson:"_id" json:"id"`
+	Name    string `bson:"name,omitempty" json:"name,omitempty"`
+	Code    string `bson:"code,omitempty" json:"code,omitempty"`
+	Type    string `bson:"type,omitempty" json:"type,omitempty"`
+	Fqdn    string `bson:"fqdn,omitempty" json:"fqdn,omitempty"`
+	EntType string `bson:"entType,omitempty" json:"entType,omitempty"`
 
 	// Hierarchy Management
 	ParentTenantID string   `bson:"parentTenantId,omitempty" json:"parentTenantId,omitempty"`

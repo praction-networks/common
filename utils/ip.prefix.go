@@ -9,17 +9,17 @@ import (
 
 // IPPrefixCode represents a compressed prefix code for file-level indexing
 type IPPrefixCode struct {
-	Code      string // "AA", "AB", etc.
-	Prefix    string // "103.83.131.0/24"
-	CIDR      int    // 24
-	Family    string // "IPv4" or "IPv6"
+	Code   string // "AA", "AB", etc.
+	Prefix string // "103.83.131.0/24"
+	CIDR   int    // 24
+	Family string // "IPv4" or "IPv6"
 }
 
 // CalculateIPv4PrefixCodes calculates prefix codes for IPv4 addresses
 // Returns /16 and /24 prefixes
 func CalculateIPv4PrefixCodes(ipv4 uint32) []IPPrefixCode {
 	codes := []IPPrefixCode{}
-	
+
 	// Extract IP string
 	ipStr := Uint32ToIPv4(ipv4)
 	ip := net.ParseIP(ipStr).To4()
@@ -60,7 +60,7 @@ func CalculateIPv4PrefixCodes(ipv4 uint32) []IPPrefixCode {
 // Returns /32 and /64 prefixes
 func CalculateIPv6PrefixCodes(ipv6 []byte) []IPPrefixCode {
 	codes := []IPPrefixCode{}
-	
+
 	if len(ipv6) != 16 {
 		return codes
 	}
@@ -110,12 +110,12 @@ func CalculateIPv6PrefixCodes(ipv6 []byte) []IPPrefixCode {
 func generatePrefixCode(prefix string, family string, cidr int) string {
 	// Use prefix string + CIDR as key for consistent hashing
 	key := fmt.Sprintf("%s:%s:%d", family, prefix, cidr)
-	
+
 	// Generate short code (2 characters) using SHA-256 hash
 	hash := sha256.Sum256([]byte(key))
 	// Use first 2 bytes of hash, encode as hex, take first 2 characters
 	hashCode := hex.EncodeToString(hash[:2])[:2]
-	
+
 	// Return uppercase 2-character code (no family prefix - keep it simple)
 	return string(hashCode[0]) + string(hashCode[1])
 }
@@ -124,14 +124,14 @@ func generatePrefixCode(prefix string, family string, cidr int) string {
 func ExtractUniquePrefixCodes(prefixCodes []IPPrefixCode) []string {
 	seen := make(map[string]bool)
 	unique := []string{}
-	
+
 	for _, pc := range prefixCodes {
 		if !seen[pc.Code] {
 			seen[pc.Code] = true
 			unique = append(unique, pc.Code)
 		}
 	}
-	
+
 	return unique
 }
 
@@ -141,16 +141,13 @@ func GeneratePrefixCodeFromIP(ipStr string) []IPPrefixCode {
 	if ip == nil {
 		return nil
 	}
-	
+
 	if ipv4 := ip.To4(); ipv4 != nil {
 		// Convert to uint32
 		ipv4Uint32 := uint32(ipv4[0])<<24 | uint32(ipv4[1])<<16 | uint32(ipv4[2])<<8 | uint32(ipv4[3])
 		return CalculateIPv4PrefixCodes(ipv4Uint32)
 	}
-	
+
 	// IPv6
 	return CalculateIPv6PrefixCodes(ip.To16())
 }
-
-
-

@@ -186,7 +186,7 @@ func AccessibleTenantsMiddleware(cache hierarchy.TenantHierarchyCache) func(http
 
 			// Get context tenant ID first
 			contextTenantID := helpers.GetTenantID(ctx)
-			
+
 			// System users WITHOUT a tenant context: Skip injection (global access)
 			// System users WITH a tenant context: Proceed to compute accessible tenants
 			if helpers.IsSystemUser(ctx) && contextTenantID == "" {
@@ -217,4 +217,3 @@ func AccessibleTenantsMiddleware(cache hierarchy.TenantHierarchyCache) func(http
 		})
 	}
 }
-

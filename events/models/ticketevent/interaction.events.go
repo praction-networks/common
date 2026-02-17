@@ -23,15 +23,15 @@ type TicketMessageAddedEvent struct {
 }
 
 type TicketMessageAddedPayload struct {
-	TicketID      string  `json:"ticketId" bson:"ticketId"`
-	TenantID      string  `json:"tenantId" bson:"tenantId"`
-	MessageID     string  `json:"messageId" bson:"messageId"`
-	Direction     string  `json:"direction" bson:"direction"` // INBOUND, OUTBOUND, INTERNAL
-	Channel       string  `json:"channel" bson:"channel"`
-	SenderType    string  `json:"senderType" bson:"senderType"` // customer, agent, system
-	SenderID      *string `json:"senderId,omitempty" bson:"senderId,omitempty"`
-	Body          *string `json:"body,omitempty" bson:"body,omitempty"`
-	IsInternal    bool    `json:"isInternal" bson:"isInternal"`
+	TicketID      string   `json:"ticketId" bson:"ticketId"`
+	TenantID      string   `json:"tenantId" bson:"tenantId"`
+	MessageID     string   `json:"messageId" bson:"messageId"`
+	Direction     string   `json:"direction" bson:"direction"` // INBOUND, OUTBOUND, INTERNAL
+	Channel       string   `json:"channel" bson:"channel"`
+	SenderType    string   `json:"senderType" bson:"senderType"` // customer, agent, system
+	SenderID      *string  `json:"senderId,omitempty" bson:"senderId,omitempty"`
+	Body          *string  `json:"body,omitempty" bson:"body,omitempty"`
+	IsInternal    bool     `json:"isInternal" bson:"isInternal"`
 	AttachmentIDs []string `json:"attachmentIds" bson:"attachmentIds"`
 }
 

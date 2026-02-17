@@ -73,8 +73,6 @@ const (
 	TemplateActionCodeBillingCreditApplied              TemplateActionCode = "BILLING.CREDIT_APPLIED"
 	TemplateActionCodeBillingAutoDebitSuccess           TemplateActionCode = "BILLING.AUTO_DEBIT_SUCCESS"
 
-
-
 	// -----------------------------------------------------
 	// 5. Network Management System (NMS) — SNMP / Poller / Alarms Actions
 	// -----------------------------------------------------
@@ -388,16 +386,16 @@ func GetAllActionCodes() map[TemplateActionCode]bool {
 		TemplateActionCodeCustomerDisconnected:              true,
 		TemplateActionCodeHotSpotLoginOTP:                   true,
 		// System templates (System.* prefix)
-		SystemTemplateActionCodeOTPLogin:                     true,
-		SystemTemplateActionCodePasswordRecovery:             true,
-		SystemTemplateActionCodePasswordChanged:              true,
-		SystemTemplateActionCodeNewDeviceLogin:               true,
-		SystemTemplateActionCodeAccountVerification:          true,
-		SystemTemplateActionCodeMFAEnabled:                   true,
-		SystemTemplateActionCodeMFADisabled:                  true,
-		SystemTemplateActionCodeSuspiciousLogin:              true,
-		SystemTemplateActionCodeLockedOut:                    true,
-		SystemTemplateActionCodeUnlocked:                     true,
+		SystemTemplateActionCodeOTPLogin:            true,
+		SystemTemplateActionCodePasswordRecovery:    true,
+		SystemTemplateActionCodePasswordChanged:     true,
+		SystemTemplateActionCodeNewDeviceLogin:      true,
+		SystemTemplateActionCodeAccountVerification: true,
+		SystemTemplateActionCodeMFAEnabled:          true,
+		SystemTemplateActionCodeMFADisabled:         true,
+		SystemTemplateActionCodeSuspiciousLogin:     true,
+		SystemTemplateActionCodeLockedOut:           true,
+		SystemTemplateActionCodeUnlocked:            true,
 	}
 }
 
@@ -453,7 +451,7 @@ func GetActionCodeDescriptions() map[TemplateActionCode]string {
 		TemplateActionCodeBillingPaymentRefundRequested:     "Payment refund requested",
 		TemplateActionCodeBillingLateFeeApplied:             "Late fee applied",
 		TemplateActionCodeBillingCreditApplied:              "Credit applied",
-		TemplateActionCodeBillingAutoDebitSuccess:           "Auto debit successful",	
+		TemplateActionCodeBillingAutoDebitSuccess:           "Auto debit successful",
 		TemplateActionCodeNMSDeviceDown:                     "Device offline alert",
 		TemplateActionCodeNMSDeviceUp:                       "Device online alert",
 		TemplateActionCodeNMSMaintenanceAlert:               "Maintenance scheduled alert",
@@ -544,16 +542,16 @@ func GetActionCodeDescriptions() map[TemplateActionCode]string {
 		TemplateActionCodeCustomerDisconnected:              "Customer Disconnected - Permanent disconnection",
 		TemplateActionCodeHotSpotLoginOTP:                   "Hotspot Login OTP - One-Time Password for login",
 		// System template descriptions
-		SystemTemplateActionCodeOTPLogin:                    "System OTP Login - One-Time Password for login (System template)",
-		SystemTemplateActionCodePasswordRecovery:           "System Password Recovery - Password recovery token (System template)",
-		SystemTemplateActionCodePasswordChanged:            "System Password Changed - Password change confirmation (System template)",
-		SystemTemplateActionCodeNewDeviceLogin:             "System New Device Login - Login alert for new device (System template)",
-		SystemTemplateActionCodeAccountVerification:        "System Account Verification - Verification link (System template)",
-		SystemTemplateActionCodeMFAEnabled:                 "System MFA Enabled - Multi-factor authentication activated (System template)",
-		SystemTemplateActionCodeMFADisabled:                "System MFA Disabled - Multi-factor authentication disabled (System template)",
-		SystemTemplateActionCodeSuspiciousLogin:           "System Suspicious Login - Unusual login detected (System template)",
-		SystemTemplateActionCodeLockedOut:                   "System Account Locked - Too many failed login attempts (System template)",
-		SystemTemplateActionCodeUnlocked:                   "System Account Unlocked - Unlock confirmation (System template)",
+		SystemTemplateActionCodeOTPLogin:            "System OTP Login - One-Time Password for login (System template)",
+		SystemTemplateActionCodePasswordRecovery:    "System Password Recovery - Password recovery token (System template)",
+		SystemTemplateActionCodePasswordChanged:     "System Password Changed - Password change confirmation (System template)",
+		SystemTemplateActionCodeNewDeviceLogin:      "System New Device Login - Login alert for new device (System template)",
+		SystemTemplateActionCodeAccountVerification: "System Account Verification - Verification link (System template)",
+		SystemTemplateActionCodeMFAEnabled:          "System MFA Enabled - Multi-factor authentication activated (System template)",
+		SystemTemplateActionCodeMFADisabled:         "System MFA Disabled - Multi-factor authentication disabled (System template)",
+		SystemTemplateActionCodeSuspiciousLogin:     "System Suspicious Login - Unusual login detected (System template)",
+		SystemTemplateActionCodeLockedOut:           "System Account Locked - Too many failed login attempts (System template)",
+		SystemTemplateActionCodeUnlocked:            "System Account Unlocked - Unlock confirmation (System template)",
 	}
 }
 

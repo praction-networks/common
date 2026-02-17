@@ -39,4 +39,3 @@ func HashUsername(username string) string {
 
 	return hashStr
 }
-

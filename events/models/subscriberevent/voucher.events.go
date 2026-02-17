@@ -2,39 +2,29 @@ package subscriberevent
 
 import "time"
 
-// VoucherBatchStatusChangedEvent represents a batch status change event
-type VoucherBatchStatusChangedEvent struct {
-	BatchID       string             `json:"batchId" bson:"batchId"`
-	OwnerTenantID string             `json:"ownerTenantId" bson:"ownerTenantId"`
-	BatchName     string             `json:"batchName" bson:"batchName"`
-	OldStatus VoucherBatchStatus `json:"oldStatus" bson:"oldStatus"`
-	NewStatus VoucherBatchStatus `json:"newStatus" bson:"newStatus"`
-	Count     int64              `json:"count" bson:"count"` // Number of vouchers affected
-	ChangedAt time.Time          `json:"changedAt" bson:"changedAt"`
-	ChangedBy string             `json:"changedBy,omitempty" bson:"changedBy,omitempty"`
-}
-
 // VoucherInstanceCreatedEvent represents a voucher instance creation event
-// Captive-portal caches: voucherCode, status, expiresAt, planId for fast validation
-type VoucherInstanceCreatedEvent struct {
-	ID               string       `json:"id" bson:"_id"`
-	OwnerTenantID    string       `json:"ownerTenantId" bson:"ownerTenantId"`
-	Scope            VoucherScope `json:"scope" bson:"scope"`
-	AllowedTenantIDs []string     `json:"allowedTenantIds,omitempty" bson:"allowedTenantIds,omitempty"`
-	TemplateID       string       `json:"templateId" bson:"templateId"`
-	PlanID           string       `json:"planId" bson:"planId"`
-	VoucherCode      string       `json:"voucherCode" bson:"voucherCode"`
-	Status           string       `json:"status" bson:"status"`
-	IssuedAt         *time.Time   `json:"issuedAt,omitempty" bson:"issuedAt,omitempty"`
-	ExpiresAt        time.Time    `json:"expiresAt" bson:"expiresAt"`
-	BatchID          *string      `json:"batchId,omitempty" bson:"batchId,omitempty"`
-	Distribution     string       `json:"distributionType" bson:"distributionType"`
-	Version          int          `json:"version" bson:"version"`
+// Published when a new voucher is inserted into MongoDB
+type VoucherCreatedEvent struct {
+	ID               string             `json:"id" bson:"_id"`
+	OwnerTenantID    string             `json:"ownerTenantId" bson:"ownerTenantId"`
+	Scope            VoucherScope       `json:"scope" bson:"scope"`
+	AllowedTenantIDs []string           `json:"allowedTenantIds,omitempty" bson:"allowedTenantIds,omitempty"`
+	TemplateID       string             `json:"templateId" bson:"templateId"`
+	PlanID           string             `json:"planId" bson:"planId"`
+	VoucherCode      string             `json:"voucherCode" bson:"voucherCode"`
+	Status           string             `json:"status" bson:"status"`
+	BatchID          *string            `json:"batchId,omitempty" bson:"batchId,omitempty"`
+	BatchStatus      VoucherBatchStatus `json:"batchStatus" bson:"batchStatus"`
+	IssuedAt         *time.Time         `json:"issuedAt,omitempty" bson:"issuedAt,omitempty"`
+	ExpiresAt        time.Time          `json:"expiresAt" bson:"expiresAt"`
+	Distribution     string             `json:"distributionType" bson:"distributionType"`
+	Version          int                `json:"version" bson:"version"`
 }
 
 // VoucherInstanceUpdatedEvent represents a voucher instance update event
-// Published per voucher when batch status changes, so captive-portal can update its cache
-type VoucherInstanceUpdatedEvent struct {
+// Published for any voucher update (status change, batch status change, usage, expiry, revocation, extension)
+// Contains the full document state from MongoDB so consumers can upsert
+type VoucherUpdatedEvent struct {
 	ID               string             `json:"id" bson:"_id"`
 	OwnerTenantID    string             `json:"ownerTenantId" bson:"ownerTenantId"`
 	Scope            VoucherScope       `json:"scope" bson:"scope"`
@@ -49,105 +39,11 @@ type VoucherInstanceUpdatedEvent struct {
 	Version          int                `json:"version" bson:"version"`
 }
 
-// VoucherInstanceBulkCreatedEvent represents a bulk voucher instance creation event
-type VoucherInstanceBulkCreatedEvent struct {
-	OwnerTenantID string   `json:"ownerTenantId" bson:"ownerTenantId"`
-	TemplateID  string   `json:"templateId" bson:"templateId"`
-	BatchID     string   `json:"batchId" bson:"batchId"`
-	Count       int      `json:"count" bson:"count"`
-	VoucherCodes []string `json:"voucherCodes,omitempty" bson:"voucherCodes,omitempty"` // Optional: list of generated codes
-}
-
-// VoucherInstanceUsedEvent represents a voucher instance usage event
-type VoucherInstanceUsedEvent struct {
-	ID            string    `json:"id" bson:"_id"`
-	OwnerTenantID string    `json:"ownerTenantId" bson:"ownerTenantId"`
-	TemplateID string    `json:"templateId" bson:"templateId"`
-	VoucherCode string   `json:"voucherCode" bson:"voucherCode"`
-	Status     string    `json:"status" bson:"status"`
-	MACAddress string    `json:"macAddress" bson:"macAddress"`
-	ClientIP   string    `json:"clientIp" bson:"clientIp"`
-	CGNATIP    *string   `json:"cgnatIp,omitempty" bson:"cgnatIp,omitempty"`
-	NASID      string    `json:"nasId" bson:"nasId"`
-	LocationID *string   `json:"locationId,omitempty" bson:"locationId,omitempty"`
-	SessionID  string    `json:"sessionId" bson:"sessionId"`
-	UsedAt     time.Time `json:"usedAt" bson:"usedAt"`
-	Version    int       `json:"version" bson:"version"`
-
-	// Binding information (for cache update)
-	BoundMAC    *string `json:"boundMac,omitempty" bson:"boundMac,omitempty"`
-	BoundUserIP *string `json:"boundUserIp,omitempty" bson:"boundUserIp,omitempty"`
-}
-
-// VoucherInstanceExpiredEvent represents a voucher instance expiration event
-type VoucherInstanceExpiredEvent struct {
-	ID            string    `json:"id" bson:"_id"`
-	OwnerTenantID string    `json:"ownerTenantId" bson:"ownerTenantId"`
-	TemplateID string    `json:"templateId" bson:"templateId"`
-	VoucherCode string   `json:"voucherCode" bson:"voucherCode"`
-	Status     string    `json:"status" bson:"status"`
-	ExpiredAt  time.Time `json:"expiredAt" bson:"expiredAt"`
-	Reason     string    `json:"reason,omitempty" bson:"reason,omitempty"` // "time_limit", "checkout", "auto_invalidate"
-	Version    int       `json:"version" bson:"version"`
-}
-
-// VoucherInstanceRevokedEvent represents a voucher instance revocation event
-type VoucherInstanceRevokedEvent struct {
-	ID            string    `json:"id" bson:"_id"`
-	OwnerTenantID string    `json:"ownerTenantId" bson:"ownerTenantId"`
-	TemplateID string    `json:"templateId" bson:"templateId"`
-	VoucherCode string   `json:"voucherCode" bson:"voucherCode"`
-	Status     string    `json:"status" bson:"status"`
-	BatchID    *string   `json:"batchId,omitempty" bson:"batchId,omitempty"`
-	RevokedAt  time.Time `json:"revokedAt" bson:"revokedAt"`
-	RevokedBy  string    `json:"revokedBy,omitempty" bson:"revokedBy,omitempty"`
-	Reason     string    `json:"reason,omitempty" bson:"reason,omitempty"`
-	Version    int       `json:"version" bson:"version"`
-}
-
-// VoucherInstanceExtendedEvent represents a voucher instance validity extension event
-type VoucherInstanceExtendedEvent struct {
-	ID            string    `json:"id" bson:"_id"`
-	OwnerTenantID string    `json:"ownerTenantId" bson:"ownerTenantId"`
-	TemplateID   string    `json:"templateId" bson:"templateId"`
-	VoucherCode  string    `json:"voucherCode" bson:"voucherCode"`
-	BatchID      *string   `json:"batchId,omitempty" bson:"batchId,omitempty"`
-	OldExpiresAt time.Time `json:"oldExpiresAt" bson:"oldExpiresAt"`
-	NewExpiresAt time.Time `json:"newExpiresAt" bson:"newExpiresAt"`
-	ExtendedAt   time.Time `json:"extendedAt" bson:"extendedAt"`
-	ExtendedBy   string    `json:"extendedBy,omitempty" bson:"extendedBy,omitempty"`
-	Version      int       `json:"version" bson:"version"`
-}
-
-// VoucherSessionCreatedEvent represents a voucher session creation event
-type VoucherSessionCreatedEvent struct {
-	ID                string    `json:"id" bson:"_id"`
-	OwnerTenantID     string    `json:"ownerTenantId" bson:"ownerTenantId"`
-	VoucherInstanceID string    `json:"voucherInstanceId" bson:"voucherInstanceId"`
-	VoucherCode       string    `json:"voucherCode" bson:"voucherCode"`
-	SessionID         string    `json:"sessionId" bson:"sessionId"`
-	MACAddress        string    `json:"macAddress" bson:"macAddress"`
-	ClientIP          string    `json:"clientIp" bson:"clientIp"`
-	CGNATIP           *string   `json:"cgnatIp,omitempty" bson:"cgnatIp,omitempty"`
-	NASID             string    `json:"nasId" bson:"nasId"`
-	LocationID        *string   `json:"locationId,omitempty" bson:"locationId,omitempty"`
-	StartTime         time.Time `json:"startTime" bson:"startTime"`
-	Status            string    `json:"status" bson:"status"`
-}
-
-// VoucherSessionEndedEvent represents a voucher session end event
-type VoucherSessionEndedEvent struct {
-	ID                string    `json:"id" bson:"_id"`
-	OwnerTenantID     string    `json:"ownerTenantId" bson:"ownerTenantId"`
-	VoucherInstanceID string    `json:"voucherInstanceId" bson:"voucherInstanceId"`
-	VoucherCode       string    `json:"voucherCode" bson:"voucherCode"`
-	SessionID         string    `json:"sessionId" bson:"sessionId"`
-	StartTime         time.Time `json:"startTime" bson:"startTime"`
-	EndTime           time.Time `json:"endTime" bson:"endTime"`
-	Duration          int64     `json:"duration" bson:"duration"` // Duration in seconds
-	UsedDataMB        int64     `json:"usedDataMB" bson:"usedDataMB"`
-	InputOctets       int64     `json:"inputOctets" bson:"inputOctets"`
-	OutputOctets      int64     `json:"outputOctets" bson:"outputOctets"`
-	TerminationReason *string   `json:"terminationReason,omitempty" bson:"terminationReason,omitempty"`
-	Status            string    `json:"status" bson:"status"`
+// VoucherInstanceDeletedEvent represents a voucher instance deletion event
+// Published when a voucher is deleted from MongoDB
+type VoucherDeletedEvent struct {
+	ID            string `json:"id" bson:"_id"`
+	OwnerTenantID string `json:"ownerTenantId" bson:"ownerTenantId"`
+	VoucherCode   string `json:"voucherCode" bson:"voucherCode"`
+	Version       int    `json:"version" bson:"version"`
 }

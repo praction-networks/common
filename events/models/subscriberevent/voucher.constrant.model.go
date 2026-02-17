@@ -39,9 +39,9 @@ const (
 type VoucherScope string
 
 const (
-	VoucherScopeSelfOnly    VoucherScope = "SELF_ONLY"     // Only the owner tenant can use
-	VoucherScopeAllChildren VoucherScope = "ALL_CHILDREN"  // Owner + all descendants in hierarchy
-	VoucherScopeExplicit    VoucherScope = "EXPLICIT"      // Owner + specific tenants listed in AllowedTenantIDs
+	VoucherScopeSelfOnly    VoucherScope = "SELF_ONLY"    // Only the owner tenant can use
+	VoucherScopeAllChildren VoucherScope = "ALL_CHILDREN" // Owner + all descendants in hierarchy
+	VoucherScopeExplicit    VoucherScope = "EXPLICIT"     // Owner + specific tenants listed in AllowedTenantIDs
 )
 
 // SessionStatus represents the status of a voucher session

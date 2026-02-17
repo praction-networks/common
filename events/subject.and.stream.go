@@ -76,11 +76,11 @@ const (
 	TenantCDNProviderBindingDeletedSubject  Subject = "tenant.cdnbinding.deleted"
 
 	//Domain User Service Event Initialization
-	TenantUserCreatedSubject          Subject = "tenantuser.created"
-	TenantUserUpdatedSubject          Subject = "tenantuser.updated"
-	TenantUserDeletedSubject          Subject = "tenantuser.deleted"
-	TenantUserPasswordSetSubject      Subject = "tenantuser.password.set" // Initial password set during onboarding
-	TenantUserPreferencesUpdatedSubject Subject = "tenantuser.preferences.updated" 
+	TenantUserCreatedSubject            Subject = "tenantuser.created"
+	TenantUserUpdatedSubject            Subject = "tenantuser.updated"
+	TenantUserDeletedSubject            Subject = "tenantuser.deleted"
+	TenantUserPasswordSetSubject        Subject = "tenantuser.password.set" // Initial password set during onboarding
+	TenantUserPreferencesUpdatedSubject Subject = "tenantuser.preferences.updated"
 
 	// Tenant Auth Role Event Initialization
 	TenantUserRoleCreatedSubject Subject = "tenantuserrole.created"
@@ -119,7 +119,6 @@ const (
 	VoucherUpdatedSubject Subject = "subscriber.voucher.updated"
 	VoucherDeletedSubject Subject = "subscriber.voucher.deleted"
 
-
 	// RadAcct CDC Events (FreeRADIUS accounting from radius-event-manager-service)
 	RadiusAccountingRadAcctSessionStartSubject  Subject = "radiusaccounting.radacct.session.start"
 	RadiusAccountingRadAcctSessionUpdateSubject Subject = "radiusaccounting.radacct.session.update"
@@ -155,34 +154,33 @@ const (
 	CouponDeletedSubject Subject = "coupon.deleted"
 
 	// Ticket Service Events
-	TicketCreatedSubject            Subject = "ticket.created"
-	TicketUpdatedSubject            Subject = "ticket.updated"
-	TicketAssignedSubject           Subject = "ticket.assigned"
-	TicketStatusChangedSubject      Subject = "ticket.status.changed"
-	TicketResolvedSubject           Subject = "ticket.resolved"
-	TicketClosedSubject             Subject = "ticket.closed"
-	TicketEscalatedSubject          Subject = "ticket.escalated"
-	TicketReopenedSubject           Subject = "ticket.reopened"
-	TicketMergedSubject             Subject = "ticket.merged"
-	TicketSplitSubject              Subject = "ticket.split"
-	TicketCommentAddedSubject       Subject = "ticket.comment.added" // DEPRECATED: Use TicketMessageAddedSubject
-	TicketMessageAddedSubject       Subject = "ticket.message.added"
-	TicketCustomerRepliedSubject    Subject = "ticket.customer.replied"
-	TicketAttachmentAddedSubject    Subject = "ticket.attachment.added"
-	TicketSLABreachedSubject        Subject = "ticket.sla.breached"
-	TicketSLAChangedSubject         Subject = "ticket.sla.changed"
+	TicketCreatedSubject                  Subject = "ticket.created"
+	TicketUpdatedSubject                  Subject = "ticket.updated"
+	TicketAssignedSubject                 Subject = "ticket.assigned"
+	TicketStatusChangedSubject            Subject = "ticket.status.changed"
+	TicketResolvedSubject                 Subject = "ticket.resolved"
+	TicketClosedSubject                   Subject = "ticket.closed"
+	TicketEscalatedSubject                Subject = "ticket.escalated"
+	TicketReopenedSubject                 Subject = "ticket.reopened"
+	TicketMergedSubject                   Subject = "ticket.merged"
+	TicketSplitSubject                    Subject = "ticket.split"
+	TicketCommentAddedSubject             Subject = "ticket.comment.added" // DEPRECATED: Use TicketMessageAddedSubject
+	TicketMessageAddedSubject             Subject = "ticket.message.added"
+	TicketCustomerRepliedSubject          Subject = "ticket.customer.replied"
+	TicketAttachmentAddedSubject          Subject = "ticket.attachment.added"
+	TicketSLABreachedSubject              Subject = "ticket.sla.breached"
+	TicketSLAChangedSubject               Subject = "ticket.sla.changed"
 	TicketAppointmentScheduledSubject     Subject = "ticket.appointment.scheduled"
-	TicketAppointmentStatusChangedSubject  Subject = "ticket.appointment.status.changed"
-	TicketChecklistCreatedSubject          Subject = "ticket.checklist.created"
-	TicketChecklistItemCompletedSubject    Subject = "ticket.checklist.item.completed"
-	TicketAssignmentRequestedSubject       Subject = "ticket.assignment.requested"
-	TicketAssignmentApprovedSubject        Subject = "ticket.assignment.approved"
-	TicketAssignmentDeniedSubject          Subject = "ticket.assignment.denied"
-	TicketTechnicianStatusUpdateSubject     Subject = "ticket.technician.status.update"
-	TicketClassifiedSubject                Subject = "ticket.classified"
-	TicketAutoLinkedSubject                Subject = "ticket.auto.linked"
-	TicketCreatedFromEmailSubject          Subject = "ticket.created.from.email"
-
+	TicketAppointmentStatusChangedSubject Subject = "ticket.appointment.status.changed"
+	TicketChecklistCreatedSubject         Subject = "ticket.checklist.created"
+	TicketChecklistItemCompletedSubject   Subject = "ticket.checklist.item.completed"
+	TicketAssignmentRequestedSubject      Subject = "ticket.assignment.requested"
+	TicketAssignmentApprovedSubject       Subject = "ticket.assignment.approved"
+	TicketAssignmentDeniedSubject         Subject = "ticket.assignment.denied"
+	TicketTechnicianStatusUpdateSubject   Subject = "ticket.technician.status.update"
+	TicketClassifiedSubject               Subject = "ticket.classified"
+	TicketAutoLinkedSubject               Subject = "ticket.auto.linked"
+	TicketCreatedFromEmailSubject         Subject = "ticket.created.from.email"
 )
 
 // Global Subjects - Cross-service events that any service can publish
