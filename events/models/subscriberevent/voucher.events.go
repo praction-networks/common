@@ -32,6 +32,23 @@ type VoucherInstanceCreatedEvent struct {
 	Version          int          `json:"version" bson:"version"`
 }
 
+// VoucherInstanceUpdatedEvent represents a voucher instance update event
+// Published per voucher when batch status changes, so captive-portal can update its cache
+type VoucherInstanceUpdatedEvent struct {
+	ID               string             `json:"id" bson:"_id"`
+	OwnerTenantID    string             `json:"ownerTenantId" bson:"ownerTenantId"`
+	Scope            VoucherScope       `json:"scope" bson:"scope"`
+	AllowedTenantIDs []string           `json:"allowedTenantIds,omitempty" bson:"allowedTenantIds,omitempty"`
+	TemplateID       string             `json:"templateId" bson:"templateId"`
+	PlanID           string             `json:"planId" bson:"planId"`
+	VoucherCode      string             `json:"voucherCode" bson:"voucherCode"`
+	Status           string             `json:"status" bson:"status"`
+	BatchID          *string            `json:"batchId,omitempty" bson:"batchId,omitempty"`
+	BatchStatus      VoucherBatchStatus `json:"batchStatus" bson:"batchStatus"`
+	ExpiresAt        time.Time          `json:"expiresAt" bson:"expiresAt"`
+	Version          int                `json:"version" bson:"version"`
+}
+
 // VoucherInstanceBulkCreatedEvent represents a bulk voucher instance creation event
 type VoucherInstanceBulkCreatedEvent struct {
 	OwnerTenantID string   `json:"ownerTenantId" bson:"ownerTenantId"`
