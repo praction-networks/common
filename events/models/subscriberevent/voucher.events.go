@@ -7,7 +7,7 @@ import "time"
 type VoucherCreatedEvent struct {
 	ID               string             `json:"id" bson:"_id"`
 	OwnerTenantID    string             `json:"ownerTenantId" bson:"ownerTenantId"`
-	Scope            VoucherScope       `json:"scope" bson:"scope"`
+	ShareWithAllChildren bool          `json:"shareWithAllChildren" bson:"shareWithAllChildren"`
 	AllowedTenantIDs []string           `json:"allowedTenantIds,omitempty" bson:"allowedTenantIds,omitempty"`
 	TemplateID       string             `json:"templateId" bson:"templateId"`
 	PlanID           string             `json:"planId" bson:"planId"`
@@ -27,7 +27,7 @@ type VoucherCreatedEvent struct {
 type VoucherUpdatedEvent struct {
 	ID               string             `json:"id" bson:"_id"`
 	OwnerTenantID    string             `json:"ownerTenantId" bson:"ownerTenantId"`
-	Scope            VoucherScope       `json:"scope" bson:"scope"`
+	ShareWithAllChildren bool          `json:"shareWithAllChildren" bson:"shareWithAllChildren"`
 	AllowedTenantIDs []string           `json:"allowedTenantIds,omitempty" bson:"allowedTenantIds,omitempty"`
 	TemplateID       string             `json:"templateId" bson:"templateId"`
 	PlanID           string             `json:"planId" bson:"planId"`
