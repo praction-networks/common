@@ -2,7 +2,7 @@ package subscriberevent
 
 import "time"
 
-// VoucherInstanceCreatedEvent represents a voucher instance creation event
+// VoucherCreatedEvent represents a voucher instance creation event
 // Published when a new voucher is inserted into MongoDB
 type VoucherCreatedEvent struct {
 	ID               string             `json:"id" bson:"_id"`
@@ -21,7 +21,7 @@ type VoucherCreatedEvent struct {
 	Version          int                `json:"version" bson:"version"`
 }
 
-// VoucherInstanceUpdatedEvent represents a voucher instance update event
+// VoucherUpdatedEvent represents a voucher instance update event
 // Published for any voucher update (status change, batch status change, usage, expiry, revocation, extension)
 // Contains the full document state from MongoDB so consumers can upsert
 type VoucherUpdatedEvent struct {
@@ -39,7 +39,7 @@ type VoucherUpdatedEvent struct {
 	Version          int                `json:"version" bson:"version"`
 }
 
-// VoucherInstanceDeletedEvent represents a voucher instance deletion event
+// VoucherDeletedEvent represents a voucher instance deletion event
 // Published when a voucher is deleted from MongoDB
 type VoucherDeletedEvent struct {
 	ID            string `json:"id" bson:"_id"`
