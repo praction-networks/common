@@ -165,7 +165,11 @@ func SendCustomError(w http.ResponseWriter, message string, errors []ErrorDetail
 }
 
 func SendCustomResponse(w http.ResponseWriter, errors []ErrorDetail, statusCode int) {
-	sendError(w, "err", errors, statusCode)
+	msg := "error"
+	if len(errors) > 0 && errors[0].Message != "" {
+		msg = errors[0].Message
+	}
+	sendError(w, msg, errors, statusCode)
 }
 
 // SendResponseModel sends a response using a generic Response[T] model structure

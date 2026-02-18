@@ -15,6 +15,7 @@ type VoucherCreatedEvent struct {
 	Status           string             `json:"status" bson:"status"`
 	BatchID          *string            `json:"batchId,omitempty" bson:"batchId,omitempty"`
 	BatchStatus      VoucherBatchStatus `json:"batchStatus" bson:"batchStatus"`
+	BoundSubscriberID *string           `json:"boundSubscriberId,omitempty" bson:"boundSubscriberId,omitempty"`
 	IssuedAt         *time.Time         `json:"issuedAt,omitempty" bson:"issuedAt,omitempty"`
 	ExpiresAt        time.Time          `json:"expiresAt" bson:"expiresAt"`
 	Distribution     string             `json:"distributionType" bson:"distributionType"`
@@ -35,6 +36,7 @@ type VoucherUpdatedEvent struct {
 	Status           string             `json:"status" bson:"status"`
 	BatchID          *string            `json:"batchId,omitempty" bson:"batchId,omitempty"`
 	BatchStatus      VoucherBatchStatus `json:"batchStatus" bson:"batchStatus"`
+	BoundSubscriberID *string           `json:"boundSubscriberId,omitempty" bson:"boundSubscriberId,omitempty"`
 	ExpiresAt        time.Time          `json:"expiresAt" bson:"expiresAt"`
 	Version          int                `json:"version" bson:"version"`
 }
