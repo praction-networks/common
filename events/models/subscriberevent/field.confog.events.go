@@ -8,6 +8,7 @@ type FieldConfigItem struct {
 	DataType          string                `json:"dataType" bson:"dataType"`                                       // Data type: string, number, boolean, date, enum, array, object
 	IsVisible         bool                  `json:"isVisible" bson:"isVisible"`                                     // Show in form?
 	IsMandatory       bool                  `json:"isMandatory" bson:"isMandatory"`                                 // Required field?
+	IsUnique          bool                  `json:"isUnique" bson:"isUnique"`                                       // Must be unique across subscribers?
 	IsReadOnly        bool                  `json:"isReadOnly" bson:"isReadOnly"`                                   // Read-only field?
 	IsHidden          bool                  `json:"isHidden" bson:"isHidden"`                                       // Completely hidden (vs not visible)?
 	DisplayOrder      int                   `json:"displayOrder" bson:"displayOrder"`                               // Order in form (1, 2, 3...)
