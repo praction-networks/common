@@ -75,6 +75,11 @@ const (
 	TenantCDNProviderBindingUpdatedSubject  Subject = "tenant.cdnbinding.updated"
 	TenantCDNProviderBindingDeletedSubject  Subject = "tenant.cdnbinding.deleted"
 
+	// Tenant Branding Events
+	TenantBrandingCreatedSubject Subject = "tenant.branding.created"
+	TenantBrandingUpdatedSubject Subject = "tenant.branding.updated"
+	TenantBrandingDeletedSubject Subject = "tenant.branding.deleted"
+
 	//Domain User Service Event Initialization
 	TenantUserCreatedSubject            Subject = "tenantuser.created"
 	TenantUserUpdatedSubject            Subject = "tenantuser.updated"
@@ -254,6 +259,10 @@ var Streams = map[StreamName]StreamMetadata{
 			TenantAppMessagingBindingCreatedSubject,
 			TenantAppMessagingBindingUpdatedSubject,
 			TenantAppMessagingBindingDeletedSubject,
+			// Tenant Branding Events
+			TenantBrandingCreatedSubject,
+			TenantBrandingUpdatedSubject,
+			TenantBrandingDeletedSubject,
 		},
 	},
 
