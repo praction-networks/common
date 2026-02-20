@@ -24,6 +24,7 @@ type GuestHotspotSubscriberCreatedEvent struct {
 	APMac        string                            `json:"apMac,omitempty" bson:"apMac,omitempty"` // Access Point MAC
 	DeviceInfo   DeviceInfo                        `json:"deviceInfo,omitempty" bson:"deviceInfo,omitempty"`
 	AuthMethod   subscriberevent.HotspotAuthMethod `json:"authMethod" bson:"authMethod"` // e.g., "OTP"
+	PlanCode     string                            `json:"planCode,omitempty" bson:"planCode,omitempty"` // Plan code (voucher-driven override)
 	UserData     map[string]interface{}            `json:"userData,omitempty" bson:"userData,omitempty"`
 	Consent      ConsentInfo                       `json:"consent,omitempty" bson:"consent,omitempty"`
 	CreatedAt    time.Time                         `json:"createdAt" bson:"createdAt"`
@@ -55,6 +56,7 @@ type GuestHotspotSubscriberValidityExtendedEvent struct {
 	HotspotProfileID string    `json:"hotspotProfileId" bson:"hotspotProfileId"`
 	MAC              string    `json:"mac" bson:"mac"` // Device MAC address
 	ValidUntil       time.Time `json:"validUntil,omitempty" bson:"validUntil,omitempty"`
+	PlanCode         string    `json:"planCode,omitempty" bson:"planCode,omitempty"` // Plan code override (voucher-driven)
 	Version          int       `json:"version" bson:"version"`
 }
 
