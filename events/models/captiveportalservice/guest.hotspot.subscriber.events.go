@@ -23,7 +23,7 @@ type GuestHotspotSubscriberCreatedEvent struct {
 	SSID         string                            `json:"ssid,omitempty" bson:"ssid,omitempty"`   // WiFi SSID
 	APMac        string                            `json:"apMac,omitempty" bson:"apMac,omitempty"` // Access Point MAC
 	DeviceInfo   DeviceInfo                        `json:"deviceInfo,omitempty" bson:"deviceInfo,omitempty"`
-	AuthMethod   subscriberevent.HotspotAuthMethod `json:"authMethod" bson:"authMethod"` // e.g., "OTP"
+	AuthMethod   subscriberevent.HotspotAuthMethod `json:"authMethod" bson:"authMethod"`                 // e.g., "OTP"
 	PlanCode     string                            `json:"planCode,omitempty" bson:"planCode,omitempty"` // Plan code (voucher-driven override)
 	UserData     map[string]interface{}            `json:"userData,omitempty" bson:"userData,omitempty"`
 	Consent      ConsentInfo                       `json:"consent,omitempty" bson:"consent,omitempty"`
