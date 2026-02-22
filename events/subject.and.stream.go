@@ -295,6 +295,14 @@ var Streams = map[StreamName]StreamMetadata{
 	},
 
 	// Global Streams - Cross-service events
+	InventoryStream: {
+		Name:        InventoryStream,
+		Description: "Stream for inventory service events",
+		Subjects: []Subject{
+			DeviceCreatedSubject,
+		},
+	},
+
 	NotificationGlobalStream: {
 		Name:        NotificationGlobalStream,
 		Description: "Global stream for notification events from all services",
