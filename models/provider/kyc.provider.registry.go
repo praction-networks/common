@@ -1,16 +1,23 @@
 package provider
 
+// FieldOption represents a predefined option for a field (e.g. sandbox/production URLs)
+type FieldOption struct {
+	Value string `json:"value"`
+	Label string `json:"label"`
+}
+
 // FieldSchema describes a single metadata field for a KYC provider.
 // The frontend reads these to dynamically render form inputs.
 type FieldSchema struct {
-	Key         string `json:"key"`
-	Label       string `json:"label"`
-	Placeholder string `json:"placeholder"`
-	Required    bool   `json:"required"`
-	Sensitive   bool   `json:"sensitive"`
-	MinLength   int    `json:"minLength,omitempty"`
-	MaxLength   int    `json:"maxLength,omitempty"`
-	IsURL       bool   `json:"isUrl,omitempty"`
+	Key         string        `json:"key"`
+	Label       string        `json:"label"`
+	Placeholder string        `json:"placeholder"`
+	Required    bool          `json:"required"`
+	Sensitive   bool          `json:"sensitive"`
+	MinLength   int           `json:"minLength,omitempty"`
+	MaxLength   int           `json:"maxLength,omitempty"`
+	IsURL       bool          `json:"isUrl,omitempty"`
+	Options     []FieldOption `json:"options,omitempty"`
 }
 
 // KYCProviderInfo holds display metadata and field definitions for one KYC provider.
@@ -36,7 +43,10 @@ var KYCProviderRegistry = map[string]KYCProviderInfo{
 		Label:       "Cashfree",
 		Description: "Cashfree Verification Suite — PAN, Aadhaar, Bank",
 		Fields: []FieldSchema{
-			{Key: "url", Label: "API URL", Placeholder: "https://api.cashfree.com/verification", Required: true, IsURL: true},
+			{Key: "url", Label: "API URL", Placeholder: "https://api.cashfree.com/verification", Required: true, IsURL: true, Options: []FieldOption{
+				{Value: "https://sandbox.cashfree.com/verification", Label: "Sandbox"},
+				{Value: "https://api.cashfree.com/verification", Label: "Production"},
+			}},
 			{Key: "x-client-id", Label: "Client ID", Placeholder: "CF12345678", Required: true, MinLength: 8, MaxLength: 100},
 			{Key: "x-client-secret", Label: "Client Secret", Placeholder: "cf-secret-key", Required: true, Sensitive: true, MinLength: 2, MaxLength: 100},
 			{Key: "x-cf-signature", Label: "CF Signature", Placeholder: "Webhook signature key (optional)", Sensitive: true, MaxLength: 500},
