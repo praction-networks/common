@@ -58,6 +58,11 @@ const (
 	DeviceUpdatedSubject         Subject = "device.updated"
 	DeviceDeletedSubject         Subject = "device.deleted"
 
+	// Inventory Service Events
+	InventoryDeviceCreatedSubject Subject = "inventory.device.created"
+	InventoryDeviceUpdatedSubject Subject = "inventory.device.updated"
+	InventoryDeviceDeletedSubject Subject = "inventory.device.deleted"
+
 	// Tenant Provider Binding Events
 	TenantSMSProviderBindingCreatedSubject  Subject = "tenant.smsbinding.created"
 	TenantSMSProviderBindingUpdatedSubject  Subject = "tenant.smsbinding.updated"
@@ -299,7 +304,9 @@ var Streams = map[StreamName]StreamMetadata{
 		Name:        InventoryStream,
 		Description: "Stream for inventory service events",
 		Subjects: []Subject{
-			DeviceCreatedSubject,
+			InventoryDeviceCreatedSubject,
+			InventoryDeviceUpdatedSubject,
+			InventoryDeviceDeletedSubject,
 		},
 	},
 
