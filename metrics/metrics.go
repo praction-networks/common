@@ -705,6 +705,55 @@ var (
 	)
 )
 
+// KYC Verification Metrics
+var (
+	// Total KYC verifications by type, provider, and outcome
+	KYCVerificationsTotal = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "kyc_verifications_total",
+			Help: "Total KYC verification requests",
+		},
+		[]string{"type", "provider", "status"}, // status: "success", "failed", "not_found", "invalid"
+	)
+
+	// End-to-end KYC verification latency
+	KYCVerificationDuration = prometheus.NewHistogramVec(
+		prometheus.HistogramOpts{
+			Name:    "kyc_verification_duration_seconds",
+			Help:    "KYC verification duration from request to response",
+			Buckets: []float64{.1, .25, .5, 1, 2.5, 5, 10, 15, 30},
+		},
+		[]string{"type", "provider"},
+	)
+
+	// Circuit breaker state per provider (0=closed, 1=open, 2=half-open)
+	KYCCircuitBreakerState = prometheus.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "kyc_circuit_breaker_state",
+			Help: "Current KYC circuit breaker state per provider (0=closed, 1=open, 2=half-open)",
+		},
+		[]string{"provider"},
+	)
+
+	// Provider error breakdown
+	KYCProviderErrors = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "kyc_provider_errors_total",
+			Help: "Total KYC provider errors by error code",
+		},
+		[]string{"provider", "error_code"},
+	)
+
+	// Audit record write counts
+	KYCAuditRecordsTotal = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "kyc_audit_records_total",
+			Help: "Total KYC audit records written",
+		},
+		[]string{"status"}, // "success", "failure"
+	)
+)
+
 // ResponseWriter tracks response status and size
 // It preserves http.Hijacker interface for WebSocket support
 type ResponseWriter struct {
@@ -874,6 +923,13 @@ func RegisterAllMetrics() {
 		DNSRateLimitRejectionsTotal,
 		DNSCircuitBreakerState,
 		DNSCircuitBreakerTransitionsTotal,
+
+		// KYC Verification metrics
+		KYCVerificationsTotal,
+		KYCVerificationDuration,
+		KYCCircuitBreakerState,
+		KYCProviderErrors,
+		KYCAuditRecordsTotal,
 
 		// Default collectors
 		collectors.NewGoCollector(),
