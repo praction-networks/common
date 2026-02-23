@@ -36,12 +36,13 @@ type KYCRequest struct {
 
 // KYCResult is the universal output from a KYC verification.
 type KYCResult struct {
-	Verified    bool            `json:"verified"`
-	Status      string          `json:"status"` // "success", "invalid", "not_found", "pending"
-	Provider    string          `json:"provider"`
-	Data        map[string]any  `json:"data,omitempty"`
-	RawResponse json.RawMessage `json:"rawResponse,omitempty"`
-	TraceID     string          `json:"traceId,omitempty"`
+	Verified         bool            `json:"verified"`
+	Status           string          `json:"status"` // "success", "invalid", "not_found", "pending"
+	Provider         string          `json:"provider"`
+	VerificationData map[string]any  `json:"verificationData,omitempty"` // structured, frontend-friendly extracted fields
+	Data             map[string]any  `json:"data,omitempty"`             // full provider response
+	RawResponse      json.RawMessage `json:"rawResponse,omitempty"`
+	TraceID          string          `json:"traceId,omitempty"`
 }
 
 // KYCVerifier is the interface that every KYC provider adapter must implement.
