@@ -66,6 +66,57 @@ var KYCProviderRegistry = map[string]KYCProviderInfo{
 			{Key: "x-product-instance-id", Label: "Product Instance ID", Placeholder: "Product instance identifier", Required: true, MinLength: 8, MaxLength: 100},
 		},
 	},
+	"DIGIO": {
+		Value:       "DIGIO",
+		Label:       "Digio",
+		Description: "Digio — eKYC, eSign, Aadhaar Verification, Video KYC",
+		Fields: []FieldSchema{
+			{Key: "url", Label: "API URL", Placeholder: "https://api.digio.in", Required: true, IsURL: true, Options: []FieldOption{
+				{Value: "https://ext.digio.in", Label: "Sandbox"},
+				{Value: "https://api.digio.in", Label: "Production"},
+			}},
+			{Key: "client-id", Label: "Client ID", Placeholder: "Your Digio client ID", Required: true, MinLength: 8, MaxLength: 100},
+			{Key: "client-secret", Label: "Client Secret", Placeholder: "Your Digio client secret", Required: true, Sensitive: true, MinLength: 8, MaxLength: 200},
+		},
+	},
+	"SIGNZY": {
+		Value:       "SIGNZY",
+		Label:       "Signzy",
+		Description: "Signzy — Video KYC, AI Document Verification, Identity Check",
+		Fields: []FieldSchema{
+			{Key: "url", Label: "API URL", Placeholder: "https://api.signzy.app", Required: true, IsURL: true, Options: []FieldOption{
+				{Value: "https://preproduction.signzy.tech", Label: "Sandbox"},
+				{Value: "https://api.signzy.app", Label: "Production"},
+			}},
+			{Key: "authorization", Label: "Authorization Token", Placeholder: "Bearer token from Signzy", Required: true, Sensitive: true, MinLength: 10, MaxLength: 500},
+			{Key: "callback-url", Label: "Callback URL", Placeholder: "https://your-domain.com/webhook/signzy", IsURL: true, MaxLength: 500},
+		},
+	},
+	"IDFY": {
+		Value:       "IDFY",
+		Label:       "IDfy",
+		Description: "IDfy — Face Match, Liveness Detection, PAN/Aadhaar/DL Verification",
+		Fields: []FieldSchema{
+			{Key: "url", Label: "API URL", Placeholder: "https://eve.idfy.com", Required: true, IsURL: true, Options: []FieldOption{
+				{Value: "https://eve-sandbox.idfy.com", Label: "Sandbox"},
+				{Value: "https://eve.idfy.com", Label: "Production"},
+			}},
+			{Key: "api-key", Label: "API Key", Placeholder: "Your IDfy API key", Required: true, Sensitive: true, MinLength: 8, MaxLength: 200},
+			{Key: "account-id", Label: "Account ID", Placeholder: "Your IDfy account ID", Required: true, MinLength: 5, MaxLength: 100},
+		},
+	},
+	"KARZA": {
+		Value:       "KARZA",
+		Label:       "Karza (Perfios)",
+		Description: "Karza by Perfios — PAN, GST, Bank, Aadhaar, Company Verification",
+		Fields: []FieldSchema{
+			{Key: "url", Label: "API URL", Placeholder: "https://api.karza.in", Required: true, IsURL: true, Options: []FieldOption{
+				{Value: "https://testapi.karza.in", Label: "Sandbox"},
+				{Value: "https://api.karza.in", Label: "Production"},
+			}},
+			{Key: "x-karza-key", Label: "Karza API Key", Placeholder: "Your Karza API key", Required: true, Sensitive: true, MinLength: 8, MaxLength: 200},
+		},
+	},
 }
 
 // GetKYCFormConfig returns the complete form configuration for the frontend.
