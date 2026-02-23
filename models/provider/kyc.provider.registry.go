@@ -52,6 +52,20 @@ var KYCProviderRegistry = map[string]KYCProviderInfo{
 			{Key: "x-cf-signature", Label: "CF Signature", Placeholder: "Webhook signature key (optional)", Sensitive: true, MaxLength: 500},
 		},
 	},
+	"SETU": {
+		Value:       "SETU",
+		Label:       "Setu",
+		Description: "Setu DigiLocker Gateway — PAN, Aadhaar, Bank Account",
+		Fields: []FieldSchema{
+			{Key: "url", Label: "API URL", Placeholder: "https://dg.setu.co", Required: true, IsURL: true, Options: []FieldOption{
+				{Value: "https://dg-sandbox.setu.co", Label: "Sandbox"},
+				{Value: "https://dg.setu.co", Label: "Production"},
+			}},
+			{Key: "x-client-id", Label: "Client ID", Placeholder: "Your Setu client ID", Required: true, MinLength: 8, MaxLength: 100},
+			{Key: "x-client-secret", Label: "Client Secret", Placeholder: "Your Setu client secret", Required: true, Sensitive: true, MinLength: 8, MaxLength: 200},
+			{Key: "x-product-instance-id", Label: "Product Instance ID", Placeholder: "Product instance identifier", Required: true, MinLength: 8, MaxLength: 100},
+		},
+	},
 }
 
 // GetKYCFormConfig returns the complete form configuration for the frontend.
