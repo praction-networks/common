@@ -20,12 +20,13 @@ type FieldSchema struct {
 	Options     []FieldOption `json:"options,omitempty"`
 }
 
-// KYCProviderInfo holds display metadata and field definitions for one KYC provider.
+// KYCProviderInfo holds display metadata, field definitions, and supported verification types for one KYC provider.
 type KYCProviderInfo struct {
-	Value       string        `json:"value"`
-	Label       string        `json:"label"`
-	Description string        `json:"description"`
-	Fields      []FieldSchema `json:"fields"`
+	Value          string             `json:"value"`
+	Label          string             `json:"label"`
+	Description    string             `json:"description"`
+	Fields         []FieldSchema      `json:"fields"`
+	SupportedTypes []VerificationType `json:"supportedTypes"`
 }
 
 // KYCFormConfig is the complete form metadata the frontend needs to render the KYC gateway form.
@@ -35,13 +36,20 @@ type KYCFormConfig struct {
 	AllowedOwnerTypes []string          `json:"allowedOwnerTypes"`
 }
 
+// allTypes is a shorthand for providers that support all 7 verification types.
+var allTypes = []VerificationType{
+	VerifyPAN, VerifyDigiLocker, VerifyPennydrop,
+	VerifyEStamp, VerifyESign, VerifyGST, VerifyPassport,
+}
+
 // KYCProviderRegistry is the single source of truth for all KYC providers.
 // Adding a new provider = add one entry here; frontend auto-renders fields.
 var KYCProviderRegistry = map[string]KYCProviderInfo{
 	"CASHFREE": {
-		Value:       "CASHFREE",
-		Label:       "Cashfree",
-		Description: "Cashfree Verification Suite — PAN, Aadhaar, Bank",
+		Value:          "CASHFREE",
+		Label:          "Cashfree",
+		Description:    "Cashfree Verification Suite — PAN, Aadhaar, Bank, eSign, Passport",
+		SupportedTypes: allTypes,
 		Fields: []FieldSchema{
 			{Key: "url", Label: "API URL", Placeholder: "https://api.cashfree.com/verification", Required: true, IsURL: true, Options: []FieldOption{
 				{Value: "https://sandbox.cashfree.com/verification", Label: "Sandbox"},
@@ -55,7 +63,10 @@ var KYCProviderRegistry = map[string]KYCProviderInfo{
 	"SETU": {
 		Value:       "SETU",
 		Label:       "Setu",
-		Description: "Setu DigiLocker Gateway — PAN, Aadhaar, Bank Account",
+		Description: "Setu DigiLocker Gateway — PAN, Aadhaar, Bank Account, eSign, GST",
+		SupportedTypes: []VerificationType{
+			VerifyPAN, VerifyDigiLocker, VerifyPennydrop, VerifyESign, VerifyGST,
+		},
 		Fields: []FieldSchema{
 			{Key: "url", Label: "API URL", Placeholder: "https://dg.setu.co", Required: true, IsURL: true, Options: []FieldOption{
 				{Value: "https://dg-sandbox.setu.co", Label: "Sandbox"},
@@ -67,9 +78,10 @@ var KYCProviderRegistry = map[string]KYCProviderInfo{
 		},
 	},
 	"DIGIO": {
-		Value:       "DIGIO",
-		Label:       "Digio",
-		Description: "Digio — eKYC, eSign, Aadhaar Verification, Video KYC",
+		Value:          "DIGIO",
+		Label:          "Digio",
+		Description:    "Digio — eKYC, eSign, eStamp, Aadhaar, DigiLocker, Passport",
+		SupportedTypes: allTypes,
 		Fields: []FieldSchema{
 			{Key: "url", Label: "API URL", Placeholder: "https://api.digio.in", Required: true, IsURL: true, Options: []FieldOption{
 				{Value: "https://ext.digio.in", Label: "Sandbox"},
@@ -80,9 +92,10 @@ var KYCProviderRegistry = map[string]KYCProviderInfo{
 		},
 	},
 	"SIGNZY": {
-		Value:       "SIGNZY",
-		Label:       "Signzy",
-		Description: "Signzy — Video KYC, AI Document Verification, Identity Check",
+		Value:          "SIGNZY",
+		Label:          "Signzy",
+		Description:    "Signzy — Video KYC, AI Document Verification, eSign, eStamp",
+		SupportedTypes: allTypes,
 		Fields: []FieldSchema{
 			{Key: "url", Label: "API URL", Placeholder: "https://api.signzy.app", Required: true, IsURL: true, Options: []FieldOption{
 				{Value: "https://preproduction.signzy.tech", Label: "Sandbox"},
@@ -93,9 +106,10 @@ var KYCProviderRegistry = map[string]KYCProviderInfo{
 		},
 	},
 	"IDFY": {
-		Value:       "IDFY",
-		Label:       "IDfy",
-		Description: "IDfy — Face Match, Liveness Detection, PAN/Aadhaar/DL Verification",
+		Value:          "IDFY",
+		Label:          "IDfy",
+		Description:    "IDfy — Face Match, Liveness Detection, PAN/Aadhaar/DL/Passport",
+		SupportedTypes: allTypes,
 		Fields: []FieldSchema{
 			{Key: "url", Label: "API URL", Placeholder: "https://eve.idfy.com", Required: true, IsURL: true, Options: []FieldOption{
 				{Value: "https://eve-sandbox.idfy.com", Label: "Sandbox"},
@@ -108,7 +122,10 @@ var KYCProviderRegistry = map[string]KYCProviderInfo{
 	"KARZA": {
 		Value:       "KARZA",
 		Label:       "Karza (Perfios)",
-		Description: "Karza by Perfios — PAN, GST, Bank, Aadhaar, Company Verification",
+		Description: "Karza by Perfios — PAN, GST, Bank, Aadhaar, Passport, eSign",
+		SupportedTypes: []VerificationType{
+			VerifyPAN, VerifyDigiLocker, VerifyPennydrop, VerifyESign, VerifyGST, VerifyPassport,
+		},
 		Fields: []FieldSchema{
 			{Key: "url", Label: "API URL", Placeholder: "https://api.karza.in", Required: true, IsURL: true, Options: []FieldOption{
 				{Value: "https://testapi.karza.in", Label: "Sandbox"},
