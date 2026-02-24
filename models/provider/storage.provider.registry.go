@@ -97,14 +97,19 @@ var StorageProviderRegistry = map[string]StorageProviderInfo{
 	"R2": {
 		Value:       "R2",
 		Label:       "Cloudflare R2",
-		Description: "Cloudflare R2 — S3-compatible object storage with zero egress fees",
+		Description: "Cloudflare R2 — S3-compatible object storage with zero egress fees. Region is always 'auto'.",
 		Category:    StorageCategoryCloud,
 		Fields: []FieldSchema{
-			{Key: "accountId", Label: "Account ID", Placeholder: "Cloudflare Account ID", Required: true, MinLength: 16, MaxLength: 64},
-			{Key: "endpoint", Label: "Endpoint Override", Placeholder: "https://{accountId}.r2.cloudflarestorage.com", IsURL: true, MaxLength: 500},
+			{Key: "accountId", Label: "Cloudflare Account ID", Placeholder: "32-character hex ID from CF dashboard", Required: true, MinLength: 16, MaxLength: 64},
+			{Key: "jurisdiction", Label: "Jurisdiction", Placeholder: "default", Options: []FieldOption{
+				{Value: "default", Label: "Default (Global)"},
+				{Value: "eu", Label: "European Union (EU)"},
+				{Value: "fedramp", Label: "FedRAMP"},
+			}},
+			{Key: "endpoint", Label: "Endpoint Override (auto-built if empty)", Placeholder: "Leave empty — auto-built from Account ID + Jurisdiction", IsURL: true, MaxLength: 500},
 			{Key: "bucketName", Label: "Bucket Name", Placeholder: "my-r2-bucket", Required: true, MinLength: 3, MaxLength: 63},
-			{Key: "accessKeyId", Label: "Access Key ID", Placeholder: "R2 Access Key ID", Required: true, Sensitive: true, MinLength: 16, MaxLength: 128},
-			{Key: "secretAccessKey", Label: "Secret Access Key", Placeholder: "R2 Secret Access Key", Required: true, Sensitive: true, MinLength: 16, MaxLength: 128},
+			{Key: "accessKeyId", Label: "Access Key ID (R2 API Token ID)", Placeholder: "Token ID from Manage R2 API Tokens", Required: true, Sensitive: true, MinLength: 16, MaxLength: 128},
+			{Key: "secretAccessKey", Label: "Secret Access Key (SHA-256 of token)", Placeholder: "Secret shown once at token creation", Required: true, Sensitive: true, MinLength: 16, MaxLength: 128},
 		},
 	},
 	"GCS": {
