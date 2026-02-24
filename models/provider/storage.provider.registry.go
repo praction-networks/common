@@ -51,11 +51,25 @@ type StorageProviderInfo struct {
 	Fields      []FieldSchema           `json:"fields"`
 }
 
+// StoragePurposeInfo holds display metadata for a storage purpose.
+type StoragePurposeInfo struct {
+	Value       string `json:"value"`
+	Label       string `json:"label"`
+	Description string `json:"description"`
+}
+
+// StorageScopeInfo holds display metadata for a scope option.
+type StorageScopeInfo struct {
+	Value       string `json:"value"`
+	Label       string `json:"label"`
+	Description string `json:"description"`
+}
+
 // StorageFormConfig is the complete form metadata the frontend needs to render the storage binding form.
 type StorageFormConfig struct {
 	Providers []StorageProviderInfo `json:"providers"`
-	Scopes    []string             `json:"scopes"`
-	Purposes  []string             `json:"purposes"`
+	Scopes    []StorageScopeInfo   `json:"scopes"`
+	Purposes  []StoragePurposeInfo `json:"purposes"`
 }
 
 // StorageProviderRegistry is the single source of truth for all storage providers.
@@ -175,6 +189,16 @@ var StorageProviderRegistry = map[string]StorageProviderInfo{
 	},
 }
 
+// StoragePurposeRegistry provides display metadata for each storage purpose.
+var StoragePurposeRegistry = map[StoragePurpose]StoragePurposeInfo{
+	StoragePurposeLogs:      {Value: "LOGS", Label: "Logs", Description: "Application and system logs"},
+	StoragePurposeDocuments: {Value: "DOCUMENTS", Label: "Documents", Description: "User documents and files"},
+	StoragePurposeBackups:   {Value: "BACKUPS", Label: "Backups", Description: "Database and system backups"},
+	StoragePurposeMedia:     {Value: "MEDIA", Label: "Media", Description: "Images, videos, and media assets"},
+	StoragePurposeReports:   {Value: "REPORTS", Label: "Reports", Description: "Generated reports and exports"},
+	StoragePurposeGeneral:   {Value: "GENERAL", Label: "General", Description: "General purpose storage"},
+}
+
 // GetStorageFormConfig returns the complete form configuration for the frontend.
 func GetStorageFormConfig() StorageFormConfig {
 	providers := make([]StorageProviderInfo, 0, len(StorageProviderRegistry))
@@ -182,14 +206,22 @@ func GetStorageFormConfig() StorageFormConfig {
 		providers = append(providers, info)
 	}
 
-	purposes := make([]string, 0, len(AllStoragePurposes()))
+	purposes := make([]StoragePurposeInfo, 0, len(AllStoragePurposes()))
 	for _, p := range AllStoragePurposes() {
-		purposes = append(purposes, string(p))
+		if info, ok := StoragePurposeRegistry[p]; ok {
+			purposes = append(purposes, info)
+		}
+	}
+
+	scopes := []StorageScopeInfo{
+		{Value: "OwnerOnly", Label: "Owner Only", Description: "Only this tenant can use this binding"},
+		{Value: "OwnerAndDescendants", Label: "Owner & Descendants", Description: "This tenant and all child tenants inherit this binding"},
+		{Value: "ExplicitTenants", Label: "Explicit Tenants", Description: "Only explicitly specified tenants can use this binding"},
 	}
 
 	return StorageFormConfig{
 		Providers: providers,
-		Scopes:    []string{"OwnerOnly", "OwnerAndDescendants", "ExplicitTenants"},
+		Scopes:    scopes,
 		Purposes:  purposes,
 	}
 }
