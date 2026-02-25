@@ -9,15 +9,17 @@ type FieldOption struct {
 // FieldSchema describes a single metadata field for a KYC provider.
 // The frontend reads these to dynamically render form inputs.
 type FieldSchema struct {
-	Key         string        `json:"key"`
-	Label       string        `json:"label"`
-	Placeholder string        `json:"placeholder"`
-	Required    bool          `json:"required"`
-	Sensitive   bool          `json:"sensitive"`
-	MinLength   int           `json:"minLength,omitempty"`
-	MaxLength   int           `json:"maxLength,omitempty"`
-	IsURL       bool          `json:"isUrl,omitempty"`
-	Options     []FieldOption `json:"options,omitempty"`
+	Key            string        `json:"key"`
+	Label          string        `json:"label"`
+	Placeholder    string        `json:"placeholder"`
+	Required       bool          `json:"required"`
+	Sensitive      bool          `json:"sensitive"`
+	MinLength      int           `json:"minLength,omitempty"`
+	MaxLength      int           `json:"maxLength,omitempty"`
+	IsURL          bool          `json:"isUrl,omitempty"`
+	Options        []FieldOption `json:"options,omitempty"`
+	Computed       bool          `json:"computed,omitempty"`       // If true, field is read-only and auto-built from ComputePattern
+	ComputePattern string        `json:"computePattern,omitempty"` // Template using {fieldKey} substitution, e.g. "https://{accountId}.r2.cloudflarestorage.com"
 }
 
 // KYCProviderInfo holds display metadata, field definitions, and supported verification types for one KYC provider.

@@ -106,7 +106,7 @@ var StorageProviderRegistry = map[string]StorageProviderInfo{
 				{Value: "eu", Label: "European Union (EU)"},
 				{Value: "fedramp", Label: "FedRAMP"},
 			}},
-			{Key: "endpoint", Label: "Endpoint Override (auto-built if empty)", Placeholder: "Leave empty — auto-built from Account ID + Jurisdiction", IsURL: true, MaxLength: 500},
+			{Key: "endpoint", Label: "S3 API Endpoint", Placeholder: "Auto-built from Account ID + Jurisdiction", IsURL: true, MaxLength: 500, Computed: true, ComputePattern: "https://{accountId}{jurisdictionDot}r2.cloudflarestorage.com"},
 			{Key: "bucketName", Label: "Bucket Name", Placeholder: "my-r2-bucket", Required: true, MinLength: 3, MaxLength: 63},
 			{Key: "accessKeyId", Label: "Access Key ID (R2 API Token ID)", Placeholder: "Token ID from Manage R2 API Tokens", Required: true, Sensitive: true, MinLength: 16, MaxLength: 128},
 			{Key: "secretAccessKey", Label: "Secret Access Key (SHA-256 of token)", Placeholder: "Secret shown once at token creation", Required: true, Sensitive: true, MinLength: 16, MaxLength: 128},
