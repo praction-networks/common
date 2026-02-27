@@ -73,6 +73,9 @@ const (
 	EnabledFeaturesFieldAnalyticsIsCustomerFeedbackEnabled = "Analytics.IsCustomerFeedbackEnabled"
 	EnabledFeaturesFieldAnalyticsIsChurnPredictionEnabled  = "Analytics.IsChurnPredictionEnabled"
 
+	// Inventory features
+	EnabledFeaturesFieldInventoryIsInventoryEnabled = "Inventory.IsInventoryEnabled"
+
 	// I9Shield features (Security)
 	EnabledFeaturesFieldI9ShieldIs2FAEnabled                 = "I9Shield.Is2FAEnabled"
 	EnabledFeaturesFieldI9ShieldIsAuditLoggingEnabled        = "I9Shield.IsAuditLoggingEnabled"
@@ -97,6 +100,7 @@ type EnabledFeatures struct {
 	Operations    OperationsFeatures   `json:"operations" bson:"operations"`       // Operations & integrations
 	Analytics     AnalyticsFeatures    `json:"analytics" bson:"analytics"`         // Analytics & feedback
 	I9Shield      SecurityFeatures     `json:"i9Shield" bson:"i9Shield"`           // I9 Shield features
+	Inventory     InventoryFeatures    `json:"inventory" bson:"inventory"`         // Inventory features
 	AI            AIFeatures           `json:"ai" bson:"ai"`                       // AI & automation
 }
 
@@ -113,6 +117,11 @@ type CoreFeatures struct {
 	IsAnalyticsEnabled    bool `json:"isAnalyticsEnabled" bson:"isAnalyticsEnabled"`
 	IsI9ShieldEnabled     bool `json:"isI9ShieldEnabled" bson:"isI9ShieldEnabled"`
 	IsAIEnabled           bool `json:"isAIEnabled" bson:"isAIEnabled"`
+}
+
+// InventoryFeatures - Inventory features
+type InventoryFeatures struct {
+	IsInventoryEnabled bool `json:"isInventoryEnabled" bson:"isInventoryEnabled"`
 }
 
 // NotificationFeatures - Notification channels
