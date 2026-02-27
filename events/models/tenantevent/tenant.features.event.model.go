@@ -10,7 +10,6 @@ const (
 	EnabledFeaturesFieldCoreIsVasEnabled          = "Core.IsVasEnabled"
 	EnabledFeaturesFieldCoreIsMarketingEnabled    = "Core.IsMarketingEnabled"
 	EnabledFeaturesFieldCoreIsBillingEnabled      = "Core.IsBillingEnabled"
-	EnabledFeaturesFieldCoreIsOperationsEnabled   = "Core.IsOperationsEnabled"
 	EnabledFeaturesFieldCoreIsAnalyticsEnabled    = "Core.IsAnalyticsEnabled"
 	EnabledFeaturesFieldCoreIsI9ShieldEnabled     = "Core.IsI9ShieldEnabled"
 	EnabledFeaturesFieldCoreIsAIEnabled           = "Core.IsAIEnabled"
@@ -22,17 +21,11 @@ const (
 	EnabledFeaturesFieldNotificationsIsUserTelegramNotificationEnabled = "Notifications.IsUserTelegramNotificationEnabled"
 	EnabledFeaturesFieldNotificationsIsPushNotificationEnabled         = "Notifications.IsPushNotificationEnabled"
 
-	// Hotspot features
-	EnabledFeaturesFieldHotspotIsOTPAuthEnabled           = "Hotspot.IsOTPAuthEnabled"
-	EnabledFeaturesFieldHotspotIsSocialLoginEnabled       = "Hotspot.IsSocialLoginEnabled"
-	EnabledFeaturesFieldHotspotIsVoucherLoginEnabled      = "Hotspot.IsVoucherLoginEnabled"
-	EnabledFeaturesFieldHotspotIsPasswordLoginEnabled     = "Hotspot.IsPasswordLoginEnabled"
-	EnabledFeaturesFieldHotspotIsGuestWiFiEnabled         = "Hotspot.IsGuestWiFiEnabled"
-	EnabledFeaturesFieldHotspotIsSessionManagementEnabled = "Hotspot.IsSessionManagementEnabled"
-	EnabledFeaturesFieldHotspotIsCustomBrandingEnabled    = "Hotspot.IsCustomBrandingEnabled"
-	EnabledFeaturesFieldHotspotIsAdvertisementEnabled     = "Hotspot.IsAdvertisementEnabled"
-	EnabledFeaturesFieldHotspotIsUsageLimitEnabled        = "Hotspot.IsUsageLimitEnabled"
-	EnabledFeaturesFieldHotspotIsMultipleSSIDEnabled      = "Hotspot.IsMultipleSSIDEnabled"
+	// Hotspot auth features (management toggles removed — handled at infra level)
+	EnabledFeaturesFieldHotspotIsOTPAuthEnabled       = "Hotspot.IsOTPAuthEnabled"
+	EnabledFeaturesFieldHotspotIsSocialLoginEnabled   = "Hotspot.IsSocialLoginEnabled"
+	EnabledFeaturesFieldHotspotIsVoucherLoginEnabled  = "Hotspot.IsVoucherLoginEnabled"
+	EnabledFeaturesFieldHotspotIsPasswordLoginEnabled = "Hotspot.IsPasswordLoginEnabled"
 
 	// VAS features
 	EnabledFeaturesFieldVASIsIPTVEnabled            = "VAS.IsIPTVEnabled"
@@ -43,28 +36,17 @@ const (
 	EnabledFeaturesFieldVASIsFirewallServiceEnabled = "VAS.IsFirewallServiceEnabled"
 	EnabledFeaturesFieldVASIsDNSSecurityEnabled     = "VAS.IsDNSSecurityEnabled"
 
-	// Marketing features
-	EnabledFeaturesFieldMarketingIsCampaginServiceEnabled     = "Marketing.IsCampaginServiceEnabled"
-	EnabledFeaturesFieldMarketingIsPromoCampaignEnabled       = "Marketing.IsPromoCampaignEnabled"
-	EnabledFeaturesFieldMarketingIsEmailCampaignEnabled       = "Marketing.IsEmailCampaignEnabled"
-	EnabledFeaturesFieldMarketingIsSMSCampaignEnabled         = "Marketing.IsSMSCampaignEnabled"
-	EnabledFeaturesFieldMarketingIsMarketingAutomationEnabled = "Marketing.IsMarketingAutomationEnabled"
-	EnabledFeaturesFieldMarketingIsCouponsEnabled             = "Marketing.IsCouponsEnabled"
-	EnabledFeaturesFieldMarketingIsLoyaltyProgramEnabled      = "Marketing.IsLoyaltyProgramEnabled"
-	EnabledFeaturesFieldMarketingIsReferralProgramEnabled     = "Marketing.IsReferralProgramEnabled"
+	// Marketing features (simplified — campaigns/automation removed)
+	EnabledFeaturesFieldMarketingIsPromoCampaignEnabled   = "Marketing.IsPromoCampaignEnabled"
+	EnabledFeaturesFieldMarketingIsCouponsEnabled         = "Marketing.IsCouponsEnabled"
+	EnabledFeaturesFieldMarketingIsLoyaltyProgramEnabled  = "Marketing.IsLoyaltyProgramEnabled"
+	EnabledFeaturesFieldMarketingIsReferralProgramEnabled = "Marketing.IsReferralProgramEnabled"
 
 	// Billing features
 	EnabledFeaturesFieldBillingIsOnlinePaymentEnabled       = "Billing.IsOnlinePaymentEnabled"
 	EnabledFeaturesFieldBillingIsMultiSplitPaymentEnabled   = "Billing.IsMultiSplitPaymentEnabled"
 	EnabledFeaturesFieldBillingIsInvoiceAutoReminderEnabled = "Billing.IsInvoiceAutoReminderEnabled"
 	EnabledFeaturesFieldBillingIsPaymentSplitEnabled        = "Billing.IsPaymentSplitEnabled"
-
-	// Operations features
-	EnabledFeaturesFieldOperationsIsTicketingEnabled      = "Operations.IsTicketingEnabled"
-	EnabledFeaturesFieldOperationsIsCRMIntegrationEnabled = "Operations.IsCRMIntegrationEnabled"
-	EnabledFeaturesFieldOperationsIsERPIntegrationEnabled = "Operations.IsERPIntegrationEnabled"
-	EnabledFeaturesFieldOperationsIsInventorySyncEnabled  = "Operations.IsInventorySyncEnabled"
-	EnabledFeaturesFieldOperationsIsPartnerPortalEnabled  = "Operations.IsPartnerPortalEnabled"
 
 	// Analytics features
 	EnabledFeaturesFieldAnalyticsIsUsageAnalyticsEnabled   = "Analytics.IsUsageAnalyticsEnabled"
@@ -93,11 +75,10 @@ const (
 type EnabledFeatures struct {
 	Core          CoreFeatures         `json:"core" bson:"core"`                   // Core user experience features
 	Notifications NotificationFeatures `json:"notifications" bson:"notifications"` // Notification channels
-	Hotspot       HotspotFeatures      `json:"hotspot" bson:"hotspot"`             // Hotspot & captive portal
+	Hotspot       HotspotFeatures      `json:"hotspot" bson:"hotspot"`             // Hotspot & captive portal (auth methods only)
 	VAS           VASFeatures          `json:"vas" bson:"vas"`                     // Value-added services
-	Marketing     MarketingFeatures    `json:"marketing" bson:"marketing"`         // Marketing & campaigns
+	Marketing     MarketingFeatures    `json:"marketing" bson:"marketing"`         // Marketing & promotions
 	Billing       BillingFeatures      `json:"billing" bson:"billing"`             // Billing & collections
-	Operations    OperationsFeatures   `json:"operations" bson:"operations"`       // Operations & integrations
 	Analytics     AnalyticsFeatures    `json:"analytics" bson:"analytics"`         // Analytics & feedback
 	I9Shield      SecurityFeatures     `json:"i9Shield" bson:"i9Shield"`           // I9 Shield features
 	Inventory     InventoryFeatures    `json:"inventory" bson:"inventory"`         // Inventory features
@@ -113,7 +94,6 @@ type CoreFeatures struct {
 	IsVasEnabled          bool `json:"isVasEnabled" bson:"isVasEnabled"`
 	IsMarketingEnabled    bool `json:"isMarketingEnabled" bson:"isMarketingEnabled"`
 	IsBillingEnabled      bool `json:"isBillingEnabled" bson:"isBillingEnabled"`
-	IsOperationsEnabled   bool `json:"isOperationsEnabled" bson:"isOperationsEnabled"`
 	IsAnalyticsEnabled    bool `json:"isAnalyticsEnabled" bson:"isAnalyticsEnabled"`
 	IsI9ShieldEnabled     bool `json:"isI9ShieldEnabled" bson:"isI9ShieldEnabled"`
 	IsAIEnabled           bool `json:"isAIEnabled" bson:"isAIEnabled"`
@@ -133,18 +113,12 @@ type NotificationFeatures struct {
 	IsPushNotificationEnabled         bool `json:"isPushNotificationEnabled" bson:"isPushNotificationEnabled"`
 }
 
-// HotspotFeatures - Hotspot & captive portal
-type HotspotFeatures struct { // Master hotspot toggle
-	IsOTPAuthEnabled           bool `json:"isOtpAuthEnabled" bson:"isOtpAuthEnabled"`                     // OTP-based authentication
-	IsSocialLoginEnabled       bool `json:"isSocialLoginEnabled" bson:"isSocialLoginEnabled"`             // Social media login (Google, Facebook)
-	IsVoucherLoginEnabled      bool `json:"isVoucherLoginEnabled" bson:"isVoucherLoginEnabled"`           // Voucher/scratch card access
-	IsPasswordLoginEnabled     bool `json:"isPasswordLoginEnabled" bson:"isPasswordLoginEnabled"`         // Password-based authentication
-	IsGuestWiFiEnabled         bool `json:"isGuestWiFiEnabled" bson:"isGuestWiFiEnabled"`                 // Guest WiFi portal
-	IsSessionManagementEnabled bool `json:"isSessionManagementEnabled" bson:"isSessionManagementEnabled"` // Session tracking & management
-	IsCustomBrandingEnabled    bool `json:"isCustomBrandingEnabled" bson:"isCustomBrandingEnabled"`       // Custom portal branding
-	IsAdvertisementEnabled     bool `json:"isAdvertisementEnabled" bson:"isAdvertisementEnabled"`         // Advertisement injection
-	IsUsageLimitEnabled        bool `json:"isUsageLimitEnabled" bson:"isUsageLimitEnabled"`               // Data/time usage limits
-	IsMultipleSSIDEnabled      bool `json:"isMultipleSSIDEnabled" bson:"isMultipleSSIDEnabled"`           // Multiple SSID support
+// HotspotFeatures - Authentication methods only (management toggles removed)
+type HotspotFeatures struct {
+	IsOTPAuthEnabled       bool `json:"isOtpAuthEnabled" bson:"isOtpAuthEnabled"`
+	IsSocialLoginEnabled   bool `json:"isSocialLoginEnabled" bson:"isSocialLoginEnabled"`
+	IsVoucherLoginEnabled  bool `json:"isVoucherLoginEnabled" bson:"isVoucherLoginEnabled"`
+	IsPasswordLoginEnabled bool `json:"isPasswordLoginEnabled" bson:"isPasswordLoginEnabled"`
 }
 
 // VASFeatures - Value-added services
@@ -158,16 +132,12 @@ type VASFeatures struct {
 	IsDNSSecurityEnabled     bool `json:"isDnsSecurityEnabled" bson:"isDnsSecurityEnabled"`
 }
 
-// MarketingFeatures - Marketing, campaigns & retention
+// MarketingFeatures - Promotions & retention (campaigns/automation removed)
 type MarketingFeatures struct {
-	IsCampaginServiceEnabled     bool `json:"isCampaginServiceEnabled" bson:"isCampaginServiceEnabled"`
-	IsPromoCampaignEnabled       bool `json:"isPromoCampaignEnabled" bson:"isPromoCampaignEnabled"`
-	IsEmailCampaignEnabled       bool `json:"isEmailCampaignEnabled" bson:"isEmailCampaignEnabled"`
-	IsSMSCampaignEnabled         bool `json:"isSmsCampaignEnabled" bson:"isSmsCampaignEnabled"`
-	IsMarketingAutomationEnabled bool `json:"isMarketingAutomationEnabled" bson:"isMarketingAutomationEnabled"`
-	IsCouponsEnabled             bool `json:"isCouponsEnabled" bson:"isCouponsEnabled"`
-	IsLoyaltyProgramEnabled      bool `json:"isLoyaltyProgramEnabled" bson:"isLoyaltyProgramEnabled"`
-	IsReferralProgramEnabled     bool `json:"isReferralProgramEnabled" bson:"isReferralProgramEnabled"`
+	IsPromoCampaignEnabled   bool `json:"isPromoCampaignEnabled" bson:"isPromoCampaignEnabled"`
+	IsCouponsEnabled         bool `json:"isCouponsEnabled" bson:"isCouponsEnabled"`
+	IsLoyaltyProgramEnabled  bool `json:"isLoyaltyProgramEnabled" bson:"isLoyaltyProgramEnabled"`
+	IsReferralProgramEnabled bool `json:"isReferralProgramEnabled" bson:"isReferralProgramEnabled"`
 }
 
 // BillingFeatures - Billing & collections
@@ -176,15 +146,6 @@ type BillingFeatures struct {
 	IsMultiSplitPaymentEnabled   bool `json:"isMultiSplitPaymentEnabled" bson:"isMultiSplitPaymentEnabled"`
 	IsInvoiceAutoReminderEnabled bool `json:"isInvoiceAutoReminderEnabled" bson:"isInvoiceAutoReminderEnabled"`
 	IsPaymentSplitEnabled        bool `json:"isPaymentSplitEnabled" bson:"isPaymentSplitEnabled"`
-}
-
-// OperationsFeatures - Operations & integrations
-type OperationsFeatures struct {
-	IsTicketingEnabled      bool `json:"isTicketingEnabled" bson:"isTicketingEnabled"`
-	IsCRMIntegrationEnabled bool `json:"isCrmIntegrationEnabled" bson:"isCrmIntegrationEnabled"`
-	IsERPIntegrationEnabled bool `json:"isErpIntegrationEnabled" bson:"isErpIntegrationEnabled"`
-	IsInventorySyncEnabled  bool `json:"isInventorySyncEnabled" bson:"isInventorySyncEnabled"`
-	IsPartnerPortalEnabled  bool `json:"isPartnerPortalEnabled" bson:"isPartnerPortalEnabled"`
 }
 
 // AnalyticsFeatures - Analytics & feedback
@@ -196,7 +157,7 @@ type AnalyticsFeatures struct {
 	IsChurnPredictionEnabled  bool `json:"isChurnPredictionEnabled" bson:"isChurnPredictionEnabled"`
 }
 
-// SecurityFeatures - Security & compliance
+// SecurityFeatures - Security & compliance (I9 Shield)
 type SecurityFeatures struct {
 	Is2FAEnabled                 bool `json:"is2FAEnabled" bson:"is2FAEnabled"`
 	IsAuditLoggingEnabled        bool `json:"isAuditLoggingEnabled" bson:"isAuditLoggingEnabled"`
