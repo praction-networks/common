@@ -53,6 +53,14 @@ type AuditEvent struct {
 	// ResourceID is the unique identifier of the affected entity
 	ResourceID string `json:"resourceId"`
 
+	// ResourceName is the human-readable name of the entity (e.g., "Subscriber Ahmed", "Plan Gold")
+	// Used for display: "John Doe updated mobile of Subscriber Ahmed"
+	ResourceName string `json:"resourceName,omitempty"`
+
+	// Changes captures structured before/after diffs for UPDATE actions
+	// Example: [{field:"mobile", oldValue:"0501234567", newValue:"0509876543"}]
+	Changes []Change `json:"changes,omitempty"`
+
 	// Service is the originating microservice name (e.g., "tenant-user-service")
 	Service string `json:"service"`
 
@@ -73,4 +81,12 @@ type AuditEvent struct {
 
 	// Metadata contains additional context (changes, before/after, reason, etc.)
 	Metadata map[string]any `json:"metadata,omitempty"`
+}
+
+// Change represents a single field modification in an UPDATE action.
+// Enables human-readable audit trail: "changed mobile from 0501234567 to 0509876543"
+type Change struct {
+	Field    string `json:"field"`
+	OldValue any    `json:"oldValue,omitempty"`
+	NewValue any    `json:"newValue,omitempty"`
 }
