@@ -79,6 +79,9 @@ const (
 	TenantCDNProviderBindingCreatedSubject  Subject = "tenant.cdnbinding.created"
 	TenantCDNProviderBindingUpdatedSubject  Subject = "tenant.cdnbinding.updated"
 	TenantCDNProviderBindingDeletedSubject  Subject = "tenant.cdnbinding.deleted"
+	TenantStorageProviderBindingCreatedSubject Subject = "tenant.storagebinding.created"
+	TenantStorageProviderBindingUpdatedSubject Subject = "tenant.storagebinding.updated"
+	TenantStorageProviderBindingDeletedSubject Subject = "tenant.storagebinding.deleted"
 
 	// Tenant Branding Events
 	TenantBrandingCreatedSubject Subject = "tenant.branding.created"
@@ -277,6 +280,9 @@ var Streams = map[StreamName]StreamMetadata{
 			TenantCDNProviderBindingCreatedSubject,
 			TenantCDNProviderBindingUpdatedSubject,
 			TenantCDNProviderBindingDeletedSubject,
+			TenantStorageProviderBindingCreatedSubject,
+			TenantStorageProviderBindingUpdatedSubject,
+			TenantStorageProviderBindingDeletedSubject,
 			TenantKYCProviderBindingCreatedSubject,
 			TenantKYCProviderBindingUpdatedSubject,
 			TenantKYCProviderBindingDeletedSubject,
