@@ -31,6 +31,13 @@ type TenantUserCreateEvent struct {
 	IsActive                 bool         `json:"isActive" bson:"isActive"`
 	IsSystem                 bool         `json:"isSystem" bson:"isSystem"`
 	Version                  int          `json:"version" bson:"version"`
+
+	// Organizational Hierarchy
+	Designation   string   `json:"designation,omitempty" bson:"designation,omitempty"`
+	Department    string   `json:"department,omitempty" bson:"department,omitempty"`
+	ReportsTo     string   `json:"reportsTo,omitempty" bson:"reportsTo,omitempty"`
+	DirectReports []string `json:"directReports,omitempty" bson:"directReports,omitempty"`
+	OrgLevel      int      `json:"orgLevel" bson:"orgLevel"`
 }
 
 type TenantUserUpdateEvent struct {
@@ -55,6 +62,13 @@ type TenantUserUpdateEvent struct {
 	OnLeave                  bool         `json:"onLeave" bson:"onLeave"`
 	IsActive                 bool         `json:"isActive" bson:"isActive"`
 	Version                  int          `json:"version" bson:"version"`
+
+	// Organizational Hierarchy
+	Designation   string   `json:"designation,omitempty" bson:"designation,omitempty"`
+	Department    string   `json:"department,omitempty" bson:"department,omitempty"`
+	ReportsTo     string   `json:"reportsTo,omitempty" bson:"reportsTo,omitempty"`
+	DirectReports []string `json:"directReports,omitempty" bson:"directReports,omitempty"`
+	OrgLevel      int      `json:"orgLevel" bson:"orgLevel"`
 }
 
 type TenantUserDeleteEvent struct {
