@@ -215,6 +215,16 @@ const (
 	UserPushNotificationDeliveredSubject Subject = "user.push.notification.delivered"
 	UserPushNotificationFailedSubject    Subject = "user.push.notification.failed"
 	UserPushNotificationOpenedSubject    Subject = "user.push.notification.opened" // Optional: for tracking
+
+	// Audit Events (Global - any service can publish)
+	AuditUserActionSubject       Subject = "audit.user.action"
+	AuditAuthActionSubject       Subject = "audit.auth.action"
+	AuditTenantActionSubject     Subject = "audit.tenant.action"
+	AuditSubscriberActionSubject Subject = "audit.subscriber.action"
+	AuditPlanActionSubject       Subject = "audit.plan.action"
+	AuditInventoryActionSubject  Subject = "audit.inventory.action"
+	AuditTicketActionSubject     Subject = "audit.ticket.action"
+	AuditSystemActionSubject     Subject = "audit.system.action"
 )
 
 // StreamMetadata defines metadata for streams
@@ -454,6 +464,21 @@ var Streams = map[StreamName]StreamMetadata{
 			TicketClassifiedSubject,
 			TicketAutoLinkedSubject,
 			TicketCreatedFromEmailSubject,
+		},
+	},
+
+	AuditGlobalStream: {
+		Name:        AuditGlobalStream,
+		Description: "Global stream for audit trail events from all services",
+		Subjects: []Subject{
+			AuditUserActionSubject,
+			AuditAuthActionSubject,
+			AuditTenantActionSubject,
+			AuditSubscriberActionSubject,
+			AuditPlanActionSubject,
+			AuditInventoryActionSubject,
+			AuditTicketActionSubject,
+			AuditSystemActionSubject,
 		},
 	},
 }
