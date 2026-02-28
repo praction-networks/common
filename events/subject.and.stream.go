@@ -92,6 +92,11 @@ const (
 	TenantUserPasswordSetSubject        Subject = "tenantuser.password.set" // Initial password set during onboarding
 	TenantUserPreferencesUpdatedSubject Subject = "tenantuser.preferences.updated"
 
+	// Department/Team Events (collection-based: full document)
+	DeptTeamCreatedSubject Subject = "deptteam.created"
+	DeptTeamUpdatedSubject Subject = "deptteam.updated"
+	DeptTeamDeletedSubject Subject = "deptteam.deleted"
+
 	// Tenant Auth Role Event Initialization
 	TenantUserRoleCreatedSubject Subject = "tenantuserrole.created"
 	TenantUserRoleUpdatedSubject Subject = "tenantuserrole.updated"
@@ -285,6 +290,10 @@ var Streams = map[StreamName]StreamMetadata{
 			TenantUserDeletedSubject,
 			TenantUserPasswordSetSubject,
 			TenantUserPreferencesUpdatedSubject,
+			// Department/Team Events
+			DeptTeamCreatedSubject,
+			DeptTeamUpdatedSubject,
+			DeptTeamDeletedSubject,
 		},
 	},
 	AuthStream: {
