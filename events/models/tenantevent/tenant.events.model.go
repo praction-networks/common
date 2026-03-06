@@ -41,6 +41,9 @@ type TenantInsertEventModel struct {
 	OLTs             []string        `bson:"olts,omitempty" json:"olts,omitempty"`
 	TenantMFAPolicy  TenantMFAPolicy `bson:"tenantMFAPolicy,omitempty" json:"tenantMFAPolicy,omitempty"`
 
+	// Licensing & Regulatory (for ISP/Telco tenants)
+	LicenseInfo LicenseInfoEvent `bson:"licenseInfo,omitempty" json:"licenseInfo,omitempty"`
+
 	// Note: Provider configurations (KYC, SMS, Mail, App Messaging) are now managed through
 	// separate binding collections and published via separate provider binding events.
 	// See: tenant.provider.binding.event.model.go
@@ -83,6 +86,9 @@ type TenantUpdateEventModel struct {
 	TenantCIN        *CINModel        `bson:"tenantCIN,omitempty" json:"tenantCIN,omitempty"`
 	EnabledFeatures  *EnabledFeatures `bson:"enabledFeatures,omitempty" json:"enabledFeatures,omitempty"`
 	OLTs             []string         `bson:"olts,omitempty" json:"olts,omitempty"`
+
+	// Licensing & Regulatory (for ISP/Telco tenants)
+	LicenseInfo *LicenseInfoEvent `bson:"licenseInfo,omitempty" json:"licenseInfo,omitempty"`
 
 	// Note: Provider configurations (KYC, SMS, Mail, App Messaging) are now managed through
 	// separate binding collections and published via separate provider binding events.
@@ -300,6 +306,18 @@ type CINModel struct {
 	CIN        string    `bson:"cin,omitempty" json:"cin,omitempty"`
 	IsVerified bool      `bson:"isVerified,omitempty" json:"isVerified,omitempty"`
 	VerifiedAt time.Time `bson:"verifiedAt,omitempty" json:"verifiedAt,omitempty"`
+}
+
+// LicenseInfoEvent holds ISP/Telco licensing details in events
+// License is issued by DOT (Department of Telecommunications)
+// TRAI is the regulatory/management authority
+type LicenseInfoEvent struct {
+	LicenseType       string     `bson:"licenseType,omitempty" json:"licenseType,omitempty"`             // VNO, UL
+	LicenseNumber     string     `bson:"licenseNumber,omitempty" json:"licenseNumber,omitempty"`         // DOT license number
+	LicenseIssuedDate *time.Time `bson:"licenseIssuedDate,omitempty" json:"licenseIssuedDate,omitempty"` // When DOT granted the license
+	LicenseExpiryDate *time.Time `bson:"licenseExpiryDate,omitempty" json:"licenseExpiryDate,omitempty"` // Validity end date
+	ServiceArea       string     `bson:"serviceArea,omitempty" json:"serviceArea,omitempty"`             // CLASS_A, CLASS_B, CLASS_C
+	ServiceAreaName   string     `bson:"serviceAreaName,omitempty" json:"serviceAreaName,omitempty"`     // "Mumbai", "Pan India", etc.
 }
 
 type NotificationGateways struct {
