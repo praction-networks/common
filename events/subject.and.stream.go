@@ -16,6 +16,7 @@ const (
 	LogEngineStream        StreamName = "LogEngineStream"
 	TicketStream           StreamName = "TicketStream"
 	VenueStream            StreamName = "VenueStream"
+	BillingStream          StreamName = "BillingStream"
 )
 
 // Global Stream names as constants
@@ -215,6 +216,11 @@ const (
 	VenueOrderCancelledSubject Subject = "venue.order.cancelled"
 	VenueMenuUpdatedSubject    Subject = "venue.menu.updated"
 	VenueMenuDeletedSubject    Subject = "venue.menu.deleted"
+
+	// Billing Service Events
+	BillingPaymentCompletedSubject Subject = "billing.payment.completed"
+	BillingPaymentFailedSubject    Subject = "billing.payment.failed"
+	BillingInvoiceCreatedSubject   Subject = "billing.invoice.created"
 )
 
 // Global Subjects - Cross-service events that any service can publish
@@ -513,6 +519,16 @@ var Streams = map[StreamName]StreamMetadata{
 			VenueOrderCancelledSubject,
 			VenueMenuUpdatedSubject,
 			VenueMenuDeletedSubject,
+		},
+	},
+
+	BillingStream: {
+		Name:        BillingStream,
+		Description: "Stream for billing service events (payments, invoices)",
+		Subjects: []Subject{
+			BillingPaymentCompletedSubject,
+			BillingPaymentFailedSubject,
+			BillingInvoiceCreatedSubject,
 		},
 	},
 }
