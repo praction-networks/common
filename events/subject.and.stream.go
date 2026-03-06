@@ -15,6 +15,7 @@ const (
 	PlanStream             StreamName = "PlanStream"
 	LogEngineStream        StreamName = "LogEngineStream"
 	TicketStream           StreamName = "TicketStream"
+	VenueStream            StreamName = "VenueStream"
 )
 
 // Global Stream names as constants
@@ -203,6 +204,17 @@ const (
 	TicketClassifiedSubject               Subject = "ticket.classified"
 	TicketAutoLinkedSubject               Subject = "ticket.auto.linked"
 	TicketCreatedFromEmailSubject         Subject = "ticket.created.from.email"
+
+	// Venue Service Events
+	VenueOrderPlacedSubject    Subject = "venue.order.placed"
+	VenueOrderConfirmedSubject Subject = "venue.order.confirmed"
+	VenueOrderPreparingSubject Subject = "venue.order.preparing"
+	VenueOrderReadySubject     Subject = "venue.order.ready"
+	VenueOrderServedSubject    Subject = "venue.order.served"
+	VenueOrderPaidSubject      Subject = "venue.order.paid"
+	VenueOrderCancelledSubject Subject = "venue.order.cancelled"
+	VenueMenuUpdatedSubject    Subject = "venue.menu.updated"
+	VenueMenuDeletedSubject    Subject = "venue.menu.deleted"
 )
 
 // Global Subjects - Cross-service events that any service can publish
@@ -485,6 +497,22 @@ var Streams = map[StreamName]StreamMetadata{
 			AuditInventoryActionSubject,
 			AuditTicketActionSubject,
 			AuditSystemActionSubject,
+		},
+	},
+
+	VenueStream: {
+		Name:        VenueStream,
+		Description: "Stream for venue service events (orders, menus)",
+		Subjects: []Subject{
+			VenueOrderPlacedSubject,
+			VenueOrderConfirmedSubject,
+			VenueOrderPreparingSubject,
+			VenueOrderReadySubject,
+			VenueOrderServedSubject,
+			VenueOrderPaidSubject,
+			VenueOrderCancelledSubject,
+			VenueMenuUpdatedSubject,
+			VenueMenuDeletedSubject,
 		},
 	},
 }
