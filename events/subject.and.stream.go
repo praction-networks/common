@@ -221,6 +221,12 @@ const (
 	BillingPaymentCompletedSubject Subject = "billing.payment.completed"
 	BillingPaymentFailedSubject    Subject = "billing.payment.failed"
 	BillingInvoiceCreatedSubject   Subject = "billing.invoice.created"
+	BillingCreditNoteIssuedSubject Subject = "billing.creditnote.issued"
+	BillingDebitNoteIssuedSubject  Subject = "billing.debitnote.issued"
+	BillingDunningReminderSubject    Subject = "billing.dunning.reminder"
+	BillingDunningWarningSubject     Subject = "billing.dunning.warning"
+	BillingDunningSuspensionSubject  Subject = "billing.dunning.suspension"
+	BillingDunningTerminationSubject Subject = "billing.dunning.termination"
 )
 
 // Global Subjects - Cross-service events that any service can publish
@@ -524,11 +530,17 @@ var Streams = map[StreamName]StreamMetadata{
 
 	BillingStream: {
 		Name:        BillingStream,
-		Description: "Stream for billing service events (payments, invoices)",
+		Description: "Stream for billing service events (payments, invoices, credit notes, dunning)",
 		Subjects: []Subject{
 			BillingPaymentCompletedSubject,
 			BillingPaymentFailedSubject,
 			BillingInvoiceCreatedSubject,
+			BillingCreditNoteIssuedSubject,
+			BillingDebitNoteIssuedSubject,
+			BillingDunningReminderSubject,
+			BillingDunningWarningSubject,
+			BillingDunningSuspensionSubject,
+			BillingDunningTerminationSubject,
 		},
 	},
 }
