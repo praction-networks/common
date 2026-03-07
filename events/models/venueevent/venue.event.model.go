@@ -2,7 +2,23 @@ package venueevent
 
 import "time"
 
-// OrderEventModel represents an order event published by venue-service
+// OrderStatus represents the status of an order in venue events
+type OrderStatus string
+
+// Order status constants — remote services use these to decide behavior
+const (
+	OrderStatusPlaced    OrderStatus = "PLACED"
+	OrderStatusAccepted  OrderStatus = "ACCEPTED"
+	OrderStatusConfirmed OrderStatus = "CONFIRMED"
+	OrderStatusPreparing OrderStatus = "PREPARING"
+	OrderStatusReady     OrderStatus = "READY"
+	OrderStatusServed    OrderStatus = "SERVED"
+	OrderStatusPaid      OrderStatus = "PAID"
+	OrderStatusCancelled OrderStatus = "CANCELLED"
+)
+
+// OrderEventModel represents an order event published by venue-service.
+// Remote services read the Status field to decide how to handle the event.
 type OrderEventModel struct {
 	ID             string           `json:"id" bson:"_id"`
 	TenantID       string           `json:"tenantId" bson:"tenantId"`
@@ -10,7 +26,7 @@ type OrderEventModel struct {
 	SubscriberID   string           `json:"subscriberId,omitempty" bson:"subscriberId,omitempty"`
 	OrderNumber    string           `json:"orderNumber" bson:"orderNumber"`
 	DisplayNumber  int              `json:"displayNumber" bson:"displayNumber"`
-	Status         string           `json:"status" bson:"status"`
+	Status         OrderStatus      `json:"status" bson:"status"`
 	Items          []OrderItemEvent `json:"items" bson:"items"`
 	Subtotal       int64            `json:"subtotal" bson:"subtotal"`
 	DiscountAmount int64            `json:"discountAmount,omitempty" bson:"discountAmount,omitempty"`
@@ -40,4 +56,3 @@ type MenuEventModel struct {
 	IsActive bool   `json:"isActive" bson:"isActive"`
 	Version  int    `json:"version" bson:"version"`
 }
-

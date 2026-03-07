@@ -206,16 +206,13 @@ const (
 	TicketAutoLinkedSubject               Subject = "ticket.auto.linked"
 	TicketCreatedFromEmailSubject         Subject = "ticket.created.from.email"
 
-	// Venue Service Events
-	VenueOrderPlacedSubject    Subject = "venue.order.placed"
-	VenueOrderConfirmedSubject Subject = "venue.order.confirmed"
-	VenueOrderPreparingSubject Subject = "venue.order.preparing"
-	VenueOrderReadySubject     Subject = "venue.order.ready"
-	VenueOrderServedSubject    Subject = "venue.order.served"
-	VenueOrderPaidSubject      Subject = "venue.order.paid"
-	VenueOrderCancelledSubject Subject = "venue.order.cancelled"
-	VenueMenuUpdatedSubject    Subject = "venue.menu.updated"
-	VenueMenuDeletedSubject    Subject = "venue.menu.deleted"
+	// Venue Service Events (3 simple events — remote services read Status field for decisions)
+	VenueOrderCreatedSubject Subject = "venue.order.created"
+	VenueOrderUpdatedSubject Subject = "venue.order.updated"
+	VenueOrderDeletedSubject Subject = "venue.order.deleted"
+	VenueMenuCreatedSubject  Subject = "venue.menu.created"
+	VenueMenuUpdatedSubject  Subject = "venue.menu.updated"
+	VenueMenuDeletedSubject  Subject = "venue.menu.deleted"
 
 	// Billing Service Events
 	BillingPaymentCompletedSubject Subject = "billing.payment.completed"
@@ -516,13 +513,10 @@ var Streams = map[StreamName]StreamMetadata{
 		Name:        VenueStream,
 		Description: "Stream for venue service events (orders, menus)",
 		Subjects: []Subject{
-			VenueOrderPlacedSubject,
-			VenueOrderConfirmedSubject,
-			VenueOrderPreparingSubject,
-			VenueOrderReadySubject,
-			VenueOrderServedSubject,
-			VenueOrderPaidSubject,
-			VenueOrderCancelledSubject,
+			VenueOrderCreatedSubject,
+			VenueOrderUpdatedSubject,
+			VenueOrderDeletedSubject,
+			VenueMenuCreatedSubject,
 			VenueMenuUpdatedSubject,
 			VenueMenuDeletedSubject,
 		},
