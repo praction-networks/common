@@ -9,7 +9,6 @@ type OrderStatus string
 const (
 	OrderStatusPlaced    OrderStatus = "PLACED"
 	OrderStatusAccepted  OrderStatus = "ACCEPTED"
-	OrderStatusConfirmed OrderStatus = "CONFIRMED"
 	OrderStatusPreparing OrderStatus = "PREPARING"
 	OrderStatusReady     OrderStatus = "READY"
 	OrderStatusServed    OrderStatus = "SERVED"
