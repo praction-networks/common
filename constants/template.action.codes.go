@@ -12,6 +12,7 @@ const (
 	// -----------------------------------------------------
 	TemplateActionCodeOTPLogin            TemplateActionCode = "AUTH.OTP_LOGIN"
 	TemplateActionCodePasswordRecovery    TemplateActionCode = "AUTH.PASSWORD_RECOVERY"
+	TemplateActionCodeSetPassword         TemplateActionCode = "AUTH.SET_PASSWORD"
 	TemplateActionCodePasswordChanged     TemplateActionCode = "AUTH.PASSWORD_CHANGED"
 	TemplateActionCodeNewDeviceLogin      TemplateActionCode = "AUTH.NEW_DEVICE_LOGIN"
 	TemplateActionCodeAccountVerification TemplateActionCode = "AUTH.ACCOUNT_VERIFICATION"
@@ -213,6 +214,7 @@ const (
 	// -----------------------------------------------------
 	SystemTemplateActionCodeOTPLogin            TemplateActionCode = "System.AUTH.OTP_LOGIN"
 	SystemTemplateActionCodePasswordRecovery    TemplateActionCode = "System.AUTH.PASSWORD_RECOVERY"
+	SystemTemplateActionCodeSetPassword         TemplateActionCode = "System.AUTH.SET_PASSWORD"
 	SystemTemplateActionCodePasswordChanged     TemplateActionCode = "System.AUTH.PASSWORD_CHANGED"
 	SystemTemplateActionCodeNewDeviceLogin      TemplateActionCode = "System.AUTH.NEW_DEVICE_LOGIN"
 	SystemTemplateActionCodeAccountVerification TemplateActionCode = "System.AUTH.ACCOUNT_VERIFICATION"
@@ -248,6 +250,7 @@ func GetAllActionCodes() map[TemplateActionCode]bool {
 	return map[TemplateActionCode]bool{
 		TemplateActionCodeOTPLogin:                          true,
 		TemplateActionCodePasswordRecovery:                  true,
+		TemplateActionCodeSetPassword:                       true,
 		TemplateActionCodePasswordChanged:                   true,
 		TemplateActionCodeNewDeviceLogin:                    true,
 		TemplateActionCodeAccountVerification:               true,
@@ -388,6 +391,7 @@ func GetAllActionCodes() map[TemplateActionCode]bool {
 		// System templates (System.* prefix)
 		SystemTemplateActionCodeOTPLogin:            true,
 		SystemTemplateActionCodePasswordRecovery:    true,
+		SystemTemplateActionCodeSetPassword:         true,
 		SystemTemplateActionCodePasswordChanged:     true,
 		SystemTemplateActionCodeNewDeviceLogin:      true,
 		SystemTemplateActionCodeAccountVerification: true,
@@ -403,7 +407,8 @@ func GetAllActionCodes() map[TemplateActionCode]bool {
 func GetActionCodeDescriptions() map[TemplateActionCode]string {
 	return map[TemplateActionCode]string{
 		TemplateActionCodeOTPLogin:                          "OTP Login - One-Time Password for login",
-		TemplateActionCodePasswordRecovery:                  "Password Recovery - Password recovery token",
+		TemplateActionCodePasswordRecovery:                  "Password Recovery - Password recovery OTP code",
+		TemplateActionCodeSetPassword:                       "Set Password - First-time password setup OTP code",
 		TemplateActionCodePasswordChanged:                   "Password Changed - Password change confirmation",
 		TemplateActionCodeNewDeviceLogin:                    "New Device Login - Login alert for new device",
 		TemplateActionCodeAccountVerification:               "Account Verification - Verification link",
@@ -543,7 +548,8 @@ func GetActionCodeDescriptions() map[TemplateActionCode]string {
 		TemplateActionCodeHotSpotLoginOTP:                   "Hotspot Login OTP - One-Time Password for login",
 		// System template descriptions
 		SystemTemplateActionCodeOTPLogin:            "System OTP Login - One-Time Password for login (System template)",
-		SystemTemplateActionCodePasswordRecovery:    "System Password Recovery - Password recovery token (System template)",
+		SystemTemplateActionCodePasswordRecovery:    "System Password Recovery - Password recovery OTP code (System template)",
+		SystemTemplateActionCodeSetPassword:         "System Set Password - First-time password setup OTP code (System template)",
 		SystemTemplateActionCodePasswordChanged:     "System Password Changed - Password change confirmation (System template)",
 		SystemTemplateActionCodeNewDeviceLogin:      "System New Device Login - Login alert for new device (System template)",
 		SystemTemplateActionCodeAccountVerification: "System Account Verification - Verification link (System template)",
