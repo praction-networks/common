@@ -90,9 +90,6 @@ const (
 	TenantBrandingUpdatedSubject Subject = "tenant.branding.updated"
 	TenantBrandingDeletedSubject Subject = "tenant.branding.deleted"
 
-	// Default Tenant User Event (published by tenant-service after ISP/Enterprise tenant creation)
-	DefaultTenantUserSubject Subject = "tenant.defaultuser.created"
-
 	//Domain User Service Event Initialization
 	TenantUserCreatedSubject            Subject = "tenantuser.created"
 	TenantUserUpdatedSubject            Subject = "tenantuser.updated"
@@ -317,8 +314,6 @@ var Streams = map[StreamName]StreamMetadata{
 			TenantBrandingCreatedSubject,
 			TenantBrandingUpdatedSubject,
 			TenantBrandingDeletedSubject,
-			// Default Tenant User Event
-			DefaultTenantUserSubject,
 		},
 	},
 

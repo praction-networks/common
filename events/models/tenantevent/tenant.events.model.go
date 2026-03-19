@@ -29,8 +29,7 @@ type TenantInsertEventModel struct {
 	MaxDepth          int      `bson:"maxDepth,omitempty" json:"maxDepth,omitempty"`
 	AllowedChildTypes []string `bson:"allowedChildTypes,omitempty" json:"allowedChildTypes,omitempty"`
 
-	DefaultEmail     string          `bson:"defaultEmail" json:"defaultEmail"`
-	DefaultPhone     string          `bson:"defaultPhone" json:"defaultPhone"`
+	AdminLoginEmail  string          `bson:"adminLoginEmail,omitempty" json:"adminLoginEmail,omitempty"`
 	PermanentAddress AddressModel    `bson:"permanentAddress" json:"permanentAddress"`
 	CurrentAddress   AddressModel    `bson:"currentAddress" json:"currentAddress"`
 	TenantGST        []GSTModel      `bson:"tenantGST,omitempty" json:"tenantGST,omitempty"`
@@ -38,7 +37,6 @@ type TenantInsertEventModel struct {
 	TenantTAN        TANModel        `bson:"tenantTAN,omitempty" json:"tenantTAN,omitempty"`
 	TenantCIN        CINModel        `bson:"tenantCIN,omitempty" json:"tenantCIN,omitempty"`
 	EnabledFeatures  EnabledFeatures `bson:"enabledFeatures,omitempty" json:"enabledFeatures,omitempty"`
-	OLTs             []string        `bson:"olts,omitempty" json:"olts,omitempty"`
 	TenantMFAPolicy  TenantMFAPolicy `bson:"tenantMFAPolicy,omitempty" json:"tenantMFAPolicy,omitempty"`
 
 	// Licensing & Regulatory (for ISP/Telco tenants)
@@ -76,8 +74,7 @@ type TenantUpdateEventModel struct {
 	MaxDepth          int      `bson:"maxDepth,omitempty" json:"maxDepth,omitempty"`
 	AllowedChildTypes []string `bson:"allowedChildTypes,omitempty" json:"allowedChildTypes,omitempty"`
 
-	DefaultEmail     string           `bson:"defaultEmail,omitempty" json:"defaultEmail,omitempty"`
-	DefaultPhone     string           `bson:"defaultPhone,omitempty" json:"defaultPhone,omitempty"`
+	AdminLoginEmail  string           `bson:"adminLoginEmail,omitempty" json:"adminLoginEmail,omitempty"`
 	PermanentAddress *AddressModel    `bson:"permanentAddress,omitempty" json:"permanentAddress,omitempty"`
 	CurrentAddress   *AddressModel    `bson:"currentAddress,omitempty" json:"currentAddress,omitempty"`
 	TenantGST        []GSTModel       `bson:"tenantGST,omitempty" json:"tenantGST,omitempty"`
@@ -85,8 +82,6 @@ type TenantUpdateEventModel struct {
 	TenantTAN        *TANModel        `bson:"tenantTAN,omitempty" json:"tenantTAN,omitempty"`
 	TenantCIN        *CINModel        `bson:"tenantCIN,omitempty" json:"tenantCIN,omitempty"`
 	EnabledFeatures  *EnabledFeatures `bson:"enabledFeatures,omitempty" json:"enabledFeatures,omitempty"`
-	OLTs             []string         `bson:"olts,omitempty" json:"olts,omitempty"`
-
 	// Licensing & Regulatory (for ISP/Telco tenants)
 	LicenseInfo *LicenseInfoEvent `bson:"licenseInfo,omitempty" json:"licenseInfo,omitempty"`
 
