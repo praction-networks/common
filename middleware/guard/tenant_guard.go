@@ -301,6 +301,11 @@ func isSetupAllowedEndpoint(method, path string) bool {
 		return true
 	}
 
+	// Domain verification (setup wizard triggers POST to re-verify domain/SSL)
+	if strings.Contains(path, "/domain/verify") && method == http.MethodPost {
+		return true
+	}
+
 	// Tenant-user reads (dashboard fetches current user profile during setup)
 	if strings.Contains(path, "/tenant-users") &&
 		(method == http.MethodGet || method == http.MethodPatch) {
