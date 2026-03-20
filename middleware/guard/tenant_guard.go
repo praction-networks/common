@@ -294,12 +294,26 @@ func isSetupAllowedEndpoint(method, path string) bool {
 		return true
 	}
 
-	// Tenant read & update (wizard reads tenant, then PATCHes it)
-	// Matches both /tenant/ (singular, tenant-service routes) and /tenants (plural)
-	// Also matches /tenant exactly (e.g., GET /api/v1/tenant for listing all tenants)
-	if (strings.Contains(path, "/tenant/") || strings.Contains(path, "/tenants") || strings.HasSuffix(path, "/tenant")) &&
+	// Setup wizard only needs to read/update its OWN tenant by ID
+	// Pattern: /api/v1/tenant/{tenantId} or /api/v1/tenant/{tenantId}/theme
+	// Do NOT allow listing all tenants (GET /api/v1/tenant) — that should be blocked until setup is done
+	if strings.Contains(path, "/tenant/") &&
 		(method == http.MethodGet || method == http.MethodPatch || method == http.MethodPut) {
-		return true
+		// Verify this is a specific tenant path (has an ID segment after /tenant/)
+		// NOT /tenant/hierarchy, /tenant/children etc. that are bulk operations
+		parts := strings.Split(path, "/tenant/")
+		if len(parts) > 1 {
+			remaining := parts[len(parts)-1]
+			// Allow: {tenantId}, {tenantId}/theme, {tenantId}/domain/verify
+			// Block: hierarchy, children, descendants, etc.
+			if remaining != "" && !strings.Contains(remaining, "hierarchy") &&
+				!strings.Contains(remaining, "children") &&
+				!strings.Contains(remaining, "descendants") &&
+				!strings.Contains(remaining, "ancestors") &&
+				!strings.Contains(remaining, "siblings") {
+				return true
+			}
+		}
 	}
 
 	// Domain verification (setup wizard triggers POST to re-verify domain/SSL)
