@@ -173,16 +173,11 @@ func (c *InMemoryCache) handleEvent(ctx context.Context, msg events.Event[json.R
 		var event tenantevent.TenantInsertEventModel
 		if err = json.Unmarshal(msg.Data, &event); err == nil {
 			c.Set(&helpers.TenantHierarchyData{
-				ID:        event.ID,
-				Ancestors: event.Ancestors,
-				Level:     event.Level,
-				IsSystem:  false, // Default, updated on update event if needed? Insert event usually has it.
-				// Wait, TenantInsertEventModel doesn't seem to have IsSystem?
-				// Let's check the model definition if possible, or assume false.
-				// Actually TenantInsertEventModel in tenant-service had IsSystem?
-				// Let's assume false or we might need to fetch.
-				// For cache consistency, if the event lacks data, we might need to fetch.
-				// But "Distributed Cache" implies events carry enough info.
+				ID:            event.ID,
+				Ancestors:     event.Ancestors,
+				Level:         event.Level,
+				IsSystem:      event.IsSystem,
+				SetupComplete: event.SetupComplete,
 			})
 			logger.Debug("Cache updated from TenantCreated", "tenantID", event.ID)
 		}
@@ -202,6 +197,9 @@ func (c *InMemoryCache) handleEvent(ctx context.Context, msg events.Event[json.R
 			}
 			if event.IsSystem != nil {
 				existing.IsSystem = *event.IsSystem
+			}
+			if event.SetupComplete != nil {
+				existing.SetupComplete = *event.SetupComplete
 			}
 			c.Set(existing)
 			logger.Debug("Cache updated from TenantUpdated", "tenantID", event.ID)

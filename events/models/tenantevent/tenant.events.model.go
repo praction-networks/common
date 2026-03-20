@@ -46,9 +46,10 @@ type TenantInsertEventModel struct {
 	// separate binding collections and published via separate provider binding events.
 	// See: tenant.provider.binding.event.model.go
 
-	IsSystem bool `bson:"isSystem" json:"isSystem"`
-	IsActive bool `bson:"isActive" json:"isActive"`
-	Version  int  `bson:"version,omitempty" json:"version,omitempty"`
+	SetupComplete bool `bson:"setupComplete" json:"setupComplete"`
+	IsSystem      bool `bson:"isSystem" json:"isSystem"`
+	IsActive      bool `bson:"isActive" json:"isActive"`
+	Version       int  `bson:"version,omitempty" json:"version,omitempty"`
 }
 
 type TenantUpdateEventModel struct {
@@ -89,9 +90,10 @@ type TenantUpdateEventModel struct {
 	// separate binding collections and published via separate provider binding events.
 	// See: tenant.provider.binding.event.model.go
 
-	IsSystem *bool `bson:"isSystem,omitempty" json:"isSystem,omitempty"`
-	IsActive *bool `bson:"isActive,omitempty" json:"isActive,omitempty"`
-	Version  int   `bson:"version,omitempty" json:"version,omitempty"`
+	SetupComplete *bool `bson:"setupComplete,omitempty" json:"setupComplete,omitempty"`
+	IsSystem      *bool `bson:"isSystem,omitempty" json:"isSystem,omitempty"`
+	IsActive      *bool `bson:"isActive,omitempty" json:"isActive,omitempty"`
+	Version       int   `bson:"version,omitempty" json:"version,omitempty"`
 }
 
 type GSTModel struct {

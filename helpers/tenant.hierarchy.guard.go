@@ -39,10 +39,11 @@ type TenantHierarchyProvider interface {
 
 // TenantHierarchyData contains minimal hierarchy info needed for validation
 type TenantHierarchyData struct {
-	ID        string   `json:"id"`
-	Ancestors []string `json:"ancestors"` // Array of ancestor tenant IDs
-	Level     int      `json:"level"`     // Optional: hierarchy level
-	IsSystem  bool     `json:"isSystem"`  // System tenant flag
+	ID            string   `json:"id"`
+	Ancestors     []string `json:"ancestors"`     // Array of ancestor tenant IDs
+	Level         int      `json:"level"`         // Optional: hierarchy level
+	IsSystem      bool     `json:"isSystem"`      // System tenant flag
+	SetupComplete bool     `json:"setupComplete"` // false until tenant admin completes post-login setup
 }
 
 // RedisClientInterface defines the minimal Redis interface needed for caching

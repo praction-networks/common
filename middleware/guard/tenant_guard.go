@@ -2,6 +2,7 @@ package guard
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/praction-networks/common/appError"
@@ -216,4 +217,95 @@ func AccessibleTenantsMiddleware(cache hierarchy.TenantHierarchyCache) func(http
 			next.ServeHTTP(w, r.WithContext(ctx))
 		})
 	}
+}
+
+// TenantSetupGuardMiddleware creates a middleware that blocks API calls from tenants
+// that haven't completed their post-login setup wizard.
+//
+// Rules:
+//  1. System Users → ALLOW (SuperAdmin always has access)
+//  2. System Tenant → ALLOW (system tenant is always fully set up)
+//  3. Tenant with setupComplete=true → ALLOW
+//  4. Specific allowed paths (GET /tenants/*, PATCH /tenants/*) → ALLOW (wizard needs these)
+//  5. Auth endpoints → ALLOW (token refresh, logout, etc.)
+//  6. Otherwise → DENY with HTTP 403 + message to complete setup
+func TenantSetupGuardMiddleware(cache hierarchy.TenantHierarchyCache) func(http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			// 1. System Users: Always allow
+			if helpers.IsSystemUser(r.Context()) {
+				next.ServeHTTP(w, r)
+				return
+			}
+
+			// 2. Get context tenant
+			contextTenantID := helpers.GetTenantID(r.Context())
+			if contextTenantID == "" {
+				// No tenant context — skip (auth endpoints, health checks, etc.)
+				next.ServeHTTP(w, r)
+				return
+			}
+
+			// 3. Look up tenant in cache
+			tenantData, exists := cache.Get(contextTenantID)
+			if !exists {
+				// Not in cache — allow through (cache might not be populated yet)
+				logger.Debug("Tenant not found in hierarchy cache, skipping setup guard", "tenantID", contextTenantID)
+				next.ServeHTTP(w, r)
+				return
+			}
+
+			// 4. System tenant or setup already complete — allow
+			if tenantData.IsSystem || tenantData.SetupComplete {
+				next.ServeHTTP(w, r)
+				return
+			}
+
+			// 5. Allow specific endpoints needed by the setup wizard:
+			//    - GET/PATCH on tenant endpoints (wizard reads and updates tenant)
+			//    - Auth endpoints (token refresh, policies, etc.)
+			path := r.URL.Path
+			if isSetupAllowedEndpoint(r.Method, path) {
+				next.ServeHTTP(w, r)
+				return
+			}
+
+			// 6. Setup not complete — reject
+			logger.Warn("API call rejected: tenant setup not complete",
+				"tenantID", contextTenantID,
+				"method", r.Method,
+				"path", path)
+
+			helpers.HandleAppError(w, appError.New(
+				appError.InvalidOperation,
+				"Tenant setup is incomplete. Please complete the setup wizard before accessing other features.",
+				http.StatusForbidden,
+				nil,
+			))
+		})
+	}
+}
+
+// isSetupAllowedEndpoint returns true for endpoints that the setup wizard needs
+func isSetupAllowedEndpoint(method, path string) bool {
+	// Auth / access control endpoints (always allowed)
+	if strings.Contains(path, "/auth/") ||
+		strings.Contains(path, "/access/") {
+		return true
+	}
+
+	// Tenant read & update (wizard reads tenant, then PATCHes it)
+	if strings.Contains(path, "/tenants") &&
+		(method == http.MethodGet || method == http.MethodPatch) {
+		return true
+	}
+
+	// Health / readiness probes
+	if strings.HasSuffix(path, "/healthz") ||
+		strings.HasSuffix(path, "/readyz") ||
+		strings.HasSuffix(path, "/health") {
+		return true
+	}
+
+	return false
 }
