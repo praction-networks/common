@@ -296,7 +296,8 @@ func isSetupAllowedEndpoint(method, path string) bool {
 
 	// Tenant read & update (wizard reads tenant, then PATCHes it)
 	// Matches both /tenant/ (singular, tenant-service routes) and /tenants (plural)
-	if (strings.Contains(path, "/tenant/") || strings.Contains(path, "/tenants")) &&
+	// Also matches /tenant exactly (e.g., GET /api/v1/tenant for listing all tenants)
+	if (strings.Contains(path, "/tenant/") || strings.Contains(path, "/tenants") || strings.HasSuffix(path, "/tenant")) &&
 		(method == http.MethodGet || method == http.MethodPatch || method == http.MethodPut) {
 		return true
 	}
