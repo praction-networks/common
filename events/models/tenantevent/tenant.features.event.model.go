@@ -26,6 +26,7 @@ const (
 	EnabledFeaturesFieldHotspotIsSocialLoginEnabled   = "Hotspot.IsSocialLoginEnabled"
 	EnabledFeaturesFieldHotspotIsVoucherLoginEnabled  = "Hotspot.IsVoucherLoginEnabled"
 	EnabledFeaturesFieldHotspotIsPasswordLoginEnabled = "Hotspot.IsPasswordLoginEnabled"
+	EnabledFeaturesFieldHotspotIsInAppBannerEnabled   = "Hotspot.IsInAppBannerEnabled"
 
 	// VAS features
 	EnabledFeaturesFieldVASIsIPTVEnabled            = "VAS.IsIPTVEnabled"
@@ -63,12 +64,33 @@ const (
 	EnabledFeaturesFieldI9ShieldIsAuditLoggingEnabled        = "I9Shield.IsAuditLoggingEnabled"
 	EnabledFeaturesFieldI9ShieldIsDataRetentionPolicyEnabled = "I9Shield.IsDataRetentionPolicyEnabled"
 	EnabledFeaturesFieldI9ShieldIsGDPRComplianceEnabled      = "I9Shield.IsGDPRComplianceEnabled"
+	EnabledFeaturesFieldI9ShieldIsI9ShieldEnabled            = "I9Shield.IsI9ShieldEnabled"
 
 	// AI features
 	EnabledFeaturesFieldAIIsAIAssistantEnabled           = "AI.IsAIAssistantEnabled"
 	EnabledFeaturesFieldAIIsAIBasedSupportEnabled        = "AI.IsAIBasedSupportEnabled"
 	EnabledFeaturesFieldAIIsNetworkOptimizationAIEnabled = "AI.IsNetworkOptimizationAIEnabled"
 	EnabledFeaturesFieldAIIsPredictiveMaintenanceEnabled = "AI.IsPredictiveMaintenanceEnabled"
+
+	// Venue features
+	EnabledFeaturesFieldVenueIsVenueEnabled         = "Venue.IsVenueEnabled"
+	EnabledFeaturesFieldVenueIsMenuManagementEnabled = "Venue.IsMenuManagementEnabled"
+	EnabledFeaturesFieldVenueIsTableManagementEnabled = "Venue.IsTableManagementEnabled"
+	EnabledFeaturesFieldVenueIsZoneManagementEnabled = "Venue.IsZoneManagementEnabled"
+	EnabledFeaturesFieldVenueIsDiscountsEnabled      = "Venue.IsDiscountsEnabled"
+
+	// ACS features
+	EnabledFeaturesFieldACSIsACSEnabled            = "ACS.IsACSEnabled"
+	EnabledFeaturesFieldACSIsFleetManagementEnabled = "ACS.IsFleetManagementEnabled"
+	EnabledFeaturesFieldACSIsRemoteConfigEnabled   = "ACS.IsRemoteConfigEnabled"
+
+	// Network features
+	EnabledFeaturesFieldNetworkIsMonitoringEnabled    = "Network.IsMonitoringEnabled"
+	EnabledFeaturesFieldNetworkIsTopologyEnabled      = "Network.IsTopologyEnabled"
+	EnabledFeaturesFieldNetworkIsOLTManagementEnabled = "Network.IsOLTManagementEnabled"
+
+	// Operations features
+	EnabledFeaturesFieldOperationsIsLogEngineEnabled = "Operations.IsLogEngineEnabled"
 )
 
 // EnabledFeatures defines all feature toggles for a Domain/Tenant, organized by category
@@ -83,6 +105,10 @@ type EnabledFeatures struct {
 	I9Shield      SecurityFeatures     `json:"i9Shield" bson:"i9Shield"`           // I9 Shield features
 	Inventory     InventoryFeatures    `json:"inventory" bson:"inventory"`         // Inventory features
 	AI            AIFeatures           `json:"ai" bson:"ai"`                       // AI & automation
+	Venue         VenueFeatures        `json:"venue" bson:"venue"`                 // Venue management (menus, tables, zones)
+	ACS           ACSFeatures          `json:"acs" bson:"acs"`                     // ACS / CWMP / CPE device management
+	Network       NetworkFeatures      `json:"network" bson:"network"`             // Network monitoring & topology
+	Operations    OperationsFeatures   `json:"operations" bson:"operations"`       // Operational modules (log engine, etc.)
 }
 
 // CoreFeatures - Core user experience
@@ -119,6 +145,7 @@ type HotspotFeatures struct {
 	IsSocialLoginEnabled   bool `json:"isSocialLoginEnabled" bson:"isSocialLoginEnabled"`
 	IsVoucherLoginEnabled  bool `json:"isVoucherLoginEnabled" bson:"isVoucherLoginEnabled"`
 	IsPasswordLoginEnabled bool `json:"isPasswordLoginEnabled" bson:"isPasswordLoginEnabled"`
+	IsInAppBannerEnabled   bool `json:"isInAppBannerEnabled" bson:"isInAppBannerEnabled"`
 }
 
 // VASFeatures - Value-added services
@@ -163,6 +190,7 @@ type SecurityFeatures struct {
 	IsAuditLoggingEnabled        bool `json:"isAuditLoggingEnabled" bson:"isAuditLoggingEnabled"`
 	IsDataRetentionPolicyEnabled bool `json:"isDataRetentionPolicyEnabled" bson:"isDataRetentionPolicyEnabled"`
 	IsGDPRComplianceEnabled      bool `json:"isGdprComplianceEnabled" bson:"isGdprComplianceEnabled"`
+	IsI9ShieldEnabled            bool `json:"isI9ShieldEnabled" bson:"isI9ShieldEnabled"`
 }
 
 // AIFeatures - AI & automation
@@ -172,3 +200,32 @@ type AIFeatures struct {
 	IsNetworkOptimizationAIEnabled bool `json:"isNetworkOptimizationAIEnabled" bson:"isNetworkOptimizationAIEnabled"`
 	IsPredictiveMaintenanceEnabled bool `json:"isPredictiveMaintenanceEnabled" bson:"isPredictiveMaintenanceEnabled"`
 }
+
+// VenueFeatures - Venue management (menus, tables, zones, discounts)
+type VenueFeatures struct {
+	IsVenueEnabled          bool `json:"isVenueEnabled" bson:"isVenueEnabled"`
+	IsMenuManagementEnabled bool `json:"isMenuManagementEnabled" bson:"isMenuManagementEnabled"`
+	IsTableManagementEnabled bool `json:"isTableManagementEnabled" bson:"isTableManagementEnabled"`
+	IsZoneManagementEnabled bool `json:"isZoneManagementEnabled" bson:"isZoneManagementEnabled"`
+	IsDiscountsEnabled      bool `json:"isDiscountsEnabled" bson:"isDiscountsEnabled"`
+}
+
+// ACSFeatures - ACS / CWMP / CPE device management
+type ACSFeatures struct {
+	IsACSEnabled            bool `json:"isAcsEnabled" bson:"isAcsEnabled"`
+	IsFleetManagementEnabled bool `json:"isFleetManagementEnabled" bson:"isFleetManagementEnabled"`
+	IsRemoteConfigEnabled   bool `json:"isRemoteConfigEnabled" bson:"isRemoteConfigEnabled"`
+}
+
+// NetworkFeatures - Network monitoring & topology
+type NetworkFeatures struct {
+	IsMonitoringEnabled    bool `json:"isMonitoringEnabled" bson:"isMonitoringEnabled"`
+	IsTopologyEnabled      bool `json:"isTopologyEnabled" bson:"isTopologyEnabled"`
+	IsOLTManagementEnabled bool `json:"isOltManagementEnabled" bson:"isOltManagementEnabled"`
+}
+
+// OperationsFeatures - Operational modules
+type OperationsFeatures struct {
+	IsLogEngineEnabled bool `json:"isLogEngineEnabled" bson:"isLogEngineEnabled"`
+}
+
