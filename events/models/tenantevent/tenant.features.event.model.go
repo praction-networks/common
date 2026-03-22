@@ -90,7 +90,20 @@ const (
 	EnabledFeaturesFieldNetworkIsOLTManagementEnabled = "Network.IsOLTManagementEnabled"
 
 	// Operations features
-	EnabledFeaturesFieldOperationsIsLogEngineEnabled = "Operations.IsLogEngineEnabled"
+	EnabledFeaturesFieldOperationsIsLogEngineEnabled   = "Operations.IsLogEngineEnabled"
+	EnabledFeaturesFieldOperationsIsAlertsEnabled      = "Operations.IsAlertsEnabled"
+	EnabledFeaturesFieldOperationsIsTicketingEnabled   = "Operations.IsTicketingEnabled"
+	EnabledFeaturesFieldOperationsIsSubscribersEnabled = "Operations.IsSubscribersEnabled"
+
+	// Catalog features
+	EnabledFeaturesFieldCatalogIsProductsEnabled = "Catalog.IsProductsEnabled"
+	EnabledFeaturesFieldCatalogIsPlansEnabled    = "Catalog.IsPlansEnabled"
+
+	// Integrations features
+	EnabledFeaturesFieldIntegrationsIsIntegrationsEnabled          = "Integrations.IsIntegrationsEnabled"
+	EnabledFeaturesFieldIntegrationsIsNotificationTemplatesEnabled = "Integrations.IsNotificationTemplatesEnabled"
+	EnabledFeaturesFieldIntegrationsIsSMSResultsEnabled            = "Integrations.IsSMSResultsEnabled"
+	EnabledFeaturesFieldIntegrationsIsEmailResultsEnabled          = "Integrations.IsEmailResultsEnabled"
 )
 
 // EnabledFeatures defines all feature toggles for a Domain/Tenant, organized by category
@@ -108,8 +121,11 @@ type EnabledFeatures struct {
 	Venue         VenueFeatures        `json:"venue" bson:"venue"`                 // Venue management (menus, tables, zones)
 	ACS           ACSFeatures          `json:"acs" bson:"acs"`                     // ACS / CWMP / CPE device management
 	Network       NetworkFeatures      `json:"network" bson:"network"`             // Network monitoring & topology
-	Operations    OperationsFeatures   `json:"operations" bson:"operations"`       // Operational modules (log engine, etc.)
+	Operations    OperationsFeatures   `json:"operations" bson:"operations"`       // Operational modules (log engine, alerts, ticketing)
+	Catalog       CatalogFeatures      `json:"catalog" bson:"catalog"`             // Product & plan catalog
+	Integrations  IntegrationsFeatures `json:"integrations" bson:"integrations"`   // Third-party integrations
 }
+
 
 // CoreFeatures - Core user experience
 type CoreFeatures struct {
@@ -226,6 +242,23 @@ type NetworkFeatures struct {
 
 // OperationsFeatures - Operational modules
 type OperationsFeatures struct {
-	IsLogEngineEnabled bool `json:"isLogEngineEnabled" bson:"isLogEngineEnabled"`
+	IsLogEngineEnabled   bool `json:"isLogEngineEnabled" bson:"isLogEngineEnabled"`
+	IsAlertsEnabled      bool `json:"isAlertsEnabled" bson:"isAlertsEnabled"`
+	IsTicketingEnabled   bool `json:"isTicketingEnabled" bson:"isTicketingEnabled"`
+	IsSubscribersEnabled bool `json:"isSubscribersEnabled" bson:"isSubscribersEnabled"`
+}
+
+// CatalogFeatures - Product & plan catalog
+type CatalogFeatures struct {
+	IsProductsEnabled bool `json:"isProductsEnabled" bson:"isProductsEnabled"`
+	IsPlansEnabled    bool `json:"isPlansEnabled" bson:"isPlansEnabled"`
+}
+
+// IntegrationsFeatures - Third-party integration modules
+type IntegrationsFeatures struct {
+	IsIntegrationsEnabled          bool `json:"isIntegrationsEnabled" bson:"isIntegrationsEnabled"`
+	IsNotificationTemplatesEnabled bool `json:"isNotificationTemplatesEnabled" bson:"isNotificationTemplatesEnabled"`
+	IsSMSResultsEnabled            bool `json:"isSmsResultsEnabled" bson:"isSmsResultsEnabled"`
+	IsEmailResultsEnabled          bool `json:"isEmailResultsEnabled" bson:"isEmailResultsEnabled"`
 }
 
