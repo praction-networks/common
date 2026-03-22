@@ -90,7 +90,8 @@ const (
 	EnabledFeaturesFieldNetworkIsOLTManagementEnabled = "Network.IsOLTManagementEnabled"
 
 	// Operations features
-	EnabledFeaturesFieldOperationsIsLogEngineEnabled   = "Operations.IsLogEngineEnabled"
+	EnabledFeaturesFieldOperationsIsLogEngineEnabled   = "Operations.IsLogEngineEnabled" // Deprecated: moved to Network
+	EnabledFeaturesFieldNetworkIsLogEngineEnabled       = "Network.IsLogEngineEnabled"
 	EnabledFeaturesFieldOperationsIsAlertsEnabled      = "Operations.IsAlertsEnabled"
 	EnabledFeaturesFieldOperationsIsTicketingEnabled   = "Operations.IsTicketingEnabled"
 	EnabledFeaturesFieldOperationsIsSubscribersEnabled = "Operations.IsSubscribersEnabled"
@@ -104,6 +105,12 @@ const (
 	EnabledFeaturesFieldIntegrationsIsNotificationTemplatesEnabled = "Integrations.IsNotificationTemplatesEnabled"
 	EnabledFeaturesFieldIntegrationsIsSMSResultsEnabled            = "Integrations.IsSMSResultsEnabled"
 	EnabledFeaturesFieldIntegrationsIsEmailResultsEnabled          = "Integrations.IsEmailResultsEnabled"
+
+	// System Management features
+	EnabledFeaturesFieldSystemIsKubernetesEnabled   = "System.IsKubernetesEnabled"
+	EnabledFeaturesFieldSystemIsRolesEnabled        = "System.IsRolesEnabled"
+	EnabledFeaturesFieldSystemIsPoliciesEnabled     = "System.IsPoliciesEnabled"
+	EnabledFeaturesFieldSystemIsPincodeUploadEnabled = "System.IsPincodeUploadEnabled"
 )
 
 // EnabledFeatures defines all feature toggles for a Domain/Tenant, organized by category
@@ -124,6 +131,7 @@ type EnabledFeatures struct {
 	Operations    OperationsFeatures   `json:"operations" bson:"operations"`       // Operational modules (log engine, alerts, ticketing)
 	Catalog       CatalogFeatures      `json:"catalog" bson:"catalog"`             // Product & plan catalog
 	Integrations  IntegrationsFeatures `json:"integrations" bson:"integrations"`   // Third-party integrations
+	System        SystemFeatures       `json:"system" bson:"system"`               // System management panels
 }
 
 
@@ -238,11 +246,11 @@ type NetworkFeatures struct {
 	IsMonitoringEnabled    bool `json:"isMonitoringEnabled" bson:"isMonitoringEnabled"`
 	IsTopologyEnabled      bool `json:"isTopologyEnabled" bson:"isTopologyEnabled"`
 	IsOLTManagementEnabled bool `json:"isOltManagementEnabled" bson:"isOltManagementEnabled"`
+	IsLogEngineEnabled     bool `json:"isLogEngineEnabled" bson:"isLogEngineEnabled"`
 }
 
 // OperationsFeatures - Operational modules
 type OperationsFeatures struct {
-	IsLogEngineEnabled   bool `json:"isLogEngineEnabled" bson:"isLogEngineEnabled"`
 	IsAlertsEnabled      bool `json:"isAlertsEnabled" bson:"isAlertsEnabled"`
 	IsTicketingEnabled   bool `json:"isTicketingEnabled" bson:"isTicketingEnabled"`
 	IsSubscribersEnabled bool `json:"isSubscribersEnabled" bson:"isSubscribersEnabled"`
@@ -260,5 +268,13 @@ type IntegrationsFeatures struct {
 	IsNotificationTemplatesEnabled bool `json:"isNotificationTemplatesEnabled" bson:"isNotificationTemplatesEnabled"`
 	IsSMSResultsEnabled            bool `json:"isSmsResultsEnabled" bson:"isSmsResultsEnabled"`
 	IsEmailResultsEnabled          bool `json:"isEmailResultsEnabled" bson:"isEmailResultsEnabled"`
+}
+
+// SystemFeatures - System management panel visibility controls
+type SystemFeatures struct {
+	IsKubernetesEnabled    bool `json:"isKubernetesEnabled" bson:"isKubernetesEnabled"`
+	IsRolesEnabled         bool `json:"isRolesEnabled" bson:"isRolesEnabled"`
+	IsPoliciesEnabled      bool `json:"isPoliciesEnabled" bson:"isPoliciesEnabled"`
+	IsPincodeUploadEnabled bool `json:"isPincodeUploadEnabled" bson:"isPincodeUploadEnabled"`
 }
 
