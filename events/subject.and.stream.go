@@ -69,6 +69,7 @@ const (
 	InventoryStockTransferredSubject Subject = "inventory.stock.transferred"
 	InventoryStockAdjustedSubject    Subject = "inventory.stock.adjusted"
 	InventoryStockProvisionedSubject Subject = "inventory.stock.provisioned"
+	InventoryStockLowSubject          Subject = "inventory.stock.low"
 
 	// Inventory Asset Lifecycle Events
 	InventoryAssetAssignedSubject  Subject = "inventory.asset.assigned"
@@ -375,6 +376,7 @@ var Streams = map[StreamName]StreamMetadata{
 			InventoryStockTransferredSubject,
 			InventoryStockAdjustedSubject,
 			InventoryStockProvisionedSubject,
+			InventoryStockLowSubject,
 			// Asset lifecycle events
 			InventoryAssetAssignedSubject,
 			InventoryAssetInstalledSubject,
