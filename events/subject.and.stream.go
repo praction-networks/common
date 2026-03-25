@@ -65,6 +65,23 @@ const (
 	InventoryDeviceUpdatedSubject Subject = "inventory.device.updated"
 	InventoryDeviceDeletedSubject Subject = "inventory.device.deleted"
 
+	// Inventory Stock Events
+	InventoryStockTransferredSubject Subject = "inventory.stock.transferred"
+	InventoryStockAdjustedSubject    Subject = "inventory.stock.adjusted"
+	InventoryStockProvisionedSubject Subject = "inventory.stock.provisioned"
+
+	// Inventory Asset Lifecycle Events
+	InventoryAssetAssignedSubject  Subject = "inventory.asset.assigned"
+	InventoryAssetInstalledSubject Subject = "inventory.asset.installed"
+	InventoryAssetReturnedSubject  Subject = "inventory.asset.returned"
+	InventoryAssetFaultySubject    Subject = "inventory.asset.faulty"
+	InventoryAssetRMASubject       Subject = "inventory.asset.rma"
+	InventoryAssetScrappedSubject  Subject = "inventory.asset.scrapped"
+
+	// Inventory Inward Events
+	InventoryInwardCreatedSubject Subject = "inventory.inward.created"
+	InventoryInwardPostedSubject  Subject = "inventory.inward.posted"
+
 	// Tenant Provider Binding Events
 	TenantSMSProviderBindingCreatedSubject  Subject = "tenant.smsbinding.created"
 	TenantSMSProviderBindingUpdatedSubject  Subject = "tenant.smsbinding.updated"
@@ -350,9 +367,24 @@ var Streams = map[StreamName]StreamMetadata{
 		Name:        InventoryStream,
 		Description: "Stream for inventory service events",
 		Subjects: []Subject{
+			// Device events
 			InventoryDeviceCreatedSubject,
 			InventoryDeviceUpdatedSubject,
 			InventoryDeviceDeletedSubject,
+			// Stock events
+			InventoryStockTransferredSubject,
+			InventoryStockAdjustedSubject,
+			InventoryStockProvisionedSubject,
+			// Asset lifecycle events
+			InventoryAssetAssignedSubject,
+			InventoryAssetInstalledSubject,
+			InventoryAssetReturnedSubject,
+			InventoryAssetFaultySubject,
+			InventoryAssetRMASubject,
+			InventoryAssetScrappedSubject,
+			// Inward events
+			InventoryInwardCreatedSubject,
+			InventoryInwardPostedSubject,
 		},
 	},
 
