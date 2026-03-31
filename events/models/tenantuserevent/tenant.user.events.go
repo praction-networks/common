@@ -95,6 +95,7 @@ type UserPreferences struct {
 	SidebarMenu     *SidebarMenuPreferences     `json:"sidebarMenu,omitempty" bson:"sidebarMenu,omitempty"`
 	TenantFavorites *TenantFavoritesPreferences `json:"tenantFavorites,omitempty" bson:"tenantFavorites,omitempty"`
 	Theme           *UserThemePreferences       `json:"theme,omitempty" bson:"theme,omitempty"`
+	Dashboard       *DashboardPreferences       `json:"dashboard,omitempty" bson:"dashboard,omitempty"`
 }
 
 // SidebarMenuPreferences represents sidebar menu organization preferences
@@ -123,6 +124,28 @@ type UserThemePreferences struct {
 	BorderColor         string `json:"borderColor,omitempty" bson:"borderColor,omitempty"`
 	PreferredLanguage   string `json:"preferredLanguage,omitempty" bson:"preferredLanguage,omitempty"`
 	// Note: Timezone is tenant-specific only, not user-specific
+}
+
+// DashboardPreferences represents user dashboard widget customization
+type DashboardPreferences struct {
+	Widgets     []DashboardWidget `json:"widgets,omitempty" bson:"widgets,omitempty"`
+	DefaultView string            `json:"defaultView,omitempty" bson:"defaultView,omitempty"` // "grid" | "list"
+}
+
+// DashboardWidget represents a single widget's position and configuration on the dashboard
+type DashboardWidget struct {
+	WidgetID string                 `json:"widgetId" bson:"widgetId"`
+	Position WidgetPosition         `json:"position" bson:"position"`
+	Visible  bool                   `json:"visible" bson:"visible"`
+	Config   map[string]interface{} `json:"config,omitempty" bson:"config,omitempty"` // Widget-specific settings
+}
+
+// WidgetPosition defines a widget's grid placement
+type WidgetPosition struct {
+	X int `json:"x" bson:"x"` // Column start
+	Y int `json:"y" bson:"y"` // Row start
+	W int `json:"w" bson:"w"` // Width in columns
+	H int `json:"h" bson:"h"` // Height in rows
 }
 
 // TenantUserPreferencesUpdatedEvent is published when user preferences are updated
