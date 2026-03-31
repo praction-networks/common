@@ -92,36 +92,36 @@ type TenantUserPasswordSetEvent struct {
 
 // UserPreferences represents user UI preferences (shared with tenant-user-service model)
 type UserPreferences struct {
-	SidebarMenu     *SidebarMenuPreferences     `json:"sidebarMenu,omitempty"`
-	TenantFavorites *TenantFavoritesPreferences `json:"tenantFavorites,omitempty"`
-	Theme           *UserThemePreferences       `json:"theme,omitempty"`
+	SidebarMenu     *SidebarMenuPreferences     `json:"sidebarMenu,omitempty" bson:"sidebarMenu,omitempty"`
+	TenantFavorites *TenantFavoritesPreferences `json:"tenantFavorites,omitempty" bson:"tenantFavorites,omitempty"`
+	Theme           *UserThemePreferences       `json:"theme,omitempty" bson:"theme,omitempty"`
 }
 
 // SidebarMenuPreferences represents sidebar menu organization preferences
 type SidebarMenuPreferences struct {
-	GroupOrder        []string            `json:"groupOrder,omitempty"`        // Ordered group titles
-	ItemOrder         map[string][]string `json:"itemOrder,omitempty"`         // groupTitle -> ordered item hrefs
-	Favorites         []string            `json:"favorites,omitempty"`         // Starred item hrefs
-	UseFavoritesOrder bool                `json:"useFavoritesOrder,omitempty"` // If true, use favorites-based order
+	GroupOrder        []string            `json:"groupOrder,omitempty" bson:"groupOrder,omitempty"`               // Ordered group titles
+	ItemOrder         map[string][]string `json:"itemOrder,omitempty" bson:"itemOrder,omitempty"`                 // groupTitle -> ordered item hrefs
+	Favorites         []string            `json:"favorites,omitempty" bson:"favorites,omitempty"`                 // Starred item hrefs
+	UseFavoritesOrder bool                `json:"useFavoritesOrder,omitempty" bson:"useFavoritesOrder,omitempty"` // If true, use favorites-based order
 }
 
 // TenantFavoritesPreferences represents tenant favorites and ordering preferences
 type TenantFavoritesPreferences struct {
-	FavoriteTenantIds []string `json:"favoriteTenantIds,omitempty"` // Starred tenant IDs
-	TenantOrder       []string `json:"tenantOrder,omitempty"`       // Custom ordered tenant IDs
-	UseFavoritesOrder bool     `json:"useFavoritesOrder,omitempty"` // If true, favorites first
+	FavoriteTenantIds []string `json:"favoriteTenantIds,omitempty" bson:"favoriteTenantIds,omitempty"` // Starred tenant IDs
+	TenantOrder       []string `json:"tenantOrder,omitempty" bson:"tenantOrder,omitempty"`             // Custom ordered tenant IDs
+	UseFavoritesOrder bool     `json:"useFavoritesOrder,omitempty" bson:"useFavoritesOrder,omitempty"` // If true, favorites first
 }
 
 // UserThemePreferences represents user-specific theme overrides
 type UserThemePreferences struct {
-	OverrideTenantTheme bool   `json:"overrideTenantTheme,omitempty"`
-	PrimaryColor        string `json:"primaryColor,omitempty"`
-	TextOnPrimary       string `json:"textOnPrimary,omitempty"`
-	AccentColor         string `json:"accentColor,omitempty"`
-	BackgroundColor     string `json:"backgroundColor,omitempty"`
-	SurfaceColor        string `json:"surfaceColor,omitempty"`
-	BorderColor         string `json:"borderColor,omitempty"`
-	PreferredLanguage   string `json:"preferredLanguage,omitempty"`
+	OverrideTenantTheme bool   `json:"overrideTenantTheme,omitempty" bson:"overrideTenantTheme,omitempty"`
+	PrimaryColor        string `json:"primaryColor,omitempty" bson:"primaryColor,omitempty"`
+	TextOnPrimary       string `json:"textOnPrimary,omitempty" bson:"textOnPrimary,omitempty"`
+	AccentColor         string `json:"accentColor,omitempty" bson:"accentColor,omitempty"`
+	BackgroundColor     string `json:"backgroundColor,omitempty" bson:"backgroundColor,omitempty"`
+	SurfaceColor        string `json:"surfaceColor,omitempty" bson:"surfaceColor,omitempty"`
+	BorderColor         string `json:"borderColor,omitempty" bson:"borderColor,omitempty"`
+	PreferredLanguage   string `json:"preferredLanguage,omitempty" bson:"preferredLanguage,omitempty"`
 	// Note: Timezone is tenant-specific only, not user-specific
 }
 
