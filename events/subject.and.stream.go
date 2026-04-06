@@ -242,6 +242,20 @@ const (
 	BillingDunningWarningSubject     Subject = "billing.dunning.warning"
 	BillingDunningSuspensionSubject  Subject = "billing.dunning.suspension"
 	BillingDunningTerminationSubject Subject = "billing.dunning.termination"
+
+	// Billing CDC Events (Change Data Capture from PostgreSQL WAL)
+	BillingInvoiceUpdatedSubject      Subject = "billing.invoice.updated"
+	BillingPaymentUpdatedSubject      Subject = "billing.payment.updated"
+	BillingSubscriptionCreatedSubject Subject = "billing.subscription.created"
+	BillingSubscriptionUpdatedSubject Subject = "billing.subscription.updated"
+	BillingCommissionCreatedSubject   Subject = "billing.commission.created"
+	BillingCommissionUpdatedSubject   Subject = "billing.commission.updated"
+	BillingTransactionCreatedSubject  Subject = "billing.ledger.transaction.created"
+	BillingTransactionUpdatedSubject  Subject = "billing.ledger.transaction.updated"
+	BillingReceiptCreatedSubject      Subject = "billing.receipt.created"
+	BillingReceiptUpdatedSubject      Subject = "billing.receipt.updated"
+	BillingRefundCreatedSubject       Subject = "billing.refund.created"
+	BillingRefundUpdatedSubject       Subject = "billing.refund.updated"
 )
 
 // Global Subjects - Cross-service events that any service can publish
@@ -558,7 +572,7 @@ var Streams = map[StreamName]StreamMetadata{
 
 	BillingStream: {
 		Name:        BillingStream,
-		Description: "Stream for billing service events (payments, invoices, credit notes, dunning)",
+		Description: "Stream for billing service events (payments, invoices, subscriptions, commissions, CDC)",
 		Subjects: []Subject{
 			BillingPaymentCompletedSubject,
 			BillingPaymentFailedSubject,
@@ -569,6 +583,19 @@ var Streams = map[StreamName]StreamMetadata{
 			BillingDunningWarningSubject,
 			BillingDunningSuspensionSubject,
 			BillingDunningTerminationSubject,
+			// CDC subjects
+			BillingInvoiceUpdatedSubject,
+			BillingPaymentUpdatedSubject,
+			BillingSubscriptionCreatedSubject,
+			BillingSubscriptionUpdatedSubject,
+			BillingCommissionCreatedSubject,
+			BillingCommissionUpdatedSubject,
+			BillingTransactionCreatedSubject,
+			BillingTransactionUpdatedSubject,
+			BillingReceiptCreatedSubject,
+			BillingReceiptUpdatedSubject,
+			BillingRefundCreatedSubject,
+			BillingRefundUpdatedSubject,
 		},
 	},
 }
