@@ -26,7 +26,6 @@ const (
 
 	// Special cases
 	SubscriberTypeGuestHotspot SubscriberType = "GUEST_HOTSPOT" // hotspot-only guest users
-	SubscriberTypeDemo         SubscriberType = "DEMO"          // lab, test, demo accounts
 )
 
 type AddressType string
