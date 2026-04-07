@@ -190,7 +190,9 @@ func AccessibleTenantsMiddleware(cache hierarchy.TenantHierarchyCache) func(http
 
 			// System users WITHOUT a tenant context: Skip injection (global access)
 			// System users WITH a tenant context: Proceed to compute accessible tenants
-			if helpers.IsSystemUser(ctx) && contextTenantID == "" {
+			// Note: "system" is a bypass marker sent by frontends (X-Tenant-ID: "system")
+			// to indicate system-wide queries — treat it the same as empty context.
+			if helpers.IsSystemUser(ctx) && (contextTenantID == "" || contextTenantID == "system") {
 				logger.Debug("System user without tenant context - granting global access")
 				next.ServeHTTP(w, r)
 				return
