@@ -37,6 +37,7 @@ type TenantInsertEventModel struct {
 	TenantTAN        TANModel        `bson:"tenantTAN,omitempty" json:"tenantTAN,omitempty"`
 	TenantCIN        CINModel        `bson:"tenantCIN,omitempty" json:"tenantCIN,omitempty"`
 	EnabledFeatures  EnabledFeatures `bson:"enabledFeatures,omitempty" json:"enabledFeatures,omitempty"`
+	KycPolicy        KYCFeatures     `bson:"kycPolicy,omitempty" json:"kycPolicy,omitempty"`
 	TenantMFAPolicy  TenantMFAPolicy `bson:"tenantMFAPolicy,omitempty" json:"tenantMFAPolicy,omitempty"`
 
 	// Licensing & Regulatory (for ISP/Telco tenants)
@@ -83,6 +84,7 @@ type TenantUpdateEventModel struct {
 	TenantTAN        *TANModel        `bson:"tenantTAN,omitempty" json:"tenantTAN,omitempty"`
 	TenantCIN        *CINModel        `bson:"tenantCIN,omitempty" json:"tenantCIN,omitempty"`
 	EnabledFeatures  *EnabledFeatures `bson:"enabledFeatures,omitempty" json:"enabledFeatures,omitempty"`
+	KycPolicy        *KYCFeatures     `bson:"kycPolicy,omitempty" json:"kycPolicy,omitempty"`
 	// Licensing & Regulatory (for ISP/Telco tenants)
 	LicenseInfo *LicenseInfoEvent `bson:"licenseInfo,omitempty" json:"licenseInfo,omitempty"`
 
