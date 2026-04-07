@@ -48,6 +48,7 @@ type AddressKYCPolicy struct {
 	SubscriberType string         `json:"subscriberType" bson:"subscriberType"` // RESIDENTIAL, SMB, ENTERPRISE
 	Enforcement    KYCEnforcement `json:"enforcement" bson:"enforcement"`
 	MinDocuments   int            `json:"minDocuments" bson:"minDocuments"` // Minimum address proof documents required
+	AutoVerify     bool           `json:"autoVerify" bson:"autoVerify"`     // Use KYC provider for auto-verification
 }
 
 // KYCFeatures — tenant-level KYC policy configuration
