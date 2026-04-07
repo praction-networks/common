@@ -72,4 +72,9 @@ type KYCFeatures struct {
 	// They get GracePeriodDays to complete KYC. After that, services can be suspended.
 	// This is essential for the bulk onboarding → later enforcement flow.
 	EnforceOnExisting bool `json:"enforceOnExisting" bson:"enforceOnExisting"`
+
+	// Block RADIUS authentication after grace period expires for subscribers without completed KYC.
+	// When true, subscribers who haven't completed KYC within GracePeriodDays will be denied RADIUS auth.
+	// Only effective when EnforceOnExisting is true and GracePeriodDays > 0.
+	BlockRadiusOnKYCFailure bool `json:"blockRadiusOnKYCFailure" bson:"blockRadiusOnKYCFailure"`
 }
