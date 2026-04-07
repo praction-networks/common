@@ -46,13 +46,62 @@ const (
 	KYCStatusRejected    KYCStatus = "REJECTED"
 )
 
-// Kept here so KYC is near its enums.
-// If you prefer, you can move this struct into subscriber.go instead.
+// ── KYC Document Type ───────────────────────────────────────────────────────
+// Unified list — same document types can be used for BOTH Person KYC and Address KYC.
+// e.g. Aadhaar and Voter ID contain the person's address, so they serve as address proof too.
+
+type KYCDocumentType string
+
+const (
+	// Identity documents (primarily Person KYC, but Aadhaar/VoterID/DL also valid for Address KYC)
+	KYCDocTypePAN    KYCDocumentType = "PAN"
+	KYCDocTypeAadhaar KYCDocumentType = "AADHAAR"        // Valid for both Person & Address KYC
+	KYCDocTypePassport KYCDocumentType = "PASSPORT"
+	KYCDocTypeVoterID KYCDocumentType = "VOTER_ID"       // Valid for both Person & Address KYC
+	KYCDocTypeDL     KYCDocumentType = "DRIVING_LICENSE"  // Also contains address
+
+	// Address proof documents (primarily Address KYC)
+	KYCDocTypeUtilityBill   KYCDocumentType = "UTILITY_BILL"
+	KYCDocTypeBankStatement KYCDocumentType = "BANK_STATEMENT"
+	KYCDocTypeRentAgreement KYCDocumentType = "RENT_AGREEMENT"
+	KYCDocTypePropertyTax   KYCDocumentType = "PROPERTY_TAX"
+	KYCDocTypeGasBill       KYCDocumentType = "GAS_BILL"
+)
+
+// ── KYC Document ────────────────────────────────────────────────────────────
+
+// KYCDocument represents a single KYC document (used in both Person and Address KYC).
+type KYCDocument struct {
+	DocumentType KYCDocumentType `bson:"documentType" json:"documentType"`
+	DocumentID   string          `bson:"documentId" json:"documentId"`
+	Status       KYCStatus       `bson:"status" json:"status"`
+	VerifiedAt   *time.Time      `bson:"verifiedAt,omitempty" json:"verifiedAt,omitempty"`
+	VerifiedBy   string          `bson:"verifiedBy,omitempty" json:"verifiedBy,omitempty"`
+	Notes        string          `bson:"notes,omitempty" json:"notes,omitempty"`
+}
+
+// ── Person KYC (Subscriber Level) ───────────────────────────────────────────
+// SubscriberKYC is the Person KYC — identity verification of the subscriber.
+// Lives on the Subscriber model. Applies to all connections of this subscriber.
+// Hotspot profiles also use this (no per-connection KYC for hotspot).
 type SubscriberKYC struct {
-	Status       KYCStatus  `bson:"status" json:"status"`
-	DocumentType string     `bson:"documentType,omitempty" json:"documentType,omitempty"` // AADHAAR, PAN, PASSPORT, etc.
+	Status    KYCStatus     `bson:"status" json:"status"`
+	Documents []KYCDocument `bson:"documents,omitempty" json:"documents,omitempty"`
+	Notes     string        `bson:"notes,omitempty" json:"notes,omitempty"`
+	// Deprecated flat fields — kept for backward compatibility with existing MongoDB data.
+	// New code should use Documents[]. A migration can backfill old data.
+	DocumentType string     `bson:"documentType,omitempty" json:"documentType,omitempty"`
 	DocumentID   string     `bson:"documentId,omitempty" json:"documentId,omitempty"`
 	VerifiedAt   *time.Time `bson:"verifiedAt,omitempty" json:"verifiedAt,omitempty"`
 	VerifiedBy   string     `bson:"verifiedBy,omitempty" json:"verifiedBy,omitempty"`
-	Notes        string     `bson:"notes,omitempty" json:"notes,omitempty"`
+}
+
+// ── Address KYC (Broadband Connection Level) ────────────────────────────────
+// AddressKYC is the per-connection address verification.
+// Proves the subscriber lives/operates at the installation address.
+// Lives on BroadbandSubscription model only (not hotspot).
+type AddressKYC struct {
+	Status    KYCStatus     `bson:"status" json:"status"`
+	Documents []KYCDocument `bson:"documents,omitempty" json:"documents,omitempty"`
+	Notes     string        `bson:"notes,omitempty" json:"notes,omitempty"`
 }
