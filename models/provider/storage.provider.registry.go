@@ -42,6 +42,20 @@ const (
 	StorageCategoryLocal StorageProviderCategory = "local"
 )
 
+// StorageBindingScope represents who can use a storage binding within a tenant tree.
+// Used by tenant-service (binding owner) and consumer services (subscriber, billing, etc).
+type StorageBindingScope string
+
+const (
+	// StorageBindingScopeOwnerOnly means only the owner tenant can use this binding
+	StorageBindingScopeOwnerOnly StorageBindingScope = "OwnerOnly"
+	// StorageBindingScopeOwnerAndDescendants means owner and all descendant tenants can use this binding
+	StorageBindingScopeOwnerAndDescendants StorageBindingScope = "OwnerAndDescendants"
+	// StorageBindingScopeExplicitTenants means only explicitly listed tenants can use this binding.
+	// Explicit tenants must be descendants of the binding owner.
+	StorageBindingScopeExplicitTenants StorageBindingScope = "ExplicitTenants"
+)
+
 // StorageProviderInfo holds display metadata and field definitions for one storage provider.
 type StorageProviderInfo struct {
 	Value       string                  `json:"value"`
@@ -196,12 +210,12 @@ var StorageProviderRegistry = map[string]StorageProviderInfo{
 
 // StoragePurposeRegistry provides display metadata for each storage purpose.
 var StoragePurposeRegistry = map[StoragePurpose]StoragePurposeInfo{
-	StoragePurposeLogs:      {Value: "LOGS", Label: "Logs", Description: "Application and system logs"},
-	StoragePurposeDocuments: {Value: "DOCUMENTS", Label: "Documents", Description: "User documents and files"},
-	StoragePurposeBackups:   {Value: "BACKUPS", Label: "Backups", Description: "Database and system backups"},
-	StoragePurposeMedia:     {Value: "MEDIA", Label: "Media", Description: "Images, videos, and media assets"},
-	StoragePurposeReports:   {Value: "REPORTS", Label: "Reports", Description: "Generated reports and exports"},
-	StoragePurposeGeneral:   {Value: "GENERAL", Label: "General", Description: "General purpose storage"},
+	StoragePurposeLogs:      {Value: "LOGS", Label: "Application Logs", Description: "Service logs, audit trails, and system event archives"},
+	StoragePurposeDocuments: {Value: "DOCUMENTS", Label: "Documents & Files", Description: "KYC documents, invoices, agreements, and user uploads"},
+	StoragePurposeBackups:   {Value: "BACKUPS", Label: "Backups & Snapshots", Description: "Scheduled database dumps, config snapshots, and disaster-recovery archives"},
+	StoragePurposeMedia:     {Value: "MEDIA", Label: "Media Assets", Description: "Branding images, captive-portal banners, and subscriber profile photos"},
+	StoragePurposeReports:   {Value: "REPORTS", Label: "Reports & Exports", Description: "Generated billing reports, usage summaries, and CSV/PDF exports"},
+	StoragePurposeGeneral:   {Value: "GENERAL", Label: "General Purpose", Description: "Catch-all bucket for any files that don't fit a specific category"},
 }
 
 // GetStorageFormConfig returns the complete form configuration for the frontend.
@@ -219,9 +233,9 @@ func GetStorageFormConfig() StorageFormConfig {
 	}
 
 	scopes := []StorageScopeInfo{
-		{Value: "OwnerOnly", Label: "Owner Only", Description: "Only this tenant can use this binding"},
-		{Value: "OwnerAndDescendants", Label: "Owner & Descendants", Description: "This tenant and all child tenants inherit this binding"},
-		{Value: "ExplicitTenants", Label: "Explicit Tenants", Description: "Only explicitly specified tenants can use this binding"},
+		{Value: "OwnerOnly", Label: "This Tenant Only", Description: "Restrict access to only the owning tenant — no sharing with child accounts"},
+		{Value: "OwnerAndDescendants", Label: "Tenant & All Sub-Tenants", Description: "The owning tenant and every child tenant inherit this storage binding automatically"},
+		{Value: "ExplicitTenants", Label: "Hand-Picked Tenants", Description: "Manually choose which specific tenants can access this storage binding"},
 	}
 
 	return StorageFormConfig{
