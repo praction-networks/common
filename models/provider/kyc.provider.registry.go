@@ -106,6 +106,10 @@ var KYCProviderRegistry = map[string]KYCProviderInfo{
 			}},
 			{Key: "webhook-auth-token", Label: "Webhook Auth Token", Placeholder: "Token value shared with Cashfree", Sensitive: true, MaxLength: 500},
 			{Key: "webhook-auth-header", Label: "Custom Auth Header Name", Placeholder: "X-Custom-Auth", MaxLength: 100},
+			// SSL whitelisting fields (Cashfree Security Checklist — SSL Whitelisting)
+			// For mutual TLS: share your cert with Cashfree and trust their CA certificate.
+			{Key: "ssl-cert", Label: "SSL Certificate (PEM)", Placeholder: "-----BEGIN CERTIFICATE-----", Sensitive: true, MaxLength: 8000},
+			{Key: "ssl-key", Label: "SSL Private Key (PEM)", Placeholder: "-----BEGIN PRIVATE KEY-----", Sensitive: true, MaxLength: 8000},
 		},
 	},
 	"SETU": {
