@@ -14,6 +14,29 @@ const (
 	KYCBindingScopeExplicitTenants KYCBindingScope = "ExplicitTenants"
 )
 
+// WebhookAuthType represents the type of webhook authentication.
+// Configured per-tenant in the KYC binding and validated by the webhook handler.
+type WebhookAuthType string
+
+const (
+	// WebhookAuthNone means no additional auth — rely on signature verification only
+	WebhookAuthNone WebhookAuthType = "none"
+	// WebhookAuthBearer validates Authorization: Bearer <token>
+	WebhookAuthBearer WebhookAuthType = "bearer"
+	// WebhookAuthBasic validates Authorization: Basic <base64(user:pass)>
+	WebhookAuthBasic WebhookAuthType = "basic"
+	// WebhookAuthCustomHeader validates a custom header name against the configured token
+	WebhookAuthCustomHeader WebhookAuthType = "custom_header"
+)
+
+// WebhookAuthConfig holds the webhook authentication configuration for a KYC provider binding.
+// Stored in the binding's Metadata map and validated by subscriber-service before signature verification.
+type WebhookAuthConfig struct {
+	AuthType   WebhookAuthType `json:"authType" bson:"authType"`
+	Token      string          `json:"token,omitempty" bson:"token,omitempty"`           // Bearer token, Basic auth base64, or custom header value
+	HeaderName string          `json:"headerName,omitempty" bson:"headerName,omitempty"` // Custom header name (for custom_header type)
+}
+
 // FieldOption represents a predefined option for a field (e.g. sandbox/production URLs)
 type FieldOption struct {
 	Value string `json:"value"`
@@ -73,7 +96,16 @@ var KYCProviderRegistry = map[string]KYCProviderInfo{
 			}},
 			{Key: "x-client-id", Label: "Client ID", Placeholder: "CF12345678", Required: true, MinLength: 8, MaxLength: 100},
 			{Key: "x-client-secret", Label: "Client Secret", Placeholder: "cf-secret-key", Required: true, Sensitive: true, MinLength: 2, MaxLength: 100},
-			{Key: "x-cf-signature", Label: "CF Signature", Placeholder: "Webhook signature key (optional)", Sensitive: true, MaxLength: 500},
+			// Webhook authentication fields (Cashfree Security Checklist — Authentication Validation)
+			// These are optional and provide an additional layer on top of HMAC signature verification.
+			{Key: "webhook-auth-type", Label: "Webhook Auth Type", Placeholder: "none", Options: []FieldOption{
+				{Value: "none", Label: "None (Signature Only)"},
+				{Value: "bearer", Label: "Bearer Token"},
+				{Value: "basic", Label: "Basic Auth"},
+				{Value: "custom_header", Label: "Custom Header"},
+			}},
+			{Key: "webhook-auth-token", Label: "Webhook Auth Token", Placeholder: "Token value shared with Cashfree", Sensitive: true, MaxLength: 500},
+			{Key: "webhook-auth-header", Label: "Custom Auth Header Name", Placeholder: "X-Custom-Auth", MaxLength: 100},
 		},
 	},
 	"SETU": {
