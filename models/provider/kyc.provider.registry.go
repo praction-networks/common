@@ -1,5 +1,19 @@
 package provider
 
+// KYCBindingScope represents who can use a KYC provider binding within a tenant tree.
+// Used by tenant-service (binding owner) and consumer services (subscriber-service).
+type KYCBindingScope string
+
+const (
+	// KYCBindingScopeOwnerOnly means only the owner tenant can use this binding
+	KYCBindingScopeOwnerOnly KYCBindingScope = "OwnerOnly"
+	// KYCBindingScopeOwnerAndDescendants means owner and all descendant tenants can use this binding
+	KYCBindingScopeOwnerAndDescendants KYCBindingScope = "OwnerAndDescendants"
+	// KYCBindingScopeExplicitTenants means only explicitly listed tenants can use this binding.
+	// Explicit tenants must be descendants of the binding owner.
+	KYCBindingScopeExplicitTenants KYCBindingScope = "ExplicitTenants"
+)
+
 // FieldOption represents a predefined option for a field (e.g. sandbox/production URLs)
 type FieldOption struct {
 	Value string `json:"value"`
