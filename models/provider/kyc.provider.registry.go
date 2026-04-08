@@ -43,20 +43,28 @@ type FieldOption struct {
 	Label string `json:"label"`
 }
 
+// FieldDependency describes conditional visibility for a field.
+// The field is only shown when the referenced field's value matches one of the Values.
+type FieldDependency struct {
+	FieldKey string   `json:"fieldKey"` // Key of the field this depends on
+	Values   []string `json:"values"`   // Show this field only when parent has one of these values
+}
+
 // FieldSchema describes a single metadata field for a KYC provider.
 // The frontend reads these to dynamically render form inputs.
 type FieldSchema struct {
-	Key            string        `json:"key"`
-	Label          string        `json:"label"`
-	Placeholder    string        `json:"placeholder"`
-	Required       bool          `json:"required"`
-	Sensitive      bool          `json:"sensitive"`
-	MinLength      int           `json:"minLength,omitempty"`
-	MaxLength      int           `json:"maxLength,omitempty"`
-	IsURL          bool          `json:"isUrl,omitempty"`
-	Options        []FieldOption `json:"options,omitempty"`
-	Computed       bool          `json:"computed,omitempty"`       // If true, field is read-only and auto-built from ComputePattern
-	ComputePattern string        `json:"computePattern,omitempty"` // Template using {fieldKey} substitution, e.g. "https://{accountId}.r2.cloudflarestorage.com"
+	Key            string           `json:"key"`
+	Label          string           `json:"label"`
+	Placeholder    string           `json:"placeholder"`
+	Required       bool             `json:"required"`
+	Sensitive      bool             `json:"sensitive"`
+	MinLength      int              `json:"minLength,omitempty"`
+	MaxLength      int              `json:"maxLength,omitempty"`
+	IsURL          bool             `json:"isUrl,omitempty"`
+	Options        []FieldOption    `json:"options,omitempty"`
+	Computed       bool             `json:"computed,omitempty"`       // If true, field is read-only and auto-built from ComputePattern
+	ComputePattern string           `json:"computePattern,omitempty"` // Template using {fieldKey} substitution, e.g. "https://{accountId}.r2.cloudflarestorage.com"
+	DependsOn      *FieldDependency `json:"dependsOn,omitempty"`      // Conditional visibility based on another field's value
 }
 
 // KYCProviderInfo holds display metadata, field definitions, and supported verification types for one KYC provider.
@@ -101,11 +109,32 @@ var KYCProviderRegistry = map[string]KYCProviderInfo{
 			{Key: "webhook-auth-type", Label: "Webhook Auth Type", Placeholder: "none", Options: []FieldOption{
 				{Value: "none", Label: "None (Signature Only)"},
 				{Value: "bearer", Label: "Bearer Token"},
-				{Value: "basic", Label: "Basic Auth"},
+				{Value: "basic", Label: "Basic Auth (Username & Password)"},
 				{Value: "custom_header", Label: "Custom Header"},
 			}},
-			{Key: "webhook-auth-token", Label: "Webhook Auth Token", Placeholder: "Token value shared with Cashfree", Sensitive: true, MaxLength: 500},
-			{Key: "webhook-auth-header", Label: "Custom Auth Header Name", Placeholder: "X-Custom-Auth", MaxLength: 100},
+			// Bearer token field — shown only when auth type is "bearer"
+			{Key: "webhook-auth-token", Label: "Bearer Token", Placeholder: "Token shared with Cashfree", Sensitive: true, MaxLength: 500, DependsOn: &FieldDependency{
+				FieldKey: "webhook-auth-type",
+				Values:   []string{"bearer"},
+			}},
+			// Basic auth fields — shown only when auth type is "basic"
+			{Key: "webhook-auth-username", Label: "Username", Placeholder: "Webhook username", MaxLength: 200, DependsOn: &FieldDependency{
+				FieldKey: "webhook-auth-type",
+				Values:   []string{"basic"},
+			}},
+			{Key: "webhook-auth-password", Label: "Password", Placeholder: "Webhook password", Sensitive: true, MaxLength: 200, DependsOn: &FieldDependency{
+				FieldKey: "webhook-auth-type",
+				Values:   []string{"basic"},
+			}},
+			// Custom header fields — shown only when auth type is "custom_header"
+			{Key: "webhook-auth-header", Label: "Custom Header Name", Placeholder: "X-Custom-Auth", MaxLength: 100, DependsOn: &FieldDependency{
+				FieldKey: "webhook-auth-type",
+				Values:   []string{"custom_header"},
+			}},
+			{Key: "webhook-auth-value", Label: "Custom Header Value", Placeholder: "Secret value for custom header", Sensitive: true, MaxLength: 500, DependsOn: &FieldDependency{
+				FieldKey: "webhook-auth-type",
+				Values:   []string{"custom_header"},
+			}},
 		},
 	},
 	"SETU": {
