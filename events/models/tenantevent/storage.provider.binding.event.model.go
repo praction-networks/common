@@ -4,22 +4,22 @@ package tenantevent
 
 // TenantStorageProviderBindingInsertEventModel represents a Storage provider binding creation event
 type TenantStorageProviderBindingInsertEventModel struct {
-	ID                string                                     `bson:"_id" json:"id"`
-	TenantID          string                                     `bson:"tenantId" json:"tenantId"`
-	Scope             string                                     `bson:"scope" json:"scope"`
-	ExplicitTenantIDs []string                                   `bson:"explicitTenantIds,omitempty" json:"explicitTenantIds,omitempty"`
+	ID                string                                       `bson:"_id" json:"id"`
+	TenantID          string                                       `bson:"tenantId" json:"tenantId"`
+	Scope             string                                       `bson:"scope" json:"scope"`
+	ExplicitTenantIDs []string                                     `bson:"explicitTenantIds,omitempty" json:"explicitTenantIds,omitempty"`
 	Configs           map[string]*TenantStorageProviderConfigEvent `bson:"configs" json:"configs"`
-	Version           int                                        `bson:"version" json:"version"`
+	Version           int                                          `bson:"version" json:"version"`
 }
 
 // TenantStorageProviderBindingUpdateEventModel represents a Storage provider binding update event
 type TenantStorageProviderBindingUpdateEventModel struct {
-	ID                string                                     `bson:"_id" json:"id"`
-	TenantID          string                                     `bson:"tenantId" json:"tenantId"`
-	Scope             string                                     `bson:"scope" json:"scope"`
-	ExplicitTenantIDs []string                                   `bson:"explicitTenantIds,omitempty" json:"explicitTenantIds,omitempty"`
+	ID                string                                       `bson:"_id" json:"id"`
+	TenantID          string                                       `bson:"tenantId" json:"tenantId"`
+	Scope             string                                       `bson:"scope" json:"scope"`
+	ExplicitTenantIDs []string                                     `bson:"explicitTenantIds,omitempty" json:"explicitTenantIds,omitempty"`
 	Configs           map[string]*TenantStorageProviderConfigEvent `bson:"configs" json:"configs"`
-	Version           int                                        `bson:"version" json:"version"`
+	Version           int                                          `bson:"version" json:"version"`
 }
 
 // TenantStorageProviderBindingDeleteEventModel represents a Storage provider binding deletion event

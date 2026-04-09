@@ -54,11 +54,11 @@ type KYCDocumentType string
 
 const (
 	// Identity documents (primarily Person KYC, but Aadhaar/VoterID/DL also valid for Address KYC)
-	KYCDocTypePAN    KYCDocumentType = "PAN"
-	KYCDocTypeAadhaar KYCDocumentType = "AADHAAR"        // Valid for both Person & Address KYC
+	KYCDocTypePAN      KYCDocumentType = "PAN"
+	KYCDocTypeAadhaar  KYCDocumentType = "AADHAAR" // Valid for both Person & Address KYC
 	KYCDocTypePassport KYCDocumentType = "PASSPORT"
-	KYCDocTypeVoterID KYCDocumentType = "VOTER_ID"       // Valid for both Person & Address KYC
-	KYCDocTypeDL     KYCDocumentType = "DRIVING_LICENSE"  // Also contains address
+	KYCDocTypeVoterID  KYCDocumentType = "VOTER_ID"        // Valid for both Person & Address KYC
+	KYCDocTypeDL       KYCDocumentType = "DRIVING_LICENSE" // Also contains address
 
 	// Address proof documents (primarily Address KYC)
 	KYCDocTypeUtilityBill   KYCDocumentType = "UTILITY_BILL"

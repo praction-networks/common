@@ -82,8 +82,8 @@ type StorageScopeInfo struct {
 // StorageFormConfig is the complete form metadata the frontend needs to render the storage binding form.
 type StorageFormConfig struct {
 	Providers []StorageProviderInfo `json:"providers"`
-	Scopes    []StorageScopeInfo   `json:"scopes"`
-	Purposes  []StoragePurposeInfo `json:"purposes"`
+	Scopes    []StorageScopeInfo    `json:"scopes"`
+	Purposes  []StoragePurposeInfo  `json:"purposes"`
 }
 
 // StorageProviderRegistry is the single source of truth for all storage providers.

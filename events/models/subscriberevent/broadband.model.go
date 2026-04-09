@@ -42,6 +42,9 @@ type BroadbandCPEMetadata struct {
 }
 
 type CPEWirelessMetadata struct {
+	RadioBand          string `json:"radioBand,omitempty" bson:"radioBand,omitempty"`         // "2.4GHz", "5GHz", "6GHz"
+	NetworkType        string `json:"networkType,omitempty" bson:"networkType,omitempty"`     // "Main", "Guest", "IoT"
+	InterfaceName      string `json:"interfaceName,omitempty" bson:"interfaceName,omitempty"` // e.g., "wlan0", "wlan1"
 	SSID               string `json:"ssid,omitempty" bson:"ssid,omitempty"`
 	Password           string `json:"password,omitempty" bson:"password,omitempty"`
 	Security           string `json:"security,omitempty" bson:"security,omitempty"`
@@ -55,17 +58,22 @@ type CPEWirelessMetadata struct {
 type PPPoEAuthConfig struct {
 	Username string `json:"username,omitempty" bson:"username,omitempty"` // PPPoE username
 	Password string `json:"password,omitempty" bson:"password,omitempty"` // PPPoE password
-	IP       string `json:"ip,omitempty" bson:"ip,omitempty"`             // Assigned IP address (if static)
+	IPv4     string `json:"ipv4,omitempty" bson:"ipv4,omitempty"`         // Assigned IPv4 address
+	IPv6     string `json:"ipv6,omitempty" bson:"ipv6,omitempty"`         // Assigned IPv6 network/prefix
 	MAC      string `json:"mac,omitempty" bson:"mac,omitempty"`           // MAC address for authentication
 }
 
 // StaticIPAuthConfig contains configuration for Static IP authentication method
 type StaticIPAuthConfig struct {
-	IP         string   `json:"ip,omitempty" bson:"ip,omitempty"`                 // Static IP address
-	MAC        string   `json:"mac,omitempty" bson:"mac,omitempty"`               // MAC address for authentication
-	Gateway    string   `json:"gateway,omitempty" bson:"gateway,omitempty"`       // Gateway IP address
-	SubnetMask string   `json:"subnetMask,omitempty" bson:"subnetMask,omitempty"` // Subnet mask
-	DNS        []string `json:"dns,omitempty" bson:"dns,omitempty"`               // Primary DNS server
+	IPv4           string   `json:"ipv4,omitempty" bson:"ipv4,omitempty"`                     // Assigned IPv4 address
+	IPv6           string   `json:"ipv6,omitempty" bson:"ipv6,omitempty"`                     // Assigned IPv6 network/prefix
+	MAC            string   `json:"mac,omitempty" bson:"mac,omitempty"`                       // MAC address for authentication
+	GatewayIPv4    string   `json:"gatewayIpv4,omitempty" bson:"gatewayIpv4,omitempty"`       // Gateway IPv4 address
+	GatewayIPv6    string   `json:"gatewayIpv6,omitempty" bson:"gatewayIpv6,omitempty"`       // Gateway IPv6 address
+	SubnetMaskIPv4 string   `json:"subnetMaskIpv4,omitempty" bson:"subnetMaskIpv4,omitempty"` // IPv4 subnet mask
+	SubnetMaskIPv6 string   `json:"subnetMaskIpv6,omitempty" bson:"subnetMaskIpv6,omitempty"` // IPv6 subnet prefix length
+	DNSIPv4        []string `json:"dnsIpv4,omitempty" bson:"dnsIpv4,omitempty"`               // IPv4 DNS servers
+	DNSIPv6        []string `json:"dnsIpv6,omitempty" bson:"dnsIpv6,omitempty"`               // IPv6 DNS servers
 }
 
 // DHCPAuthConfig contains configuration for DHCP authentication method

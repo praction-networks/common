@@ -73,16 +73,16 @@ const (
 	EnabledFeaturesFieldAIIsPredictiveMaintenanceEnabled = "AI.IsPredictiveMaintenanceEnabled"
 
 	// Venue features
-	EnabledFeaturesFieldVenueIsVenueEnabled         = "Venue.IsVenueEnabled"
-	EnabledFeaturesFieldVenueIsMenuManagementEnabled = "Venue.IsMenuManagementEnabled"
+	EnabledFeaturesFieldVenueIsVenueEnabled           = "Venue.IsVenueEnabled"
+	EnabledFeaturesFieldVenueIsMenuManagementEnabled  = "Venue.IsMenuManagementEnabled"
 	EnabledFeaturesFieldVenueIsTableManagementEnabled = "Venue.IsTableManagementEnabled"
-	EnabledFeaturesFieldVenueIsZoneManagementEnabled = "Venue.IsZoneManagementEnabled"
-	EnabledFeaturesFieldVenueIsDiscountsEnabled      = "Venue.IsDiscountsEnabled"
+	EnabledFeaturesFieldVenueIsZoneManagementEnabled  = "Venue.IsZoneManagementEnabled"
+	EnabledFeaturesFieldVenueIsDiscountsEnabled       = "Venue.IsDiscountsEnabled"
 
 	// ACS features
-	EnabledFeaturesFieldACSIsACSEnabled            = "ACS.IsACSEnabled"
+	EnabledFeaturesFieldACSIsACSEnabled             = "ACS.IsACSEnabled"
 	EnabledFeaturesFieldACSIsFleetManagementEnabled = "ACS.IsFleetManagementEnabled"
-	EnabledFeaturesFieldACSIsRemoteConfigEnabled   = "ACS.IsRemoteConfigEnabled"
+	EnabledFeaturesFieldACSIsRemoteConfigEnabled    = "ACS.IsRemoteConfigEnabled"
 
 	// Network features
 	EnabledFeaturesFieldNetworkIsMonitoringEnabled    = "Network.IsMonitoringEnabled"
@@ -91,7 +91,7 @@ const (
 
 	// Operations features
 	EnabledFeaturesFieldOperationsIsLogEngineEnabled   = "Operations.IsLogEngineEnabled" // Deprecated: moved to Network
-	EnabledFeaturesFieldNetworkIsLogEngineEnabled       = "Network.IsLogEngineEnabled"
+	EnabledFeaturesFieldNetworkIsLogEngineEnabled      = "Network.IsLogEngineEnabled"
 	EnabledFeaturesFieldOperationsIsAlertsEnabled      = "Operations.IsAlertsEnabled"
 	EnabledFeaturesFieldOperationsIsTicketingEnabled   = "Operations.IsTicketingEnabled"
 	EnabledFeaturesFieldOperationsIsSubscribersEnabled = "Operations.IsSubscribersEnabled"
@@ -107,9 +107,9 @@ const (
 	EnabledFeaturesFieldIntegrationsIsEmailResultsEnabled          = "Integrations.IsEmailResultsEnabled"
 
 	// System Management features
-	EnabledFeaturesFieldSystemIsKubernetesEnabled   = "System.IsKubernetesEnabled"
-	EnabledFeaturesFieldSystemIsRolesEnabled        = "System.IsRolesEnabled"
-	EnabledFeaturesFieldSystemIsPoliciesEnabled     = "System.IsPoliciesEnabled"
+	EnabledFeaturesFieldSystemIsKubernetesEnabled    = "System.IsKubernetesEnabled"
+	EnabledFeaturesFieldSystemIsRolesEnabled         = "System.IsRolesEnabled"
+	EnabledFeaturesFieldSystemIsPoliciesEnabled      = "System.IsPoliciesEnabled"
 	EnabledFeaturesFieldSystemIsPincodeUploadEnabled = "System.IsPincodeUploadEnabled"
 )
 
@@ -137,7 +137,6 @@ type EnabledFeatures struct {
 	// The master toggle Core.IsUserKYCEnabled controls whether KYC is active.
 	// KYC gateway config lives in TenantKYCProviderBinding (separate collection).
 }
-
 
 // CoreFeatures - Core user experience
 type CoreFeatures struct {
@@ -231,18 +230,18 @@ type AIFeatures struct {
 
 // VenueFeatures - Venue management (menus, tables, zones, discounts)
 type VenueFeatures struct {
-	IsVenueEnabled          bool `json:"isVenueEnabled" bson:"isVenueEnabled"`
-	IsMenuManagementEnabled bool `json:"isMenuManagementEnabled" bson:"isMenuManagementEnabled"`
+	IsVenueEnabled           bool `json:"isVenueEnabled" bson:"isVenueEnabled"`
+	IsMenuManagementEnabled  bool `json:"isMenuManagementEnabled" bson:"isMenuManagementEnabled"`
 	IsTableManagementEnabled bool `json:"isTableManagementEnabled" bson:"isTableManagementEnabled"`
-	IsZoneManagementEnabled bool `json:"isZoneManagementEnabled" bson:"isZoneManagementEnabled"`
-	IsDiscountsEnabled      bool `json:"isDiscountsEnabled" bson:"isDiscountsEnabled"`
+	IsZoneManagementEnabled  bool `json:"isZoneManagementEnabled" bson:"isZoneManagementEnabled"`
+	IsDiscountsEnabled       bool `json:"isDiscountsEnabled" bson:"isDiscountsEnabled"`
 }
 
 // ACSFeatures - ACS / CWMP / CPE device management
 type ACSFeatures struct {
-	IsACSEnabled            bool `json:"isAcsEnabled" bson:"isAcsEnabled"`
+	IsACSEnabled             bool `json:"isAcsEnabled" bson:"isAcsEnabled"`
 	IsFleetManagementEnabled bool `json:"isFleetManagementEnabled" bson:"isFleetManagementEnabled"`
-	IsRemoteConfigEnabled   bool `json:"isRemoteConfigEnabled" bson:"isRemoteConfigEnabled"`
+	IsRemoteConfigEnabled    bool `json:"isRemoteConfigEnabled" bson:"isRemoteConfigEnabled"`
 }
 
 // NetworkFeatures - Network monitoring & topology
@@ -281,4 +280,3 @@ type SystemFeatures struct {
 	IsPoliciesEnabled      bool `json:"isPoliciesEnabled" bson:"isPoliciesEnabled"`
 	IsPincodeUploadEnabled bool `json:"isPincodeUploadEnabled" bson:"isPincodeUploadEnabled"`
 }
-
