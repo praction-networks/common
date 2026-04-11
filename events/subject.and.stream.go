@@ -102,6 +102,9 @@ const (
 	TenantStorageProviderBindingCreatedSubject Subject = "tenant.storagebinding.created"
 	TenantStorageProviderBindingUpdatedSubject Subject = "tenant.storagebinding.updated"
 	TenantStorageProviderBindingDeletedSubject Subject = "tenant.storagebinding.deleted"
+	TenantESignProviderBindingCreatedSubject   Subject = "tenant.esignbinding.created"
+	TenantESignProviderBindingUpdatedSubject   Subject = "tenant.esignbinding.updated"
+	TenantESignProviderBindingDeletedSubject   Subject = "tenant.esignbinding.deleted"
 
 	// Tenant Branding Events
 	TenantBrandingCreatedSubject Subject = "tenant.branding.created"
@@ -342,6 +345,9 @@ var Streams = map[StreamName]StreamMetadata{
 			TenantAppMessagingBindingCreatedSubject,
 			TenantAppMessagingBindingUpdatedSubject,
 			TenantAppMessagingBindingDeletedSubject,
+			TenantESignProviderBindingCreatedSubject,
+			TenantESignProviderBindingUpdatedSubject,
+			TenantESignProviderBindingDeletedSubject,
 			// Tenant Branding Events
 			TenantBrandingCreatedSubject,
 			TenantBrandingUpdatedSubject,
