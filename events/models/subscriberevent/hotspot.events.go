@@ -22,6 +22,7 @@ type HotspotProfileCreatedEvent struct {
 	ValidFrom               time.Time            `json:"validFrom,omitempty" bson:"validFrom,omitempty"`                         // When this profile becomes valid
 	ValidUntil              *time.Time           `json:"validUntil,omitempty" bson:"validUntil,omitempty"`                       // When this profile expires (nil = no expiration)
 	PlanCode                string               `json:"planCode,omitempty" bson:"planCode,omitempty"`                           // Plan code used for this hotspot profile
+	RadiusAttributes        map[string]interface{} `json:"radiusAttributes,omitempty" bson:"radiusAttributes,omitempty"`
 	Version                 int                  `json:"version" bson:"version"`
 }
 
@@ -46,6 +47,7 @@ type HotspotProfileUpdatedEvent struct {
 	ValidFrom               *time.Time           `json:"validFrom,omitempty" bson:"validFrom,omitempty"`                         // When this profile becomes valid (optional update)
 	ValidUntil              *time.Time           `json:"validUntil,omitempty" bson:"validUntil,omitempty"`                       // When this profile expires (optional update)
 	PlanCode                string               `json:"planCode,omitempty" bson:"planCode,omitempty"`                           // Plan code used for this hotspot profile (optional update)
+	RadiusAttributes        map[string]interface{} `json:"radiusAttributes,omitempty" bson:"radiusAttributes,omitempty"`
 	Version                 int                  `json:"version" bson:"version"`
 }
 

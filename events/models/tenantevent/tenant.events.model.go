@@ -50,6 +50,7 @@ type TenantInsertEventModel struct {
 	SetupComplete bool `bson:"setupComplete" json:"setupComplete"`
 	IsSystem      bool `bson:"isSystem" json:"isSystem"`
 	IsActive      bool `bson:"isActive" json:"isActive"`
+	RadiusAttributes map[string]interface{} `bson:"radiusAttributes,omitempty" json:"radiusAttributes,omitempty"`
 	Version       int  `bson:"version,omitempty" json:"version,omitempty"`
 }
 
@@ -95,6 +96,7 @@ type TenantUpdateEventModel struct {
 	SetupComplete *bool `bson:"setupComplete,omitempty" json:"setupComplete,omitempty"`
 	IsSystem      *bool `bson:"isSystem,omitempty" json:"isSystem,omitempty"`
 	IsActive      *bool `bson:"isActive,omitempty" json:"isActive,omitempty"`
+	RadiusAttributes map[string]interface{} `bson:"radiusAttributes,omitempty" json:"radiusAttributes,omitempty"`
 	Version       int   `bson:"version,omitempty" json:"version,omitempty"`
 }
 

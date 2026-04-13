@@ -27,6 +27,7 @@ type DeviceInsertEventModel struct {
 	IsActive            bool     `bson:"isActive" json:"isActive"`
 	Tags                []string `bson:"tags,omitempty" json:"tags,omitempty"`
 	Notes               string   `bson:"notes,omitempty" json:"notes,omitempty"`
+	RadiusAttributes    map[string]interface{} `bson:"radiusAttributes,omitempty" json:"radiusAttributes,omitempty"`
 	Version             int      `bson:"version" json:"version"`
 }
 
@@ -57,6 +58,7 @@ type DeviceUpdateEventModel struct {
 	IsActive            *bool    `bson:"isActive,omitempty" json:"isActive,omitempty"`
 	Tags                []string `bson:"tags,omitempty" json:"tags,omitempty"`
 	Notes               string   `bson:"notes,omitempty" json:"notes,omitempty"`
+	RadiusAttributes    map[string]interface{} `bson:"radiusAttributes,omitempty" json:"radiusAttributes,omitempty"`
 	Version             int      `bson:"version" json:"version"`
 }
 

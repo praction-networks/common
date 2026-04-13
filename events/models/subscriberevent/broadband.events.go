@@ -13,6 +13,7 @@ type BroadbandSubscriptionCreatedEvent struct {
 	StaticIPAddress       string                      `json:"staticIpAddress,omitempty" bson:"staticIpAddress,omitempty"`
 	StaticGateway         string                      `json:"staticGateway,omitempty" bson:"staticGateway,omitempty"`
 	VLANID                int                         `json:"vlanId,omitempty" bson:"vlanId,omitempty"`
+	RadiusAttributes      map[string]interface{}      `json:"radiusAttributes,omitempty" bson:"radiusAttributes,omitempty"`
 	PlanCode              string                      `json:"planCode" bson:"planCode"`
 	InstallationAddressID string                      `json:"installationAddressId,omitempty" bson:"installationAddressId,omitempty"`
 	BillingProfileID      string                      `json:"billingProfileId,omitempty" bson:"billingProfileId,omitempty"`
@@ -34,6 +35,9 @@ type BroadbandSubscriptionUpdatedEvent struct {
 	ConnectionType        BroadbandConnectionType `json:"connectionType,omitempty" bson:"connectionType,omitempty"`
 	AuthMethod            BroabandAuthMethod   `json:"authMethod,omitempty" bson:"authMethod,omitempty"`
 	AuthConfig            *BroadbandAuthConfig `json:"authConfig,omitempty" bson:"authConfig,omitempty"`
+	StaticIPAddress       string               `json:"staticIpAddress,omitempty" bson:"staticIpAddress,omitempty"`
+	VLANID                int                  `json:"vlanId,omitempty" bson:"vlanId,omitempty"`
+	RadiusAttributes      map[string]interface{} `json:"radiusAttributes,omitempty" bson:"radiusAttributes,omitempty"`
 	PlanCode              string               `json:"planCode,omitempty" bson:"planCode,omitempty"`
 	InstallationAddressID string               `json:"installationAddressId,omitempty" bson:"installationAddressId,omitempty"`
 	Version               int                  `json:"version" bson:"version"`
