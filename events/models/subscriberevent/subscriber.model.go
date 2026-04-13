@@ -14,6 +14,10 @@ const (
 	// SubscriberStatusInactive indicates the subscriber is disabled/archived (soft delete)
 	// Inactive subscribers cannot have new services created, but existing services remain in their current state
 	SubscriberStatusInactive SubscriberStatus = "INACTIVE"
+
+	// SubscriberStatusOnboarding indicates the subscriber is recently created and may still be
+	// undergoing KYC or plan assignment before an active connection is established.
+	SubscriberStatusOnboarding SubscriberStatus = "ONBOARDING"
 )
 
 type SubscriberType string
