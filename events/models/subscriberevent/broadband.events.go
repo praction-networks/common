@@ -26,14 +26,17 @@ type BroadbandSubscriptionCreatedEvent struct {
 
 // BroadbandSubscriptionUpdatedEvent represents a broadband subscription update event
 type BroadbandSubscriptionUpdatedEvent struct {
-	ID                    string `json:"id" bson:"id"`
-	SubscriberID          string `json:"subscriberId" bson:"subscriberId"`
-	TenantID              string `json:"tenantId" bson:"tenantId"`
-	AccountNumber         string `json:"accountNumber,omitempty" bson:"accountNumber,omitempty"`
-	Status                string `json:"status,omitempty" bson:"status,omitempty"`
-	PlanCode              string `json:"planCode,omitempty" bson:"planCode,omitempty"`
-	InstallationAddressID string `json:"installationAddressId,omitempty" bson:"installationAddressId,omitempty"`
-	Version               int    `json:"version" bson:"version"`
+	ID                    string               `json:"id" bson:"id"`
+	SubscriberID          string               `json:"subscriberId" bson:"subscriberId"`
+	TenantID              string               `json:"tenantId" bson:"tenantId"`
+	AccountNumber         string               `json:"accountNumber,omitempty" bson:"accountNumber,omitempty"`
+	Status                string               `json:"status,omitempty" bson:"status,omitempty"`
+	ConnectionType        BroadbandConnectionType `json:"connectionType,omitempty" bson:"connectionType,omitempty"`
+	AuthMethod            BroabandAuthMethod   `json:"authMethod,omitempty" bson:"authMethod,omitempty"`
+	AuthConfig            *BroadbandAuthConfig `json:"authConfig,omitempty" bson:"authConfig,omitempty"`
+	PlanCode              string               `json:"planCode,omitempty" bson:"planCode,omitempty"`
+	InstallationAddressID string               `json:"installationAddressId,omitempty" bson:"installationAddressId,omitempty"`
+	Version               int                  `json:"version" bson:"version"`
 }
 
 // BroadbandSubscriptionDeletedEvent represents a broadband subscription deletion event
