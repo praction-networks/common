@@ -1,5 +1,30 @@
 package tenantevent
 
+// AuthPolicyCondition defines a single condition to match against an incoming RADIUS request attribute
+type AuthPolicyCondition struct {
+	Attribute string `bson:"attribute" json:"attribute"` // e.g., "Tunnel-Private-Group-Id", "NAS-Port-Type"
+	Operator  string `bson:"operator" json:"operator"`   // e.g., "==", "!=", "=~" (regex)
+	Value     string `bson:"value" json:"value"`         // e.g., "502", "Ethernet"
+}
+
+// AuthPolicyAction defines a single reply attribute to set when a rule's conditions all match
+type AuthPolicyAction struct {
+	Attribute string `bson:"attribute" json:"attribute"` // e.g., "Framed-Pool", "ERX-Ingress-Policy-Name"
+	Operator  string `bson:"operator" json:"operator"`   // e.g., ":=", "="
+	Value     string `bson:"value" json:"value"`         // e.g., "PoolA", "150M"
+}
+
+// AuthorizationPolicy defines a dynamic authorization rule for a NAS/BNG device.
+// Each rule has conditions (all must match — AND logic) and actions (reply attributes to set).
+type AuthorizationPolicy struct {
+	RuleName    string                `bson:"ruleName" json:"ruleName"`
+	Description string                `bson:"description,omitempty" json:"description,omitempty"`
+	Priority    int                   `bson:"priority" json:"priority"`
+	Conditions  []AuthPolicyCondition `bson:"conditions" json:"conditions"`
+	Actions     []AuthPolicyAction    `bson:"actions" json:"actions"`
+	IsActive    bool                  `bson:"isActive" json:"isActive"`
+}
+
 // DeviceInsertEventModel defines the model for device insert events
 type DeviceInsertEventModel struct {
 	ID                  string   `bson:"_id" json:"id"`
@@ -27,8 +52,9 @@ type DeviceInsertEventModel struct {
 	IsActive            bool     `bson:"isActive" json:"isActive"`
 	Tags                []string `bson:"tags,omitempty" json:"tags,omitempty"`
 	Notes               string   `bson:"notes,omitempty" json:"notes,omitempty"`
-	RadiusAttributes    map[string]interface{} `bson:"radiusAttributes,omitempty" json:"radiusAttributes,omitempty"`
-	Version             int      `bson:"version" json:"version"`
+	RadiusAttributes      map[string]interface{}  `bson:"radiusAttributes,omitempty" json:"radiusAttributes,omitempty"`
+	AuthorizationPolicies []AuthorizationPolicy   `bson:"authorizationPolicies,omitempty" json:"authorizationPolicies,omitempty"`
+	Version               int                     `bson:"version" json:"version"`
 }
 
 // DeviceUpdateEventModel defines the model for device update events
@@ -58,8 +84,9 @@ type DeviceUpdateEventModel struct {
 	IsActive            *bool    `bson:"isActive,omitempty" json:"isActive,omitempty"`
 	Tags                []string `bson:"tags,omitempty" json:"tags,omitempty"`
 	Notes               string   `bson:"notes,omitempty" json:"notes,omitempty"`
-	RadiusAttributes    map[string]interface{} `bson:"radiusAttributes,omitempty" json:"radiusAttributes,omitempty"`
-	Version             int      `bson:"version" json:"version"`
+	RadiusAttributes      map[string]interface{}  `bson:"radiusAttributes,omitempty" json:"radiusAttributes,omitempty"`
+	AuthorizationPolicies []AuthorizationPolicy   `bson:"authorizationPolicies,omitempty" json:"authorizationPolicies,omitempty"`
+	Version               int                     `bson:"version" json:"version"`
 }
 
 // DeviceDeleteEventModel defines the model for device delete events
