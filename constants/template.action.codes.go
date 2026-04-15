@@ -164,9 +164,11 @@ const (
 	// SUBSCRIBER = the ISP end-customer using broadband/hotspot service.
 	// -----------------------------------------------------
 	// Onboarding & Verification
-	TemplateActionCodeSubscriberOnboardingOTP TemplateActionCode = "SUBSCRIBER.ONBOARDING_OTP"
-	TemplateActionCodeSubscriberMobileVerify  TemplateActionCode = "SUBSCRIBER.MOBILE_VERIFICATION"
-	TemplateActionCodeSubscriberWelcome       TemplateActionCode = "SUBSCRIBER.WELCOME"
+	TemplateActionCodeSubscriberOnboardingOTP      TemplateActionCode = "SUBSCRIBER.ONBOARDING_OTP"
+	TemplateActionCodeSubscriberMobileVerify       TemplateActionCode = "SUBSCRIBER.MOBILE_VERIFICATION"
+	TemplateActionCodeSubscriberEmailVerify        TemplateActionCode = "SUBSCRIBER.EMAIL_VERIFICATION"
+	TemplateActionCodeSubscriberWhatsAppVerify     TemplateActionCode = "SUBSCRIBER.WHATSAPP_VERIFICATION"
+	TemplateActionCodeSubscriberWelcome            TemplateActionCode = "SUBSCRIBER.WELCOME"
 	// Plan & Service Events
 	TemplateActionCodeSubscriberPlanActivated   TemplateActionCode = "SUBSCRIBER.PLAN_ACTIVATED"
 	TemplateActionCodeSubscriberPlanExpiring    TemplateActionCode = "SUBSCRIBER.PLAN_EXPIRING"
@@ -403,6 +405,8 @@ func GetAllActionCodes() map[TemplateActionCode]bool {
 		// Subscriber domain
 		TemplateActionCodeSubscriberOnboardingOTP:        true,
 		TemplateActionCodeSubscriberMobileVerify:         true,
+		TemplateActionCodeSubscriberEmailVerify:          true,
+		TemplateActionCodeSubscriberWhatsAppVerify:       true,
 		TemplateActionCodeSubscriberWelcome:              true,
 		TemplateActionCodeSubscriberPlanActivated:        true,
 		TemplateActionCodeSubscriberPlanExpiring:         true,
@@ -573,7 +577,9 @@ func GetActionCodeDescriptions() map[TemplateActionCode]string {
 		TemplateActionCodeActivationFailed:          "Activation Failed - Could not activate service",
 		// Subscriber domain descriptions
 		TemplateActionCodeSubscriberOnboardingOTP:        "Subscriber Onboarding OTP - Phone verification OTP during subscriber sign-up",
-		TemplateActionCodeSubscriberMobileVerify:         "Subscriber Mobile Verification - Verify subscriber's mobile number",
+		TemplateActionCodeSubscriberMobileVerify:         "Subscriber Mobile Verification - OTP sent via SMS to verify subscriber's mobile number",
+		TemplateActionCodeSubscriberEmailVerify:          "Subscriber Email Verification - OTP or link sent via email to verify subscriber's email address",
+		TemplateActionCodeSubscriberWhatsAppVerify:       "Subscriber WhatsApp Verification - OTP sent via WhatsApp to verify subscriber's WhatsApp number",
 		TemplateActionCodeSubscriberWelcome:              "Subscriber Welcome - Welcome message after successful onboarding",
 		TemplateActionCodeSubscriberPlanActivated:        "Subscriber Plan Activated - Internet plan activated for subscriber",
 		TemplateActionCodeSubscriberPlanExpiring:         "Subscriber Plan Expiring - Plan expiry reminder",
