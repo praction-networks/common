@@ -161,17 +161,34 @@ const (
 	// -----------------------------------------------------
 	// 11. Subscriber Actions (ISP end-user / captive portal subscribers)
 	// Distinct from USER.* which covers admin/tenant portal users.
+	// SUBSCRIBER = the ISP end-customer using broadband/hotspot service.
 	// -----------------------------------------------------
-	TemplateActionCodeSubscriberOnboardingOTP    TemplateActionCode = "SUBSCRIBER.ONBOARDING_OTP"
-	TemplateActionCodeSubscriberMobileVerify     TemplateActionCode = "SUBSCRIBER.MOBILE_VERIFICATION"
-	TemplateActionCodeSubscriberWelcome          TemplateActionCode = "SUBSCRIBER.WELCOME"
-	TemplateActionCodeSubscriberPlanActivated    TemplateActionCode = "SUBSCRIBER.PLAN_ACTIVATED"
-	TemplateActionCodeSubscriberPlanExpiring     TemplateActionCode = "SUBSCRIBER.PLAN_EXPIRING"
-	TemplateActionCodeSubscriberPlanExpired      TemplateActionCode = "SUBSCRIBER.PLAN_EXPIRED"
+	// Onboarding & Verification
+	TemplateActionCodeSubscriberOnboardingOTP TemplateActionCode = "SUBSCRIBER.ONBOARDING_OTP"
+	TemplateActionCodeSubscriberMobileVerify  TemplateActionCode = "SUBSCRIBER.MOBILE_VERIFICATION"
+	TemplateActionCodeSubscriberWelcome       TemplateActionCode = "SUBSCRIBER.WELCOME"
+	// Plan & Service Events
+	TemplateActionCodeSubscriberPlanActivated   TemplateActionCode = "SUBSCRIBER.PLAN_ACTIVATED"
+	TemplateActionCodeSubscriberPlanExpiring    TemplateActionCode = "SUBSCRIBER.PLAN_EXPIRING"
+	TemplateActionCodeSubscriberPlanExpired     TemplateActionCode = "SUBSCRIBER.PLAN_EXPIRED"
+	TemplateActionCodeSubscriberPlanChanged     TemplateActionCode = "SUBSCRIBER.PLAN_CHANGED"
+	TemplateActionCodeSubscriberPlanRenewed     TemplateActionCode = "SUBSCRIBER.PLAN_RENEWED"
+	TemplateActionCodeSubscriberRenewalReminder TemplateActionCode = "SUBSCRIBER.RENEWAL_REMINDER"
+	// Data & Usage
 	TemplateActionCodeSubscriberDataQuotaWarning TemplateActionCode = "SUBSCRIBER.DATA_QUOTA_WARNING"
 	TemplateActionCodeSubscriberDataQuotaExhaust TemplateActionCode = "SUBSCRIBER.DATA_QUOTA_EXHAUSTED"
-	TemplateActionCodeSubscriberSuspended        TemplateActionCode = "SUBSCRIBER.SUSPENDED"
-	TemplateActionCodeSubscriberReinstated       TemplateActionCode = "SUBSCRIBER.REINSTATED"
+	// Account Status
+	TemplateActionCodeSubscriberSuspended    TemplateActionCode = "SUBSCRIBER.SUSPENDED"
+	TemplateActionCodeSubscriberReinstated   TemplateActionCode = "SUBSCRIBER.REINSTATED"
+	TemplateActionCodeSubscriberDisconnected TemplateActionCode = "SUBSCRIBER.DISCONNECTED"
+	// Lifecycle / CRM (formerly CUSTOMER.*)
+	TemplateActionCodeSubscriberWelcomeCallScheduled TemplateActionCode = "SUBSCRIBER.WELCOME_CALL_SCHEDULED"
+	TemplateActionCodeSubscriberWelcomeCallCompleted TemplateActionCode = "SUBSCRIBER.WELCOME_CALL_COMPLETED"
+	TemplateActionCodeSubscriberUpgradeOffer         TemplateActionCode = "SUBSCRIBER.UPGRADE_OFFER"
+	TemplateActionCodeSubscriberDowngradeRequested   TemplateActionCode = "SUBSCRIBER.DOWNGRADE_REQUESTED"
+	TemplateActionCodeSubscriberRelocationRequested  TemplateActionCode = "SUBSCRIBER.RELOCATION_REQUESTED"
+	TemplateActionCodeSubscriberRelocationCompleted  TemplateActionCode = "SUBSCRIBER.RELOCATION_COMPLETED"
+	TemplateActionCodeSubscriberChurnRisk            TemplateActionCode = "SUBSCRIBER.CHURN_RISK"
 
 	// -----------------------------------------------------
 	// 12. Hotspots Logic Actions
@@ -209,18 +226,8 @@ const (
 	TemplateActionCodeActivationCompleted      TemplateActionCode = "ACTIVATION.COMPLETED"
 	TemplateActionCodeActivationFailed         TemplateActionCode = "ACTIVATION.FAILED"
 
-	// -----------------------------------------------------
-	// 14. Customer Lifecycle & Churn / Retention Actions
-	// -----------------------------------------------------
-	TemplateActionCodeCustomerWelcomeCallScheduled TemplateActionCode = "CUSTOMER.WELCOME_CALL_SCHEDULED"
-	TemplateActionCodeCustomerWelcomeCallCompleted TemplateActionCode = "CUSTOMER.WELCOME_CALL_COMPLETED"
-	TemplateActionCodeCustomerUpgradeOffer         TemplateActionCode = "CUSTOMER.UPGRADE_OFFER"
-	TemplateActionCodeCustomerDowngradeRequested   TemplateActionCode = "CUSTOMER.DOWNGRADE_REQUESTED"
-	TemplateActionCodeCustomerRelocationRequested  TemplateActionCode = "CUSTOMER.RELOCATION_REQUESTED"
-	TemplateActionCodeCustomerRelocationCompleted  TemplateActionCode = "CUSTOMER.RELOCATION_COMPLETED"
-	TemplateActionCodeCustomerRenewalReminder      TemplateActionCode = "CUSTOMER.RENEWAL_REMINDER"
-	TemplateActionCodeCustomerChurnRisk            TemplateActionCode = "CUSTOMER.CHURN_RISK"
-	TemplateActionCodeCustomerDisconnected         TemplateActionCode = "CUSTOMER.DISCONNECTED"
+	// NOTE: CUSTOMER.* codes have been consolidated into SUBSCRIBER.*
+	// Use TemplateActionCodeSubscriber* constants instead.
 
 	// -----------------------------------------------------
 	// 15. System Templates (System-level notifications)
@@ -392,28 +399,30 @@ func GetAllActionCodes() map[TemplateActionCode]bool {
 		TemplateActionCodeProvisioningFailed:                true,
 		TemplateActionCodeActivationPendingPayment:          true,
 		TemplateActionCodeActivationCompleted:               true,
-		TemplateActionCodeActivationFailed:                  true,
-		TemplateActionCodeCustomerWelcomeCallScheduled:      true,
-		TemplateActionCodeCustomerWelcomeCallCompleted:      true,
-		TemplateActionCodeCustomerUpgradeOffer:              true,
-		TemplateActionCodeCustomerDowngradeRequested:        true,
-		TemplateActionCodeCustomerRelocationRequested:       true,
-		TemplateActionCodeCustomerRelocationCompleted:       true,
-		TemplateActionCodeCustomerRenewalReminder:           true,
-		TemplateActionCodeCustomerChurnRisk:                 true,
-		TemplateActionCodeCustomerDisconnected:              true,
+		TemplateActionCodeActivationFailed:          true,
 		// Subscriber domain
-		TemplateActionCodeSubscriberOnboardingOTP:    true,
-		TemplateActionCodeSubscriberMobileVerify:     true,
-		TemplateActionCodeSubscriberWelcome:          true,
-		TemplateActionCodeSubscriberPlanActivated:    true,
-		TemplateActionCodeSubscriberPlanExpiring:     true,
-		TemplateActionCodeSubscriberPlanExpired:      true,
-		TemplateActionCodeSubscriberDataQuotaWarning: true,
-		TemplateActionCodeSubscriberDataQuotaExhaust: true,
-		TemplateActionCodeSubscriberSuspended:        true,
-		TemplateActionCodeSubscriberReinstated:       true,
-		TemplateActionCodeHotSpotLoginOTP:            true,
+		TemplateActionCodeSubscriberOnboardingOTP:        true,
+		TemplateActionCodeSubscriberMobileVerify:         true,
+		TemplateActionCodeSubscriberWelcome:              true,
+		TemplateActionCodeSubscriberPlanActivated:        true,
+		TemplateActionCodeSubscriberPlanExpiring:         true,
+		TemplateActionCodeSubscriberPlanExpired:          true,
+		TemplateActionCodeSubscriberPlanChanged:          true,
+		TemplateActionCodeSubscriberPlanRenewed:          true,
+		TemplateActionCodeSubscriberRenewalReminder:      true,
+		TemplateActionCodeSubscriberDataQuotaWarning:     true,
+		TemplateActionCodeSubscriberDataQuotaExhaust:     true,
+		TemplateActionCodeSubscriberSuspended:            true,
+		TemplateActionCodeSubscriberReinstated:           true,
+		TemplateActionCodeSubscriberDisconnected:         true,
+		TemplateActionCodeSubscriberWelcomeCallScheduled: true,
+		TemplateActionCodeSubscriberWelcomeCallCompleted: true,
+		TemplateActionCodeSubscriberUpgradeOffer:         true,
+		TemplateActionCodeSubscriberDowngradeRequested:   true,
+		TemplateActionCodeSubscriberRelocationRequested:  true,
+		TemplateActionCodeSubscriberRelocationCompleted:  true,
+		TemplateActionCodeSubscriberChurnRisk:            true,
+		TemplateActionCodeHotSpotLoginOTP:                true,
 		// System templates (System.* prefix)
 		SystemTemplateActionCodeOTPLogin:            true,
 		SystemTemplateActionCodePasswordRecovery:    true,
@@ -561,28 +570,30 @@ func GetActionCodeDescriptions() map[TemplateActionCode]string {
 		TemplateActionCodeProvisioningFailed:                "Provisioning Failed - Error during activation",
 		TemplateActionCodeActivationPendingPayment:          "Activation Pending - Awaiting payment/verification",
 		TemplateActionCodeActivationCompleted:               "Activation Completed - Service live for customer",
-		TemplateActionCodeActivationFailed:                  "Activation Failed - Could not activate service",
-		TemplateActionCodeCustomerWelcomeCallScheduled:      "Welcome Call Scheduled - Post-install touchpoint",
-		TemplateActionCodeCustomerWelcomeCallCompleted:      "Welcome Call Completed",
-		TemplateActionCodeCustomerUpgradeOffer:              "Upgrade Offer - Higher plan / speed proposal",
-		TemplateActionCodeCustomerDowngradeRequested:        "Downgrade Requested",
-		TemplateActionCodeCustomerRelocationRequested:       "Relocation Requested - Shift connection to new address",
-		TemplateActionCodeCustomerRelocationCompleted:       "Relocation Completed",
-		TemplateActionCodeCustomerRenewalReminder:           "Renewal Reminder - Plan renewal due",
-		TemplateActionCodeCustomerChurnRisk:                 "Churn Risk Alert - At-risk customer detected",
-		TemplateActionCodeCustomerDisconnected:              "Customer Disconnected - Permanent disconnection",
+		TemplateActionCodeActivationFailed:          "Activation Failed - Could not activate service",
 		// Subscriber domain descriptions
-		TemplateActionCodeSubscriberOnboardingOTP:    "Subscriber Onboarding OTP - Phone verification OTP during subscriber sign-up",
-		TemplateActionCodeSubscriberMobileVerify:     "Subscriber Mobile Verification - Verify subscriber's mobile number",
-		TemplateActionCodeSubscriberWelcome:          "Subscriber Welcome - Welcome message after successful onboarding",
-		TemplateActionCodeSubscriberPlanActivated:    "Subscriber Plan Activated - Internet plan activated for subscriber",
-		TemplateActionCodeSubscriberPlanExpiring:     "Subscriber Plan Expiring - Plan expiry reminder",
-		TemplateActionCodeSubscriberPlanExpired:      "Subscriber Plan Expired - Subscriber's plan has expired",
-		TemplateActionCodeSubscriberDataQuotaWarning: "Subscriber Data Quota Warning - Data usage approaching limit",
-		TemplateActionCodeSubscriberDataQuotaExhaust: "Subscriber Data Quota Exhausted - Data limit reached",
-		TemplateActionCodeSubscriberSuspended:        "Subscriber Suspended - Subscriber account suspended",
-		TemplateActionCodeSubscriberReinstated:       "Subscriber Reinstated - Subscriber account reactivated",
-		TemplateActionCodeHotSpotLoginOTP:            "Hotspot Login OTP - One-Time Password for login",
+		TemplateActionCodeSubscriberOnboardingOTP:        "Subscriber Onboarding OTP - Phone verification OTP during subscriber sign-up",
+		TemplateActionCodeSubscriberMobileVerify:         "Subscriber Mobile Verification - Verify subscriber's mobile number",
+		TemplateActionCodeSubscriberWelcome:              "Subscriber Welcome - Welcome message after successful onboarding",
+		TemplateActionCodeSubscriberPlanActivated:        "Subscriber Plan Activated - Internet plan activated for subscriber",
+		TemplateActionCodeSubscriberPlanExpiring:         "Subscriber Plan Expiring - Plan expiry reminder",
+		TemplateActionCodeSubscriberPlanExpired:          "Subscriber Plan Expired - Subscriber's plan has expired",
+		TemplateActionCodeSubscriberPlanChanged:          "Subscriber Plan Changed - Subscriber has changed their plan",
+		TemplateActionCodeSubscriberPlanRenewed:          "Subscriber Plan Renewed - Plan successfully renewed",
+		TemplateActionCodeSubscriberRenewalReminder:      "Subscriber Renewal Reminder - Plan renewal due soon",
+		TemplateActionCodeSubscriberDataQuotaWarning:     "Subscriber Data Quota Warning - Data usage approaching limit",
+		TemplateActionCodeSubscriberDataQuotaExhaust:     "Subscriber Data Quota Exhausted - Data limit reached",
+		TemplateActionCodeSubscriberSuspended:            "Subscriber Suspended - Subscriber account suspended",
+		TemplateActionCodeSubscriberReinstated:           "Subscriber Reinstated - Subscriber account reactivated",
+		TemplateActionCodeSubscriberDisconnected:         "Subscriber Disconnected - Account permanently disconnected",
+		TemplateActionCodeSubscriberWelcomeCallScheduled: "Welcome Call Scheduled - Post-install touchpoint booked",
+		TemplateActionCodeSubscriberWelcomeCallCompleted: "Welcome Call Completed - Onboarding call logged",
+		TemplateActionCodeSubscriberUpgradeOffer:         "Upgrade Offer - Higher plan / speed proposal for subscriber",
+		TemplateActionCodeSubscriberDowngradeRequested:   "Downgrade Requested - Subscriber requested a lower plan",
+		TemplateActionCodeSubscriberRelocationRequested:  "Relocation Requested - Shift connection to a new address",
+		TemplateActionCodeSubscriberRelocationCompleted:  "Relocation Completed - Connection live at new address",
+		TemplateActionCodeSubscriberChurnRisk:            "Churn Risk Alert - Subscriber flagged as high churn risk",
+		TemplateActionCodeHotSpotLoginOTP:                "Hotspot Login OTP - One-Time Password for captive portal login",
 		// System template descriptions
 		SystemTemplateActionCodeOTPLogin:            "System OTP Login - One-Time Password for login (System template)",
 		SystemTemplateActionCodePasswordRecovery:    "System Password Recovery - Password recovery OTP code (System template)",
