@@ -159,7 +159,22 @@ const (
 	TemplateActionCodeLeadReopened      TemplateActionCode = "LEAD.REOPENED"
 
 	// -----------------------------------------------------
-	// 11. Hotspots Logic Actions
+	// 11. Subscriber Actions (ISP end-user / captive portal subscribers)
+	// Distinct from USER.* which covers admin/tenant portal users.
+	// -----------------------------------------------------
+	TemplateActionCodeSubscriberOnboardingOTP    TemplateActionCode = "SUBSCRIBER.ONBOARDING_OTP"
+	TemplateActionCodeSubscriberMobileVerify     TemplateActionCode = "SUBSCRIBER.MOBILE_VERIFICATION"
+	TemplateActionCodeSubscriberWelcome          TemplateActionCode = "SUBSCRIBER.WELCOME"
+	TemplateActionCodeSubscriberPlanActivated    TemplateActionCode = "SUBSCRIBER.PLAN_ACTIVATED"
+	TemplateActionCodeSubscriberPlanExpiring     TemplateActionCode = "SUBSCRIBER.PLAN_EXPIRING"
+	TemplateActionCodeSubscriberPlanExpired      TemplateActionCode = "SUBSCRIBER.PLAN_EXPIRED"
+	TemplateActionCodeSubscriberDataQuotaWarning TemplateActionCode = "SUBSCRIBER.DATA_QUOTA_WARNING"
+	TemplateActionCodeSubscriberDataQuotaExhaust TemplateActionCode = "SUBSCRIBER.DATA_QUOTA_EXHAUSTED"
+	TemplateActionCodeSubscriberSuspended        TemplateActionCode = "SUBSCRIBER.SUSPENDED"
+	TemplateActionCodeSubscriberReinstated       TemplateActionCode = "SUBSCRIBER.REINSTATED"
+
+	// -----------------------------------------------------
+	// 12. Hotspots Logic Actions
 	// -----------------------------------------------------
 	TemplateActionCodeHotSpotLoginOTP TemplateActionCode = "HOTSPOT.SUBSCRIBER_LOGIN_OTP"
 
@@ -387,7 +402,18 @@ func GetAllActionCodes() map[TemplateActionCode]bool {
 		TemplateActionCodeCustomerRenewalReminder:           true,
 		TemplateActionCodeCustomerChurnRisk:                 true,
 		TemplateActionCodeCustomerDisconnected:              true,
-		TemplateActionCodeHotSpotLoginOTP:                   true,
+		// Subscriber domain
+		TemplateActionCodeSubscriberOnboardingOTP:    true,
+		TemplateActionCodeSubscriberMobileVerify:     true,
+		TemplateActionCodeSubscriberWelcome:          true,
+		TemplateActionCodeSubscriberPlanActivated:    true,
+		TemplateActionCodeSubscriberPlanExpiring:     true,
+		TemplateActionCodeSubscriberPlanExpired:      true,
+		TemplateActionCodeSubscriberDataQuotaWarning: true,
+		TemplateActionCodeSubscriberDataQuotaExhaust: true,
+		TemplateActionCodeSubscriberSuspended:        true,
+		TemplateActionCodeSubscriberReinstated:       true,
+		TemplateActionCodeHotSpotLoginOTP:            true,
 		// System templates (System.* prefix)
 		SystemTemplateActionCodeOTPLogin:            true,
 		SystemTemplateActionCodePasswordRecovery:    true,
@@ -545,7 +571,18 @@ func GetActionCodeDescriptions() map[TemplateActionCode]string {
 		TemplateActionCodeCustomerRenewalReminder:           "Renewal Reminder - Plan renewal due",
 		TemplateActionCodeCustomerChurnRisk:                 "Churn Risk Alert - At-risk customer detected",
 		TemplateActionCodeCustomerDisconnected:              "Customer Disconnected - Permanent disconnection",
-		TemplateActionCodeHotSpotLoginOTP:                   "Hotspot Login OTP - One-Time Password for login",
+		// Subscriber domain descriptions
+		TemplateActionCodeSubscriberOnboardingOTP:    "Subscriber Onboarding OTP - Phone verification OTP during subscriber sign-up",
+		TemplateActionCodeSubscriberMobileVerify:     "Subscriber Mobile Verification - Verify subscriber's mobile number",
+		TemplateActionCodeSubscriberWelcome:          "Subscriber Welcome - Welcome message after successful onboarding",
+		TemplateActionCodeSubscriberPlanActivated:    "Subscriber Plan Activated - Internet plan activated for subscriber",
+		TemplateActionCodeSubscriberPlanExpiring:     "Subscriber Plan Expiring - Plan expiry reminder",
+		TemplateActionCodeSubscriberPlanExpired:      "Subscriber Plan Expired - Subscriber's plan has expired",
+		TemplateActionCodeSubscriberDataQuotaWarning: "Subscriber Data Quota Warning - Data usage approaching limit",
+		TemplateActionCodeSubscriberDataQuotaExhaust: "Subscriber Data Quota Exhausted - Data limit reached",
+		TemplateActionCodeSubscriberSuspended:        "Subscriber Suspended - Subscriber account suspended",
+		TemplateActionCodeSubscriberReinstated:       "Subscriber Reinstated - Subscriber account reactivated",
+		TemplateActionCodeHotSpotLoginOTP:            "Hotspot Login OTP - One-Time Password for login",
 		// System template descriptions
 		SystemTemplateActionCodeOTPLogin:            "System OTP Login - One-Time Password for login (System template)",
 		SystemTemplateActionCodePasswordRecovery:    "System Password Recovery - Password recovery OTP code (System template)",
