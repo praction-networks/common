@@ -10,8 +10,8 @@ type NotificationModel struct {
 
 	// Channel specifies which communication channels to use
 	// Each channel will have its own template (e.g., login_otp for SMS, login_otp for email)
-	// Example: ["sms", "email"] or ["whatsapp"] or ["sms", "email", "whatsapp", "telegram"]
-	Channel []string `json:"channel" default:"sms,email,whatsapp,telegram"`
+	// Example: ["sms", "email"] or ["whatsapp"] or ["sms", "email", "whatsapp"]
+	Channel []string `json:"channel" default:"sms,email,whatsapp"`
 
 	// TemplateCode identifies which template to use for this notification (REQUIRED)
 	// Examples: "login_otp", "password_reset", "welcome", "invoice", etc.
@@ -23,18 +23,16 @@ type NotificationModel struct {
 	// Example: {"otp": "123456", "user_name": "John Doe", "expiry_minutes": "5"}
 	Variables map[string]string `json:"variables"`
 
-	// Recipient contains recipients for SMS, WhatsApp, Telegram (phone numbers)
+	// Recipient contains recipients for SMS, WhatsApp (phone numbers)
 	// Example: ["+1234567890", "+9876543210"]
-	// Used when Channel contains "sms", "whatsapp", or "telegram"
+	// Used when Channel contains "sms" or "whatsapp"
 	SMSRecipients []string `json:"smsRecipients,omitempty"`
 
 	// WhatsAppRecipients contains WhatsApp recipients
 	// Used when Channel contains "whatsapp"
 	WhatsAppRecipients []string `json:"whatsappRecipients,omitempty"`
 
-	// TelegramRecipients contains Telegram recipients
-	// Used when Channel contains "telegram"
-	TelegramRecipients []string `json:"telegramRecipients,omitempty"`
+
 
 	// MailRecipient contains email-specific recipient information
 	// Used when Channel contains "email"

@@ -252,7 +252,7 @@ type TenantKYCProviderConfig struct {
 
 type AppMessagingProvidersModel struct {
 	MessageProviderID string                    `bson:"messageProviderId,omitempty" json:"messageProviderId,omitempty"`
-	Channel           string                    `bson:"channel,omitempty" json:"channel,omitempty"` // Messaging channel (WhatsApp, Telegram, etc.)
+	Channel           string                    `bson:"channel,omitempty" json:"channel,omitempty"` // Messaging channel (WhatsApp, etc.)
 	UseTemplate       bool                      `bson:"useTemplate" json:"useTemplate"`
 	UseParent         bool                      `bson:"useParent,omitempty" json:"useParent,omitempty"`
 	TenantConfig      *TenantAppMessagingConfig `bson:"tenantConfig,omitempty" json:"tenantConfig,omitempty"`
@@ -325,7 +325,7 @@ type NotificationGateways struct {
 	SMS      []string `bson:"sms,omitempty" json:"sms,omitempty"`
 	Mail     []string `bson:"mail,omitempty" json:"mail,omitempty"`
 	WhatsApp []string `bson:"whatsapp,omitempty" json:"whatsapp,omitempty"`
-	Telegram []string `bson:"telegram,omitempty" json:"telegram,omitempty"`
+
 }
 
 type ExternalRadiusSettings struct {
