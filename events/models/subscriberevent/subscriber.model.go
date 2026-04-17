@@ -76,12 +76,13 @@ const (
 
 // KYCDocument represents a single KYC document (used in both Person and Address KYC).
 type KYCDocument struct {
-	DocumentType KYCDocumentType `bson:"documentType" json:"documentType"`
-	DocumentID   string          `bson:"documentId" json:"documentId"`
-	Status       KYCStatus       `bson:"status" json:"status"`
-	VerifiedAt   *time.Time      `bson:"verifiedAt,omitempty" json:"verifiedAt,omitempty"`
-	VerifiedBy   string          `bson:"verifiedBy,omitempty" json:"verifiedBy,omitempty"`
-	Notes        string          `bson:"notes,omitempty" json:"notes,omitempty"`
+	DocumentType          KYCDocumentType `bson:"documentType" json:"documentType"`
+	DocumentID          string          `bson:"documentId" json:"documentId"`
+	VerificationSessionID string        `bson:"verificationSessionId,omitempty" json:"verificationSessionId,omitempty"` // For validation during subscriber creation
+	Status              KYCStatus       `bson:"status" json:"status"`
+	VerifiedAt          *time.Time      `bson:"verifiedAt,omitempty" json:"verifiedAt,omitempty"`
+	VerifiedBy          string          `bson:"verifiedBy,omitempty" json:"verifiedBy,omitempty"`
+	Notes               string          `bson:"notes,omitempty" json:"notes,omitempty"`
 }
 
 // ── Person KYC (Subscriber Level) ───────────────────────────────────────────
