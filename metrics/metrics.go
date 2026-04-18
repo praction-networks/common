@@ -752,6 +752,47 @@ var (
 		},
 		[]string{"status"}, // "success", "failure"
 	)
+
+	OTPRequestsTotal = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "otp_requests_total",
+			Help: "Total OTP request operations",
+		},
+		[]string{"channel", "status"}, // status: success, failed
+	)
+
+	OTPVerificationsTotal = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "otp_verifications_total",
+			Help: "Total OTP verification operations",
+		},
+		[]string{"status"}, // status: success, failed
+	)
+
+	KYCUploadAttemptsTotal = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "kyc_upload_attempts_total",
+			Help: "Total KYC document upload attempts",
+		},
+		[]string{"side", "status", "reason"}, // status: success, failed
+	)
+
+	KYCWebhookEventsTotal = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "kyc_webhook_events_total",
+			Help: "Total KYC webhook events processed",
+		},
+		[]string{"provider", "event_type", "status"}, // status: received, processed, failed, ignored
+	)
+
+	KYCWebhookDuration = prometheus.NewHistogramVec(
+		prometheus.HistogramOpts{
+			Name:    "kyc_webhook_duration_seconds",
+			Help:    "KYC webhook processing duration in seconds",
+			Buckets: []float64{.01, .025, .05, .1, .25, .5, 1, 2.5, 5, 10, 15},
+		},
+		[]string{"provider", "event_type"},
+	)
 )
 
 // ResponseWriter tracks response status and size
@@ -930,6 +971,11 @@ func RegisterAllMetrics() {
 		KYCCircuitBreakerState,
 		KYCProviderErrors,
 		KYCAuditRecordsTotal,
+		OTPRequestsTotal,
+		OTPVerificationsTotal,
+		KYCUploadAttemptsTotal,
+		KYCWebhookEventsTotal,
+		KYCWebhookDuration,
 
 		// Default collectors
 		collectors.NewGoCollector(),
