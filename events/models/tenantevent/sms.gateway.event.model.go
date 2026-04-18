@@ -1,8 +1,5 @@
 package tenantevent
 
-// SMSType represents supported SMS gateway providers
-type SMSType string
-
 // SMSProviderInsertEventModel defines the model for SMS provider insert events
 type SMSProviderInsertEventModel struct {
 	ID                 string         `bson:"_id" json:"id"`

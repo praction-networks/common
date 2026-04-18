@@ -53,9 +53,9 @@ const (
 	ExternalRadiusCreatedSubject Subject = "externalradius.created"
 	ExternalRadiusUpdateSubject  Subject = "externalradius.updated"
 	ExternalRadiusDeleteSubject  Subject = "externalradius.deleted"
-	SMSGatewayCreatedSubject     Subject = "smsgateway.created"
-	SMSGatewayUpdateSubject      Subject = "smsgateway.updated"
-	SMSGatewayDeleteSubject      Subject = "smsgateway.deleted"
+	SMSGatewayCreatedSubject     Subject = "smsgateway.created" // DEPRECATED: Use SMSProviderCreatedSubject
+	SMSGatewayUpdateSubject      Subject = "smsgateway.updated" // DEPRECATED: Use SMSProviderUpdatedSubject
+	SMSGatewayDeleteSubject      Subject = "smsgateway.deleted" // DEPRECATED: Use SMSProviderDeletedSubject
 	DeviceCreatedSubject         Subject = "device.created"
 	DeviceUpdatedSubject         Subject = "device.updated"
 	DeviceDeletedSubject         Subject = "device.deleted"
@@ -84,9 +84,9 @@ const (
 	InventoryInwardPostedSubject  Subject = "inventory.inward.posted"
 
 	// Tenant Provider Binding Events
-	TenantSMSProviderBindingCreatedSubject     Subject = "tenant.smsbinding.created"
-	TenantSMSProviderBindingUpdatedSubject     Subject = "tenant.smsbinding.updated"
-	TenantSMSProviderBindingDeletedSubject     Subject = "tenant.smsbinding.deleted"
+	TenantSMSProviderBindingCreatedSubject     Subject = "tenant.smsbinding.created" // DEPRECATED: Use SMSProviderCreatedSubject
+	TenantSMSProviderBindingUpdatedSubject     Subject = "tenant.smsbinding.updated" // DEPRECATED: Use SMSProviderUpdatedSubject
+	TenantSMSProviderBindingDeletedSubject     Subject = "tenant.smsbinding.deleted" // DEPRECATED: Use SMSProviderDeletedSubject
 	TenantMailServerBindingCreatedSubject      Subject = "tenant.mailbinding.created"
 	TenantMailServerBindingUpdatedSubject      Subject = "tenant.mailbinding.updated"
 	TenantMailServerBindingDeletedSubject      Subject = "tenant.mailbinding.deleted"
@@ -105,6 +105,9 @@ const (
 	TenantESignProviderBindingCreatedSubject   Subject = "tenant.esignbinding.created"
 	TenantESignProviderBindingUpdatedSubject   Subject = "tenant.esignbinding.updated"
 	TenantESignProviderBindingDeletedSubject   Subject = "tenant.esignbinding.deleted"
+	SMSProviderCreatedSubject                  Subject = "tenant.smsprovider.created"
+	SMSProviderUpdatedSubject                  Subject = "tenant.smsprovider.updated"
+	SMSProviderDeletedSubject                  Subject = "tenant.smsprovider.deleted"
 
 	// Tenant Branding Events
 	TenantBrandingCreatedSubject Subject = "tenant.branding.created"
@@ -348,6 +351,9 @@ var Streams = map[StreamName]StreamMetadata{
 			TenantESignProviderBindingCreatedSubject,
 			TenantESignProviderBindingUpdatedSubject,
 			TenantESignProviderBindingDeletedSubject,
+			SMSProviderCreatedSubject,
+			SMSProviderUpdatedSubject,
+			SMSProviderDeletedSubject,
 			// Tenant Branding Events
 			TenantBrandingCreatedSubject,
 			TenantBrandingUpdatedSubject,

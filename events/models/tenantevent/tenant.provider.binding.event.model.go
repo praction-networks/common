@@ -1,44 +1,7 @@
 package tenantevent
 
-// ==================== SMS PROVIDER EVENTS ====================
-
-// TenantSMSProviderInsertEventModel represents an SMS provider creation event
-type TenantSMSProviderInsertEventModel struct {
-	ID                string                   `bson:"_id" json:"id"`
-	OwnerTenantID     string                   `bson:"ownerTenantId" json:"ownerTenantId"`
-	Channel           string                   `bson:"channel" json:"channel"`
-	Scope             string                   `bson:"scope" json:"scope"`
-	ExplicitTenantIDs []string                 `bson:"explicitTenantIds,omitempty" json:"explicitTenantIds,omitempty"`
-	TenantConfig      *TenantSMSProviderConfig `bson:"tenantConfig,omitempty" json:"tenantConfig,omitempty"`
-	Priority          int                      `bson:"priority" json:"priority"`
-	IsActive          bool                     `bson:"isActive" json:"isActive"`
-	FailoverOn        bool                     `bson:"failoverOn" json:"failoverOn"`
-	MaxRetries        int                      `bson:"maxRetries,omitempty" json:"maxRetries,omitempty"`
-	Weight            int                      `bson:"weight,omitempty" json:"weight,omitempty"`
-	Version           int                      `bson:"version" json:"version"`
-}
-
-// TenantSMSProviderUpdateEventModel represents an SMS provider update event
-type TenantSMSProviderUpdateEventModel struct {
-	ID                string                   `bson:"_id" json:"id"`
-	OwnerTenantID     string                   `bson:"ownerTenantId" json:"ownerTenantId"`
-	Channel           string                   `bson:"channel" json:"channel"`
-	Scope             string                   `bson:"scope,omitempty" json:"scope,omitempty"`
-	ExplicitTenantIDs []string                 `bson:"explicitTenantIds,omitempty" json:"explicitTenantIds,omitempty"`
-	TenantConfig      *TenantSMSProviderConfig `bson:"tenantConfig,omitempty" json:"tenantConfig,omitempty"`
-	Priority          int                      `bson:"priority,omitempty" json:"priority,omitempty"`
-	IsActive          *bool                    `bson:"isActive,omitempty" json:"isActive,omitempty"`
-	FailoverOn        *bool                    `bson:"failoverOn,omitempty" json:"failoverOn,omitempty"`
-	MaxRetries        int                      `bson:"maxRetries,omitempty" json:"maxRetries,omitempty"`
-	Weight            int                      `bson:"weight,omitempty" json:"weight,omitempty"`
-	Version           int                      `bson:"version" json:"version"`
-}
-
-// TenantSMSProviderDeleteEventModel represents an SMS provider deletion event
-type TenantSMSProviderDeleteEventModel struct {
-	ID            string `bson:"_id" json:"id"`
-	OwnerTenantID string `bson:"ownerTenantId" json:"ownerTenantId"`
-}
+// Note: SMS Provider Events have been moved to sms.provider.event.model.go
+// as part of the Unified Provider Architecture refactor.
 
 // ==================== MAIL SERVER BINDING EVENTS ====================
 
