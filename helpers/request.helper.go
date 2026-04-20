@@ -67,10 +67,12 @@ func RequestIDMiddleware(next http.Handler) http.Handler {
 	})
 }
 
-// TenantIDMiddleware extracts tenant ID from X-Tenant-ID header and adds it to request context
+// TenantIDMiddleware extracts tenant ID from X-Tenant-ID header and adds it to request context.
+// APISIX may append ancestor tenants, arriving as "ancestor, target" — we keep only the target
+// (last element) so downstream consumers get a single tenant ID.
 func TenantIDMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		tenantID := r.Header.Get("X-Tenant-ID")
+		tenantID := NormalizeTenantHeader(r.Header.Get("X-Tenant-ID"))
 		if tenantID != "" {
 			ctx := context.WithValue(r.Context(), TenantIDKey, tenantID)
 			next.ServeHTTP(w, r.WithContext(ctx))
@@ -78,6 +80,16 @@ func TenantIDMiddleware(next http.Handler) http.Handler {
 			next.ServeHTTP(w, r)
 		}
 	})
+}
+
+// NormalizeTenantHeader returns the target tenant ID from an X-Tenant-ID header value,
+// stripping any ancestor tenants that APISIX may have prepended.
+func NormalizeTenantHeader(headerValue string) string {
+	if headerValue == "" {
+		return ""
+	}
+	parts := strings.Split(headerValue, ",")
+	return strings.TrimSpace(parts[len(parts)-1])
 }
 
 // MetricsMiddleware captures metrics
