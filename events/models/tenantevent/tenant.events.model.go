@@ -202,27 +202,6 @@ type TenantSMSProviderConfig struct {
 	Metadata map[string]any `bson:"metadata" json:"metadata"`
 }
 
-type MailServerProviderTenantConfig struct {
-	ProviderID   string                  `bson:"providerID,omitempty" json:"providerID,omitempty"`
-	UseTemplate  bool                    `bson:"useTemplate" json:"useTemplate"`
-	UseParent    bool                    `bson:"useParent,omitempty" json:"useParent,omitempty"`
-	TenantConfig *TenantMailServerConfig `bson:"tenantConfig,omitempty" json:"tenantConfig,omitempty"`
-	Priority     int                     `bson:"priority" json:"priority"`
-	IsActive     bool                    `bson:"isActive" json:"isActive"`
-	FailoverOn   bool                    `bson:"failoverOn" json:"failoverOn"`
-	MaxRetries   int                     `bson:"maxRetries,omitempty" json:"maxRetries,omitempty"`
-	Weight       int                     `bson:"weight,omitempty" json:"weight,omitempty"`
-}
-
-type TenantMailServerConfig struct {
-	SortCode        MailProviderType `bson:"sortCode" json:"sortCode"`
-	SMTPConfig      *SMTPConfig      `bson:"smtp,omitempty" json:"smtp,omitempty"`
-	SendGridConfig  *SendGridConfig  `bson:"sendgrid,omitempty" json:"sendgrid,omitempty"`
-	MailgunConfig   *MailgunConfig   `bson:"mailgun,omitempty" json:"mailgun,omitempty"`
-	PostalConfig    *PostalConfig    `bson:"postal,omitempty" json:"postal,omitempty"`
-	MailchimpConfig *MailchimpConfig `bson:"mailchimp,omitempty" json:"mailchimp,omitempty"`
-}
-
 type TenantCDNProviderConfig struct {
 	SortCode           string                 `bson:"sortCode" json:"sortCode"`
 	CloudflareConfig   map[string]interface{} `bson:"cloudflare,omitempty" json:"cloudflare,omitempty"`

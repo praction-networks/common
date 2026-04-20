@@ -2,50 +2,9 @@ package tenantevent
 
 // Note: SMS Provider Events have been moved to sms.provider.event.model.go
 // as part of the Unified Provider Architecture refactor.
-
-// ==================== MAIL SERVER BINDING EVENTS ====================
-
-// TenantMailServerBindingInsertEventModel represents a Mail server binding creation event
-type TenantMailServerBindingInsertEventModel struct {
-	ID               string                  `bson:"_id" json:"id"`
-	TenantID         string                  `bson:"tenantId" json:"tenantId"`
-	ProviderID       string                  `bson:"providerId,omitempty" json:"providerId,omitempty"`
-	UseTemplate      bool                    `bson:"useTemplate" json:"useTemplate"`
-	UseParent        bool                    `bson:"useParent,omitempty" json:"useParent,omitempty"`
-	ParentTenantID   string                  `bson:"parentTenantId,omitempty" json:"parentTenantId,omitempty"` // Explicit parent tenant ID when useParent is true
-	TenantConfig     *TenantMailServerConfig `bson:"tenantConfig,omitempty" json:"tenantConfig,omitempty"`
-	Priority         int                     `bson:"priority" json:"priority"`
-	IsActive         bool                    `bson:"isActive" json:"isActive"`
-	FailoverOn       bool                    `bson:"failoverOn" json:"failoverOn"`
-	MaxRetries       int                     `bson:"maxRetries,omitempty" json:"maxRetries,omitempty"`
-	Weight           int                     `bson:"weight,omitempty" json:"weight,omitempty"`
-	ResolvedSortCode string                  `bson:"resolvedSortCode,omitempty" json:"resolvedSortCode,omitempty"`
-	Version          int                     `bson:"version" json:"version"`
-}
-
-// TenantMailServerBindingUpdateEventModel represents a Mail server binding update event
-type TenantMailServerBindingUpdateEventModel struct {
-	ID               string                  `bson:"_id" json:"id"`
-	TenantID         string                  `bson:"tenantId" json:"tenantId"`
-	ProviderID       string                  `bson:"providerId,omitempty" json:"providerId,omitempty"`
-	UseTemplate      bool                    `bson:"useTemplate" json:"useTemplate"`
-	UseParent        bool                    `bson:"useParent,omitempty" json:"useParent,omitempty"`
-	ParentTenantID   string                  `bson:"parentTenantId,omitempty" json:"parentTenantId,omitempty"` // Explicit parent tenant ID when useParent is true
-	TenantConfig     *TenantMailServerConfig `bson:"tenantConfig,omitempty" json:"tenantConfig,omitempty"`
-	Priority         int                     `bson:"priority" json:"priority"`
-	IsActive         bool                    `bson:"isActive" json:"isActive"`
-	FailoverOn       bool                    `bson:"failoverOn" json:"failoverOn"`
-	MaxRetries       int                     `bson:"maxRetries,omitempty" json:"maxRetries,omitempty"`
-	Weight           int                     `bson:"weight,omitempty" json:"weight,omitempty"`
-	ResolvedSortCode string                  `bson:"resolvedSortCode,omitempty" json:"resolvedSortCode,omitempty"`
-	Version          int                     `bson:"version" json:"version"`
-}
-
-// TenantMailServerBindingDeleteEventModel represents a Mail server binding deletion event
-type TenantMailServerBindingDeleteEventModel struct {
-	ID       string `bson:"_id" json:"id"`
-	TenantID string `bson:"tenantId" json:"tenantId"`
-}
+// Note: Mail Provider Events live in mail.provider.event.model.go — the old
+// MailServer binding event models were retired when the unified
+// TenantMailProvider shape replaced the two-table template+binding stack.
 
 // ==================== KYC PROVIDER BINDING EVENTS ====================
 

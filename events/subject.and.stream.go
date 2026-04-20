@@ -41,9 +41,6 @@ const (
 	KYCGatewayCreatedSubject     Subject = "kycgateway.created"
 	KYCGatewayUpdateSubject      Subject = "kycgateway.updated"
 	KYCGatewayDeleteSubject      Subject = "kycgateway.deleted"
-	MailServerCreatedSubject     Subject = "mailserver.created"
-	MailServerUpdateSubject      Subject = "mailserver.updated"
-	MailServerDeleteSubject      Subject = "mailserver.deleted"
 	CDNProviderCreatedSubject    Subject = "cdnprovider.created"
 	CDNProviderUpdateSubject     Subject = "cdnprovider.updated"
 	CDNProviderDeleteSubject     Subject = "cdnprovider.deleted"
@@ -81,9 +78,6 @@ const (
 	InventoryInwardPostedSubject  Subject = "inventory.inward.posted"
 
 	// Tenant Provider Binding Events
-	TenantMailServerBindingCreatedSubject      Subject = "tenant.mailbinding.created"
-	TenantMailServerBindingUpdatedSubject      Subject = "tenant.mailbinding.updated"
-	TenantMailServerBindingDeletedSubject      Subject = "tenant.mailbinding.deleted"
 	TenantKYCProviderBindingCreatedSubject     Subject = "tenant.kycbinding.created"
 	TenantKYCProviderBindingUpdatedSubject     Subject = "tenant.kycbinding.updated"
 	TenantKYCProviderBindingDeletedSubject     Subject = "tenant.kycbinding.deleted"
@@ -313,9 +307,6 @@ var Streams = map[StreamName]StreamMetadata{
 			KYCGatewayCreatedSubject,
 			KYCGatewayUpdateSubject,
 			KYCGatewayDeleteSubject,
-			MailServerCreatedSubject,
-			MailServerUpdateSubject,
-			MailServerDeleteSubject,
 			PaymentGatewayCreatedSubject,
 			PaymentGatewayUpdateSubject,
 			PaymentGatewayDeleteSubject,
@@ -326,9 +317,6 @@ var Streams = map[StreamName]StreamMetadata{
 			DeviceUpdatedSubject,
 			DeviceDeletedSubject,
 			// Tenant Provider Binding Events
-			TenantMailServerBindingCreatedSubject,
-			TenantMailServerBindingUpdatedSubject,
-			TenantMailServerBindingDeletedSubject,
 			CDNProviderCreatedSubject,
 			CDNProviderUpdateSubject,
 			CDNProviderDeleteSubject,
