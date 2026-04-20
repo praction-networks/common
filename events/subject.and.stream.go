@@ -102,6 +102,9 @@ const (
 	SMSProviderCreatedSubject                  Subject = "tenant.smsprovider.created"
 	SMSProviderUpdatedSubject                  Subject = "tenant.smsprovider.updated"
 	SMSProviderDeletedSubject                  Subject = "tenant.smsprovider.deleted"
+	MailProviderCreatedSubject                 Subject = "tenant.mailprovider.created"
+	MailProviderUpdatedSubject                 Subject = "tenant.mailprovider.updated"
+	MailProviderDeletedSubject                 Subject = "tenant.mailprovider.deleted"
 
 	// Tenant Branding Events
 	TenantBrandingCreatedSubject Subject = "tenant.branding.created"
@@ -347,6 +350,9 @@ var Streams = map[StreamName]StreamMetadata{
 			SMSProviderCreatedSubject,
 			SMSProviderUpdatedSubject,
 			SMSProviderDeletedSubject,
+			MailProviderCreatedSubject,
+			MailProviderUpdatedSubject,
+			MailProviderDeletedSubject,
 			// Tenant Branding Events
 			TenantBrandingCreatedSubject,
 			TenantBrandingUpdatedSubject,
