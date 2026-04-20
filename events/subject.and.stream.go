@@ -256,6 +256,11 @@ const (
 	BillingReceiptUpdatedSubject      Subject = "billing.receipt.updated"
 	BillingRefundCreatedSubject       Subject = "billing.refund.created"
 	BillingRefundUpdatedSubject       Subject = "billing.refund.updated"
+
+	// Billing Price Book CDC Events (from PostgreSQL WAL CDC)
+	BillingPriceBookCreatedSubject Subject = "billing.pricebook.created"
+	BillingPriceBookUpdatedSubject Subject = "billing.pricebook.updated"
+	BillingPriceBookDeletedSubject Subject = "billing.pricebook.deleted"
 )
 
 // Global Subjects - Cross-service events that any service can publish
@@ -596,6 +601,10 @@ var Streams = map[StreamName]StreamMetadata{
 			BillingReceiptUpdatedSubject,
 			BillingRefundCreatedSubject,
 			BillingRefundUpdatedSubject,
+			// Price Book CDC subjects
+			BillingPriceBookCreatedSubject,
+			BillingPriceBookUpdatedSubject,
+			BillingPriceBookDeletedSubject,
 		},
 	},
 }
