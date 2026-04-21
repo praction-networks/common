@@ -49,6 +49,7 @@ type PriceBookCDCEvent struct {
 	EffectiveFrom    time.Time          `json:"effectiveFrom"`
 	EffectiveTo      *time.Time         `json:"effectiveTo,omitempty"`
 	Items            []PriceBookItemCDC `json:"items"`
+	PlanLevelPrice   *float64           `json:"planLevelPrice,omitempty"`
 	TargetTenantID   *string            `json:"targetTenantId,omitempty"`
 	Status           string             `json:"status"`
 	CreatedAt        time.Time          `json:"createdAt"`
