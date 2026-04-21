@@ -88,3 +88,19 @@ type BroadbandAuthConfig struct {
 	StaticIP *StaticIPAuthConfig `json:"staticIp,omitempty" bson:"staticIp,omitempty"` // Static IP configuration (when AuthMethod is STATIC_IP)
 	DHCP     *DHCPAuthConfig     `json:"dhcp,omitempty" bson:"dhcp,omitempty"`         // DHCP configuration (when AuthMethod is DHCP)
 }
+
+// BroadbandInstallationAddress mirrors the installation address stored on the
+// broadband subscription document. Carried in events so downstream consumers
+// (radius, billing, shield) can resolve location without a service callback.
+type BroadbandInstallationAddress struct {
+	HouseNumber string `json:"houseNumber,omitempty" bson:"houseNumber,omitempty"`
+	Address1    string `json:"address1,omitempty" bson:"address1,omitempty"`
+	Address2    string `json:"address2,omitempty" bson:"address2,omitempty"`
+	Landmark    string `json:"landmark,omitempty" bson:"landmark,omitempty"`
+	Area        string `json:"area,omitempty" bson:"area,omitempty"`
+	Pincode     string `json:"pincode,omitempty" bson:"pincode,omitempty"`
+	City        string `json:"city,omitempty" bson:"city,omitempty"`
+	District    string `json:"district,omitempty" bson:"district,omitempty"`
+	State       string `json:"state,omitempty" bson:"state,omitempty"`
+	Country     string `json:"country,omitempty" bson:"country,omitempty"`
+}
