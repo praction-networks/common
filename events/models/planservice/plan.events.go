@@ -6,9 +6,8 @@ import (
 
 type PlanCreatedEvent struct {
 	ID                   string                `json:"id" bson:"_id"`
-	OwnerTenantID        *string               `json:"ownerTenantId,omitempty" bson:"ownerTenantId,omitempty"` // Tenant who created/owns this (has edit rights)
-	TenantIDs            []string              `json:"tenantIds,omitempty" bson:"tenantIds,omitempty"`         // Tenants who can access/use this plan (ISP, reseller, distributor, partner)
-	Scope                CatalogScope          `json:"scope" bson:"scope"`                                     // GLOBAL or TENANT
+	OwnerTenantID        *string               `json:"ownerTenantId" bson:"ownerTenantId"`             // Required. ISP or Enterprise tenant that owns this plan.
+	TenantIDs            []string              `json:"tenantIds,omitempty" bson:"tenantIds,omitempty"` // Tenants who can access/use this plan (owner is auto-included)
 	Code                 string                `json:"code" bson:"code"`
 	Name                 string                `json:"name" bson:"name"`
 	PlanType             PlanType              `json:"planType" bson:"planType"`
@@ -29,9 +28,8 @@ type PlanCreatedEvent struct {
 
 type PlanUpdateEvent struct {
 	ID                   string                `json:"id" bson:"_id"`
-	OwnerTenantID        *string               `json:"ownerTenantId,omitempty" bson:"ownerTenantId,omitempty"` // Tenant who created/owns this (has edit rights)
-	TenantIDs            []string              `json:"tenantIds,omitempty" bson:"tenantIds,omitempty"`         // Tenants who can access/use this plan (ISP, reseller, distributor, partner)
-	Scope                CatalogScope          `json:"scope" bson:"scope"`                                     // GLOBAL or TENANT
+	OwnerTenantID        *string               `json:"ownerTenantId" bson:"ownerTenantId"`             // Required. ISP or Enterprise tenant that owns this plan.
+	TenantIDs            []string              `json:"tenantIds,omitempty" bson:"tenantIds,omitempty"` // Tenants who can access/use this plan (owner is auto-included)
 	Code                 string                `json:"code" bson:"code"`
 	Name                 string                `json:"name" bson:"name"`
 	PlanType             PlanType              `json:"planType" bson:"planType"`
@@ -67,14 +65,12 @@ type PlanItem struct {
 
 // BillingCyclePricing defines pricing for a specific billing cycle
 type BillingCyclePricing struct {
-	// Max Broadband Subscriptions defines the maximum number of broadband subscriptions that can be created for the plan
-	MaxSimultaneousSessions   int          `json:"maxSimultaneousSessions" bson:"maxSimultaneousSessions"`
-	MaxBroadbandSubscriptions int          `json:"maxBroadbandSubscriptions" bson:"maxBroadbandSubscriptions"`
-	BillingCycle              BillingCycle `json:"billingCycle" bson:"billingCycle"`                   // Quantity + Unit (e.g., {quantity: 1, unit: "MONTH"})
-	BasePrice                 float64      `json:"basePrice" bson:"basePrice"`                         // Base price for this cycle
-	DiscountPct               *float64     `json:"discountPct,omitempty" bson:"discountPct,omitempty"` // Optional discount percentage
-	IsDefault                 bool         `json:"isDefault" bson:"isDefault"`                         // Mark one as default
-	IsActive                  bool         `json:"isActive" bson:"isActive"`                           // Enable/disable this cycle
+	MaxSimultaneousSessions int          `json:"maxSimultaneousSessions" bson:"maxSimultaneousSessions"`
+	BillingCycle            BillingCycle `json:"billingCycle" bson:"billingCycle"`                   // Quantity + Unit (e.g., {quantity: 1, unit: "MONTH"})
+	BasePrice               float64      `json:"basePrice" bson:"basePrice"`                         // Base price for this cycle
+	DiscountPct             *float64     `json:"discountPct,omitempty" bson:"discountPct,omitempty"` // Optional discount percentage
+	IsDefault               bool         `json:"isDefault" bson:"isDefault"`                         // Mark one as default
+	IsActive                bool         `json:"isActive" bson:"isActive"`                           // Enable/disable this cycle
 }
 
 // HotspotBillingConfig defines connection time management for HOTSPOT plan subtype

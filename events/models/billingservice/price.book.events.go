@@ -36,6 +36,10 @@ type VolumeDiscountCDC struct {
 
 // PriceBookCDCEvent is the payload published by billing-service CDC for price book changes.
 // This is consumed by plan-service to maintain a local cache of price books.
+//
+// Leaf-tenant pricing fields (BasePrice, CommissionAmount, CommissionType, AgrPolicy)
+// are billing-owned — billing is the source of truth for commission/AGR configuration
+// and plan-service stores them as a read-only projection for catalog display.
 type PriceBookCDCEvent struct {
 	ID               string             `json:"id"`
 	Scope            string             `json:"scope"`
@@ -51,10 +55,17 @@ type PriceBookCDCEvent struct {
 	Items            []PriceBookItemCDC `json:"items"`
 	PlanLevelPrice   *float64           `json:"planLevelPrice,omitempty"`
 	TargetTenantID   *string            `json:"targetTenantId,omitempty"`
-	Status           string             `json:"status"`
-	CreatedAt        time.Time          `json:"createdAt"`
-	CreatedBy        string             `json:"createdBy"`
-	UpdatedAt        time.Time          `json:"updatedAt"`
-	UpdatedBy        string             `json:"updatedBy"`
-	Version          int                `json:"version"`
+
+	// Leaf-tenant pricing (billing-owned, read-only on plan side).
+	BasePrice        *int64  `json:"basePrice,omitempty"`        // customer sell price in paise
+	CommissionAmount *int64  `json:"commissionAmount,omitempty"` // FIXED paise or PERCENT basis points
+	CommissionType   *string `json:"commissionType,omitempty"`   // FIXED | PERCENT
+	AgrPolicy        string  `json:"agrPolicy,omitempty"`        // NONE | ONLINE_ONLY | ALL
+
+	Status    string    `json:"status"`
+	CreatedAt time.Time `json:"createdAt"`
+	CreatedBy string    `json:"createdBy"`
+	UpdatedAt time.Time `json:"updatedAt"`
+	UpdatedBy string    `json:"updatedBy"`
+	Version   int       `json:"version"`
 }
