@@ -24,6 +24,7 @@ type PlanCreatedEvent struct {
 	Status                  Status                `json:"status" bson:"status"`
 	NASAttributes           NASAttributes         `json:"nasAttributes,omitempty" bson:"nasAttributes,omitempty"`   // RADIUS attributes per NAS vendor type
 	PlanDefaultFor          []string              `json:"planDefaultFor,omitempty" bson:"planDefaultFor,omitempty"` // Whether this is the default plan for the tenant
+	TaxConfig               *PlanTaxConfig        `json:"taxConfig,omitempty" bson:"taxConfig,omitempty"`           // Tax treatment (inclusive/exclusive, category, mode) — snapshotted onto PriceBook at creation time
 	Version                 int                   `json:"version" bson:"version"`
 }
 
@@ -47,6 +48,7 @@ type PlanUpdateEvent struct {
 	Status                  Status                `json:"status" bson:"status"`
 	NASAttributes           NASAttributes         `json:"nasAttributes,omitempty" bson:"nasAttributes,omitempty"`   // RADIUS attributes per NAS vendor type
 	PlanDefaultFor          []string              `json:"planDefaultFor,omitempty" bson:"planDefaultFor,omitempty"` // Whether this is the default plan for the tenant
+	TaxConfig               *PlanTaxConfig        `json:"taxConfig,omitempty" bson:"taxConfig,omitempty"`           // Tax treatment (inclusive/exclusive, category, mode) — snapshotted onto PriceBook at creation time
 	Version                 int                   `json:"version" bson:"version"`
 }
 
@@ -63,6 +65,38 @@ type PlanItem struct {
 	ProductCode string       `json:"productCode" bson:"productCode"`                 // Product code for display/reference
 	BasePrice   *float64     `json:"basePrice,omitempty" bson:"basePrice,omitempty"` // Base price for this product in the plan
 	Role        PlanItemRole `json:"role" bson:"role"`                               // "BASE", "ADDON", "BUNDLE", "OPTIONAL"
+}
+
+// PlanTaxConfig declares how tax applies to a plan's base prices. It lives
+// at plan level (alongside ProductTaxConfig on products) so billing-service
+// can reason about tax without loading every product in the plan. PriceBooks
+// snapshot the resolved rate from this config at creation time so invoice
+// math remains stable even if the plan's tax treatment changes later.
+type PlanTaxConfig struct {
+	// IsTaxable — false means every billing event against this plan is
+	// zero-tax. When false, all other fields are ignored.
+	IsTaxable bool `json:"isTaxable" bson:"isTaxable"`
+
+	// Mode — DYNAMIC resolves the rate at billing time from the plan's
+	// primary product category HSN/SAC plus the tenant's country/state.
+	// FIXED uses FixedTaxRateID verbatim.
+	Mode TaxMode `json:"mode,omitempty" bson:"mode,omitempty"`
+
+	// TaxCategory — identifier that matches a key in the tenant's
+	// billing-service TaxConfiguration.TaxRates JSONB (e.g.
+	// "TELECOM_SERVICE", "GST_18"). Snapshotted onto PriceBook so billing
+	// never needs to guess.
+	TaxCategory string `json:"taxCategory,omitempty" bson:"taxCategory,omitempty"`
+
+	// FixedTaxRateID — when Mode=FIXED, points to a specific TaxRateModel
+	// in plan-service.
+	FixedTaxRateID *string `json:"fixedTaxRateId,omitempty" bson:"fixedTaxRateId,omitempty"`
+
+	// PriceIsInclusive — true means every basePrice on the plan (and on
+	// any PriceBook created from it) already includes tax; billing splits
+	// the tax component out at invoice time. False means tax is added on
+	// top.
+	PriceIsInclusive bool `json:"priceIsInclusive" bson:"priceIsInclusive"`
 }
 
 // BillingCyclePricing defines pricing for a specific billing cycle
