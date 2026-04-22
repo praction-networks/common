@@ -2,6 +2,22 @@ package planservice
 
 import "time"
 
+// PricingTierEvent represents a pricing tier in events (TIERED pricing model).
+type PricingTierEvent struct {
+	MinQty    int     `json:"minQty" bson:"minQty"`
+	MaxQty    *int    `json:"maxQty,omitempty" bson:"maxQty,omitempty"`
+	UnitPrice float64 `json:"unitPrice" bson:"unitPrice"`
+	FlatFee   float64 `json:"flatFee,omitempty" bson:"flatFee,omitempty"`
+}
+
+// VolumeDiscountEvent represents a volume discount in events (VOLUME pricing model).
+type VolumeDiscountEvent struct {
+	MinQty      int     `json:"minQty" bson:"minQty"`
+	MaxQty      *int    `json:"maxQty,omitempty" bson:"maxQty,omitempty"`
+	DiscountPct float64 `json:"discountPct,omitempty" bson:"discountPct,omitempty"`
+	DiscountAmt float64 `json:"discountAmt,omitempty" bson:"discountAmt,omitempty"`
+}
+
 // PriceBookItemEvent represents a price book item in events
 type PriceBookItemEvent struct {
 	ProductID       string                `json:"productId" bson:"productId"`

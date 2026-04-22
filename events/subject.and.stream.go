@@ -167,10 +167,7 @@ const (
 	VoucherDetailsSubject                         Subject = "captiveportal.voucher.details"
 
 	// Plan Service Events
-	// Plan Tenant Pricing Events (CRITICAL - consumed by billing/subscription services)
-	PlanTenantPricingCreatedSubject Subject = "plan.tenant.pricing.created"
-	PlanTenantPricingUpdatedSubject Subject = "plan.tenant.pricing.updated"
-	PlanTenantPricingDeletedSubject Subject = "plan.tenant.pricing.deleted"
+	// PlanTenantPricing events removed — feature deprecated.
 	// Plan Events (consumed by subscriber/billing services)
 	PlanCreatedSubject Subject = "plan.created"
 	PlanUpdatedSubject Subject = "plan.updated"
@@ -474,10 +471,6 @@ var Streams = map[StreamName]StreamMetadata{
 		Name:        PlanStream,
 		Description: "Stream for plan service events",
 		Subjects: []Subject{
-			// Plan Tenant Pricing Events (CRITICAL - consumed by billing/subscription services)
-			PlanTenantPricingCreatedSubject,
-			PlanTenantPricingUpdatedSubject,
-			PlanTenantPricingDeletedSubject,
 			// Plan Events (consumed by subscriber/billing services)
 			PlanCreatedSubject,
 			PlanUpdatedSubject,
