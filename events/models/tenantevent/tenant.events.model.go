@@ -105,6 +105,12 @@ type GSTModel struct {
 	GSTIN      string    `bson:"gstin,omitempty" json:"gstin,omitempty"`
 	IsVerified bool      `bson:"isVerified,omitempty" json:"isVerified,omitempty"`
 	VerifiedAt time.Time `bson:"verifiedAt,omitempty" json:"verifiedAt,omitempty"`
+	// IsDefault — when true, this GST entry is used for invoices where
+	// the subscriber's state doesn't match any of the tenant's
+	// registrations. Exactly one entry per tenant should carry this flag;
+	// billing-service's resolver falls back to the first entry if none
+	// is explicitly marked.
+	IsDefault bool `bson:"isDefault,omitempty" json:"isDefault,omitempty"`
 }
 
 type TenantDeleteEventModel struct {
