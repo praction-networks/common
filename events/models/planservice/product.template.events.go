@@ -38,5 +38,11 @@ type ProductTemplateEvent struct {
 	TaxRateID *string             `json:"taxRateId,omitempty"`
 	Tax       *ProductTaxSnapshot `json:"tax,omitempty"`
 
+	// PriceIsInclusive — declares whether Product.Price already contains
+	// GST (true) or GST is added on top at billing time (false). Flows
+	// through plan → price book → invoice so the interpretation stays
+	// consistent catalogue-through-billing.
+	PriceIsInclusive bool `json:"priceIsInclusive"`
+
 	Version int `json:"version"`
 }
