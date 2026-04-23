@@ -185,9 +185,9 @@ const (
 	CouponUpdatedSubject Subject = "coupon.updated"
 	CouponDeletedSubject Subject = "coupon.deleted"
 	// Product Template Events (consumed by inventory-service for cache sync)
-	ProductTemplateCreatedSubject Subject = "product.template.created"
-	ProductTemplateUpdatedSubject Subject = "product.template.updated"
-	ProductTemplateDeletedSubject Subject = "product.template.deleted"
+	ProductCreatedSubject Subject = "product.created"
+	ProductUpdatedSubject Subject = "product.updated"
+	ProductDeletedSubject Subject = "product.deleted"
 
 	// Ticket Service Events
 	TicketCreatedSubject                  Subject = "ticket.created"
@@ -488,9 +488,9 @@ var Streams = map[StreamName]StreamMetadata{
 			CouponUpdatedSubject,
 			CouponDeletedSubject,
 			// Product Template Events (consumed by inventory-service)
-			ProductTemplateCreatedSubject,
-			ProductTemplateUpdatedSubject,
-			ProductTemplateDeletedSubject,
+			ProductCreatedSubject,
+			ProductUpdatedSubject,
+			ProductDeletedSubject,
 		},
 	},
 	TicketStream: {
