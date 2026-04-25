@@ -79,9 +79,11 @@ func NewListener(
 		},
 		InProgressTick: 0, // will default to AckWait/2 below
 
-		// Preserve historical behavior: per-message success log at Info.
-		// Operators flip this to false per-service in the noise-reduction phase.
-		VerboseSuccessLog: true,
+		// Default per-message success log to Debug. Errors/metadata-failures
+		// stay at Error, so operators still see all real problems; the
+		// successful-processing line is high-volume noise that belongs in
+		// Debug builds. Set to true on the listener instance to opt back in.
+		VerboseSuccessLog: false,
 
 		stopCh: make(chan struct{}),
 	}
