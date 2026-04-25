@@ -125,7 +125,7 @@ func SystemLevelGuardMiddleware(cache hierarchy.TenantHierarchyCache) func(http.
 				// Assuming cache is source of truth for "System" flag.
 				// However, if cache is partial, this might be issue.
 				// But we load FULL cache at startup.
-				logger.Warn("Access denied: Tenant not found in hierarchy cache during system check", "tenantID", contextTenantID)
+				logger.Warn("Access denied: Tenant not found in hierarchy cache during system check", "tenant_id", contextTenantID)
 				helpers.HandleAppError(w, appError.New(
 					appError.UnauthorizedAccess,
 					"Access denied: Tenant verification failed",
@@ -252,7 +252,7 @@ func TenantSetupGuardMiddleware(cache hierarchy.TenantHierarchyCache) func(http.
 			tenantData, exists := cache.Get(contextTenantID)
 			if !exists {
 				// Not in cache — allow through (cache might not be populated yet)
-				logger.Debug("Tenant not found in hierarchy cache, skipping setup guard", "tenantID", contextTenantID)
+				logger.Debug("Tenant not found in hierarchy cache, skipping setup guard", "tenant_id", contextTenantID)
 				next.ServeHTTP(w, r)
 				return
 			}
@@ -274,7 +274,7 @@ func TenantSetupGuardMiddleware(cache hierarchy.TenantHierarchyCache) func(http.
 
 			// 6. Setup not complete — reject
 			logger.Warn("API call rejected: tenant setup not complete",
-				"tenantID", contextTenantID,
+				"tenant_id", contextTenantID,
 				"method", r.Method,
 				"path", path)
 

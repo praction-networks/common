@@ -179,7 +179,7 @@ func (c *InMemoryCache) handleEvent(ctx context.Context, msg events.Event[json.R
 				IsSystem:      event.IsSystem,
 				SetupComplete: event.SetupComplete,
 			})
-			logger.Debug("Cache updated from TenantCreated", "tenantID", event.ID)
+			logger.Debug("Cache updated from TenantCreated", "tenant_id", event.ID)
 		}
 	case events.TenantUpdatedSubject:
 		var event tenantevent.TenantUpdateEventModel
@@ -202,13 +202,13 @@ func (c *InMemoryCache) handleEvent(ctx context.Context, msg events.Event[json.R
 				existing.SetupComplete = *event.SetupComplete
 			}
 			c.Set(existing)
-			logger.Debug("Cache updated from TenantUpdated", "tenantID", event.ID)
+			logger.Debug("Cache updated from TenantUpdated", "tenant_id", event.ID)
 		}
 	case events.TenantDeletedSubject:
 		var event tenantevent.TenantDeleteEventModel
 		if err = json.Unmarshal(msg.Data, &event); err == nil {
 			c.Remove(event.ID)
-			logger.Debug("Cache removed from TenantDeleted", "tenantID", event.ID)
+			logger.Debug("Cache removed from TenantDeleted", "tenant_id", event.ID)
 		}
 	}
 

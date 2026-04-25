@@ -91,11 +91,11 @@ func getTenantHierarchyFromCache(ctx context.Context, redisClient RedisClientInt
 
 	var tenantData TenantHierarchyData
 	if err := json.Unmarshal([]byte(cachedData), &tenantData); err != nil {
-		logger.Warn("Failed to unmarshal cached tenant hierarchy data", err, "tenantID", tenantID)
+		logger.Warn("Failed to unmarshal cached tenant hierarchy data", err, "tenant_id", tenantID)
 		return nil
 	}
 
-	logger.Debug("Tenant hierarchy cache hit", "tenantID", tenantID)
+	logger.Debug("Tenant hierarchy cache hit", "tenant_id", tenantID)
 	return &tenantData
 }
 
@@ -113,7 +113,7 @@ func setTenantHierarchyCache(_ context.Context, redisClient RedisClientInterface
 		cacheKey := TenantHierarchyCachePrefix + tenantID
 		cacheData, err := json.Marshal(data)
 		if err != nil {
-			logger.Warn("Failed to marshal tenant hierarchy for cache", err, "tenantID", tenantID)
+			logger.Warn("Failed to marshal tenant hierarchy for cache", err, "tenant_id", tenantID)
 			return
 		}
 
@@ -122,9 +122,9 @@ func setTenantHierarchyCache(_ context.Context, redisClient RedisClientInterface
 			return
 		}
 		if err := cmd.Err(); err != nil {
-			logger.Warn("Failed to cache tenant hierarchy data", err, "tenantID", tenantID)
+			logger.Warn("Failed to cache tenant hierarchy data", err, "tenant_id", tenantID)
 		} else {
-			logger.Debug("Cached tenant hierarchy data", "tenantID", tenantID, "ttl", TenantHierarchyCacheTTL)
+			logger.Debug("Cached tenant hierarchy data", "tenant_id", tenantID, "ttl", TenantHierarchyCacheTTL)
 		}
 	}()
 }
@@ -368,10 +368,10 @@ func InvalidateTenantHierarchyCache(ctx context.Context, redisClient RedisClient
 		return nil
 	}
 	if err := cmd.Err(); err != nil {
-		logger.Warn("Failed to invalidate tenant hierarchy cache", err, "tenantID", tenantID)
+		logger.Warn("Failed to invalidate tenant hierarchy cache", err, "tenant_id", tenantID)
 		return err
 	}
 
-	logger.Debug("Invalidated tenant hierarchy cache", "tenantID", tenantID)
+	logger.Debug("Invalidated tenant hierarchy cache", "tenant_id", tenantID)
 	return nil
 }
