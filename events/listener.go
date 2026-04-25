@@ -32,6 +32,17 @@ type Listener struct {
 	// Optional: if we detect unrecoverable payload issues (e.g., JSON syntax), handle and drop
 	PoisonHandler func(ctx context.Context, subject string, raw []byte, meta *jetstream.MsgMetadata)
 
+	// HandlerName is an optional stable identifier for the handler attached to
+	// this listener (e.g. "tenant.created"). When set it is included in every
+	// per-message log so operators can attribute outcomes without parsing the
+	// subject string. Empty by default; safe to leave unset.
+	HandlerName string
+
+	// VerboseSuccessLog controls whether per-message success is logged at Info
+	// (true) or Debug (false). Default is true to preserve historical behavior;
+	// the cluster-wide flip to Debug is staged in a later phase.
+	VerboseSuccessLog bool
+
 	stopCh chan struct{}
 }
 
@@ -67,7 +78,12 @@ func NewListener(
 			1 * time.Minute, 2 * time.Minute, 5 * time.Minute,
 		},
 		InProgressTick: 0, // will default to AckWait/2 below
-		stopCh:         make(chan struct{}),
+
+		// Preserve historical behavior: per-message success log at Info.
+		// Operators flip this to false per-service in the noise-reduction phase.
+		VerboseSuccessLog: true,
+
+		stopCh: make(chan struct{}),
 	}
 }
 
@@ -137,6 +153,41 @@ func (l *Listener) Listen(ctx context.Context) error {
 	return nil
 }
 
+// logHandlerOutcome emits a structured per-message outcome with a stable shape.
+// stage names a step in the consume path ("metadata", "decode", "handle", "ack",
+// "success") so dashboards can break failure rates down by stage. err is logged
+// positionally (auto-extracted to the "error" field) when non-nil.
+//
+// On success at the "success" stage the line is emitted at Info when
+// VerboseSuccessLog is true and Debug otherwise; every other stage with a
+// non-nil err is logged at Error. Extra fields are appended verbatim.
+func (l *Listener) logHandlerOutcome(stage, subject string, sequence interface{}, dur time.Duration, err error, extra ...interface{}) {
+	args := []interface{}{
+		logger.KeyStream, string(l.StreamName),
+		logger.KeySubject, subject,
+		logger.KeySequence, sequence,
+		"stage", stage,
+	}
+	if l.HandlerName != "" {
+		args = append(args, logger.KeyHandler, l.HandlerName)
+	}
+	if dur > 0 {
+		args = append(args, logger.KeyDurationMs, dur.Milliseconds())
+	}
+	args = append(args, extra...)
+
+	if err != nil {
+		args = append(args, err)
+		logger.Error("NATS message handling failed", args...)
+		return
+	}
+	if stage == "success" && !l.VerboseSuccessLog {
+		logger.Debug("Processed message successfully", args...)
+		return
+	}
+	logger.Info("Processed message successfully", args...)
+}
+
 func (l *Listener) processMessage(ctx context.Context, msg jetstream.Msg) {
 	subject := msg.Subject()
 	streamName := string(l.StreamName)
@@ -148,7 +199,7 @@ func (l *Listener) processMessage(ctx context.Context, msg jetstream.Msg) {
 
 	meta, err := msg.Metadata()
 	if err != nil {
-		logger.Error("Failed to get message metadata", err, "Subject", subject)
+		l.logHandlerOutcome("metadata", subject, 0, 0, err)
 		metrics.RecordNATSFailure(streamName, subject, err)
 		_ = msg.Nak()
 		return
@@ -176,7 +227,7 @@ func (l *Listener) processMessage(ctx context.Context, msg jetstream.Msg) {
 	var event Event[json.RawMessage]
 	if err := json.Unmarshal(msg.Data(), &event); err != nil {
 		close(done)
-		logger.Error("Failed to unmarshal message", err, "Subject", subject, "Sequence", meta.Sequence)
+		l.logHandlerOutcome("decode", subject, meta.Sequence, 0, err)
 		metrics.RecordNATSFailure(streamName, subject, err)
 
 		// Poison: let a hook capture & persist, then Ack to stop redelivery loop.
@@ -193,7 +244,7 @@ func (l *Listener) processMessage(ctx context.Context, msg jetstream.Msg) {
 	// handle
 	if err := l.OnMessageFunc(ctx, event); err != nil {
 		close(done)
-		logger.Error("OnMessageFunc returned error", err, "Subject", subject, "Sequence", meta.Sequence)
+		l.logHandlerOutcome("handle", subject, meta.Sequence, time.Since(start), err)
 		metrics.RecordNATSFailure(streamName, subject, err)
 
 		// Use NakWithDelay to control cadence (BackOff is only for AckWait timeouts)
@@ -204,7 +255,7 @@ func (l *Listener) processMessage(ctx context.Context, msg jetstream.Msg) {
 	// ack
 	if err := msg.Ack(); err != nil {
 		close(done)
-		logger.Error("Failed to acknowledge message", err, "Subject", subject, "Sequence", meta.Sequence)
+		l.logHandlerOutcome("ack", subject, meta.Sequence, time.Since(start), err)
 		metrics.RecordNATSFailure(streamName, subject, err)
 		return
 	}
@@ -216,8 +267,7 @@ func (l *Listener) processMessage(ctx context.Context, msg jetstream.Msg) {
 	duration := time.Since(start)
 	metrics.RecordNATSProcessingTime(streamName, subject, duration)
 
-	logger.Info("Processed message successfully",
-		"Stream", streamName, "Subject", subject, "Sequence", meta.Sequence, "Duration", duration)
+	l.logHandlerOutcome("success", subject, meta.Sequence, duration, nil)
 }
 
 func (l *Listener) nakWithPolicy(msg jetstream.Msg, meta *jetstream.MsgMetadata) {

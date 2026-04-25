@@ -28,6 +28,35 @@ var (
 )
 
 // ============================================
+// CANONICAL FIELD KEYS
+// ============================================
+//
+// Use these constants when adding new logger calls so field names stay
+// consistent across services. Existing call sites with string literals
+// remain valid; the migration to constants is mechanical and tracked
+// separately in the field-name rename phase.
+const (
+	KeyTenantID    = "tenant_id"
+	KeyUserID      = "user_id"
+	KeyRequestID   = "request_id"
+	KeyTraceID     = "trace_id"
+	KeySubjectID   = "subject_id"
+	KeyResource    = "resource"
+	KeyAction      = "action"
+	KeyComponent   = "component"
+	KeyProvider    = "provider"
+	KeyStream      = "stream"
+	KeySubject     = "subject"
+	KeySequence    = "sequence"
+	KeyDurationMs  = "duration_ms"
+	KeyAttempt     = "attempt"
+	KeyHandler     = "handler"
+	KeyEventType   = "event_type"
+	KeyServiceName = "service"
+	KeyVersion     = "version"
+)
+
+// ============================================
 // GDPR & COMPLIANCE CONFIGURATION
 // ============================================
 
