@@ -66,12 +66,20 @@ const (
 	InventoryStockLowSubject         Subject = "inventory.stock.low"
 
 	// Inventory Asset Lifecycle Events
-	InventoryAssetAssignedSubject  Subject = "inventory.asset.assigned"
-	InventoryAssetInstalledSubject Subject = "inventory.asset.installed"
-	InventoryAssetReturnedSubject  Subject = "inventory.asset.returned"
-	InventoryAssetFaultySubject    Subject = "inventory.asset.faulty"
-	InventoryAssetRMASubject       Subject = "inventory.asset.rma"
-	InventoryAssetScrappedSubject  Subject = "inventory.asset.scrapped"
+	InventoryAssetAssignedSubject         Subject = "inventory.asset.assigned"
+	InventoryAssetInstalledSubject        Subject = "inventory.asset.installed"
+	InventoryAssetReturnedSubject         Subject = "inventory.asset.returned"
+	InventoryAssetFaultySubject           Subject = "inventory.asset.faulty"
+	InventoryAssetRMASubject              Subject = "inventory.asset.rma"
+	InventoryAssetScrappedSubject         Subject = "inventory.asset.scrapped"
+	// New asset lifecycle subjects — full ONT/CPE flow: creation,
+	// stock-tenant transfer, condition re-grading via QC, and saga
+	// compensation when subscriber-side cpe_requested can't be
+	// satisfied by inventory-side authority.
+	InventoryAssetCreatedSubject          Subject = "inventory.asset.created"
+	InventoryAssetTenantAssignedSubject   Subject = "inventory.asset.tenant_assigned"
+	InventoryAssetConditionChangedSubject Subject = "inventory.asset.condition_changed"
+	InventoryAssetAssignmentFailedSubject Subject = "inventory.asset.assignment_failed"
 
 	// Inventory Inward Events
 	InventoryInwardCreatedSubject Subject = "inventory.inward.created"
@@ -131,6 +139,14 @@ const (
 	BroadbandSubscriptionCreatedSubject Subject = "subscriber.broadband.created"
 	BroadbandSubscriptionUpdatedSubject Subject = "subscriber.broadband.updated"
 	BroadbandSubscriptionDeletedSubject Subject = "subscriber.broadband.deleted"
+
+	// Subscriber CPE assignment-saga events. Apply to BOTH broadband and
+	// SMB subscriptions (discriminated via SubscriptionType field on the
+	// payload). Published by subscriber-service whenever an operator
+	// requests / releases a CPE binding; consumed by inventory-service
+	// which makes the authoritative atomic transition on the asset.
+	SubscriberCpeRequestedSubject Subject = "subscriber.cpe.requested"
+	SubscriberCpeReleasedSubject  Subject = "subscriber.cpe.released"
 
 	// Hotspot Profile Events
 	HotspotProfileCreatedSubject Subject = "subscriber.hotspot.created"
@@ -388,7 +404,11 @@ var Streams = map[StreamName]StreamMetadata{
 			InventoryStockProvisionedSubject,
 			InventoryStockLowSubject,
 			// Asset lifecycle events
+			InventoryAssetCreatedSubject,
+			InventoryAssetTenantAssignedSubject,
+			InventoryAssetConditionChangedSubject,
 			InventoryAssetAssignedSubject,
+			InventoryAssetAssignmentFailedSubject,
 			InventoryAssetInstalledSubject,
 			InventoryAssetReturnedSubject,
 			InventoryAssetFaultySubject,
@@ -426,6 +446,9 @@ var Streams = map[StreamName]StreamMetadata{
 			BroadbandSubscriptionCreatedSubject,
 			BroadbandSubscriptionUpdatedSubject,
 			BroadbandSubscriptionDeletedSubject,
+			// CPE assignment-saga events (cross-domain — broadband + SMB)
+			SubscriberCpeRequestedSubject,
+			SubscriberCpeReleasedSubject,
 			// Hotspot Profile Events
 			HotspotProfileCreatedSubject,
 			HotspotProfileUpdatedSubject,
