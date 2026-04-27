@@ -32,6 +32,15 @@ type TenantInsertEventModel struct {
 	AdminLoginEmail  string          `bson:"adminLoginEmail,omitempty" json:"adminLoginEmail,omitempty"`
 	PermanentAddress AddressModel    `bson:"permanentAddress" json:"permanentAddress"`
 	CurrentAddress   AddressModel    `bson:"currentAddress" json:"currentAddress"`
+
+	// Currency — ISO 4217 code carried explicitly so billing-service's
+	// TenantCache doesn't have to re-derive it from the address country
+	// on every event. Empty for child tenants (Reseller/Distributor/
+	// Branch/etc.) — their currency is inherited from the root
+	// ISP/Enterprise via CurrencyResolver's parent walk. Only the root
+	// tenant types carry an explicit value.
+	Currency string `bson:"currency,omitempty" json:"currency,omitempty"`
+
 	TenantGST        []GSTModel      `bson:"tenantGST,omitempty" json:"tenantGST,omitempty"`
 	TenantPAN        PANModel        `bson:"tenantPAN,omitempty" json:"tenantPAN,omitempty"`
 	TenantTAN        TANModel        `bson:"tenantTAN,omitempty" json:"tenantTAN,omitempty"`
@@ -80,6 +89,13 @@ type TenantUpdateEventModel struct {
 	AdminLoginEmail  string           `bson:"adminLoginEmail,omitempty" json:"adminLoginEmail,omitempty"`
 	PermanentAddress *AddressModel    `bson:"permanentAddress,omitempty" json:"permanentAddress,omitempty"`
 	CurrentAddress   *AddressModel    `bson:"currentAddress,omitempty" json:"currentAddress,omitempty"`
+
+	// Currency — pointer so an absent field means "no change", an
+	// empty-string pointer would mean "clear" (not used today). Set on
+	// root-tenant currency edits and cascaded as a fanout to every
+	// descendant so caches drop into sync without manual reconciliation.
+	Currency *string `bson:"currency,omitempty" json:"currency,omitempty"`
+
 	TenantGST        []GSTModel       `bson:"tenantGST,omitempty" json:"tenantGST,omitempty"`
 	TenantPAN        *PANModel        `bson:"tenantPAN,omitempty" json:"tenantPAN,omitempty"`
 	TenantTAN        *TANModel        `bson:"tenantTAN,omitempty" json:"tenantTAN,omitempty"`
