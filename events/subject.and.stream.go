@@ -54,6 +54,9 @@ const (
 	DeviceCreatedSubject         Subject = "device.created"
 	DeviceUpdatedSubject         Subject = "device.updated"
 	DeviceDeletedSubject         Subject = "device.deleted"
+	OLTCreatedSubject            Subject = "olt.created"
+	OLTUpdatedSubject            Subject = "olt.updated"
+	OLTDeletedSubject            Subject = "olt.deleted"
 
 	// Inventory Service Events
 	InventoryDeviceCreatedSubject Subject = "inventory.device.created"
@@ -359,6 +362,10 @@ var Streams = map[StreamName]StreamMetadata{
 			DeviceCreatedSubject,
 			DeviceUpdatedSubject,
 			DeviceDeletedSubject,
+			// OLT Events (consumed by olt-manager)
+			OLTCreatedSubject,
+			OLTUpdatedSubject,
+			OLTDeletedSubject,
 			// Tenant Provider Binding Events
 			CDNProviderCreatedSubject,
 			CDNProviderUpdateSubject,
