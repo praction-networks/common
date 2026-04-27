@@ -155,18 +155,37 @@ type TokenTopupEvent struct {
 
 // TokenConsumedEvent — wallet decrement Committed. The billing-service's
 // usage-aggregation pipeline picks this up to cut overage invoice lines.
+//
+// Tax context (RateCardID + UnitPricePaise + Currency + HSNSACCode +
+// GSTRatePercent + TaxInclusive) is included so billing-service can
+// compute the correct GST split (CGST/SGST when tenant-state ==
+// system-state; IGST otherwise) without a callback to license-service.
+// This is the per-event tax data; tenant-level tax overrides
+// (e.g. composition scheme) still apply via billing's tenant.taxation.
 type TokenConsumedEvent struct {
 	LicenseID     string    `json:"licenseId"`
 	TenantID      string    `json:"tenantId"`
 	WalletID      string    `json:"walletId"`
 	SKUCode       string    `json:"skuCode"`
-	Component     string    `json:"component"`     // INFERENCE, SERVICE_PLANE, ...
-	Deployment    string    `json:"deployment"`    // VENDOR_GPU / CUSTOMER_GPU / ...
+	Component     string    `json:"component"`  // INFERENCE, SERVICE_PLANE, ...
+	Deployment    string    `json:"deployment"` // VENDOR_GPU / CUSTOMER_GPU / ...
 	CurrencyUnit  string    `json:"currencyUnit"`
 	ActualQty     int64     `json:"actualQty"`
 	BalanceAfter  int64     `json:"balanceAfter"`
 	ReservationID string    `json:"reservationId"`
-	OccurredAt    time.Time `json:"occurredAt"`
+
+	// Tax context — billing-service uses these to compute the invoice
+	// line. Empty when the wallet was billed flat-rate via subscription
+	// (no per-event tax computation needed).
+	RateCardID      string  `json:"rateCardId,omitempty"`
+	UnitPricePaise  int64   `json:"unitPricePaise,omitempty"`
+	Currency        string  `json:"currency,omitempty"`
+	HSNSACCode      string  `json:"hsnSacCode,omitempty"`
+	GSTRatePercent  float64 `json:"gstRatePercent,omitempty"`
+	TaxInclusive    bool    `json:"taxInclusive,omitempty"`
+	IsOverage       bool    `json:"isOverage,omitempty"` // true if this consumption breached the included pool
+
+	OccurredAt time.Time `json:"occurredAt"`
 }
 
 // TokenLowBalanceEvent — included pool fell below low_balance_threshold.
