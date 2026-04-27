@@ -21,17 +21,25 @@ type OLTCLIConfig struct {
 
 // OLTSNMPConfig carries the credentials olt-manager needs for SNMP
 // polling — link state, board/port stats, ONT counters. Field set
-// switches on Version: v1/v2c → Community; v3 → username + auth/priv.
+// switches on Version: v1/v2c → ReadCommunity (+ optional WriteCommunity);
+// v3 → username + auth/priv.
+//
+// SNMP v1/v2c distinguishes read (GET/GETBULK — high frequency status
+// polling) from write (SET — config push). Many ISPs use a separate
+// write community to reduce the blast radius of credential leaks; if
+// the operator only configures one community, leave WriteCommunity
+// blank and olt-manager will fall back to ReadCommunity for SET ops.
 type OLTSNMPConfig struct {
-	Version       string `bson:"version" json:"version"`                                 // v1 | v2c | v3
-	Port          int    `bson:"port" json:"port"`                                       // default 161
-	Community     string `bson:"community,omitempty" json:"community,omitempty"`         // v1/v2c
-	Username      string `bson:"username,omitempty" json:"username,omitempty"`           // v3
-	SecurityLevel string `bson:"securityLevel,omitempty" json:"securityLevel,omitempty"` // v3: noAuthNoPriv | authNoPriv | authPriv
-	AuthProtocol  string `bson:"authProtocol,omitempty" json:"authProtocol,omitempty"`   // v3: MD5 | SHA | SHA224 | SHA256 | SHA384 | SHA512
-	AuthPassword  string `bson:"authPassword,omitempty" json:"authPassword,omitempty"`
-	PrivProtocol  string `bson:"privProtocol,omitempty" json:"privProtocol,omitempty"`   // v3: DES | 3DES | AES128 | AES192 | AES256
-	PrivPassword  string `bson:"privPassword,omitempty" json:"privPassword,omitempty"`
+	Version        string `bson:"version" json:"version"`                                   // v1 | v2c | v3
+	Port           int    `bson:"port" json:"port"`                                         // default 161
+	ReadCommunity  string `bson:"readCommunity,omitempty" json:"readCommunity,omitempty"`   // v1/v2c — required
+	WriteCommunity string `bson:"writeCommunity,omitempty" json:"writeCommunity,omitempty"` // v1/v2c — optional; falls back to readCommunity
+	Username       string `bson:"username,omitempty" json:"username,omitempty"`             // v3
+	SecurityLevel  string `bson:"securityLevel,omitempty" json:"securityLevel,omitempty"`   // v3: noAuthNoPriv | authNoPriv | authPriv
+	AuthProtocol   string `bson:"authProtocol,omitempty" json:"authProtocol,omitempty"`     // v3: MD5 | SHA | SHA224 | SHA256 | SHA384 | SHA512
+	AuthPassword   string `bson:"authPassword,omitempty" json:"authPassword,omitempty"`
+	PrivProtocol   string `bson:"privProtocol,omitempty" json:"privProtocol,omitempty"`     // v3: DES | 3DES | AES128 | AES192 | AES256
+	PrivPassword   string `bson:"privPassword,omitempty" json:"privPassword,omitempty"`
 }
 
 // OLTInsertEventModel is published on TenantStream / olt.created when
