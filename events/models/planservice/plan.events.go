@@ -2,6 +2,8 @@ package planservice
 
 import (
 	"time"
+
+	"github.com/praction-networks/common/models/money"
 )
 
 type PlanCreatedEvent struct {
@@ -61,15 +63,16 @@ type PlanDeletedEvent struct {
 type PlanItem struct {
 	ProductID   string       `json:"productId" bson:"productId"`                     // Product ID reference
 	ProductCode string       `json:"productCode" bson:"productCode"`                 // Product code for display/reference
-	BasePrice   *float64     `json:"basePrice,omitempty" bson:"basePrice,omitempty"` // Base price for this product in the plan
+	BasePrice   *money.Money `json:"basePrice,omitempty" bson:"basePrice,omitempty"` // Base price for this product in the plan (paise)
 	Role        PlanItemRole `json:"role" bson:"role"`                               // "BASE", "ADDON", "BUNDLE", "OPTIONAL"
 }
 
-// BillingCyclePricing defines pricing for a specific billing cycle
+// BillingCyclePricing defines pricing for a specific billing cycle.
+// BasePrice in paise. DiscountPct stays float (percentage 0-100).
 type BillingCyclePricing struct {
 	BillingCycle BillingCycle `json:"billingCycle" bson:"billingCycle"`                   // Quantity + Unit (e.g., {quantity: 1, unit: "MONTH"})
-	BasePrice    float64      `json:"basePrice" bson:"basePrice"`                         // Base price for this cycle
-	DiscountPct  *float64     `json:"discountPct,omitempty" bson:"discountPct,omitempty"` // Optional discount percentage
+	BasePrice    money.Money  `json:"basePrice" bson:"basePrice"`                         // Base price for this cycle (paise)
+	DiscountPct  *float64     `json:"discountPct,omitempty" bson:"discountPct,omitempty"` // Optional discount percentage (0-100)
 	IsDefault    bool         `json:"isDefault" bson:"isDefault"`                         // Mark one as default
 	IsActive     bool         `json:"isActive" bson:"isActive"`                           // Enable/disable this cycle
 }
@@ -119,12 +122,12 @@ type ContractTerms struct {
 	CommitmentPeriod    int        `json:"commitmentPeriod" bson:"commitmentPeriod"` // Months of commitment (0 = no commitment)
 	CommitmentStartDate *time.Time `json:"commitmentStartDate,omitempty" bson:"commitmentStartDate,omitempty"`
 	CommitmentEndDate   *time.Time `json:"commitmentEndDate,omitempty" bson:"commitmentEndDate,omitempty"`
-	EarlyTerminationFee *float64   `json:"earlyTerminationFee,omitempty" bson:"earlyTerminationFee,omitempty"`
-	AutoRenewal         bool       `json:"autoRenewal" bson:"autoRenewal"`                                   // Auto-renew at end of commitment
-	RenewalNoticeDays   int        `json:"renewalNoticeDays,omitempty" bson:"renewalNoticeDays,omitempty"`   // Notice period before renewal
-	MinimumPeriod       int        `json:"minimumPeriod,omitempty" bson:"minimumPeriod,omitempty"`           // Minimum service period (days)
-	LockInPeriod        int        `json:"lockInPeriod,omitempty" bson:"lockInPeriod,omitempty"`             // Lock-in period (days)
-	CommitmentDiscount  *float64   `json:"commitmentDiscount,omitempty" bson:"commitmentDiscount,omitempty"` // Discount for commitment
+	EarlyTerminationFee *money.Money `json:"earlyTerminationFee,omitempty" bson:"earlyTerminationFee,omitempty"` // paise
+	AutoRenewal         bool         `json:"autoRenewal" bson:"autoRenewal"`                                     // Auto-renew at end of commitment
+	RenewalNoticeDays   int          `json:"renewalNoticeDays,omitempty" bson:"renewalNoticeDays,omitempty"`     // Notice period before renewal
+	MinimumPeriod       int          `json:"minimumPeriod,omitempty" bson:"minimumPeriod,omitempty"`             // Minimum service period (days)
+	LockInPeriod        int          `json:"lockInPeriod,omitempty" bson:"lockInPeriod,omitempty"`               // Lock-in period (days)
+	CommitmentDiscount  *money.Money `json:"commitmentDiscount,omitempty" bson:"commitmentDiscount,omitempty"`   // Discount for commitment (paise)
 }
 
 // SLA defines Service Level Agreements for plans
@@ -133,17 +136,17 @@ type SLA struct {
 	TargetValue       float64 `json:"targetValue" bson:"targetValue"`         // e.g., 99.9 for uptime, 50 for latency (ms)
 	MeasurementUnit   string  `json:"measurementUnit" bson:"measurementUnit"` // "PERCENT", "MILLISECONDS", "MBPS"
 	PenaltyType       string  `json:"penaltyType" bson:"penaltyType"`         // "CREDIT", "REFUND", "SERVICE_CREDIT"
-	PenaltyAmount     float64 `json:"penaltyAmount,omitempty" bson:"penaltyAmount,omitempty"`
+	PenaltyAmount     money.Money `json:"penaltyAmount,omitempty" bson:"penaltyAmount,omitempty"` // paise
 	MeasurementWindow string  `json:"measurementWindow" bson:"measurementWindow"` // "MONTHLY", "DAILY", "WEEKLY"
 	Description       string  `json:"description,omitempty" bson:"description,omitempty"`
 }
 
 // CreditPolicy defines credit limits and financial controls for plans
 type CreditPolicy struct {
-	CreditLimit               *float64         `json:"creditLimit,omitempty" bson:"creditLimit,omitempty"`                             // Credit limit amount
+	CreditLimit               *money.Money     `json:"creditLimit,omitempty" bson:"creditLimit,omitempty"`                             // Credit limit amount (paise)
 	CreditLimitType           CreditLimitType  `json:"creditLimitType" bson:"creditLimitType"`                                         // "HARD", "SOFT", "NONE"
 	CreditCheckRequired       bool             `json:"creditCheckRequired" bson:"creditCheckRequired"`                                 // Whether credit check is required
-	DepositRequired           *float64         `json:"depositRequired,omitempty" bson:"depositRequired,omitempty"`                     // Deposit amount required
+	DepositRequired           *money.Money     `json:"depositRequired,omitempty" bson:"depositRequired,omitempty"`                     // Deposit amount required (paise)
 	DepositRefundable         bool             `json:"depositRefundable" bson:"depositRefundable"`                                     // Whether deposit is refundable
 	PaymentTerms              PaymentTermsType `json:"paymentTerms" bson:"paymentTerms"`                                               // "PREPAID", "POSTPAID", "HYBRID"
 	PaymentMethodRestrictions []string         `json:"paymentMethodRestrictions,omitempty" bson:"paymentMethodRestrictions,omitempty"` // Restricted payment methods

@@ -4,14 +4,18 @@ import (
 	"time"
 
 	"github.com/praction-networks/common/events/models/planservice"
+	"github.com/praction-networks/common/models/money"
 )
 
-// PriceBookItemCDC represents a price book item in CDC events from billing-service
+// PriceBookItemCDC represents a price book item in CDC events from billing-service.
+// Money fields are paise; rates (DiscountPercent) stay float as
+// percentage 0-100. MinQty/MaxQty are quantity counts (kept as float64
+// for fractional units like 1.5 GB).
 type PriceBookItemCDC struct {
 	ProductID       string                       `json:"productId"`
 	Unit            planservice.Unit             `json:"unit"`
 	PricingModel    planservice.PricingModelType `json:"pricingModel"`
-	Amount          *float64                     `json:"amount,omitempty"`
+	Amount          *money.Money                 `json:"amount,omitempty"`
 	DiscountPercent *float64                     `json:"discountPercent,omitempty"`
 	PricingTiers    []PricingTierCDC             `json:"pricingTiers,omitempty"`
 	VolumeDiscounts []VolumeDiscountCDC          `json:"volumeDiscounts,omitempty"`
@@ -20,18 +24,18 @@ type PriceBookItemCDC struct {
 
 // PricingTierCDC represents a pricing tier in CDC events
 type PricingTierCDC struct {
-	MinQty    float64  `json:"minQty"`
-	MaxQty    *float64 `json:"maxQty,omitempty"`
-	UnitPrice float64  `json:"unitPrice"`
-	FlatFee   float64  `json:"flatFee"`
+	MinQty    float64     `json:"minQty"`
+	MaxQty    *float64    `json:"maxQty,omitempty"`
+	UnitPrice money.Money `json:"unitPrice"`
+	FlatFee   money.Money `json:"flatFee"`
 }
 
 // VolumeDiscountCDC represents a volume discount in CDC events
 type VolumeDiscountCDC struct {
-	MinQty      float64  `json:"minQty"`
-	MaxQty      *float64 `json:"maxQty,omitempty"`
-	DiscountPct float64  `json:"discountPct"`
-	DiscountAmt float64  `json:"discountAmt"`
+	MinQty      float64     `json:"minQty"`
+	MaxQty      *float64    `json:"maxQty,omitempty"`
+	DiscountPct float64     `json:"discountPct"`
+	DiscountAmt money.Money `json:"discountAmt"`
 }
 
 // PriceBookCDCEvent is the payload published by billing-service CDC for price book changes.
@@ -53,7 +57,7 @@ type PriceBookCDCEvent struct {
 	EffectiveFrom    time.Time          `json:"effectiveFrom"`
 	EffectiveTo      *time.Time         `json:"effectiveTo,omitempty"`
 	Items            []PriceBookItemCDC `json:"items"`
-	PlanLevelPrice   *float64           `json:"planLevelPrice,omitempty"`
+	PlanLevelPrice   *money.Money       `json:"planLevelPrice,omitempty"`
 	TargetTenantID   *string            `json:"targetTenantId,omitempty"`
 
 	// Leaf-tenant pricing (billing-owned, read-only on plan side).

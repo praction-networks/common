@@ -1,5 +1,7 @@
 package planservice
 
+import "github.com/praction-networks/common/models/money"
+
 // ProductTaxSnapshot carries the resolved tax rate + GST components for a
 // taxable product at the moment an event is published. Downstream services
 // (billing) read this directly without having to fetch the tax-rate model
@@ -24,7 +26,7 @@ type ProductTemplateEvent struct {
 	ProductCode   string   `json:"productCode"`
 	ProductName   string   `json:"productName"`
 	ProductType   string   `json:"productType"` // SERVICE, GOODS, BUNDLE
-	BasePrice     *float64 `json:"basePrice,omitempty"`
+	BasePrice     *money.Money `json:"basePrice,omitempty"` // paise
 	Status        string   `json:"status"`
 	OwnerTenantID *string  `json:"ownerTenantId,omitempty"` // Required: ISP or Enterprise tenant that owns this product
 	TenantIDs     []string `json:"tenantIds,omitempty"`     // Owner is auto-included

@@ -1,21 +1,28 @@
 package planservice
 
-import "time"
+import (
+	"time"
+
+	"github.com/praction-networks/common/models/money"
+)
 
 // PricingTierEvent represents a pricing tier in events (TIERED pricing model).
+// MinQty/MaxQty are quantity counts (int). UnitPrice and FlatFee are
+// money.Money paise values.
 type PricingTierEvent struct {
-	MinQty    int     `json:"minQty" bson:"minQty"`
-	MaxQty    *int    `json:"maxQty,omitempty" bson:"maxQty,omitempty"`
-	UnitPrice float64 `json:"unitPrice" bson:"unitPrice"`
-	FlatFee   float64 `json:"flatFee,omitempty" bson:"flatFee,omitempty"`
+	MinQty    int         `json:"minQty" bson:"minQty"`
+	MaxQty    *int        `json:"maxQty,omitempty" bson:"maxQty,omitempty"`
+	UnitPrice money.Money `json:"unitPrice" bson:"unitPrice"`
+	FlatFee   money.Money `json:"flatFee,omitempty" bson:"flatFee,omitempty"`
 }
 
 // VolumeDiscountEvent represents a volume discount in events (VOLUME pricing model).
+// DiscountPct stays float64 (percentage 0-100). DiscountAmt is paise.
 type VolumeDiscountEvent struct {
-	MinQty      int     `json:"minQty" bson:"minQty"`
-	MaxQty      *int    `json:"maxQty,omitempty" bson:"maxQty,omitempty"`
-	DiscountPct float64 `json:"discountPct,omitempty" bson:"discountPct,omitempty"`
-	DiscountAmt float64 `json:"discountAmt,omitempty" bson:"discountAmt,omitempty"`
+	MinQty      int         `json:"minQty" bson:"minQty"`
+	MaxQty      *int        `json:"maxQty,omitempty" bson:"maxQty,omitempty"`
+	DiscountPct float64     `json:"discountPct,omitempty" bson:"discountPct,omitempty"`
+	DiscountAmt money.Money `json:"discountAmt,omitempty" bson:"discountAmt,omitempty"`
 }
 
 // PriceBookItemEvent represents a price book item in events
@@ -23,7 +30,7 @@ type PriceBookItemEvent struct {
 	ProductID       string                `json:"productId" bson:"productId"`
 	Unit            Unit                  `json:"unit" bson:"unit"`
 	PricingModel    PricingModelType      `json:"pricingModel" bson:"pricingModel"`                           // "FLAT", "TIERED", "VOLUME", "BUNDLE"
-	Amount          *float64              `json:"amount,omitempty" bson:"amount,omitempty"`                   // Flat price (for FLAT model)
+	Amount          *money.Money          `json:"amount,omitempty" bson:"amount,omitempty"`                   // Flat price in paise (for FLAT model)
 	PricingTiers    []PricingTierEvent    `json:"pricingTiers,omitempty" bson:"pricingTiers,omitempty"`       // Tiered pricing (for TIERED model)
 	VolumeDiscounts []VolumeDiscountEvent `json:"volumeDiscounts,omitempty" bson:"volumeDiscounts,omitempty"` // Volume discounts (for VOLUME model)
 }
@@ -39,7 +46,7 @@ type PriceBookCreatedEvent struct {
 	EffectiveFrom  time.Time            `json:"effectiveFrom" bson:"effectiveFrom"`
 	EffectiveTo    *time.Time           `json:"effectiveTo,omitempty" bson:"effectiveTo,omitempty"`
 	Items          []PriceBookItemEvent `json:"items" bson:"items"`
-	PlanLevelPrice *float64             `json:"planLevelPrice,omitempty" bson:"planLevelPrice,omitempty"`
+	PlanLevelPrice *money.Money         `json:"planLevelPrice,omitempty" bson:"planLevelPrice,omitempty"`
 	Status         Status               `json:"status" bson:"status"`
 	CreatedAt      time.Time            `json:"createdAt" bson:"createdAt"`
 	CreatedBy      string               `json:"createdBy" bson:"createdBy"`
@@ -57,7 +64,7 @@ type PriceBookUpdatedEvent struct {
 	EffectiveFrom  *time.Time           `json:"effectiveFrom,omitempty" bson:"effectiveFrom,omitempty"`
 	EffectiveTo    *time.Time           `json:"effectiveTo,omitempty" bson:"effectiveTo,omitempty"`
 	Items          []PriceBookItemEvent `json:"items,omitempty" bson:"items,omitempty"`
-	PlanLevelPrice *float64             `json:"planLevelPrice,omitempty" bson:"planLevelPrice,omitempty"`
+	PlanLevelPrice *money.Money         `json:"planLevelPrice,omitempty" bson:"planLevelPrice,omitempty"`
 	Status         Status               `json:"status,omitempty" bson:"status,omitempty"`
 	UpdatedAt      time.Time            `json:"updatedAt" bson:"updatedAt"`
 	UpdatedBy      string               `json:"updatedBy" bson:"updatedBy"`
