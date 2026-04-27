@@ -17,6 +17,7 @@ const (
 	TicketStream           StreamName = "TicketStream"
 	VenueStream            StreamName = "VenueStream"
 	BillingStream          StreamName = "BillingStream"
+	LicenseStream          StreamName = "LicenseStream"
 )
 
 // Global Stream names as constants
@@ -271,6 +272,30 @@ const (
 	BillingPriceBookCreatedSubject Subject = "billing.pricebook.created"
 	BillingPriceBookUpdatedSubject Subject = "billing.pricebook.updated"
 	BillingPriceBookDeletedSubject Subject = "billing.pricebook.deleted"
+
+	// License lifecycle (issued/transitioned/renewed/etc.)
+	LicenseIssuedSubject              Subject = "license.issued"
+	LicenseEntitlementChangedSubject  Subject = "license.entitlement.changed"
+	LicenseSuspendedSubject           Subject = "license.suspended"
+	LicenseReinstatedSubject          Subject = "license.reinstated"
+	LicenseRenewedSubject             Subject = "license.renewed"
+	LicenseExpiredSubject             Subject = "license.expired"
+	LicenseTerminatedSubject          Subject = "license.terminated"
+
+	// Token wallet events (metered SKU consumption)
+	LicenseTokenTopupSubject       Subject = "license.token.topup"
+	LicenseTokenConsumedSubject    Subject = "license.token.consumed"
+	LicenseTokenLowBalanceSubject  Subject = "license.token.lowbalance"
+	LicenseTokenExhaustedSubject   Subject = "license.token.exhausted"
+
+	// Installation lifecycle
+	LicenseInstallationEnrolledSubject       Subject = "license.installation.enrolled"
+	LicenseInstallationOfflineSubject        Subject = "license.installation.offline"
+	LicenseInstallationRecoveredSubject      Subject = "license.installation.recovered"
+	LicenseInstallationDecommissionedSubject Subject = "license.installation.decommissioned"
+
+	// JWS revocation broadcast (consumed by all in-cluster verifiers)
+	LicenseJWSRevokedSubject Subject = "license.jws.revoked"
 )
 
 // Global Subjects - Cross-service events that any service can publish
@@ -615,6 +640,29 @@ var Streams = map[StreamName]StreamMetadata{
 			BillingPriceBookCreatedSubject,
 			BillingPriceBookUpdatedSubject,
 			BillingPriceBookDeletedSubject,
+		},
+	},
+
+	LicenseStream: {
+		Name:        LicenseStream,
+		Description: "Stream for license-service events: licenses, entitlements, wallets, installations, JWS revocation",
+		Subjects: []Subject{
+			LicenseIssuedSubject,
+			LicenseEntitlementChangedSubject,
+			LicenseSuspendedSubject,
+			LicenseReinstatedSubject,
+			LicenseRenewedSubject,
+			LicenseExpiredSubject,
+			LicenseTerminatedSubject,
+			LicenseTokenTopupSubject,
+			LicenseTokenConsumedSubject,
+			LicenseTokenLowBalanceSubject,
+			LicenseTokenExhaustedSubject,
+			LicenseInstallationEnrolledSubject,
+			LicenseInstallationOfflineSubject,
+			LicenseInstallationRecoveredSubject,
+			LicenseInstallationDecommissionedSubject,
+			LicenseJWSRevokedSubject,
 		},
 	},
 }

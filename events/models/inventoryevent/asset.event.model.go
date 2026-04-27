@@ -120,24 +120,29 @@ type AssetReturnedEvent struct {
 	OwnerTenantID           string    `json:"ownerTenantId" bson:"ownerTenantId"`
 	PrevSubscriberID        string    `json:"prevSubscriberId,omitempty" bson:"prevSubscriberId,omitempty"`
 	BroadbandSubscriptionID string    `json:"broadbandSubscriptionId,omitempty" bson:"broadbandSubscriptionId,omitempty"`
-	Reason                  string    `json:"reason,omitempty" bson:"reason,omitempty"`
-	Version                 int       `json:"version" bson:"version"`
-	ReturnedAt              time.Time `json:"returnedAt" bson:"returnedAt"`
-	ReturnedBy              string    `json:"returnedBy,omitempty" bson:"returnedBy,omitempty"`
+	// Reason carries an AssetReleaseReason value (string-coded). Kept
+	// as `string` for now; promoting to the typed alias is a separate
+	// nicety that can land on the next common release without changing
+	// the wire format.
+	Reason     string    `json:"reason,omitempty" bson:"reason,omitempty"`
+	Version    int       `json:"version" bson:"version"`
+	ReturnedAt time.Time `json:"returnedAt" bson:"returnedAt"`
+	ReturnedBy string    `json:"returnedBy,omitempty" bson:"returnedBy,omitempty"`
 }
 
 // AssetFaultyEvent fires when an asset is marked non-functional. The
 // subscription it was bound to (if any) should transition to
 // AWAITING_REPLACEMENT until a new CPE is assigned.
 type AssetFaultyEvent struct {
-	AssetID                 string    `json:"assetId" bson:"assetId"`
-	OwnerTenantID           string    `json:"ownerTenantId" bson:"ownerTenantId"`
-	PrevSubscriberID        string    `json:"prevSubscriberId,omitempty" bson:"prevSubscriberId,omitempty"`
-	BroadbandSubscriptionID string    `json:"broadbandSubscriptionId,omitempty" bson:"broadbandSubscriptionId,omitempty"`
-	FaultReason             string    `json:"faultReason,omitempty" bson:"faultReason,omitempty"`
-	Version                 int       `json:"version" bson:"version"`
-	MarkedAt                time.Time `json:"markedAt" bson:"markedAt"`
-	MarkedBy                string    `json:"markedBy,omitempty" bson:"markedBy,omitempty"`
+	AssetID                 string `json:"assetId" bson:"assetId"`
+	OwnerTenantID           string `json:"ownerTenantId" bson:"ownerTenantId"`
+	PrevSubscriberID        string `json:"prevSubscriberId,omitempty" bson:"prevSubscriberId,omitempty"`
+	BroadbandSubscriptionID string `json:"broadbandSubscriptionId,omitempty" bson:"broadbandSubscriptionId,omitempty"`
+	// FaultReason carries an AssetReleaseReason value (string-coded).
+	FaultReason string    `json:"faultReason,omitempty" bson:"faultReason,omitempty"`
+	Version     int       `json:"version" bson:"version"`
+	MarkedAt    time.Time `json:"markedAt" bson:"markedAt"`
+	MarkedBy    string    `json:"markedBy,omitempty" bson:"markedBy,omitempty"`
 }
 
 // AssetRMAEvent fires when a faulty asset enters the vendor RMA pipeline.
@@ -154,10 +159,11 @@ type AssetRMAEvent struct {
 // AssetScrappedEvent fires when an asset reaches terminal state.
 // Subscriber-side projection should drop the row from available_assets.
 type AssetScrappedEvent struct {
-	AssetID       string    `json:"assetId" bson:"assetId"`
-	OwnerTenantID string    `json:"ownerTenantId" bson:"ownerTenantId"`
-	Reason        string    `json:"reason,omitempty" bson:"reason,omitempty"`
-	Version       int       `json:"version" bson:"version"`
-	ScrappedAt    time.Time `json:"scrappedAt" bson:"scrappedAt"`
-	ScrappedBy    string    `json:"scrappedBy,omitempty" bson:"scrappedBy,omitempty"`
+	AssetID       string `json:"assetId" bson:"assetId"`
+	OwnerTenantID string `json:"ownerTenantId" bson:"ownerTenantId"`
+	// Reason carries an AssetReleaseReason value (string-coded).
+	Reason     string    `json:"reason,omitempty" bson:"reason,omitempty"`
+	Version    int       `json:"version" bson:"version"`
+	ScrappedAt time.Time `json:"scrappedAt" bson:"scrappedAt"`
+	ScrappedBy string    `json:"scrappedBy,omitempty" bson:"scrappedBy,omitempty"`
 }
