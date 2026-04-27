@@ -7,6 +7,30 @@ package licenseevent
 
 import "time"
 
+// LicenseClaims — public projection of the JWS payload. Consumers
+// (jwsverify, auth-service middleware, cloud-sync-agent) read this
+// shape after a verified parse. Internal license-service code uses
+// services.LicenseClaims which is the same shape but not bound to
+// the events module's import boundary.
+type LicenseClaims struct {
+	Iss               string                `json:"iss"`
+	Sub               string                `json:"sub"`
+	Aud               []string              `json:"aud"`
+	Iat               int64                 `json:"iat"`
+	Nbf               int64                 `json:"nbf"`
+	Exp               int64                 `json:"exp"`
+	JTI               string                `json:"jti"`
+	TenantID          string                `json:"tenantId"`
+	TenantType        string                `json:"tenantType"`
+	InstallationID    string                `json:"installationId,omitempty"`
+	MTLSFingerprint   string                `json:"mtlsFingerprint,omitempty"`
+	Counter           int64                 `json:"counter"`
+	Nonce             string                `json:"nonce"`
+	LicenseStatus     string                `json:"licenseStatus"`
+	LicenseValidUntil int64                 `json:"licenseValidUntil"`
+	Entitlements      []EntitlementSnapshot `json:"entitlements"`
+}
+
 // LicenseSnapshot is the wire-shape of a License row, denormalized so
 // consumers don't have to call back. Trimmed to fields consumers actually
 // need; full record stays in license-service Postgres.
@@ -207,13 +231,39 @@ type InstallationDecommissionedEvent struct {
 	OccurredAt     time.Time `json:"occurredAt"`
 }
 
-// JWSRevokedEvent — broadcast that a specific JWS jti must not be honored
-// for the rest of its TTL. Verifiers add jti to a Redis-backed
-// short-lived deny set.
+// JWSRevokedEvent — broadcast that one JWS (by jti) or every JWS for a
+// given licenseId must not be honored for the rest of its TTL.
+// Verifiers maintain a short-lived deny set keyed by jti when present,
+// or by licenseId when JTI is empty (license-level revocation, fired
+// on Suspend / Expire / Terminate).
 type JWSRevokedEvent struct {
-	JTI        string    `json:"jti"`
+	JTI        string    `json:"jti,omitempty"`
 	LicenseID  string    `json:"licenseId"`
-	ExpiresAt  time.Time `json:"expiresAt"` // when the deny entry is safe to drop (= JWS exp)
+	ExpiresAt  time.Time `json:"expiresAt"` // when the deny entry is safe to drop (= max JWS exp)
 	Reason     string    `json:"reason"`
 	OccurredAt time.Time `json:"occurredAt"`
+}
+
+// TierExceededEvent — PER_SUBSCRIBER pricing crossed the licensed
+// quantity for an entitlement. billing-service consumes to add an
+// overage line to the next invoice; CSM consumes to email upsell.
+type TierExceededEvent struct {
+	LicenseID         string    `json:"licenseId"`
+	TenantID          string    `json:"tenantId"`
+	SKUCode           string    `json:"skuCode"`
+	LicensedQuantity  int64     `json:"licensedQuantity"`
+	CurrentQuantity   int64     `json:"currentQuantity"`
+	OveragePolicy     string    `json:"overagePolicy"`
+	OccurredAt        time.Time `json:"occurredAt"`
+}
+
+// TierRecoveredEvent — subscriber count fell back below the licensed
+// quantity (e.g. seasonal churn). Lets billing stop accruing overage.
+type TierRecoveredEvent struct {
+	LicenseID         string    `json:"licenseId"`
+	TenantID          string    `json:"tenantId"`
+	SKUCode           string    `json:"skuCode"`
+	LicensedQuantity  int64     `json:"licensedQuantity"`
+	CurrentQuantity   int64     `json:"currentQuantity"`
+	OccurredAt        time.Time `json:"occurredAt"`
 }

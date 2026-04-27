@@ -296,6 +296,11 @@ const (
 
 	// JWS revocation broadcast (consumed by all in-cluster verifiers)
 	LicenseJWSRevokedSubject Subject = "license.jws.revoked"
+
+	// Subscriber-tier (PER_SUBSCRIBER pricing) — count crossed the
+	// licensed quantity. billing-service consumes to bill overage.
+	LicenseTierExceededSubject Subject = "license.tier.exceeded"
+	LicenseTierRecoveredSubject Subject = "license.tier.recovered"
 )
 
 // Global Subjects - Cross-service events that any service can publish
@@ -663,6 +668,8 @@ var Streams = map[StreamName]StreamMetadata{
 			LicenseInstallationRecoveredSubject,
 			LicenseInstallationDecommissionedSubject,
 			LicenseJWSRevokedSubject,
+			LicenseTierExceededSubject,
+			LicenseTierRecoveredSubject,
 		},
 	},
 }
