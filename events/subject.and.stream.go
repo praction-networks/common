@@ -18,6 +18,7 @@ const (
 	VenueStream            StreamName = "VenueStream"
 	BillingStream          StreamName = "BillingStream"
 	LicenseStream          StreamName = "LicenseStream"
+	OLTEventStream         StreamName = "OLTEventStream"
 )
 
 // Global Stream names as constants
@@ -57,6 +58,23 @@ const (
 	OLTCreatedSubject            Subject = "olt.created"
 	OLTUpdatedSubject            Subject = "olt.updated"
 	OLTDeletedSubject            Subject = "olt.deleted"
+
+	// OLT runtime events — pushed by olt-manager from SNMP traps.
+	// Distinct stream (OLTEventStream) so trap storms can't crowd out
+	// tenant lifecycle events on TenantStream.
+	OLTEventONTDownSubject       Subject = "olt.event.ont.down"
+	OLTEventONTUpSubject         Subject = "olt.event.ont.up"
+	OLTEventDyingGaspSubject     Subject = "olt.event.dying_gasp"
+	OLTEventONTDeactivatedSubject Subject = "olt.event.ont.deactivated"
+	OLTEventLinkDownSubject      Subject = "olt.event.link.down"
+	OLTEventLinkUpSubject        Subject = "olt.event.link.up"
+	OLTEventLOSSubject           Subject = "olt.event.los"
+	OLTEventLOSRecoveredSubject  Subject = "olt.event.los.recovered"
+	OLTEventAlarmActiveSubject   Subject = "olt.event.alarm.active"
+	OLTEventAlarmClearedSubject  Subject = "olt.event.alarm.cleared"
+	OLTEventColdStartSubject     Subject = "olt.event.cold_start"
+	OLTEventAuthFailureSubject   Subject = "olt.event.auth_failure"
+	OLTEventTrapUnknownSubject   Subject = "olt.event.trap.unknown"
 
 	// Inventory Service Events
 	InventoryDeviceCreatedSubject Subject = "inventory.device.created"
@@ -652,6 +670,26 @@ var Streams = map[StreamName]StreamMetadata{
 			BillingPriceBookCreatedSubject,
 			BillingPriceBookUpdatedSubject,
 			BillingPriceBookDeletedSubject,
+		},
+	},
+
+	OLTEventStream: {
+		Name:        OLTEventStream,
+		Description: "Real-time OLT runtime events from olt-manager (SNMP traps + active polling). Higher velocity than TenantStream; isolated so trap storms don't crowd out lifecycle events.",
+		Subjects: []Subject{
+			OLTEventONTDownSubject,
+			OLTEventONTUpSubject,
+			OLTEventDyingGaspSubject,
+			OLTEventONTDeactivatedSubject,
+			OLTEventLinkDownSubject,
+			OLTEventLinkUpSubject,
+			OLTEventLOSSubject,
+			OLTEventLOSRecoveredSubject,
+			OLTEventAlarmActiveSubject,
+			OLTEventAlarmClearedSubject,
+			OLTEventColdStartSubject,
+			OLTEventAuthFailureSubject,
+			OLTEventTrapUnknownSubject,
 		},
 	},
 
