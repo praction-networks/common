@@ -151,12 +151,22 @@ var OLTVendorRegistry = []OLTVendorInfo{
 			"MA5606T",
 		},
 		FirmwareVersions: []string{
+			// V8R02x — MA5800 family (X2, X7, X15, X17)
 			"V800R022C00",
 			"V800R021C10",
 			"V800R021C00",
 			"V800R020C10",
 			"V800R019C10",
 			"V800R018C10",
+			// V8R01x — MA5600T family (MA5683T / MA5680T / MA5608T / MA5606T / MA5603T / MA5600T)
+			// Compact OLTs (MA5608T) and rack-mount predecessors most
+			// commonly run V800R017C10; brownfield deployments still
+			// see V800R015C10 in the field.
+			"V800R017C10",
+			"V800R017C00",
+			"V800R015C10",
+			"V800R015C00",
+			"V800R013C10",
 		},
 		SupportedCLIProtocols:  []OLTCLIProtocol{OLTCLIProtocolSSH, OLTCLIProtocolTelnet},
 		SupportedSNMPVersions:  []OLTSNMPVersion{OLTSNMPVersionV2c, OLTSNMPVersionV3},
