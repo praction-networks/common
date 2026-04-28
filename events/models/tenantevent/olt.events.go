@@ -1,22 +1,26 @@
 package tenantevent
 
-import "time"
-
-// OLTCLIConfig carries the credentials olt-manager needs to drive the
-// vendor CLI (Huawei MA5800, ZTE C320, Nokia FX, etc.) for ONT
-// provisioning, board/port queries, and command execution.
+// OLTCLIProtocolConfig carries the credentials for one CLI transport
+// (SSH or telnet). An OLT may carry both — see OLTCLIConfig.Protocols.
 //
 // Either Password or PrivateKey must be present — enforced at the
 // tenant-service request-schema layer, not here, since the event model
 // is the wire shape and may legitimately omit the unused alternative.
-type OLTCLIConfig struct {
-	Protocol         string `bson:"protocol" json:"protocol"`                                 // ssh | telnet
-	Port             int    `bson:"port" json:"port"`                                         // default 22 (ssh) / 23 (telnet)
+type OLTCLIProtocolConfig struct {
+	Protocol         string `bson:"protocol" json:"protocol"`                                     // ssh | telnet
+	Port             int    `bson:"port" json:"port"`                                             // default 22 (ssh) / 23 (telnet)
 	Username         string `bson:"username" json:"username"`
 	Password         string `bson:"password,omitempty" json:"password,omitempty"`
-	PrivateKey       string `bson:"privateKey,omitempty" json:"privateKey,omitempty"`         // SSH key alt to password
+	PrivateKey       string `bson:"privateKey,omitempty" json:"privateKey,omitempty"`             // SSH key alt to password
 	PrivateKeyPhrase string `bson:"privateKeyPhrase,omitempty" json:"privateKeyPhrase,omitempty"`
-	EnablePassword   string `bson:"enablePassword,omitempty" json:"enablePassword,omitempty"` // vendor-specific (super/enable mode)
+	EnablePassword   string `bson:"enablePassword,omitempty" json:"enablePassword,omitempty"`     // vendor-specific (super/enable mode)
+}
+
+// OLTCLIConfig — multi-protocol vendor-CLI bundle. Protocols[0] is the
+// primary transport olt-manager attempts first; further entries are
+// fallbacks used when the primary cannot establish a session.
+type OLTCLIConfig struct {
+	Protocols []OLTCLIProtocolConfig `bson:"protocols" json:"protocols"`
 }
 
 // OLTSNMPConfig carries the credentials olt-manager needs for SNMP
@@ -56,6 +60,7 @@ type OLTInsertEventModel struct {
 	Model           string `bson:"model" json:"model"`
 	FirmwareVersion string `bson:"firmwareVersion,omitempty" json:"firmwareVersion,omitempty"`
 	SerialNumber    string `bson:"serialNumber,omitempty" json:"serialNumber,omitempty"`
+	SysName         string `bson:"sysName,omitempty" json:"sysName,omitempty"`
 
 	MgmtIP string `bson:"mgmtIp" json:"mgmtIp"`
 
@@ -66,11 +71,7 @@ type OLTInsertEventModel struct {
 	Status   string   `bson:"status" json:"status"` // provisioned | active | suspended
 	IsActive bool     `bson:"isActive" json:"isActive"`
 
-	CreatedAt time.Time `bson:"createdAt" json:"createdAt"`
-	CreatedBy string    `bson:"createdBy" json:"createdBy"`
-	UpdatedAt time.Time `bson:"updatedAt" json:"updatedAt"`
-	UpdatedBy string    `bson:"updatedBy" json:"updatedBy"`
-	Version   int       `bson:"version" json:"version"`
+	Version int `bson:"version" json:"version"`
 }
 
 // OLTUpdateEventModel mirrors the device update model: pointer types
@@ -87,6 +88,7 @@ type OLTUpdateEventModel struct {
 	Model           string `bson:"model,omitempty" json:"model,omitempty"`
 	FirmwareVersion string `bson:"firmwareVersion,omitempty" json:"firmwareVersion,omitempty"`
 	SerialNumber    string `bson:"serialNumber,omitempty" json:"serialNumber,omitempty"`
+	SysName         string `bson:"sysName,omitempty" json:"sysName,omitempty"`
 
 	MgmtIP string `bson:"mgmtIp,omitempty" json:"mgmtIp,omitempty"`
 
@@ -97,16 +99,12 @@ type OLTUpdateEventModel struct {
 	Status   string   `bson:"status,omitempty" json:"status,omitempty"`
 	IsActive *bool    `bson:"isActive,omitempty" json:"isActive,omitempty"`
 
-	UpdatedAt time.Time `bson:"updatedAt" json:"updatedAt"`
-	UpdatedBy string    `bson:"updatedBy" json:"updatedBy"`
-	Version   int       `bson:"version" json:"version"`
+	Version int `bson:"version" json:"version"`
 }
 
 // OLTDeleteEventModel — minimal payload, mirrors DeviceDeleteEventModel.
 type OLTDeleteEventModel struct {
-	ID        string    `bson:"_id" json:"id"`
-	TenantIDs []string  `bson:"tenantIds,omitempty" json:"tenantIds,omitempty"`
-	Version   int       `bson:"version" json:"version"`
-	DeletedAt time.Time `bson:"deletedAt" json:"deletedAt"`
-	DeletedBy string    `bson:"deletedBy,omitempty" json:"deletedBy,omitempty"`
+	ID        string   `bson:"_id" json:"id"`
+	TenantIDs []string `bson:"tenantIds,omitempty" json:"tenantIds,omitempty"`
+	Version   int      `bson:"version" json:"version"`
 }

@@ -169,7 +169,7 @@ var OLTVendorRegistry = []OLTVendorInfo{
 			"V800R013C10",
 		},
 		SupportedCLIProtocols:  []OLTCLIProtocol{OLTCLIProtocolSSH, OLTCLIProtocolTelnet},
-		SupportedSNMPVersions:  []OLTSNMPVersion{OLTSNMPVersionV2c, OLTSNMPVersionV3},
+		SupportedSNMPVersions:  []OLTSNMPVersion{OLTSNMPVersionV1, OLTSNMPVersionV2c, OLTSNMPVersionV3},
 		SupportsEnableMode:     true,
 		SupportsPrivateKeyAuth: true,
 		DefaultCLIPort: map[string]int{
@@ -196,7 +196,7 @@ var OLTVendorRegistry = []OLTVendorInfo{
 			"V1.2.5",
 		},
 		SupportedCLIProtocols:  []OLTCLIProtocol{OLTCLIProtocolSSH, OLTCLIProtocolTelnet},
-		SupportedSNMPVersions:  []OLTSNMPVersion{OLTSNMPVersionV2c, OLTSNMPVersionV3},
+		SupportedSNMPVersions:  []OLTSNMPVersion{OLTSNMPVersionV1, OLTSNMPVersionV2c, OLTSNMPVersionV3},
 		SupportsEnableMode:     true,
 		SupportsPrivateKeyAuth: true,
 		DefaultCLIPort: map[string]int{
@@ -222,7 +222,7 @@ var OLTVendorRegistry = []OLTVendorInfo{
 			"FX0.50.05",
 		},
 		SupportedCLIProtocols:  []OLTCLIProtocol{OLTCLIProtocolSSH},
-		SupportedSNMPVersions:  []OLTSNMPVersion{OLTSNMPVersionV2c, OLTSNMPVersionV3},
+		SupportedSNMPVersions:  []OLTSNMPVersion{OLTSNMPVersionV1, OLTSNMPVersionV2c, OLTSNMPVersionV3},
 		SupportsEnableMode:     false,
 		SupportsPrivateKeyAuth: true,
 		DefaultCLIPort: map[string]int{
@@ -248,7 +248,7 @@ var OLTVendorRegistry = []OLTVendorInfo{
 			"RP0600",
 		},
 		SupportedCLIProtocols:  []OLTCLIProtocol{OLTCLIProtocolSSH, OLTCLIProtocolTelnet},
-		SupportedSNMPVersions:  []OLTSNMPVersion{OLTSNMPVersionV2c, OLTSNMPVersionV3},
+		SupportedSNMPVersions:  []OLTSNMPVersion{OLTSNMPVersionV1, OLTSNMPVersionV2c, OLTSNMPVersionV3},
 		SupportsEnableMode:     true,
 		SupportsPrivateKeyAuth: true,
 		DefaultCLIPort: map[string]int{
@@ -274,7 +274,7 @@ var OLTVendorRegistry = []OLTVendorInfo{
 			"NOS-8.0",
 		},
 		SupportedCLIProtocols:  []OLTCLIProtocol{OLTCLIProtocolSSH},
-		SupportedSNMPVersions:  []OLTSNMPVersion{OLTSNMPVersionV2c, OLTSNMPVersionV3},
+		SupportedSNMPVersions:  []OLTSNMPVersion{OLTSNMPVersionV1, OLTSNMPVersionV2c, OLTSNMPVersionV3},
 		SupportsEnableMode:     true,
 		SupportsPrivateKeyAuth: true,
 		DefaultCLIPort: map[string]int{
@@ -304,7 +304,7 @@ var OLTVendorRegistry = []OLTVendorInfo{
 			"V1.9.0",
 		},
 		SupportedCLIProtocols:  []OLTCLIProtocol{OLTCLIProtocolSSH, OLTCLIProtocolTelnet},
-		SupportedSNMPVersions:  []OLTSNMPVersion{OLTSNMPVersionV2c, OLTSNMPVersionV3},
+		SupportedSNMPVersions:  []OLTSNMPVersion{OLTSNMPVersionV1, OLTSNMPVersionV2c, OLTSNMPVersionV3},
 		SupportsEnableMode:     true,
 		SupportsPrivateKeyAuth: true,
 		DefaultCLIPort: map[string]int{
@@ -332,7 +332,7 @@ var OLTVendorRegistry = []OLTVendorInfo{
 			"10.1.0F",
 		},
 		SupportedCLIProtocols:  []OLTCLIProtocol{OLTCLIProtocolSSH, OLTCLIProtocolTelnet},
-		SupportedSNMPVersions:  []OLTSNMPVersion{OLTSNMPVersionV2c, OLTSNMPVersionV3},
+		SupportedSNMPVersions:  []OLTSNMPVersion{OLTSNMPVersionV1, OLTSNMPVersionV2c, OLTSNMPVersionV3},
 		SupportsEnableMode:     true,
 		SupportsPrivateKeyAuth: true,
 		DefaultCLIPort: map[string]int{
@@ -347,7 +347,7 @@ var OLTVendorRegistry = []OLTVendorInfo{
 		Models:      []string{}, // free-type until model list is curated
 		FirmwareVersions: []string{},
 		SupportedCLIProtocols:  []OLTCLIProtocol{OLTCLIProtocolSSH, OLTCLIProtocolTelnet},
-		SupportedSNMPVersions:  []OLTSNMPVersion{OLTSNMPVersionV2c, OLTSNMPVersionV3},
+		SupportedSNMPVersions:  []OLTSNMPVersion{OLTSNMPVersionV1, OLTSNMPVersionV2c, OLTSNMPVersionV3},
 		SupportsEnableMode:     true,
 		SupportsPrivateKeyAuth: true,
 		DefaultCLIPort: map[string]int{
@@ -376,7 +376,7 @@ var OLTVendorRegistry = []OLTVendorInfo{
 			"V2.0.04",
 		},
 		SupportedCLIProtocols:  []OLTCLIProtocol{OLTCLIProtocolSSH, OLTCLIProtocolTelnet},
-		SupportedSNMPVersions:  []OLTSNMPVersion{OLTSNMPVersionV2c, OLTSNMPVersionV3},
+		SupportedSNMPVersions:  []OLTSNMPVersion{OLTSNMPVersionV1, OLTSNMPVersionV2c, OLTSNMPVersionV3},
 		SupportsEnableMode:     true,
 		SupportsPrivateKeyAuth: true,
 		DefaultCLIPort: map[string]int{
@@ -400,7 +400,7 @@ var OLTVendorRegistry = []OLTVendorInfo{
 			"V2.0.04",
 		},
 		SupportedCLIProtocols:  []OLTCLIProtocol{OLTCLIProtocolSSH, OLTCLIProtocolTelnet},
-		SupportedSNMPVersions:  []OLTSNMPVersion{OLTSNMPVersionV2c, OLTSNMPVersionV3},
+		SupportedSNMPVersions:  []OLTSNMPVersion{OLTSNMPVersionV1, OLTSNMPVersionV2c, OLTSNMPVersionV3},
 		SupportsEnableMode:     true,
 		SupportsPrivateKeyAuth: true,
 		DefaultCLIPort: map[string]int{
