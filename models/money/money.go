@@ -33,6 +33,9 @@ import (
 	"math"
 	"strconv"
 	"strings"
+
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/bsontype"
 )
 
 // Currency is a thin wrapper around an ISO-4217 code so the type
@@ -159,6 +162,44 @@ func (m *Money) UnmarshalJSON(data []byte) error {
 	}
 	*m = FromMajor(CurrencyINR, f)
 	return nil
+}
+
+// MarshalBSONValue emits Money as a BSON Int64 (minor units), mirroring
+// the JSON contract.
+func (m Money) MarshalBSONValue() (bsontype.Type, []byte, error) {
+	return bson.MarshalValue(int64(m))
+}
+
+// UnmarshalBSONValue accepts BSON int32, int64, double, or string for
+// the same backwards-compat reasons as UnmarshalJSON. Documents written
+// by legacy publishers that stored basePrice as a BSON double (e.g.
+// 169.49) decode as INR major units; canonical int64 documents pass
+// through unchanged.
+func (m *Money) UnmarshalBSONValue(t bsontype.Type, data []byte) error {
+	rv := bson.RawValue{Type: t, Value: data}
+	switch t {
+	case bsontype.Null, bsontype.Undefined:
+		*m = 0
+		return nil
+	case bsontype.Int64:
+		*m = Money(rv.Int64())
+		return nil
+	case bsontype.Int32:
+		*m = Money(int64(rv.Int32()))
+		return nil
+	case bsontype.Double:
+		*m = FromMajor(CurrencyINR, rv.Double())
+		return nil
+	case bsontype.String:
+		parsed, err := ParseString(rv.StringValue())
+		if err != nil {
+			return fmt.Errorf("money: %w", err)
+		}
+		*m = parsed
+		return nil
+	default:
+		return fmt.Errorf("money: unsupported BSON type %v", t)
+	}
 }
 
 // FromMajor converts a major-unit value (rupees, dollars, dinars) to
