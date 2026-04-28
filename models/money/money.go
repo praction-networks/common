@@ -27,6 +27,7 @@
 package money
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"math"
@@ -105,6 +106,60 @@ type Money int64
 // FromPaise constructs a Money from a minor-unit count. Named
 // "Paise" historically; works for any minor unit (cents, yen, fils).
 func FromPaise(paise int64) Money { return Money(paise) }
+
+// MarshalJSON emits Money as a plain JSON integer (minor units).
+// Explicit so the contract is documented and paired with UnmarshalJSON.
+func (m Money) MarshalJSON() ([]byte, error) {
+	return []byte(strconv.FormatInt(int64(m), 10)), nil
+}
+
+// UnmarshalJSON accepts three input shapes for backwards compatibility
+// with publishers that haven't migrated to integer minor units:
+//
+//   - integer (canonical): treated as minor units as-is. e.g. 16949 → 16949 paise.
+//   - float (legacy): treated as INR major units and converted via FromMajor.
+//     e.g. 169.49 → 16949 paise. Assumes INR because legacy publishers in
+//     this codebase only ever sent INR amounts; non-INR float payloads
+//     will be wrong and should migrate to the integer form.
+//   - string: parsed via ParseString (INR) — covers older string payloads
+//     used by some payment-gateway adapters.
+//   - null: treated as zero Money.
+//
+// Once all publishers emit integer minor units, the float branch becomes
+// dead code but is kept as a defensive fallback.
+func (m *Money) UnmarshalJSON(data []byte) error {
+	s := strings.TrimSpace(string(data))
+	if s == "" || s == "null" {
+		*m = 0
+		return nil
+	}
+	if s[0] == '"' {
+		var raw string
+		if err := json.Unmarshal(data, &raw); err != nil {
+			return fmt.Errorf("money: invalid string: %w", err)
+		}
+		parsed, err := ParseString(raw)
+		if err != nil {
+			return fmt.Errorf("money: %w", err)
+		}
+		*m = parsed
+		return nil
+	}
+	if !strings.ContainsAny(s, ".eE") {
+		n, err := strconv.ParseInt(s, 10, 64)
+		if err != nil {
+			return fmt.Errorf("money: invalid integer: %w", err)
+		}
+		*m = Money(n)
+		return nil
+	}
+	f, err := strconv.ParseFloat(s, 64)
+	if err != nil {
+		return fmt.Errorf("money: invalid number: %w", err)
+	}
+	*m = FromMajor(CurrencyINR, f)
+	return nil
+}
 
 // FromMajor converts a major-unit value (rupees, dollars, dinars) to
 // Money using the currency's minor-unit factor. Banker's rounding to
