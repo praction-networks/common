@@ -19,6 +19,7 @@ const (
 	BillingStream          StreamName = "BillingStream"
 	LicenseStream          StreamName = "LicenseStream"
 	OLTEventStream         StreamName = "OLTEventStream"
+	OLTManagerStream       StreamName = "OLTManagerStream"
 )
 
 // Global Stream names as constants
@@ -75,6 +76,20 @@ const (
 	OLTEventColdStartSubject     Subject = "olt.event.cold_start"
 	OLTEventAuthFailureSubject   Subject = "olt.event.auth_failure"
 	OLTEventTrapUnknownSubject   Subject = "olt.event.trap.unknown"
+
+	// OLT Manager service-level events — sync lifecycle, capability
+	// detection, ONT reconciliation, alarm reconciliation, health
+	// changes. Distinct stream (OLTManagerStream) so high-velocity trap
+	// events on OLTEventStream don't crowd out reconciliation results.
+	OLTManagerSyncStartedSubject        Subject = "oltmanager.sync.started"
+	OLTManagerSyncCompletedSubject      Subject = "oltmanager.sync.completed"
+	OLTManagerSyncFailedSubject         Subject = "oltmanager.sync.failed"
+	OLTManagerCapabilityDetectedSubject Subject = "oltmanager.capability.detected"
+	OLTManagerONTDiscoveredSubject      Subject = "oltmanager.ont.discovered"
+	OLTManagerONTUpdatedSubject         Subject = "oltmanager.ont.updated"
+	OLTManagerONTDeletedSubject         Subject = "oltmanager.ont.deleted"
+	OLTManagerAlarmReconciledSubject    Subject = "oltmanager.alarm.reconciled"
+	OLTManagerHealthChangedSubject      Subject = "oltmanager.health.changed"
 
 	// Inventory Service Events
 	InventoryDeviceCreatedSubject Subject = "inventory.device.created"
@@ -690,6 +705,22 @@ var Streams = map[StreamName]StreamMetadata{
 			OLTEventColdStartSubject,
 			OLTEventAuthFailureSubject,
 			OLTEventTrapUnknownSubject,
+		},
+	},
+
+	OLTManagerStream: {
+		Name:        OLTManagerStream,
+		Description: "Service-level events from olt-manager-service: sync lifecycle, capability detection, ONT reconciliation, alarm reconciliation, health changes.",
+		Subjects: []Subject{
+			OLTManagerSyncStartedSubject,
+			OLTManagerSyncCompletedSubject,
+			OLTManagerSyncFailedSubject,
+			OLTManagerCapabilityDetectedSubject,
+			OLTManagerONTDiscoveredSubject,
+			OLTManagerONTUpdatedSubject,
+			OLTManagerONTDeletedSubject,
+			OLTManagerAlarmReconciledSubject,
+			OLTManagerHealthChangedSubject,
 		},
 	},
 
