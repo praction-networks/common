@@ -64,6 +64,16 @@ type OLTInsertEventModel struct {
 
 	MgmtIP string `bson:"mgmtIp" json:"mgmtIp"`
 
+	// Geographic location — operator-set at OLT registration time
+	// (not derived from SNMP). Pointer semantics so "not provided"
+	// stays distinct from "0,0" (a real point in the Atlantic).
+	// Address is the human-readable street/site label that pin
+	// tooltips render; sysLocation from the probe seeds it when
+	// present.
+	Latitude  *float64 `bson:"latitude,omitempty" json:"latitude,omitempty"`
+	Longitude *float64 `bson:"longitude,omitempty" json:"longitude,omitempty"`
+	Address   string   `bson:"address,omitempty" json:"address,omitempty"`
+
 	CLI  OLTCLIConfig  `bson:"cli" json:"cli"`
 	SNMP OLTSNMPConfig `bson:"snmp" json:"snmp"`
 
@@ -91,6 +101,12 @@ type OLTUpdateEventModel struct {
 	SysName         string `bson:"sysName,omitempty" json:"sysName,omitempty"`
 
 	MgmtIP string `bson:"mgmtIp,omitempty" json:"mgmtIp,omitempty"`
+
+	// Geo fields use pointer semantics at the wire level too —
+	// `nil` means "not changed in this update", not "set to 0,0".
+	Latitude  *float64 `bson:"latitude,omitempty" json:"latitude,omitempty"`
+	Longitude *float64 `bson:"longitude,omitempty" json:"longitude,omitempty"`
+	Address   string   `bson:"address,omitempty" json:"address,omitempty"`
 
 	CLI  *OLTCLIConfig  `bson:"cli,omitempty" json:"cli,omitempty"`
 	SNMP *OLTSNMPConfig `bson:"snmp,omitempty" json:"snmp,omitempty"`
