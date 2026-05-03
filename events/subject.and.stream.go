@@ -84,6 +84,16 @@ const (
 	OLTManagerSyncStartedSubject        Subject = "oltmanager.sync.started"
 	OLTManagerSyncCompletedSubject      Subject = "oltmanager.sync.completed"
 	OLTManagerSyncFailedSubject         Subject = "oltmanager.sync.failed"
+	// Per-phase progress events for multi-step initial / full sync.
+	// Run-level Started/Completed/Failed bracket the whole job; the Phase
+	// subjects narrate progress inside it (Phase A identity, B chassis,
+	// C ports/optics, D VLANs, E ONTs, …). The SSE bridge in olt-manager
+	// fans these out to the dashboard so operators see U2000-style phase
+	// timelines while a fresh OLT is discovered.
+	OLTManagerSyncPhaseStartedSubject   Subject = "oltmanager.sync.phase.started"
+	OLTManagerSyncPhaseProgressSubject  Subject = "oltmanager.sync.phase.progress"
+	OLTManagerSyncPhaseCompletedSubject Subject = "oltmanager.sync.phase.completed"
+	OLTManagerSyncPhaseFailedSubject    Subject = "oltmanager.sync.phase.failed"
 	OLTManagerCapabilityDetectedSubject Subject = "oltmanager.capability.detected"
 	OLTManagerONTDiscoveredSubject      Subject = "oltmanager.ont.discovered"
 	OLTManagerONTUpdatedSubject         Subject = "oltmanager.ont.updated"
@@ -715,6 +725,10 @@ var Streams = map[StreamName]StreamMetadata{
 			OLTManagerSyncStartedSubject,
 			OLTManagerSyncCompletedSubject,
 			OLTManagerSyncFailedSubject,
+			OLTManagerSyncPhaseStartedSubject,
+			OLTManagerSyncPhaseProgressSubject,
+			OLTManagerSyncPhaseCompletedSubject,
+			OLTManagerSyncPhaseFailedSubject,
 			OLTManagerCapabilityDetectedSubject,
 			OLTManagerONTDiscoveredSubject,
 			OLTManagerONTUpdatedSubject,

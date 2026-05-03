@@ -91,8 +91,17 @@ func Send201Created(w http.ResponseWriter, message string, data any) {
 	sendSuccess(w, message, data, http.StatusCreated)
 }
 
-func Send202Accepted(w http.ResponseWriter, message string) {
-	sendSuccess(w, message, "", http.StatusAccepted)
+// Send202Accepted writes HTTP 202 with the canonical success envelope.
+// `data` is variadic for backwards compatibility — existing callers
+// passing only (w, message) still work; async APIs that want to return
+// a job/run id (like the OLT-manager `POST /sync` flow) pass it as the
+// third arg. Only the first data value is honored.
+func Send202Accepted(w http.ResponseWriter, message string, data ...any) {
+	var d any = ""
+	if len(data) > 0 {
+		d = data[0]
+	}
+	sendSuccess(w, message, d, http.StatusAccepted)
 }
 
 func Send203NonAuthoritativeInfo(w http.ResponseWriter, message string) {
