@@ -303,12 +303,13 @@ var OLTVendorRegistry = []OLTVendorInfo{
 			"V1.9.5",
 			"V1.9.0",
 		},
-		SupportedCLIProtocols:  []OLTCLIProtocol{OLTCLIProtocolSSH, OLTCLIProtocolTelnet},
+		// VSOL firmware ships Telnet only — no SSH server. Same
+		// restriction inherited by Syrotech / CIG OEM rebrands.
+		SupportedCLIProtocols:  []OLTCLIProtocol{OLTCLIProtocolTelnet},
 		SupportedSNMPVersions:  []OLTSNMPVersion{OLTSNMPVersionV1, OLTSNMPVersionV2c, OLTSNMPVersionV3},
 		SupportsEnableMode:     true,
-		SupportsPrivateKeyAuth: true,
+		SupportsPrivateKeyAuth: false, // telnet-only, no key auth
 		DefaultCLIPort: map[string]int{
-			string(OLTCLIProtocolSSH):    22,
 			string(OLTCLIProtocolTelnet): 23,
 		},
 	},
@@ -375,12 +376,12 @@ var OLTVendorRegistry = []OLTVendorInfo{
 			"V2.0.05",
 			"V2.0.04",
 		},
-		SupportedCLIProtocols:  []OLTCLIProtocol{OLTCLIProtocolSSH, OLTCLIProtocolTelnet},
+		// Inherits VSOL firmware — Telnet only.
+		SupportedCLIProtocols:  []OLTCLIProtocol{OLTCLIProtocolTelnet},
 		SupportedSNMPVersions:  []OLTSNMPVersion{OLTSNMPVersionV1, OLTSNMPVersionV2c, OLTSNMPVersionV3},
 		SupportsEnableMode:     true,
-		SupportsPrivateKeyAuth: true,
+		SupportsPrivateKeyAuth: false,
 		DefaultCLIPort: map[string]int{
-			string(OLTCLIProtocolSSH):    22,
 			string(OLTCLIProtocolTelnet): 23,
 		},
 	},
@@ -399,12 +400,12 @@ var OLTVendorRegistry = []OLTVendorInfo{
 			"V2.0.05",
 			"V2.0.04",
 		},
-		SupportedCLIProtocols:  []OLTCLIProtocol{OLTCLIProtocolSSH, OLTCLIProtocolTelnet},
+		// Inherits VSOL firmware — Telnet only.
+		SupportedCLIProtocols:  []OLTCLIProtocol{OLTCLIProtocolTelnet},
 		SupportedSNMPVersions:  []OLTSNMPVersion{OLTSNMPVersionV1, OLTSNMPVersionV2c, OLTSNMPVersionV3},
 		SupportsEnableMode:     true,
-		SupportsPrivateKeyAuth: true,
+		SupportsPrivateKeyAuth: false,
 		DefaultCLIPort: map[string]int{
-			string(OLTCLIProtocolSSH):    22,
 			string(OLTCLIProtocolTelnet): 23,
 		},
 	},
@@ -524,6 +525,28 @@ func IsKnownFirmware(vendor, firmware string) bool {
 	}
 	for _, f := range v.FirmwareVersions {
 		if f == firmware {
+			return true
+		}
+	}
+	return false
+}
+
+// IsCLIProtocolSupported reports whether the given vendor's firmware
+// (per the canonical registry) accepts the named CLI transport. Used
+// by olt-manager's probe gate to enforce vendor-specific transport
+// restrictions — e.g. VSOL refuses SSH; supplying SSH credentials
+// for a VSOL OLT is a save-blocker.
+//
+// Unknown vendor → false (strict). Callers that want a permissive
+// fallback should check LookupOLTVendor first and apply their own
+// policy when it returns nil.
+func IsCLIProtocolSupported(vendor string, protocol OLTCLIProtocol) bool {
+	v := LookupOLTVendor(vendor)
+	if v == nil {
+		return false
+	}
+	for _, p := range v.SupportedCLIProtocols {
+		if p == protocol {
 			return true
 		}
 	}
