@@ -405,10 +405,6 @@ var Streams = map[StreamName]StreamMetadata{
 			DeviceCreatedSubject,
 			DeviceUpdatedSubject,
 			DeviceDeletedSubject,
-			// OLT Events (consumed by olt-manager)
-			OLTCreatedSubject,
-			OLTUpdatedSubject,
-			OLTDeletedSubject,
 			// Tenant Provider Binding Events
 			CDNProviderCreatedSubject,
 			CDNProviderUpdateSubject,
@@ -720,8 +716,13 @@ var Streams = map[StreamName]StreamMetadata{
 
 	OLTManagerStream: {
 		Name:        OLTManagerStream,
-		Description: "Service-level events from olt-manager-service: sync lifecycle, capability detection, ONT reconciliation, alarm reconciliation, health changes.",
+		Description: "Service-level events from olt-manager-service: OLT lifecycle (created/updated/deleted), sync lifecycle, capability detection, ONT reconciliation, alarm reconciliation, health changes. olt-manager owns the source-of-truth for OLT records and is the publisher of olt.* lifecycle events.",
 		Subjects: []Subject{
+			// OLT lifecycle (olt-manager is the publisher; was on TenantStream pre-cutover)
+			OLTCreatedSubject,
+			OLTUpdatedSubject,
+			OLTDeletedSubject,
+			// Service-level events emitted during sync runs / reconciliation
 			OLTManagerSyncStartedSubject,
 			OLTManagerSyncCompletedSubject,
 			OLTManagerSyncFailedSubject,
