@@ -5,9 +5,11 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"math/rand"
 	"strconv"
+	"sync/atomic"
 	"time"
 
 	"github.com/nats-io/nats.go/jetstream"
@@ -25,6 +27,14 @@ type Publisher[T any] struct {
 	StreamManager   *JsStreamManager
 	EnableDedup     bool
 	FallbackStorage *mongo.Collection
+
+	// streamVerified flips to true after the first successful
+	// StreamManager.Stream() round-trip. Subsequent publishes skip
+	// the existence check — JetStream's WithExpectStream guard at
+	// publish time still enforces correctness, and the per-publish
+	// StreamInfo round-trip was masking caller-ctx cancellation as
+	// "stream not found" (it is not — it's the canceled lookup).
+	streamVerified atomic.Bool
 }
 
 // NewPublisher creates a new publisher.
@@ -260,19 +270,35 @@ func (p *Publisher[T]) PublishWithOptions(ctx context.Context, data T, userOpts 
 			Observe(time.Since(start).Seconds())
 	}()
 
-	// Ensure the stream exists (fail fast on config errors)
-	streamInfo, err := p.StreamManager.Stream(ctx, string(p.Stream))
-	if err != nil {
-		metrics.RecordNATSFailure("unknown", string(p.Subject), err)
-		logger.Error("Stream not found for subject", err, "Stream", p.Stream, "Subject", p.Subject)
-		return nil, fmt.Errorf("stream %s not found for subject %s: %w", p.Stream, p.Subject, err)
+	// Ensure the stream exists (fail fast on config errors). Cached
+	// after the first successful round-trip — JetStream's
+	// WithExpectStream guard at publish time still enforces
+	// correctness on the hot path. The lookup runs on a detached
+	// ctx with a short budget so a cancelled caller ctx doesn't
+	// surface as "Stream not found" (which it isn't — it's the
+	// existence probe failing because *its* ctx died).
+	streamName := string(p.Stream)
+	if !p.streamVerified.Load() {
+		checkCtx, checkCancel := context.WithTimeout(context.WithoutCancel(ctx), 5*time.Second)
+		_, err := p.StreamManager.Stream(checkCtx, streamName)
+		checkCancel()
+		if err != nil {
+			metrics.RecordNATSFailure(streamName, string(p.Subject), err)
+			if errors.Is(err, jetstream.ErrStreamNotFound) {
+				logger.Error("Stream not found for subject", err, "Stream", p.Stream, "Subject", p.Subject)
+				return nil, fmt.Errorf("stream %s not found for subject %s: %w", p.Stream, p.Subject, err)
+			}
+			logger.Warn("Stream existence check failed", err, "Stream", p.Stream, "Subject", p.Subject)
+			return nil, fmt.Errorf("stream %s lookup failed for subject %s: %w", p.Stream, p.Subject, err)
+		}
+		p.streamVerified.Store(true)
 	}
 
 	// Prepare payload (carry your generic Event[T])
 	event := Event[T]{Subject: p.Subject, Data: data}
 	payload, err := json.Marshal(event)
 	if err != nil {
-		metrics.RecordNATSFailure(streamInfo.Config.Name, string(p.Subject), err)
+		metrics.RecordNATSFailure(streamName, string(p.Subject), err)
 		logger.Error("Failed to marshal event", err, "subject", p.Subject)
 		return nil, fmt.Errorf("failed to marshal event: %w", err)
 	}
@@ -314,12 +340,12 @@ func (p *Publisher[T]) PublishWithOptions(ctx context.Context, data T, userOpts 
 	if !opts.RetryEnabled {
 		ack, err := p.StreamManager.JsClient.Publish(ctx, string(p.Subject), payload, jsOpts...)
 		if err != nil {
-			metrics.RecordNATSFailure(streamInfo.Config.Name, string(p.Subject), err)
+			metrics.RecordNATSFailure(streamName, string(p.Subject), err)
 			logger.Error("Failed to publish event (no retry)", "subject", p.Subject, err)
 			return nil, fmt.Errorf("failed to publish event: %w", err)
 		}
 		success = true
-		metrics.RecordNATSPublished(streamInfo.Config.Name, string(p.Subject))
+		metrics.RecordNATSPublished(streamName, string(p.Subject))
 		logger.Info("Published (no retry)", "subject", p.Subject, "stream", ack.Stream, "seq", ack.Sequence, "duplicate", ack.Duplicate)
 		return ack, nil
 	}
@@ -334,13 +360,13 @@ func (p *Publisher[T]) PublishWithOptions(ctx context.Context, data T, userOpts 
 		ack, err := p.StreamManager.JsClient.Publish(ctx, string(p.Subject), payload, jsOpts...)
 		if err == nil {
 			success = true
-			metrics.RecordNATSPublished(streamInfo.Config.Name, string(p.Subject))
+			metrics.RecordNATSPublished(streamName, string(p.Subject))
 			logger.Info("Published (retry ok)", "subject", p.Subject, "attempt", attempt, "stream", ack.Stream, "seq", ack.Sequence, "duplicate", ack.Duplicate)
 			return ack, nil
 		}
 
 		lastErr = err
-		metrics.RecordNATSFailure(streamInfo.Config.Name, string(p.Subject), err)
+		metrics.RecordNATSFailure(streamName, string(p.Subject), err)
 		logger.Error("Publish failed", err, "subject", p.Subject, "attempt", attempt)
 
 		// Stop if context is done
