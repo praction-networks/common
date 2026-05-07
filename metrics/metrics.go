@@ -835,6 +835,15 @@ func (rw *ResponseWriter) Hijack() (net.Conn, *bufio.ReadWriter, error) {
 	return nil, nil, fmt.Errorf("underlying ResponseWriter does not implement http.Hijacker")
 }
 
+// Flush implements http.Flusher so SSE handlers wrapped by this
+// middleware can stream chunks. Without this, `w.(http.Flusher)`
+// type-assertions fail and SSE endpoints return 500.
+func (rw *ResponseWriter) Flush() {
+	if flusher, ok := rw.ResponseWriter.(http.Flusher); ok {
+		flusher.Flush()
+	}
+}
+
 // RegisterAllMetrics registers all metrics with the registry
 func RegisterAllMetrics() {
 	registry.MustRegister(
