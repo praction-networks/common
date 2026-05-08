@@ -107,7 +107,19 @@ const (
 	OLTManagerONTRegisteredSubject         Subject = "oltmanager.ont.registered"
 	OLTManagerONTActivatedSubject          Subject = "oltmanager.ont.activated"
 	OLTManagerServicePortCreatedSubject    Subject = "oltmanager.serviceport.created"
+	OLTManagerServicePortUpdatedSubject    Subject = "oltmanager.serviceport.updated"
 	OLTManagerServicePortDeletedSubject    Subject = "oltmanager.serviceport.deleted"
+	// SP-drift fix: published by olt-manager's DriftReconciler / MergePON
+	// path on every sync-discovered service port (in addition to the
+	// existing operator-driven created/deleted pair). Lets the dashboard
+	// live-update without the operator hitting Refresh.
+	OLTManagerSPReconcileStartedSubject   Subject = "oltmanager.serviceport.reconcile.started"
+	OLTManagerSPReconcileCompletedSubject Subject = "oltmanager.serviceport.reconcile.completed"
+	// ONT-state-transition is published by WalkONT when a fresh live
+	// SNMP GET observes a state edge (e.g. offline → online). Drives
+	// the on-demand SP reconciler so a come-back-online ONT gets its
+	// service-ports re-discovered without operator action.
+	OLTManagerONTStateTransitionSubject Subject = "oltmanager.ont.state.transition"
 	OLTManagerAlarmReconciledSubject    Subject = "oltmanager.alarm.reconciled"
 	OLTManagerHealthChangedSubject      Subject = "oltmanager.health.changed"
 
@@ -747,7 +759,11 @@ var Streams = map[StreamName]StreamMetadata{
 			OLTManagerONTRegisteredSubject,
 			OLTManagerONTActivatedSubject,
 			OLTManagerServicePortCreatedSubject,
+			OLTManagerServicePortUpdatedSubject,
 			OLTManagerServicePortDeletedSubject,
+			OLTManagerSPReconcileStartedSubject,
+			OLTManagerSPReconcileCompletedSubject,
+			OLTManagerONTStateTransitionSubject,
 			OLTManagerAlarmReconciledSubject,
 			OLTManagerHealthChangedSubject,
 		},
