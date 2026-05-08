@@ -28,18 +28,25 @@ const (
 	AssetStatusRMA       AssetStatus = "RMA"
 	AssetStatusReturned  AssetStatus = "RETURNED"
 	AssetStatusScrapped  AssetStatus = "SCRAPPED"
+	// AssetStatusPendingReturn — FE has submitted a drop-off batch that
+	// includes this asset but the WM has not yet accepted/rejected the line.
+	// Custody still nominally with the FE; auto-released back to ASSIGNED/
+	// INSTALLED after dropoffLockWindowHours (tenant policy) elapses.
+	// Source: field-central assets-prd.md §11.2 (two-step drop-off).
+	AssetStatusPendingReturn AssetStatus = "PENDING_RETURN"
 )
 
 // ValidAssetTransitions defines the allowed state transitions for assets.
 var ValidAssetTransitions = map[AssetStatus][]AssetStatus{
-	AssetStatusInStock:   {AssetStatusReserved, AssetStatusAssigned, AssetStatusScrapped},
-	AssetStatusReserved:  {AssetStatusInStock, AssetStatusAssigned},
-	AssetStatusAssigned:  {AssetStatusInstalled, AssetStatusReturned, AssetStatusFaulty},
-	AssetStatusInstalled: {AssetStatusFaulty, AssetStatusReturned},
-	AssetStatusFaulty:    {AssetStatusRMA, AssetStatusScrapped, AssetStatusReturned},
-	AssetStatusRMA:       {AssetStatusReturned, AssetStatusScrapped},
-	AssetStatusReturned:  {AssetStatusInStock},
-	AssetStatusScrapped:  {}, // terminal state
+	AssetStatusInStock:       {AssetStatusReserved, AssetStatusAssigned, AssetStatusScrapped},
+	AssetStatusReserved:      {AssetStatusInStock, AssetStatusAssigned},
+	AssetStatusAssigned:      {AssetStatusInstalled, AssetStatusReturned, AssetStatusFaulty, AssetStatusPendingReturn},
+	AssetStatusInstalled:     {AssetStatusFaulty, AssetStatusReturned, AssetStatusPendingReturn},
+	AssetStatusFaulty:        {AssetStatusRMA, AssetStatusScrapped, AssetStatusReturned},
+	AssetStatusRMA:           {AssetStatusReturned, AssetStatusScrapped},
+	AssetStatusReturned:      {AssetStatusInStock},
+	AssetStatusScrapped:      {}, // terminal state
+	AssetStatusPendingReturn: {AssetStatusReturned, AssetStatusAssigned, AssetStatusInstalled},
 }
 
 // IsValidTransition checks if a state transition is allowed.
