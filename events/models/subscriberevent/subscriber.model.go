@@ -18,6 +18,16 @@ const (
 	// SubscriberStatusOnboarding indicates the subscriber is recently created and may still be
 	// undergoing KYC or plan assignment before an active connection is established.
 	SubscriberStatusOnboarding SubscriberStatus = "ONBOARDING"
+
+	// SubscriberStatusPendingKYC indicates the subscriber has been created but
+	// must complete KYC before any service can be activated.
+	// Source: field-central onboard-subscriber-prd.md §6.
+	SubscriberStatusPendingKYC SubscriberStatus = "PENDING_KYC"
+
+	// SubscriberStatusPendingPayment indicates KYC is verified but the first
+	// invoice/security deposit has not yet been settled.
+	// Source: field-central onboard-subscriber-prd.md §6.
+	SubscriberStatusPendingPayment SubscriberStatus = "PENDING_PAYMENT"
 )
 
 type SubscriberType string
