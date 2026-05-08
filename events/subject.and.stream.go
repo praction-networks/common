@@ -98,6 +98,16 @@ const (
 	OLTManagerONTDiscoveredSubject      Subject = "oltmanager.ont.discovered"
 	OLTManagerONTUpdatedSubject         Subject = "oltmanager.ont.updated"
 	OLTManagerONTDeletedSubject         Subject = "oltmanager.ont.deleted"
+	// Provisioning lifecycle events emitted by olt-manager when an
+	// operator drives the Discover → Profile → Service Port → Execute
+	// wizard. Distinct from the *.discovered/updated/deleted sync-side
+	// events because they are operator-triggered and carry the full
+	// register / service-port draft for downstream audit + dashboard
+	// fan-out.
+	OLTManagerONTRegisteredSubject         Subject = "oltmanager.ont.registered"
+	OLTManagerONTActivatedSubject          Subject = "oltmanager.ont.activated"
+	OLTManagerServicePortCreatedSubject    Subject = "oltmanager.serviceport.created"
+	OLTManagerServicePortDeletedSubject    Subject = "oltmanager.serviceport.deleted"
 	OLTManagerAlarmReconciledSubject    Subject = "oltmanager.alarm.reconciled"
 	OLTManagerHealthChangedSubject      Subject = "oltmanager.health.changed"
 
@@ -734,6 +744,10 @@ var Streams = map[StreamName]StreamMetadata{
 			OLTManagerONTDiscoveredSubject,
 			OLTManagerONTUpdatedSubject,
 			OLTManagerONTDeletedSubject,
+			OLTManagerONTRegisteredSubject,
+			OLTManagerONTActivatedSubject,
+			OLTManagerServicePortCreatedSubject,
+			OLTManagerServicePortDeletedSubject,
 			OLTManagerAlarmReconciledSubject,
 			OLTManagerHealthChangedSubject,
 		},
