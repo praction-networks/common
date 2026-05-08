@@ -38,6 +38,12 @@ const (
 	AssetReleaseReasonLost AssetReleaseReason = "LOST"
 	// AssetReleaseReasonOther — catch-all; pair with a free-text note.
 	AssetReleaseReasonOther AssetReleaseReason = "OTHER"
+	// AssetReleaseReasonChurnRecovery — operator recovered the unit from a
+	// churning customer (subscription not yet cancelled at the moment of
+	// recovery; distinct from SUBSCRIPTION_CANCELLED which presumes the
+	// cancellation already landed).
+	// Source: field-central assets-prd.md §6.4.
+	AssetReleaseReasonChurnRecovery AssetReleaseReason = "CHURN_RECOVERY"
 	// AssetReleaseReasonUnknown — sentinel for unrecognized / unparseable
 	// inputs. Storing UNKNOWN is preferable to dropping the row, as it
 	// surfaces the bad-reason via analytics queries.
@@ -55,6 +61,7 @@ var validAssetReleaseReasons = map[AssetReleaseReason]bool{
 	AssetReleaseReasonDamaged:               true,
 	AssetReleaseReasonLost:                  true,
 	AssetReleaseReasonOther:                 true,
+	AssetReleaseReasonChurnRecovery:         true,
 }
 
 // NormalizeAssetReleaseReason trims whitespace, uppercases the input,
@@ -76,4 +83,4 @@ func NormalizeAssetReleaseReason(raw string) AssetReleaseReason {
 // AssetReleaseReasonOneOf is the space-separated list of canonical
 // values usable directly in struct-tag `oneof=...` validation. Kept in
 // sync with validAssetReleaseReasons.
-const AssetReleaseReasonOneOf = "FAULTY SWAP SUBSCRIPTION_CANCELLED DOA END_OF_LIFE DAMAGED LOST OTHER"
+const AssetReleaseReasonOneOf = "FAULTY SWAP SUBSCRIPTION_CANCELLED DOA END_OF_LIFE DAMAGED LOST OTHER CHURN_RECOVERY"
