@@ -1,7 +1,9 @@
 package audit
 
 import (
+	"bufio"
 	"context"
+	"net"
 	"net/http"
 	"strings"
 	"time"
@@ -70,6 +72,24 @@ type responseWriter struct {
 func (rw *responseWriter) WriteHeader(code int) {
 	rw.statusCode = code
 	rw.ResponseWriter.WriteHeader(code)
+}
+
+// Flush proxies http.Flusher so SSE handlers wrapped by this middleware
+// can stream. Without it, type assertions like w.(http.Flusher) fail
+// because the embedded interface is hidden behind the wrapper struct.
+func (rw *responseWriter) Flush() {
+	if f, ok := rw.ResponseWriter.(http.Flusher); ok {
+		f.Flush()
+	}
+}
+
+// Hijack proxies http.Hijacker so WebSocket upgrade handlers continue
+// to work when this middleware sits in front of them.
+func (rw *responseWriter) Hijack() (net.Conn, *bufio.ReadWriter, error) {
+	if h, ok := rw.ResponseWriter.(http.Hijacker); ok {
+		return h.Hijack()
+	}
+	return nil, nil, http.ErrNotSupported
 }
 
 // httpMethodToAction maps HTTP methods to audit action types
