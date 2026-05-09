@@ -265,6 +265,40 @@ func TestPolicyNotifications_SupportChannels_RoundTrip(t *testing.T) {
 	}
 }
 
+// TestTenantPolicyPatch_NilBucketsIgnored — nil buckets in the wire form
+// represent "client did not send this bucket"; only non-nil buckets are
+// considered for merge.
+func TestTenantPolicyPatch_NilBucketsIgnored(t *testing.T) {
+	body := []byte(`{"assets":{"dropoffLockWindowHours":6}}`)
+	var p TenantPolicyPatch
+	if err := json.Unmarshal(body, &p); err != nil {
+		t.Fatalf("unmarshal: %v", err)
+	}
+	if p.Account != nil || p.Auth != nil || p.Shift != nil {
+		t.Errorf("absent buckets must be nil; got Account=%v Auth=%v Shift=%v", p.Account, p.Auth, p.Shift)
+	}
+	if p.Assets == nil {
+		t.Fatalf("Assets must be non-nil when sent")
+	}
+	if p.Assets.DropoffLockWindowHours != 6 {
+		t.Errorf("DropoffLockWindowHours: got %d", p.Assets.DropoffLockWindowHours)
+	}
+}
+
+// TestTenantPolicyPatch_EmptyBucketRetained — an empty {} bucket is
+// distinguishable from nil; means "client sent the bucket but no fields
+// inside changed". Unusual but legal.
+func TestTenantPolicyPatch_EmptyBucketRetained(t *testing.T) {
+	body := []byte(`{"assets":{}}`)
+	var p TenantPolicyPatch
+	if err := json.Unmarshal(body, &p); err != nil {
+		t.Fatalf("unmarshal: %v", err)
+	}
+	if p.Assets == nil {
+		t.Errorf("empty bucket must round-trip as non-nil pointer")
+	}
+}
+
 // TestPolicyShift_Defaults — Defaults() lands the documented baseline values.
 func TestPolicyShift_Defaults(t *testing.T) {
 	d := Defaults()
