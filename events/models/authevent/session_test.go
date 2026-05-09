@@ -19,8 +19,8 @@ func TestAuthSessionRevokedEvent_RoundTrip(t *testing.T) {
 	if err := json.Unmarshal(b, &got); err != nil {
 		t.Fatalf("unmarshal: %v", err)
 	}
-	if got.UserID != "user_xyz" || got.SessionID != "sess_123" || got.Reason != "user_initiated" {
-		t.Errorf("round-trip mismatch: %+v", got)
+	if got != in {
+		t.Errorf("round-trip mismatch: got %+v, want %+v", got, in)
 	}
 }
 
@@ -38,7 +38,7 @@ func TestAuthSessionRevokedEvent_AllSentinel(t *testing.T) {
 	if err := json.Unmarshal(b, &got); err != nil {
 		t.Fatalf("unmarshal: %v", err)
 	}
-	if got.SessionID != "all" {
-		t.Errorf("SessionID: got %q, want all", got.SessionID)
+	if got != in {
+		t.Errorf("round-trip mismatch: got %+v, want %+v", got, in)
 	}
 }
