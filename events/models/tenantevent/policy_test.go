@@ -299,6 +299,25 @@ func TestTenantPolicyPatch_EmptyBucketRetained(t *testing.T) {
 	}
 }
 
+// TestTenantPolicyUpdatedEvent_RoundTrip — payload shape per design §5.5.
+// Subject is "tenant.policy.updated" (no .v1 suffix per Wave 0 convention).
+func TestTenantPolicyUpdatedEvent_RoundTrip(t *testing.T) {
+	in := TenantPolicyUpdatedEvent{
+		TenantID:    "tenant_xyz",
+		Version:     4,
+		UpdatedAtMs: 1715200000000,
+		ChangedKeys: []string{"assets.dropoffLockWindowHours"},
+	}
+	b, _ := json.Marshal(in)
+	var got TenantPolicyUpdatedEvent
+	if err := json.Unmarshal(b, &got); err != nil {
+		t.Fatalf("unmarshal: %v", err)
+	}
+	if got.TenantID != "tenant_xyz" || got.Version != 4 || len(got.ChangedKeys) != 1 {
+		t.Errorf("round-trip mismatch: got %+v", got)
+	}
+}
+
 // TestPolicyShift_Defaults — Defaults() lands the documented baseline values.
 func TestPolicyShift_Defaults(t *testing.T) {
 	d := Defaults()
