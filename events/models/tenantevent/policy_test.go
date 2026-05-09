@@ -227,6 +227,24 @@ func TestPolicyShift_RoundTrip(t *testing.T) {
 	}
 }
 
+// TestPolicyOnboard_RoundTrip — 2 fields per backend-contract §11.2.
+// enabledFeatures.core.isUserKYCEnabled lives on TenantModel.EnabledFeatures
+// (existing) and is NOT duplicated here.
+func TestPolicyOnboard_RoundTrip(t *testing.T) {
+	in := PolicyOnboard{
+		AgreementChannel: "OTP",
+		OtpChannel:       "WHATSAPP",
+	}
+	b, _ := json.Marshal(in)
+	var got PolicyOnboard
+	if err := json.Unmarshal(b, &got); err != nil {
+		t.Fatalf("unmarshal: %v", err)
+	}
+	if got != in {
+		t.Errorf("got %+v, want %+v", got, in)
+	}
+}
+
 // TestPolicyShift_Defaults — Defaults() lands the documented baseline values.
 func TestPolicyShift_Defaults(t *testing.T) {
 	d := Defaults()
