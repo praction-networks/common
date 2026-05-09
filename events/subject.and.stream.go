@@ -182,6 +182,9 @@ const (
 	TenantBrandingUpdatedSubject Subject = "tenant.branding.updated"
 	TenantBrandingDeletedSubject Subject = "tenant.branding.deleted"
 
+	// Tenant Policy Events
+	TenantPolicyUpdatedSubject Subject = "tenant.policy.updated"
+
 	//Domain User Service Event Initialization
 	TenantUserCreatedSubject            Subject = "tenantuser.created"
 	TenantUserUpdatedSubject            Subject = "tenantuser.updated"
@@ -456,6 +459,8 @@ var Streams = map[StreamName]StreamMetadata{
 			TenantBrandingCreatedSubject,
 			TenantBrandingUpdatedSubject,
 			TenantBrandingDeletedSubject,
+			// Tenant Policy Events
+			TenantPolicyUpdatedSubject,
 		},
 	},
 
