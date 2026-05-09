@@ -102,6 +102,25 @@ func TestPolicyAuth_Validate(t *testing.T) {
 	}
 }
 
+// TestTenantPolicy_VersionField — Version is bumped server-side on every
+// successful PATCH and surfaces to consumers via the tenant.policy.updated
+// event so caches can detect stale state via integer compare.
+func TestTenantPolicy_VersionField(t *testing.T) {
+	d := Defaults()
+	if d.Version != 1 {
+		t.Errorf("Defaults().Version: got %d, want 1", d.Version)
+	}
+	in := TenantPolicy{Version: 7, Account: PolicyAccount{}}
+	b, _ := json.Marshal(in)
+	var got TenantPolicy
+	if err := json.Unmarshal(b, &got); err != nil {
+		t.Fatalf("unmarshal: %v", err)
+	}
+	if got.Version != 7 {
+		t.Errorf("round-trip Version: got %d, want 7", got.Version)
+	}
+}
+
 // TestPolicyNotifications_Validate_Narrowing — tenant may narrow but not expand.
 func TestPolicyNotifications_Validate_Narrowing(t *testing.T) {
 	platform := notificationevent.CriticalCategoriesPlatform
