@@ -24,5 +24,13 @@ func Defaults() TenantPolicy {
 		Account: PolicyAccount{},
 		Assets:  PolicyAssets{DropoffLockWindowHours: 4, RecoveryAcknowledgement: "NONE"},
 		Auth:    PolicyAuth{AccessTokenTtlMinutes: 10},
+		Shift: PolicyShift{
+			FirstBreakSkipsReason:         true,
+			SubsequentBreaksRequireReason: true,
+			BreakReasons:                  []string{"Lunch", "Fuel", "Customer", "Personal", "Other"},
+			EndNudgeGraceMinutes:          30,
+			IdleMinutesThreshold:          5,
+			LocationTrackingEnabled:       true,
+		},
 	}
 }

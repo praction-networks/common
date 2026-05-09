@@ -200,3 +200,53 @@ func TestPolicyAccount_NilVsZero(t *testing.T) {
 		t.Errorf("set-to-false must encode; got %s", string(b2))
 	}
 }
+
+// TestPolicyShift_RoundTrip — 7 fields per backend-contract §11.1, used by
+// the Account hub break/idle/heartbeat flows and by server-side end-nudge.
+func TestPolicyShift_RoundTrip(t *testing.T) {
+	max := 45
+	in := PolicyShift{
+		FirstBreakSkipsReason:         true,
+		SubsequentBreaksRequireReason: true,
+		BreakReasons:                  []string{"Lunch", "Customer"},
+		MaxBreakMinutes:               &max,
+		EndNudgeGraceMinutes:          30,
+		IdleMinutesThreshold:          5,
+		LocationTrackingEnabled:       true,
+	}
+	b, _ := json.Marshal(in)
+	var got PolicyShift
+	if err := json.Unmarshal(b, &got); err != nil {
+		t.Fatalf("unmarshal: %v", err)
+	}
+	if !got.FirstBreakSkipsReason || got.MaxBreakMinutes == nil || *got.MaxBreakMinutes != 45 {
+		t.Errorf("round-trip mismatch: %+v", got)
+	}
+	if len(got.BreakReasons) != 2 || got.BreakReasons[0] != "Lunch" {
+		t.Errorf("break reasons: %v", got.BreakReasons)
+	}
+}
+
+// TestPolicyShift_Defaults — Defaults() lands the documented baseline values.
+func TestPolicyShift_Defaults(t *testing.T) {
+	d := Defaults()
+	if !d.Shift.FirstBreakSkipsReason {
+		t.Errorf("FirstBreakSkipsReason default: want true")
+	}
+	if !d.Shift.SubsequentBreaksRequireReason {
+		t.Errorf("SubsequentBreaksRequireReason default: want true")
+	}
+	wantReasons := []string{"Lunch", "Fuel", "Customer", "Personal", "Other"}
+	if len(d.Shift.BreakReasons) != 5 || d.Shift.BreakReasons[0] != wantReasons[0] {
+		t.Errorf("BreakReasons default: got %v, want %v", d.Shift.BreakReasons, wantReasons)
+	}
+	if d.Shift.EndNudgeGraceMinutes != 30 {
+		t.Errorf("EndNudgeGraceMinutes default: got %d, want 30", d.Shift.EndNudgeGraceMinutes)
+	}
+	if d.Shift.IdleMinutesThreshold != 5 {
+		t.Errorf("IdleMinutesThreshold default: got %d, want 5", d.Shift.IdleMinutesThreshold)
+	}
+	if !d.Shift.LocationTrackingEnabled {
+		t.Errorf("LocationTrackingEnabled default: want true")
+	}
+}
