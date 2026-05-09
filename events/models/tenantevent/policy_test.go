@@ -245,6 +245,26 @@ func TestPolicyOnboard_RoundTrip(t *testing.T) {
 	}
 }
 
+// TestPolicyNotifications_SupportChannels_RoundTrip — §11.4 support channels.
+// Strings are URLs/numbers/emails per tenant choice.
+func TestPolicyNotifications_SupportChannels_RoundTrip(t *testing.T) {
+	in := PolicyNotifications{
+		SupportChannels: PolicySupportChannels{
+			Whatsapp: "+919876543210",
+			Call:     "+918888888888",
+			Email:    "support@example.com",
+		},
+	}
+	b, _ := json.Marshal(in)
+	var got PolicyNotifications
+	if err := json.Unmarshal(b, &got); err != nil {
+		t.Fatalf("unmarshal: %v", err)
+	}
+	if got.SupportChannels.Whatsapp != "+919876543210" || got.SupportChannels.Email != "support@example.com" {
+		t.Errorf("support channels: got %+v", got.SupportChannels)
+	}
+}
+
 // TestPolicyShift_Defaults — Defaults() lands the documented baseline values.
 func TestPolicyShift_Defaults(t *testing.T) {
 	d := Defaults()
