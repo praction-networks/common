@@ -202,6 +202,9 @@ const (
 	TenantUserRoleUpdatedSubject Subject = "tenantuserrole.updated"
 	TenantUserRoleDeletedSubject Subject = "tenantuserrole.deleted"
 
+	// Auth Session Events
+	AuthSessionRevokedSubject Subject = "auth.session.revoked"
+
 	// Subscriber Service Event Initialization
 	SubscriberCreatedSubject Subject = "subscriber.created"
 	SubscriberUpdatedSubject Subject = "subscriber.updated"
@@ -489,6 +492,9 @@ var Streams = map[StreamName]StreamMetadata{
 			TenantUserRoleCreatedSubject,
 			TenantUserRoleUpdatedSubject,
 			TenantUserRoleDeletedSubject,
+
+			// Auth Session Events
+			AuthSessionRevokedSubject,
 		},
 	},
 
