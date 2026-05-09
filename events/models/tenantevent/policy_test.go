@@ -8,12 +8,16 @@ import (
 )
 
 // TestDefaults — Defaults() returns a struct with the documented baseline
-// values: emailChangeAllowed=false, dropoffLockWindowHours=4,
+// values: emailChangeAllowed=nil (not set), dropoffLockWindowHours=4,
 // recoveryAcknowledgement=NONE, accessTokenTtlMinutes=10.
+//
+// EmailChangeAllowed is now *bool; nil means "not configured" (sparse PATCH
+// semantics). Defaults() no longer initialises it so callers can distinguish
+// "server default" from "explicitly set to false".
 func TestDefaults(t *testing.T) {
 	d := Defaults()
-	if d.Account.EmailChangeAllowed {
-		t.Errorf("Account.EmailChangeAllowed default: got true, want false")
+	if d.Account.EmailChangeAllowed != nil {
+		t.Errorf("Account.EmailChangeAllowed default: got %v, want nil", d.Account.EmailChangeAllowed)
 	}
 	if d.Assets.DropoffLockWindowHours != 4 {
 		t.Errorf("Assets.DropoffLockWindowHours default: got %d, want 4", d.Assets.DropoffLockWindowHours)
@@ -40,15 +44,17 @@ func TestBackcompatUnmarshal(t *testing.T) {
 }
 
 // TestPolicyAccount_RoundTrip — EmailChangeAllowed gates the email-change endpoint.
+// Now *bool: pointer-to-true must survive a JSON round-trip.
 func TestPolicyAccount_RoundTrip(t *testing.T) {
-	in := PolicyAccount{EmailChangeAllowed: true}
+	bTrue := true
+	in := PolicyAccount{EmailChangeAllowed: &bTrue}
 	b, _ := json.Marshal(in)
 	var got PolicyAccount
 	if err := json.Unmarshal(b, &got); err != nil {
 		t.Fatalf("unmarshal: %v", err)
 	}
-	if got != in {
-		t.Errorf("got %+v, want %+v", got, in)
+	if got.EmailChangeAllowed == nil || *got.EmailChangeAllowed != true {
+		t.Errorf("got %v, want pointer to true", got.EmailChangeAllowed)
 	}
 }
 
@@ -143,5 +149,54 @@ func TestPolicyNotifications_Validate_Narrowing(t *testing.T) {
 		if (err != nil) != tc.wantErr {
 			t.Errorf("%s: err=%v, wantErr=%v", tc.name, err, tc.wantErr)
 		}
+	}
+}
+
+// TestPolicyAccount_DeferredKeys_RoundTrip — the 7 §11.5 deferred-but-listed
+// keys plus the migrated EmailChangeAllowed (now *bool to disambiguate
+// "set to false" from "not sent" under sparse PATCH semantics).
+func TestPolicyAccount_DeferredKeys_RoundTrip(t *testing.T) {
+	bTrue, bFalse := true, false
+	rate := 7.5
+	in := PolicyAccount{
+		EmailChangeAllowed:   &bFalse,
+		AllowMobileChange:    &bTrue,
+		AllowWhatsappChange:  &bFalse,
+		FuelMode:             "PER_KM",
+		FuelRatePerKm:        &rate,
+		LeaveCategories:      []string{"PAID", "SICK"},
+		VehicleRequired:      &bTrue,
+		DocumentVaultEnabled: &bTrue,
+	}
+	b, _ := json.Marshal(in)
+	var got PolicyAccount
+	if err := json.Unmarshal(b, &got); err != nil {
+		t.Fatalf("unmarshal: %v", err)
+	}
+	if got.EmailChangeAllowed == nil || *got.EmailChangeAllowed != false {
+		t.Errorf("EmailChangeAllowed: got %v", got.EmailChangeAllowed)
+	}
+	if got.FuelMode != "PER_KM" || got.FuelRatePerKm == nil || *got.FuelRatePerKm != 7.5 {
+		t.Errorf("fuel: got mode=%q rate=%v", got.FuelMode, got.FuelRatePerKm)
+	}
+	if len(got.LeaveCategories) != 2 || got.LeaveCategories[0] != "PAID" {
+		t.Errorf("leave categories: got %v", got.LeaveCategories)
+	}
+}
+
+// TestPolicyAccount_NilVsZero — nil pointer (omitted) and *bool to false must
+// be distinguishable in the wire form so MergeTenantPolicy can preserve the
+// "client did not send" semantic.
+func TestPolicyAccount_NilVsZero(t *testing.T) {
+	bFalse := false
+	a := PolicyAccount{}
+	b, _ := json.Marshal(a)
+	if string(b) != "{}" {
+		t.Errorf("nil pointers must omit; got %s", string(b))
+	}
+	a2 := PolicyAccount{EmailChangeAllowed: &bFalse}
+	b2, _ := json.Marshal(a2)
+	if string(b2) != `{"emailChangeAllowed":false}` {
+		t.Errorf("set-to-false must encode; got %s", string(b2))
 	}
 }
