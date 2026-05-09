@@ -6,6 +6,7 @@ package tenantevent
 // Buckets are named with the `Policy` prefix to disambiguate from any other
 // shared types in the tenantevent package.
 type TenantPolicy struct {
+	Version       int                 `json:"version,omitempty"       bson:"version,omitempty"`
 	Account       PolicyAccount       `json:"account,omitempty"       bson:"account,omitempty"`
 	Assets        PolicyAssets        `json:"assets,omitempty"        bson:"assets,omitempty"`
 	Auth          PolicyAuth          `json:"auth,omitempty"          bson:"auth,omitempty"`
@@ -19,6 +20,7 @@ type TenantPolicy struct {
 // of stored documents does not auto-apply defaults.
 func Defaults() TenantPolicy {
 	return TenantPolicy{
+		Version: 1,
 		Account: PolicyAccount{EmailChangeAllowed: false},
 		Assets:  PolicyAssets{DropoffLockWindowHours: 4, RecoveryAcknowledgement: "NONE"},
 		Auth:    PolicyAuth{AccessTokenTtlMinutes: 10},
