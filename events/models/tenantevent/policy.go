@@ -21,7 +21,7 @@ type TenantPolicy struct {
 func Defaults() TenantPolicy {
 	return TenantPolicy{
 		Version: 1,
-		Account: PolicyAccount{EmailChangeAllowed: false},
+		Account: PolicyAccount{},
 		Assets:  PolicyAssets{DropoffLockWindowHours: 4, RecoveryAcknowledgement: "NONE"},
 		Auth:    PolicyAuth{AccessTokenTtlMinutes: 10},
 	}
