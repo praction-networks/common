@@ -346,7 +346,7 @@ func (p *Publisher[T]) PublishWithOptions(ctx context.Context, data T, userOpts 
 		}
 		success = true
 		metrics.RecordNATSPublished(streamName, string(p.Subject))
-		logger.Info("Published (no retry)", "subject", p.Subject, "stream", ack.Stream, "seq", ack.Sequence, "duplicate", ack.Duplicate)
+		logger.Debug("Published (no retry)", "subject", p.Subject, "stream", ack.Stream, "seq", ack.Sequence, "duplicate", ack.Duplicate)
 		return ack, nil
 	}
 
@@ -361,7 +361,7 @@ func (p *Publisher[T]) PublishWithOptions(ctx context.Context, data T, userOpts 
 		if err == nil {
 			success = true
 			metrics.RecordNATSPublished(streamName, string(p.Subject))
-			logger.Info("Published (retry ok)", "subject", p.Subject, "attempt", attempt, "stream", ack.Stream, "seq", ack.Sequence, "duplicate", ack.Duplicate)
+			logger.Debug("Published (retry ok)", "subject", p.Subject, "attempt", attempt, "stream", ack.Stream, "seq", ack.Sequence, "duplicate", ack.Duplicate)
 			return ack, nil
 		}
 
