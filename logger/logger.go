@@ -467,6 +467,10 @@ func UpdateLogLevel(newLevel string) error {
 	return nil
 }
 
+func GetLogLevel() string {
+	return logLevel.String()
+}
+
 func Sync() {
 	if logInstance != nil {
 		_ = logInstance.Sync()
