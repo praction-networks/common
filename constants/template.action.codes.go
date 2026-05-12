@@ -247,6 +247,11 @@ const (
 	SystemTemplateActionCodeSuspiciousLogin     TemplateActionCode = "System.AUTH.SUSPICIOUS_LOGIN"
 	SystemTemplateActionCodeLockedOut           TemplateActionCode = "System.AUTH.LOCKED_OUT"
 	SystemTemplateActionCodeUnlocked            TemplateActionCode = "System.AUTH.UNLOCKED"
+
+	// -----------------------------------------------------
+	// 16. Admin Actions
+	// -----------------------------------------------------
+	TemplateActionCodeAdminCustomNotification TemplateActionCode = "ADMIN.CUSTOM_NOTIFICATION"
 )
 
 // String returns the string representation of the action code
@@ -439,6 +444,8 @@ func GetAllActionCodes() map[TemplateActionCode]bool {
 		SystemTemplateActionCodeSuspiciousLogin:     true,
 		SystemTemplateActionCodeLockedOut:           true,
 		SystemTemplateActionCodeUnlocked:            true,
+		// Admin actions
+		TemplateActionCodeAdminCustomNotification: true,
 	}
 }
 
@@ -612,6 +619,8 @@ func GetActionCodeDescriptions() map[TemplateActionCode]string {
 		SystemTemplateActionCodeSuspiciousLogin:     "System Suspicious Login - Unusual login detected (System template)",
 		SystemTemplateActionCodeLockedOut:           "System Account Locked - Too many failed login attempts (System template)",
 		SystemTemplateActionCodeUnlocked:            "System Account Unlocked - Unlock confirmation (System template)",
+		// Admin action descriptions
+		TemplateActionCodeAdminCustomNotification: "Admin Custom Notification - Manual email from admin to a user",
 	}
 }
 
