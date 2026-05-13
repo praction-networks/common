@@ -26,6 +26,11 @@ type RoleUpdateEventModel struct {
 	Version                  int      `bson:"version" json:"version"`
 }
 
+// RoleDeleteEventModel carries the role ID plus the snapshot of users the role
+// was assigned to at delete time. Consumers (e.g. auth-service /auth/events SSE)
+// match `assignedTo` against the authenticated user ID to push a
+// `permissions.invalidated` event so each affected session reloads /auth/me.
 type RoleDeleteEventModel struct {
-	ID string `bson:"_id" json:"id"`
+	ID         string   `bson:"_id" json:"id"`
+	AssignedTo []string `json:"assignedTo" bson:"assignedTo"`
 }
