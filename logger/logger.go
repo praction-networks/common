@@ -467,6 +467,11 @@ func UpdateLogLevel(newLevel string) error {
 	return nil
 }
 
+// GetLogLevel returns the current active log level as a lowercase string (e.g. "info", "debug").
+func GetLogLevel() string {
+	return logLevel.Level().String()
+}
+
 func Sync() {
 	if logInstance != nil {
 		_ = logInstance.Sync()
