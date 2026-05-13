@@ -188,12 +188,14 @@ func AccessibleTenantsMiddleware(cache hierarchy.TenantHierarchyCache) func(http
 			// Get context tenant ID first
 			contextTenantID := helpers.GetTenantID(ctx)
 
-			// System users WITHOUT a tenant context: Skip injection (global access)
-			// System users WITH a tenant context: Proceed to compute accessible tenants
-			// Note: "system" is a bypass marker sent by frontends (X-Tenant-ID: "system")
-			// to indicate system-wide queries — treat it the same as empty context.
-			if helpers.IsSystemUser(ctx) && (contextTenantID == "" || contextTenantID == "system") {
-				logger.Debug("System user without tenant context - granting global access")
+			// System users (SuperAdmin / scope=system in JWT): ALWAYS grant global
+			// access regardless of X-Tenant-ID value. Zero-Trust IAM design:
+			// system scope bypasses tenant scoping everywhere. X-Tenant-ID is
+			// informational only for system users — the dashboard sends it to
+			// satisfy forward-auth requirements, but the guard ignores it.
+			if helpers.IsSystemUser(ctx) {
+				logger.Debug("System user - granting global access (X-Tenant-ID ignored for scoping)",
+					"contextTenantID", contextTenantID)
 				next.ServeHTTP(w, r)
 				return
 			}
