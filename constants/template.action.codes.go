@@ -48,6 +48,11 @@ const (
 	TemplateActionCodeTenantPlanChanged  TemplateActionCode = "TENANT.PLAN_CHANGED"
 
 	// -----------------------------------------------------
+	// 3a. Admin / Operator Actions
+	// -----------------------------------------------------
+	TemplateActionCodeAdminCustomNotification TemplateActionCode = "ADMIN.CUSTOM_NOTIFICATION"
+
+	// -----------------------------------------------------
 	// 4. Billing, Payments & Finance Actions
 	// -----------------------------------------------------
 	TemplateActionCodeBillingInvoiceGenerated           TemplateActionCode = "BILLING.INVOICE_GENERATED"
@@ -300,6 +305,7 @@ func GetAllActionCodes() map[TemplateActionCode]bool {
 		TemplateActionCodeTenantReinstated:                  true,
 		TemplateActionCodeTenantDomainMapped:                true,
 		TemplateActionCodeTenantPlanChanged:                 true,
+		TemplateActionCodeAdminCustomNotification:           true,
 		TemplateActionCodeBillingInvoiceGenerated:           true,
 		TemplateActionCodeBillingPaymentReceipt:             true,
 		TemplateActionCodeBillingPaymentFailed:              true,
@@ -473,6 +479,7 @@ func GetActionCodeDescriptions() map[TemplateActionCode]string {
 		TemplateActionCodeTenantReinstated:                  "Tenant Reinstated - Service restored",
 		TemplateActionCodeTenantDomainMapped:                "Domain Mapping Updated",
 		TemplateActionCodeTenantPlanChanged:                 "Subscription Plan Changed",
+		TemplateActionCodeAdminCustomNotification:           "Admin Custom Notification - Manual admin-to-user email",
 		TemplateActionCodeBillingInvoiceGenerated:           "Invoice generated",
 		TemplateActionCodeBillingPaymentReceipt:             "Payment receipt confirmation",
 		TemplateActionCodeBillingPaymentFailed:              "Payment failed",
