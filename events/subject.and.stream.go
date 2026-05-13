@@ -194,6 +194,11 @@ const (
 	DeptTeamUpdatedSubject Subject = "deptteam.updated"
 	DeptTeamDeletedSubject Subject = "deptteam.deleted"
 
+	// OrgUnit events
+	OrgUnitCreatedSubject Subject = "orgunit.created"
+	OrgUnitUpdatedSubject Subject = "orgunit.updated"
+	OrgUnitDeletedSubject Subject = "orgunit.deleted"
+
 	// Tenant Auth Role Event Initialization
 	TenantUserRoleCreatedSubject Subject = "tenantuserrole.created"
 	TenantUserRoleUpdatedSubject Subject = "tenantuserrole.updated"
@@ -473,6 +478,10 @@ var Streams = map[StreamName]StreamMetadata{
 			DeptTeamCreatedSubject,
 			DeptTeamUpdatedSubject,
 			DeptTeamDeletedSubject,
+			// OrgUnit Events
+			OrgUnitCreatedSubject,
+			OrgUnitUpdatedSubject,
+			OrgUnitDeletedSubject,
 		},
 	},
 	AuthStream: {
