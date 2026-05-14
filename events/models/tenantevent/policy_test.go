@@ -135,13 +135,13 @@ func TestPolicyNotifications_Validate_Narrowing(t *testing.T) {
 
 	cases := []struct {
 		name    string
-		allowed []string
+		allowed []notificationevent.NotificationCategory
 		wantErr bool
 	}{
 		{"nil means full platform list", nil, false},
-		{"empty means no critical allowed", []string{}, false},
-		{"subset OK", []string{string(platform[0])}, false},
-		{"superset rejected", append([]string{"BOGUS_CATEGORY"}, string(platform[0])), true},
+		{"empty means no critical allowed", []notificationevent.NotificationCategory{}, false},
+		{"subset OK", []notificationevent.NotificationCategory{platform[0]}, false},
+		{"superset rejected", []notificationevent.NotificationCategory{"BOGUS_CATEGORY", platform[0]}, true},
 	}
 	for _, tc := range cases {
 		err := PolicyNotifications{CriticalCategoriesAllowed: tc.allowed}.Validate()
