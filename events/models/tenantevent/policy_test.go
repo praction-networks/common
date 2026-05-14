@@ -38,6 +38,27 @@ func TestDefaults(t *testing.T) {
 	if d.Assets.PeerScope != "REGION" {
 		t.Errorf("Assets.PeerScope default: got %q, want REGION", d.Assets.PeerScope)
 	}
+	if d.Assets.VarianceEscalationCount != 3 {
+		t.Errorf("Assets.VarianceEscalationCount default: got %d, want 3", d.Assets.VarianceEscalationCount)
+	}
+	if d.Assets.NearbyWarehouseThresholdKm != 2 {
+		t.Errorf("Assets.NearbyWarehouseThresholdKm default: got %g, want 2", d.Assets.NearbyWarehouseThresholdKm)
+	}
+	if d.Assets.PeerReceiptTimeoutMinutes != 60 {
+		t.Errorf("Assets.PeerReceiptTimeoutMinutes default: got %d, want 60", d.Assets.PeerReceiptTimeoutMinutes)
+	}
+	if d.Assets.CourierTimeoutHours != 4 {
+		t.Errorf("Assets.CourierTimeoutHours default: got %d, want 4", d.Assets.CourierTimeoutHours)
+	}
+	if d.Assets.JobTransferApproverSlaMinutes != 15 {
+		t.Errorf("Assets.JobTransferApproverSlaMinutes default: got %d, want 15", d.Assets.JobTransferApproverSlaMinutes)
+	}
+	if d.Assets.JobTransferPeerOfferMinutes != 10 {
+		t.Errorf("Assets.JobTransferPeerOfferMinutes default: got %d, want 10", d.Assets.JobTransferPeerOfferMinutes)
+	}
+	if d.Assets.JobTransferTotalLifetimeHours != 4 {
+		t.Errorf("Assets.JobTransferTotalLifetimeHours default: got %d, want 4", d.Assets.JobTransferTotalLifetimeHours)
+	}
 }
 
 // TestBackcompatUnmarshal — old policy documents (without the new buckets)
@@ -68,11 +89,15 @@ func TestPolicyAccount_RoundTrip(t *testing.T) {
 	}
 }
 
-// TestPolicyAssets_RoundTrip — dropoffLockWindowHours, recoveryAcknowledgement and the new §11.3 fields.
+// TestPolicyAssets_RoundTrip — dropoffLockWindowHours, recoveryAcknowledgement and the new §11.3 fields,
+// including a WarehouseGeofence slice to exercise the []WarehouseGeofence JSON path.
 func TestPolicyAssets_RoundTrip(t *testing.T) {
 	in := PolicyAssets{
 		DropoffLockWindowHours:  6,
 		RecoveryAcknowledgement: "SIGNATURE",
+		WarehouseGeofences: []WarehouseGeofence{
+			{WarehouseID: "wh_01", Lat: 28.61, Lng: 77.20, RadiusM: 75},
+		},
 	}
 	b, _ := json.Marshal(in)
 	var got PolicyAssets
@@ -84,7 +109,8 @@ func TestPolicyAssets_RoundTrip(t *testing.T) {
 	}
 }
 
-// TestPolicyAssets_Validate — allowed and rejected RecoveryAcknowledgement values.
+// TestPolicyAssets_Validate — allowed and rejected values for RecoveryAcknowledgement,
+// PeerScope, and ReconcileNudgeHourLocal.
 func TestPolicyAssets_Validate(t *testing.T) {
 	for _, v := range []string{"", "NONE", "SIGNATURE", "OTP"} {
 		if err := (PolicyAssets{RecoveryAcknowledgement: v}).Validate(); err != nil {
@@ -93,6 +119,25 @@ func TestPolicyAssets_Validate(t *testing.T) {
 	}
 	if err := (PolicyAssets{RecoveryAcknowledgement: "BOGUS"}).Validate(); err == nil {
 		t.Error("Validate(BOGUS) should error")
+	}
+	// PeerScope
+	for _, v := range []string{"", "REGION", "ZONE", "ALL"} {
+		if err := (PolicyAssets{RecoveryAcknowledgement: "NONE", PeerScope: v}).Validate(); err != nil {
+			t.Errorf("PeerScope Validate(%q) unexpected error: %v", v, err)
+		}
+	}
+	if err := (PolicyAssets{RecoveryAcknowledgement: "NONE", PeerScope: "BOGUS"}).Validate(); err == nil {
+		t.Error("PeerScope Validate(BOGUS) should error")
+	}
+	// ReconcileNudgeHourLocal
+	if err := (PolicyAssets{RecoveryAcknowledgement: "NONE", ReconcileNudgeHourLocal: 0}).Validate(); err != nil {
+		t.Errorf("ReconcileNudgeHourLocal(0) unexpected error: %v", err)
+	}
+	if err := (PolicyAssets{RecoveryAcknowledgement: "NONE", ReconcileNudgeHourLocal: 23}).Validate(); err != nil {
+		t.Errorf("ReconcileNudgeHourLocal(23) unexpected error: %v", err)
+	}
+	if err := (PolicyAssets{RecoveryAcknowledgement: "NONE", ReconcileNudgeHourLocal: 24}).Validate(); err == nil {
+		t.Error("ReconcileNudgeHourLocal(24) should error")
 	}
 }
 
