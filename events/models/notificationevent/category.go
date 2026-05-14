@@ -24,6 +24,25 @@ const (
 	// assigned job was changed.
 	NotificationCategoryJobRescheduled NotificationCategory = "JOB_RESCHEDULED"
 
+	// ── Job transfer ─────────────────────────────────────────────────────
+
+	// NotificationCategoryJobTransferRequested — the current FE has
+	// requested that their job be transferred to another FE.
+	NotificationCategoryJobTransferRequested NotificationCategory = "JOB_TRANSFER_REQUESTED"
+	// NotificationCategoryJobTransferPeerOffered — a peer FE has been
+	// offered a transferred job and must Accept/Decline. Default priority
+	// CRITICAL (backend-contract §9.5).
+	NotificationCategoryJobTransferPeerOffered NotificationCategory = "JOB_TRANSFER_PEER_OFFERED"
+	// NotificationCategoryJobTransferPeerAccepted — a peer FE has
+	// accepted the transferred job; notifies the original FE.
+	NotificationCategoryJobTransferPeerAccepted NotificationCategory = "JOB_TRANSFER_PEER_ACCEPTED"
+	// NotificationCategoryJobTransferExpired — the transfer offer window
+	// elapsed without a peer accepting; job reverts to the original FE.
+	NotificationCategoryJobTransferExpired NotificationCategory = "JOB_TRANSFER_EXPIRED"
+	// NotificationCategoryJobTransferForceUnassigned — an admin force-
+	// unassigned the job during or after a transfer flow.
+	NotificationCategoryJobTransferForceUnassigned NotificationCategory = "JOB_TRANSFER_FORCE_UNASSIGNED"
+
 	// ── SLA / risk ───────────────────────────────────────────────────────
 
 	// NotificationCategorySLAWarning — an SLA timer is about to breach.
@@ -72,6 +91,24 @@ const (
 	// retention policy; informational only.
 	NotificationCategoryDraftAutoPurged NotificationCategory = "DRAFT_AUTO_PURGED"
 
+	// ── Peer / returns ───────────────────────────────────────────────────
+
+	// NotificationCategoryPeerHandoffIncoming — a peer FE is handing off
+	// a job directly to the recipient; requires acknowledgement.
+	NotificationCategoryPeerHandoffIncoming NotificationCategory = "PEER_HANDOFF_INCOMING"
+	// NotificationCategoryReturnLineAccepted — a return-line request
+	// raised by the FE has been accepted by dispatch.
+	NotificationCategoryReturnLineAccepted NotificationCategory = "RETURN_LINE_ACCEPTED"
+	// NotificationCategoryReturnLineRejected — a return-line request has
+	// been rejected; FE must continue with the current route.
+	NotificationCategoryReturnLineRejected NotificationCategory = "RETURN_LINE_REJECTED"
+	// NotificationCategoryPeerAssistRequestApproved — a request by the FE
+	// for peer assistance has been approved; a helper FE is on their way.
+	NotificationCategoryPeerAssistRequestApproved NotificationCategory = "PEER_ASSIST_REQUEST_APPROVED"
+	// NotificationCategoryPeerAssistRequestDeclined — a request for peer
+	// assistance has been declined; FE must resolve the job independently.
+	NotificationCategoryPeerAssistRequestDeclined NotificationCategory = "PEER_ASSIST_REQUEST_DECLINED"
+
 	// ── System / org ─────────────────────────────────────────────────────
 
 	// NotificationCategoryAnnouncement — generic in-app announcement (org
@@ -95,6 +132,11 @@ func (c NotificationCategory) Valid() bool {
 		NotificationCategoryJobReassigned,
 		NotificationCategoryJobCancelled,
 		NotificationCategoryJobRescheduled,
+		NotificationCategoryJobTransferRequested,
+		NotificationCategoryJobTransferPeerOffered,
+		NotificationCategoryJobTransferPeerAccepted,
+		NotificationCategoryJobTransferExpired,
+		NotificationCategoryJobTransferForceUnassigned,
 		NotificationCategorySLAWarning,
 		NotificationCategorySLABreach,
 		NotificationCategoryAppointmentReminder,
@@ -107,6 +149,11 @@ func (c NotificationCategory) Valid() bool {
 		NotificationCategoryPaymentOverdue,
 		NotificationCategoryDraftExpiring,
 		NotificationCategoryDraftAutoPurged,
+		NotificationCategoryPeerHandoffIncoming,
+		NotificationCategoryReturnLineAccepted,
+		NotificationCategoryReturnLineRejected,
+		NotificationCategoryPeerAssistRequestApproved,
+		NotificationCategoryPeerAssistRequestDeclined,
 		NotificationCategoryAnnouncement,
 		NotificationCategoryShiftReminder,
 		NotificationCategoryTenantBroadcast,

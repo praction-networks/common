@@ -31,8 +31,9 @@ func (n PolicyNotifications) Validate() error {
 	if n.CriticalCategoriesAllowed == nil {
 		return nil
 	}
-	platform := make(map[string]struct{}, len(notificationevent.CriticalCategoriesPlatform))
-	for _, c := range notificationevent.CriticalCategoriesPlatform {
+	platformList := notificationevent.CriticalCategoriesPlatform()
+	platform := make(map[string]struct{}, len(platformList))
+	for _, c := range platformList {
 		platform[string(c)] = struct{}{}
 	}
 	for _, c := range n.CriticalCategoriesAllowed {
