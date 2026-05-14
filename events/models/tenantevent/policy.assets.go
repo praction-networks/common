@@ -33,14 +33,25 @@ type PolicyAssets struct {
 	JobTransferRequiresFeManagerOnly bool     `json:"jobTransferRequiresFeManagerOnly,omitempty" bson:"jobTransferRequiresFeManagerOnly,omitempty"` // approver gating
 }
 
-// Validate checks that enumerated string fields hold only documented values.
+// Validate checks that enumerated string fields hold only documented values
+// and that numeric fields are within their documented ranges.
 func (a PolicyAssets) Validate() error {
 	switch a.RecoveryAcknowledgement {
 	case "", "NONE", "SIGNATURE", "OTP":
-		return nil
+		// ok
 	default:
 		return fmt.Errorf("RecoveryAcknowledgement must be NONE, SIGNATURE, or OTP (got %q)", a.RecoveryAcknowledgement)
 	}
+	switch a.PeerScope {
+	case "", "REGION", "ZONE", "ALL":
+		// ok
+	default:
+		return fmt.Errorf("PeerScope must be REGION, ZONE, or ALL (got %q)", a.PeerScope)
+	}
+	if a.ReconcileNudgeHourLocal < 0 || a.ReconcileNudgeHourLocal > 23 {
+		return fmt.Errorf("ReconcileNudgeHourLocal must be 0–23 (got %d)", a.ReconcileNudgeHourLocal)
+	}
+	return nil
 }
 
 // WarehouseGeofence defines a per-warehouse geofence override.
