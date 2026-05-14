@@ -12,7 +12,7 @@ type PolicyNotifications struct {
 	// CriticalCategoriesAllowed narrows the platform CRITICAL whitelist.
 	// nil = full platform list; empty = no CRITICAL allowed; otherwise
 	// must be a subset of notificationevent.CriticalCategoriesPlatform.
-	CriticalCategoriesAllowed []string              `json:"criticalCategoriesAllowed,omitempty" bson:"criticalCategoriesAllowed,omitempty"`
+	CriticalCategoriesAllowed []notificationevent.NotificationCategory `json:"criticalCategoriesAllowed,omitempty" bson:"criticalCategoriesAllowed,omitempty"`
 	SupportChannels           PolicySupportChannels `json:"supportChannels,omitempty"           bson:"supportChannels,omitempty"`
 }
 
@@ -32,9 +32,9 @@ func (n PolicyNotifications) Validate() error {
 		return nil
 	}
 	platformList := notificationevent.CriticalCategoriesPlatform()
-	platform := make(map[string]struct{}, len(platformList))
+	platform := make(map[notificationevent.NotificationCategory]struct{}, len(platformList))
 	for _, c := range platformList {
-		platform[string(c)] = struct{}{}
+		platform[c] = struct{}{}
 	}
 	for _, c := range n.CriticalCategoriesAllowed {
 		if _, ok := platform[c]; !ok {
