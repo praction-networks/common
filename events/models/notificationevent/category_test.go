@@ -11,6 +11,12 @@ func TestNotificationCategory_AllValid(t *testing.T) {
 		NotificationCategoryJobReassigned,
 		NotificationCategoryJobCancelled,
 		NotificationCategoryJobRescheduled,
+		// Job transfer
+		NotificationCategoryJobTransferRequested,
+		NotificationCategoryJobTransferPeerOffered,
+		NotificationCategoryJobTransferPeerAccepted,
+		NotificationCategoryJobTransferExpired,
+		NotificationCategoryJobTransferForceUnassigned,
 		// SLA / risk
 		NotificationCategorySLAWarning,
 		NotificationCategorySLABreach,
@@ -27,6 +33,12 @@ func TestNotificationCategory_AllValid(t *testing.T) {
 		// Draft / housekeeping
 		NotificationCategoryDraftExpiring,
 		NotificationCategoryDraftAutoPurged,
+		// Peer / returns
+		NotificationCategoryPeerHandoffIncoming,
+		NotificationCategoryReturnLineAccepted,
+		NotificationCategoryReturnLineRejected,
+		NotificationCategoryPeerAssistRequestApproved,
+		NotificationCategoryPeerAssistRequestDeclined,
 		// System / org
 		NotificationCategoryAnnouncement,
 		NotificationCategoryShiftReminder,
