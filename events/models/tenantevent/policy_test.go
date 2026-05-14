@@ -2,6 +2,7 @@ package tenantevent
 
 import (
 	"encoding/json"
+	"reflect"
 	"testing"
 
 	"github.com/praction-networks/common/events/models/notificationevent"
@@ -27,6 +28,15 @@ func TestDefaults(t *testing.T) {
 	}
 	if d.Auth.AccessTokenTtlMinutes != 10 {
 		t.Errorf("Auth.AccessTokenTtlMinutes default: got %d, want 10", d.Auth.AccessTokenTtlMinutes)
+	}
+	if d.Assets.ReconcileNudgeHourLocal != 18 {
+		t.Errorf("Assets.ReconcileNudgeHourLocal default: got %d, want 18", d.Assets.ReconcileNudgeHourLocal)
+	}
+	if d.Assets.ProximityThresholdM != 50 {
+		t.Errorf("Assets.ProximityThresholdM default: got %d, want 50", d.Assets.ProximityThresholdM)
+	}
+	if d.Assets.PeerScope != "REGION" {
+		t.Errorf("Assets.PeerScope default: got %q, want REGION", d.Assets.PeerScope)
 	}
 }
 
@@ -58,7 +68,7 @@ func TestPolicyAccount_RoundTrip(t *testing.T) {
 	}
 }
 
-// TestPolicyAssets_RoundTrip — three new keys: dropoffLockWindowHours, recoveryAcknowledgement.
+// TestPolicyAssets_RoundTrip — dropoffLockWindowHours, recoveryAcknowledgement and the new §11.3 fields.
 func TestPolicyAssets_RoundTrip(t *testing.T) {
 	in := PolicyAssets{
 		DropoffLockWindowHours:  6,
@@ -69,8 +79,20 @@ func TestPolicyAssets_RoundTrip(t *testing.T) {
 	if err := json.Unmarshal(b, &got); err != nil {
 		t.Fatalf("unmarshal: %v", err)
 	}
-	if got != in {
+	if !reflect.DeepEqual(got, in) {
 		t.Errorf("got %+v, want %+v", got, in)
+	}
+}
+
+// TestPolicyAssets_Validate — allowed and rejected RecoveryAcknowledgement values.
+func TestPolicyAssets_Validate(t *testing.T) {
+	for _, v := range []string{"", "NONE", "SIGNATURE", "OTP"} {
+		if err := (PolicyAssets{RecoveryAcknowledgement: v}).Validate(); err != nil {
+			t.Errorf("Validate(%q) unexpected error: %v", v, err)
+		}
+	}
+	if err := (PolicyAssets{RecoveryAcknowledgement: "BOGUS"}).Validate(); err == nil {
+		t.Error("Validate(BOGUS) should error")
 	}
 }
 

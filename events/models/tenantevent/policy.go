@@ -22,7 +22,22 @@ func Defaults() TenantPolicy {
 	return TenantPolicy{
 		Version: 1,
 		Account: PolicyAccount{},
-		Assets:  PolicyAssets{DropoffLockWindowHours: 4, RecoveryAcknowledgement: "NONE"},
+		Assets: PolicyAssets{
+			DropoffLockWindowHours:           4,
+			RecoveryAcknowledgement:          "NONE",
+			ReconcileNudgeHourLocal:          18,
+			VarianceEscalationCount:          3,
+			ProximityThresholdM:              50,
+			NearbyWarehouseThresholdKm:       2,
+			PeerReceiptTimeoutMinutes:        60,
+			CourierTimeoutHours:              4,
+			PeerScope:                        "REGION",
+			JobTransferApproverSlaMinutes:    15,
+			JobTransferPeerOfferMinutes:      10,
+			JobTransferTotalLifetimeHours:    4,
+			// WarehouseGeofences, ConsumableLowThresholds, JobTransferReasonsAllowed: nil = platform defaults apply
+			// JobTransferRequiresFeManagerOnly: false (zero value)
+		},
 		Auth:    PolicyAuth{AccessTokenTtlMinutes: 10},
 		Shift: PolicyShift{
 			FirstBreakSkipsReason:         true,
