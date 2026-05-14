@@ -3,6 +3,7 @@ package tenantevent
 import (
 	"encoding/json"
 	"reflect"
+	"strings"
 	"testing"
 
 	"github.com/praction-networks/common/events/models/notificationevent"
@@ -388,5 +389,24 @@ func TestPolicyAccount_Validate(t *testing.T) {
 	}
 	if err := (PolicyAccount{FuelMode: "BOGUS"}).Validate(); err == nil {
 		t.Error("FuelMode Validate(BOGUS) should error")
+	}
+}
+
+// TestPolicyShift_FalseNotOmitted — bool fields must appear in JSON even when
+// false. omitempty on bool silently drops false values, making it impossible
+// for clients to distinguish "disabled" from "not configured".
+func TestPolicyShift_FalseNotOmitted(t *testing.T) {
+	s := PolicyShift{
+		FirstBreakSkipsReason:         false,
+		SubsequentBreaksRequireReason: false,
+		LocationTrackingEnabled:       false,
+	}
+	b, _ := json.Marshal(s)
+	raw := string(b)
+	// All three bool fields must appear in JSON even when false
+	for _, key := range []string{"firstBreakSkipsReason", "subsequentBreaksRequireReason", "locationTrackingEnabled"} {
+		if !strings.Contains(raw, key) {
+			t.Errorf("JSON missing %q: %s", key, raw)
+		}
 	}
 }
