@@ -410,3 +410,20 @@ func TestPolicyShift_FalseNotOmitted(t *testing.T) {
 		}
 	}
 }
+
+// TestPolicyShift_ZeroIntNotOmitted — int fields must appear in JSON even when
+// zero. Zero is a valid sentinel (0 grace minutes = no grace period;
+// 0 idle threshold = feature disabled) and must not be silently dropped.
+func TestPolicyShift_ZeroIntNotOmitted(t *testing.T) {
+	s := PolicyShift{
+		EndNudgeGraceMinutes: 0,
+		IdleMinutesThreshold: 0,
+	}
+	b, _ := json.Marshal(s)
+	raw := string(b)
+	for _, key := range []string{"endNudgeGraceMinutes", "idleMinutesThreshold"} {
+		if !strings.Contains(raw, key) {
+			t.Errorf("JSON missing %q when value is 0: %s", key, raw)
+		}
+	}
+}
