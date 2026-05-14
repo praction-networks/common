@@ -9,7 +9,7 @@ type PolicyShift struct {
 	SubsequentBreaksRequireReason bool     `json:"subsequentBreaksRequireReason"           bson:"subsequentBreaksRequireReason"`
 	BreakReasons                  []string `json:"breakReasons,omitempty"                  bson:"breakReasons,omitempty"`
 	MaxBreakMinutes               *int     `json:"maxBreakMinutes,omitempty"               bson:"maxBreakMinutes,omitempty"`
-	EndNudgeGraceMinutes          int      `json:"endNudgeGraceMinutes,omitempty"          bson:"endNudgeGraceMinutes,omitempty"`
-	IdleMinutesThreshold          int      `json:"idleMinutesThreshold,omitempty"          bson:"idleMinutesThreshold,omitempty"`
+	EndNudgeGraceMinutes          int      `json:"endNudgeGraceMinutes"                    bson:"endNudgeGraceMinutes"`
+	IdleMinutesThreshold          int      `json:"idleMinutesThreshold"                    bson:"idleMinutesThreshold"`
 	LocationTrackingEnabled       bool     `json:"locationTrackingEnabled"                 bson:"locationTrackingEnabled"`
 }
