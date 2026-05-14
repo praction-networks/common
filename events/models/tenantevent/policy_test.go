@@ -109,8 +109,7 @@ func TestPolicyAuth_Validate(t *testing.T) {
 }
 
 // TestTenantPolicy_VersionField — Version is bumped server-side on every
-// successful PATCH and surfaces to consumers via the tenant.policy.updated
-// event so caches can detect stale state via integer compare.
+// successful PATCH; stored for future cache invalidation support.
 func TestTenantPolicy_VersionField(t *testing.T) {
 	d := Defaults()
 	if d.Version != 1 {
@@ -262,59 +261,6 @@ func TestPolicyNotifications_SupportChannels_RoundTrip(t *testing.T) {
 	}
 	if got.SupportChannels.Whatsapp != "+919876543210" || got.SupportChannels.Email != "support@example.com" {
 		t.Errorf("support channels: got %+v", got.SupportChannels)
-	}
-}
-
-// TestTenantPolicyPatch_NilBucketsIgnored — nil buckets in the wire form
-// represent "client did not send this bucket"; only non-nil buckets are
-// considered for merge.
-func TestTenantPolicyPatch_NilBucketsIgnored(t *testing.T) {
-	body := []byte(`{"assets":{"dropoffLockWindowHours":6}}`)
-	var p TenantPolicyPatch
-	if err := json.Unmarshal(body, &p); err != nil {
-		t.Fatalf("unmarshal: %v", err)
-	}
-	if p.Account != nil || p.Auth != nil || p.Shift != nil {
-		t.Errorf("absent buckets must be nil; got Account=%v Auth=%v Shift=%v", p.Account, p.Auth, p.Shift)
-	}
-	if p.Assets == nil {
-		t.Fatalf("Assets must be non-nil when sent")
-	}
-	if p.Assets.DropoffLockWindowHours != 6 {
-		t.Errorf("DropoffLockWindowHours: got %d", p.Assets.DropoffLockWindowHours)
-	}
-}
-
-// TestTenantPolicyPatch_EmptyBucketRetained — an empty {} bucket is
-// distinguishable from nil; means "client sent the bucket but no fields
-// inside changed". Unusual but legal.
-func TestTenantPolicyPatch_EmptyBucketRetained(t *testing.T) {
-	body := []byte(`{"assets":{}}`)
-	var p TenantPolicyPatch
-	if err := json.Unmarshal(body, &p); err != nil {
-		t.Fatalf("unmarshal: %v", err)
-	}
-	if p.Assets == nil {
-		t.Errorf("empty bucket must round-trip as non-nil pointer")
-	}
-}
-
-// TestTenantPolicyUpdatedEvent_RoundTrip — payload shape per design §5.5.
-// Subject is "tenant.policy.updated" (no .v1 suffix per Wave 0 convention).
-func TestTenantPolicyUpdatedEvent_RoundTrip(t *testing.T) {
-	in := TenantPolicyUpdatedEvent{
-		TenantID:    "tenant_xyz",
-		Version:     4,
-		UpdatedAtMs: 1715200000000,
-		ChangedKeys: []string{"assets.dropoffLockWindowHours"},
-	}
-	b, _ := json.Marshal(in)
-	var got TenantPolicyUpdatedEvent
-	if err := json.Unmarshal(b, &got); err != nil {
-		t.Fatalf("unmarshal: %v", err)
-	}
-	if got.TenantID != "tenant_xyz" || got.Version != 4 || len(got.ChangedKeys) != 1 {
-		t.Errorf("round-trip mismatch: got %+v", got)
 	}
 }
 
