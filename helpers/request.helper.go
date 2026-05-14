@@ -175,8 +175,11 @@ func LoggingMiddleware(next http.Handler) http.Handler {
 		status := rw.Status()
 		size := rw.Size()
 
+		// NOTE: reqID is injected via logger.SetDefaultRequestLogger above (line 168),
+		// so do NOT add it explicitly here — that produced a duplicate `reqID` key
+		// in the emitted JSON (observed by the IAM watcher across multiple
+		// services). Likewise userID is on the default logger.
 		fields := []interface{}{
-			"reqID", reqID,
 			"method", r.Method,
 			"path", r.URL.Path,
 			"size", size,
