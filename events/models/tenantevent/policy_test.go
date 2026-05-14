@@ -354,3 +354,39 @@ func TestPolicyShift_Defaults(t *testing.T) {
 		t.Errorf("LocationTrackingEnabled default: want true")
 	}
 }
+
+func TestPolicyOnboard_Validate(t *testing.T) {
+	// Valid combinations
+	valid := []PolicyOnboard{
+		{},
+		{AgreementChannel: "SIGNATURE", OtpChannel: "SMS"},
+		{AgreementChannel: "OTP", OtpChannel: "WHATSAPP"},
+		{AgreementChannel: "OTP", OtpChannel: "BOTH"},
+	}
+	for _, v := range valid {
+		if err := v.Validate(); err != nil {
+			t.Errorf("Validate(%+v) unexpected error: %v", v, err)
+		}
+	}
+	// Invalid values
+	invalid := []PolicyOnboard{
+		{AgreementChannel: "BOGUS"},
+		{OtpChannel: "EMAIL"},
+	}
+	for _, v := range invalid {
+		if err := v.Validate(); err == nil {
+			t.Errorf("Validate(%+v) expected error", v)
+		}
+	}
+}
+
+func TestPolicyAccount_Validate(t *testing.T) {
+	for _, v := range []string{"", "FLAT", "PER_KM"} {
+		if err := (PolicyAccount{FuelMode: v}).Validate(); err != nil {
+			t.Errorf("FuelMode Validate(%q) unexpected error: %v", v, err)
+		}
+	}
+	if err := (PolicyAccount{FuelMode: "BOGUS"}).Validate(); err == nil {
+		t.Error("FuelMode Validate(BOGUS) should error")
+	}
+}

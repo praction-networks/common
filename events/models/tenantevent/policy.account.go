@@ -1,5 +1,7 @@
 package tenantevent
 
+import "fmt"
+
 // PolicyAccount is the per-tenant account-management policy bucket.
 //
 // Source: backend-contract §11.5, Sweep 4 Q2 (emailChangeAllowed) plus the
@@ -19,4 +21,13 @@ type PolicyAccount struct {
 	LeaveCategories      []string `json:"leaveCategories,omitempty"      bson:"leaveCategories,omitempty"`
 	VehicleRequired      *bool    `json:"vehicleRequired,omitempty"      bson:"vehicleRequired,omitempty"`
 	DocumentVaultEnabled *bool    `json:"documentVaultEnabled,omitempty" bson:"documentVaultEnabled,omitempty"`
+}
+
+func (a PolicyAccount) Validate() error {
+	switch a.FuelMode {
+	case "", "FLAT", "PER_KM":
+		return nil
+	default:
+		return fmt.Errorf("FuelMode must be FLAT or PER_KM (got %q)", a.FuelMode)
+	}
 }
