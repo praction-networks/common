@@ -128,7 +128,7 @@ func TestTenantPolicy_VersionField(t *testing.T) {
 
 // TestPolicyNotifications_Validate_Narrowing — tenant may narrow but not expand.
 func TestPolicyNotifications_Validate_Narrowing(t *testing.T) {
-	platform := notificationevent.CriticalCategoriesPlatform
+	platform := notificationevent.CriticalCategoriesPlatform()
 	if len(platform) == 0 {
 		t.Skip("CriticalCategoriesPlatform empty — populate before validating")
 	}
