@@ -1,7 +1,9 @@
 package iamguard
 
 import (
+	"context"
 	"sort"
+	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/praction-networks/common/logger"
@@ -20,9 +22,32 @@ type Config struct {
 	// guard filters down to Service when comparing. Required.
 	SeedPolicies []SeedPolicy
 
+	// APISIXAdminURL is the APISIX admin endpoint (e.g.
+	// https://apisix-admin.internal). When set, the guard fetches deployed
+	// routes from the live API at boot — the smart path for runtime, since
+	// the deployed state IS the source of truth and there is nothing to
+	// mount, nothing to bake into the image, no per-environment yaml.
+	//
+	// Used together with APISIXAdminKey for the X-API-KEY header.
+	APISIXAdminURL string
+
+	// APISIXAdminKey is the value of the X-API-KEY header APISIX admin
+	// expects. Pulled from a K8s Secret in production; from an env var in
+	// dev. Empty string skips the header — only useful when the admin
+	// endpoint is firewalled to an internal mesh.
+	APISIXAdminKey string
+
+	// APISIXServicePathPrefix narrows the APISIX route set down to the
+	// caller's own surface when filtering by label is not possible. e.g.
+	// pass "auth/" inside auth-service so the per-service guard does not
+	// flag every tenant-service or olt-manager APISIX route as
+	// `apisix_without_chi`. Optional — when empty + admin API in use, all
+	// returned routes are considered.
+	APISIXServicePathPrefix string
+
 	// APISIXRoutesDir is the directory containing the K8S/apisix/routes/*.yaml
-	// files. If empty, APISIX comparison is skipped and a warning is logged —
-	// chi↔seed drift is still reported. Optional.
+	// files. Used by the offline scan (CI lint, dev). Ignored when
+	// APISIXAdminURL is set — admin API wins. Optional.
 	APISIXRoutesDir string
 
 	// PublicPaths lists chi routes that intentionally bypass Casbin (login,
@@ -80,16 +105,40 @@ func Check(cfg Config) (*Report, error) {
 
 	seedRoutes := WalkSeedPolicies(cfg.SeedPolicies, cfg.Service)
 
+	// APISIX side: prefer the admin API (runtime source of truth, env-
+	// agnostic, no file mount required) and fall back to the local yaml
+	// directory only when the admin URL is unset. The yaml path is mainly
+	// for offline scans (CI lint, dev). Both paths feed the same comparator
+	// downstream.
 	var apisixRoutes []APISIXRoute
-	if cfg.APISIXRoutesDir != "" {
+	switch {
+	case cfg.APISIXAdminURL != "":
+		ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+		apisixRoutes, err = FetchAPISIXRoutesFromAdmin(ctx, cfg.APISIXAdminURL, cfg.APISIXAdminKey)
+		cancel()
+		if err != nil {
+			logger.Warn("iamguard: APISIX admin fetch failed, skipping APISIX side of check", err, "admin_url", cfg.APISIXAdminURL)
+			apisixRoutes = nil
+		}
+	case cfg.APISIXRoutesDir != "":
 		apisixRoutes, err = WalkAPISIXRoutes(cfg.APISIXRoutesDir)
 		if err != nil {
 			logger.Warn("iamguard: APISIX walk failed, skipping APISIX side of check", err, "routes_dir", cfg.APISIXRoutesDir)
-		} else {
-			apisixRoutes = FilterAPISIXByService(apisixRoutes, cfg.Service)
+			apisixRoutes = nil
 		}
-	} else {
-		logger.Warn("iamguard: APISIX_ROUTES_DIR not set, skipping APISIX side of check", nil)
+	default:
+		logger.Warn("iamguard: APISIX source not configured, skipping APISIX side of check")
+	}
+
+	if len(apisixRoutes) > 0 {
+		// Filter by labels.service first; routes deployed before the label
+		// rollout fall through to the path-prefix filter so older clusters
+		// still scope correctly.
+		filtered := FilterAPISIXByService(apisixRoutes, cfg.Service)
+		if len(filtered) == 0 && cfg.APISIXServicePathPrefix != "" {
+			filtered = FilterAPISIXByPathPrefix(apisixRoutes, cfg.APISIXServicePathPrefix)
+		}
+		apisixRoutes = filtered
 	}
 
 	chiSet := make(map[RouteKey]ChiRoute, len(chiRoutes))
@@ -170,15 +219,20 @@ func Check(cfg Config) (*Report, error) {
 
 // LogReport emits a structured per-kind summary plus one WARN line per drift
 // entry. Output is line-oriented so it is greppable from container logs.
+//
+// The common logger interprets a leading `nil` as a misaligned key when no
+// real error is present, so this routine passes kv pairs directly (no nil
+// placeholder) when there is nothing to surface as an error.
 func LogReport(rep *Report) {
-	if rep == nil || !rep.HasDrift() {
-		if rep != nil {
-			logger.Info("iamguard: no route drift detected", "service", rep.Service)
-		}
+	if rep == nil {
+		return
+	}
+	if !rep.HasDrift() {
+		logger.Info("iamguard: no route drift detected", "service", rep.Service)
 		return
 	}
 
-	logger.Warn("iamguard: route drift detected", nil,
+	logger.Warn("iamguard: route drift detected",
 		"service", rep.Service,
 		"total", len(rep.Drift),
 		"chi_without_policy", rep.Counts[ChiWithoutPolicy],
@@ -190,7 +244,7 @@ func LogReport(rep *Report) {
 	)
 
 	for _, d := range rep.Drift {
-		logger.Warn("iamguard: drift entry", nil,
+		logger.Warn("iamguard: drift entry",
 			"kind", string(d.Kind),
 			"method", d.Route.Method,
 			"path", d.Route.Path,

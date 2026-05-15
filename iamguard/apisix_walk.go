@@ -109,6 +109,12 @@ func WalkAPISIXRoutes(routesDir string) ([]APISIXRoute, error) {
 
 // FilterAPISIXByService returns only the entries whose service matches the
 // given prefix. Pass "" to keep all entries.
+//
+// "Service" is populated by the yaml walker (top-level `service:` key) and
+// by the admin walker when the APISIX route carries `labels.service`. When
+// neither source supplies a value (older routes deployed before the label
+// was introduced), use FilterAPISIXByPathPrefix instead so the per-service
+// guard can still scope its check.
 func FilterAPISIXByService(routes []APISIXRoute, service string) []APISIXRoute {
 	if service == "" {
 		return routes
@@ -116,6 +122,29 @@ func FilterAPISIXByService(routes []APISIXRoute, service string) []APISIXRoute {
 	out := make([]APISIXRoute, 0, len(routes))
 	for _, r := range routes {
 		if r.Service == service {
+			out = append(out, r)
+		}
+	}
+	return out
+}
+
+// FilterAPISIXByPathPrefix narrows the APISIX route list to entries whose
+// normalised path starts with the given prefix (e.g. "auth/" for
+// auth-service, "olt/" for olt-manager). Use this when running the guard
+// against the APISIX admin API at runtime — APISIX returns routes for every
+// service in the cluster, and the per-service guard only wants its own
+// surface. Pass "" to keep all entries.
+//
+// Prefix matching is on the already-normalised path (no /api/v1 prefix,
+// trimmed slashes, lowercased). Pass the same form your seed Resources use.
+func FilterAPISIXByPathPrefix(routes []APISIXRoute, prefix string) []APISIXRoute {
+	if prefix == "" {
+		return routes
+	}
+	prefix = strings.ToLower(strings.Trim(prefix, "/"))
+	out := make([]APISIXRoute, 0, len(routes))
+	for _, r := range routes {
+		if strings.HasPrefix(r.Key.Path, prefix) {
 			out = append(out, r)
 		}
 	}
