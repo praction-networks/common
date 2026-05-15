@@ -27,6 +27,7 @@ const (
 	// -----------------------------------------------------
 	TemplateActionCodeWelcome              TemplateActionCode = "USER.WELCOME"
 	TemplateActionCodeEmailVerification    TemplateActionCode = "USER.EMAIL_VERIFICATION"
+	TemplateActionCodeUserEmailOTP         TemplateActionCode = "USER.EMAIL_OTP"
 	TemplateActionCodeMobileVerification   TemplateActionCode = "USER.MOBILE_VERIFICATION"
 	TemplateActionCodeWhatsAppVerification TemplateActionCode = "USER.WHATSAPP_VERIFICATION"
 	TemplateActionCodeProfileUpdated       TemplateActionCode = "USER.PROFILE_UPDATED"
@@ -290,6 +291,7 @@ func GetAllActionCodes() map[TemplateActionCode]bool {
 		TemplateActionCodeUnlocked:                          true,
 		TemplateActionCodeWelcome:                           true,
 		TemplateActionCodeEmailVerification:                 true,
+		TemplateActionCodeUserEmailOTP:                      true,
 		TemplateActionCodeMobileVerification:                true,
 		TemplateActionCodeWhatsAppVerification:              true,
 		TemplateActionCodeProfileUpdated:                    true,
@@ -463,7 +465,8 @@ func GetActionCodeDescriptions() map[TemplateActionCode]string {
 		TemplateActionCodeLockedOut:                         "Account Locked - Too many failed login attempts",
 		TemplateActionCodeUnlocked:                          "Account Unlocked - Unlock confirmation",
 		TemplateActionCodeWelcome:                           "Welcome message for new users",
-		TemplateActionCodeEmailVerification:                 "Email verification",
+		TemplateActionCodeEmailVerification:                 "Email verification (link)",
+		TemplateActionCodeUserEmailOTP:                      "Email OTP for verified users (no link, OTP only)",
 		TemplateActionCodeMobileVerification:                "Mobile verification",
 		TemplateActionCodeWhatsAppVerification:              "WhatsApp verification",
 		TemplateActionCodeProfileUpdated:                    "Profile updated confirmation",
