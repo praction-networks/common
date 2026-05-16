@@ -106,24 +106,57 @@ func httpMethodToAction(method string) string {
 	}
 }
 
-// extractResource extracts the resource name from the URL path
-// e.g., /api/v1/subscribers/sub-001 → "subscriber"
+// pathResourceMap maps URL path segments to their canonical singular
+// resource name. Explicit map prevents the naive TrimSuffix("s") from
+// mangling words like radius → "radiu" or series → "serie".
+var pathResourceMap = map[string]string{
+	"subscribers":  "subscriber",
+	"plans":        "plan",
+	"tenants":      "tenant",
+	"tenant-users": "tenant-user",
+	"users":        "user",
+	"invoices":     "invoice",
+	"payments":     "payment",
+	"olts":         "olt",
+	"onts":         "ont",
+	"tickets":      "ticket",
+	"radius":       "radius",
+	"series":       "series",
+	"status":       "status",
+	"inventory":    "inventory",
+	"assets":       "asset",
+	"vendors":      "vendor",
+	"warehouses":   "warehouse",
+	"stocks":       "stock",
+	"products":     "product",
+	"alarms":       "alarm",
+	"sessions":     "session",
+	"licenses":     "license",
+	"audit-logs":   "audit-log",
+}
+
+// extractResource pulls the first meaningful path segment from a request
+// URL and returns its canonical resource name. Skips "api" and version
+// prefixes. Falls back to the raw segment (never empty string) so
+// unrecognised paths are still grouped consistently in audit queries.
 func extractResource(path string) string {
 	parts := strings.Split(strings.Trim(path, "/"), "/")
-	// Skip "api" and version prefix
-	for i, part := range parts {
-		if part == "api" || strings.HasPrefix(part, "v") {
+	for _, part := range parts {
+		if part == "" {
 			continue
 		}
-		if i > 0 {
-			// Return singular form of the first meaningful path segment
-			resource := parts[i]
-			resource = strings.TrimSuffix(resource, "s") // naive singularize
-			return resource
+		if part == "api" {
+			continue
 		}
-	}
-	if len(parts) > 0 {
-		return parts[len(parts)-1]
+		// Version prefixes like v1, v2, v10 — at most 3 chars starting with 'v'
+		if strings.HasPrefix(part, "v") && len(part) <= 3 {
+			continue
+		}
+		if canonical, ok := pathResourceMap[part]; ok {
+			return canonical
+		}
+		// Unknown segment — return as-is rather than guessing a singular
+		return part
 	}
 	return "unknown"
 }
