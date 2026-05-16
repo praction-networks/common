@@ -23,6 +23,11 @@ func TestExtractResource(t *testing.T) {
 		{"/api/v1/onts", "ont"},
 		{"/api/v1/olts/o-001", "olt"},
 
+		// Platform resources (regression fix)
+		{"/api/v1/products", "product"},
+		{"/api/v1/devices", "device"},
+		{"/api/v1/subscriptions", "subscription"},
+
 		// Unknown path — fall back to raw segment, never empty
 		{"/api/v1/something-new", "something-new"},
 
