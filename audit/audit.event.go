@@ -44,6 +44,13 @@ type AuditEvent struct {
 	// UserName is the display name of the user (optional, for readability)
 	UserName string `json:"userName,omitempty"`
 
+	// UserRole is the role label the actor held at the time of the action
+	// (e.g. "TenantAdmin", "NOC Engineer", "Support"). Populated by the
+	// Publisher from helpers.GetUserRole(ctx). Empty for system / async
+	// publishers. Used by the audit UI to render narrative sentences like
+	// "Rohit Kumar (NOC Engineer) assigned plan Gold..."
+	UserRole string `json:"userRole,omitempty"`
+
 	// Action is the type of action performed (CREATE, UPDATE, DELETE, etc.)
 	Action AuditAction `json:"action"`
 
