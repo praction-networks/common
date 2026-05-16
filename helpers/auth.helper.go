@@ -102,6 +102,14 @@ func (m *AuthMiddleware) ValidateServiceToken(next http.Handler) http.Handler {
 			ctx = context.WithValue(ctx, UserIDKey, userID)
 		}
 
+		// Extract X-User-Role header (set by auth-service via forward-auth).
+		// Optional — emitted by audit publishers for narrative rendering.
+		// Empty role is acceptable; downstream uses gracefully degrade.
+		userRole := r.Header.Get("X-User-Role")
+		if userRole != "" {
+			ctx = context.WithValue(ctx, UserRoleKey, userRole)
+		}
+
 		// Extract X-Is-System-User header (set by auth-service via forward-auth)
 		isSystemUser := false
 		if isSystemUserHeader := r.Header.Get("X-Is-System-User"); isSystemUserHeader != "" {

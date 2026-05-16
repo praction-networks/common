@@ -56,6 +56,9 @@ func (p *Publisher) Publish(ctx context.Context, event AuditEvent) error {
 	if event.TenantID == "" {
 		event.TenantID = helpers.GetTenantID(ctx)
 	}
+	if event.UserRole == "" {
+		event.UserRole = helpers.GetUserRole(ctx)
+	}
 
 	data, err := json.Marshal(event)
 	if err != nil {
