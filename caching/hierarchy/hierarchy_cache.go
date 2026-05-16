@@ -18,6 +18,19 @@ type TenantHierarchyCache interface {
 	// Get returns hierarchy data for a tenant
 	Get(tenantID string) (*helpers.TenantHierarchyData, bool)
 
+	// GetFresh returns hierarchy data for a tenant, falling back to the
+	// configured provider when the cached entry is stale (e.g. has
+	// SetupComplete=false). When no provider is set this behaves identically
+	// to Get. The optional provider is wired via SetProvider at startup.
+	// Concrete provider lookups are expected to be Redis-fast — the helper
+	// caches the result back into the in-memory map so subsequent reads
+	// stay on the hot path.
+	GetFresh(ctx context.Context, tenantID string) (*helpers.TenantHierarchyData, bool)
+
+	// SetProvider wires an optional provider used by GetFresh to refresh
+	// stale entries (entries with SetupComplete=false). Pass nil to disable.
+	SetProvider(provider helpers.TenantHierarchyProvider)
+
 	// Set updates or adds a tenant to the cache
 	Set(tenant *helpers.TenantHierarchyData)
 
@@ -41,8 +54,9 @@ type TenantHierarchyCache interface {
 
 // InMemoryCache implements TenantHierarchyCache using a thread-safe map
 type InMemoryCache struct {
-	cache map[string]*helpers.TenantHierarchyData
-	mutex sync.RWMutex
+	cache    map[string]*helpers.TenantHierarchyData
+	mutex    sync.RWMutex
+	provider helpers.TenantHierarchyProvider
 }
 
 // NewInMemoryCache creates a new empty cache
@@ -50,6 +64,46 @@ func NewInMemoryCache() *InMemoryCache {
 	return &InMemoryCache{
 		cache: make(map[string]*helpers.TenantHierarchyData),
 	}
+}
+
+// SetProvider wires an optional TenantHierarchyProvider used by GetFresh as
+// a fallback when the cached entry is marked SetupComplete=false. The
+// provider call is the only request path that touches a hot DB/Redis lookup,
+// so callers should pass a provider that hits Redis first.
+func (c *InMemoryCache) SetProvider(provider helpers.TenantHierarchyProvider) {
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
+	c.provider = provider
+}
+
+// GetFresh returns the cached entry; when the entry is missing or marked
+// SetupComplete=false AND a provider has been wired, it consults the provider
+// to confirm and writes the fresh value back into the cache. This is the
+// fail-open path for the tenant-setup guard: a stale NATS event must not
+// trap a user whose tenant has already completed setup.
+func (c *InMemoryCache) GetFresh(ctx context.Context, tenantID string) (*helpers.TenantHierarchyData, bool) {
+	data, exists := c.Get(tenantID)
+	// Fast path: cache hit AND already complete — no provider call needed.
+	if exists && data.SetupComplete {
+		return data, true
+	}
+
+	c.mutex.RLock()
+	provider := c.provider
+	c.mutex.RUnlock()
+	if provider == nil {
+		return data, exists
+	}
+
+	fresh, err := provider.GetTenantByID(ctx, tenantID)
+	if err != nil || fresh == nil {
+		// Provider failure — degrade to the cached value (which may be
+		// stale or missing). Logging happens at the guard layer so we
+		// don't double-log for every read.
+		return data, exists
+	}
+	c.Set(fresh)
+	return fresh, true
 }
 
 func (c *InMemoryCache) Get(tenantID string) (*helpers.TenantHierarchyData, bool) {

@@ -250,8 +250,13 @@ func TenantSetupGuardMiddleware(cache hierarchy.TenantHierarchyCache) func(http.
 				return
 			}
 
-			// 3. Look up tenant in cache
-			tenantData, exists := cache.Get(contextTenantID)
+			// 3. Look up tenant in cache. GetFresh consults the optional
+			//    TenantHierarchyProvider when the cached entry is stale
+			//    (SetupComplete=false). This breaks the dashboard ↔ /setup
+			//    loop that fires when a tenant flips SetupComplete=true but
+			//    the in-memory cache misses the NATS tenant.updated event
+			//    (consumer offline, replica behind, etc.).
+			tenantData, exists := cache.GetFresh(r.Context(), contextTenantID)
 			if !exists {
 				// Not in cache — allow through (cache might not be populated yet)
 				logger.Debug("Tenant not found in hierarchy cache, skipping setup guard", "tenant_id", contextTenantID)
