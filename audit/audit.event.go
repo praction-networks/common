@@ -20,6 +20,47 @@ const (
 	ActionGrant   AuditAction = "GRANT"
 )
 
+// Domain-specific actions — used by handler-level PublishAsync calls
+// when the generic CRUD verb is insufficient for the UI narrative.
+const (
+	// Subscriber domain
+	ActionAssignPlan AuditAction = "ASSIGN_PLAN"
+	ActionKYCVerify  AuditAction = "KYC_VERIFY"
+	ActionKYCReject  AuditAction = "KYC_REJECT"
+	ActionSuspend    AuditAction = "SUSPEND"
+	ActionResume     AuditAction = "RESUME"
+
+	// Billing domain
+	ActionCollectPayment AuditAction = "COLLECT_PAYMENT"
+	ActionRefund         AuditAction = "REFUND"
+	ActionVoidInvoice    AuditAction = "VOID_INVOICE"
+	ActionApplyDiscount  AuditAction = "APPLY_DISCOUNT"
+
+	// ACS / device domain
+	ActionProvision    AuditAction = "PROVISION"
+	ActionReboot       AuditAction = "REBOOT"
+	ActionFactoryReset AuditAction = "FACTORY_RESET"
+	ActionApplyPolicy  AuditAction = "APPLY_POLICY"
+
+	// OLT domain
+	ActionConfigureOLT  AuditAction = "CONFIGURE_OLT"
+	ActionSyncOLT       AuditAction = "SYNC_OLT"
+	ActionAckAlarm      AuditAction = "ACK_ALARM"
+	ActionRegisterONT   AuditAction = "REGISTER_ONT"
+	ActionDeregisterONT AuditAction = "DEREGISTER_ONT"
+
+	// Auth / security domain
+	ActionPasswordReset AuditAction = "PASSWORD_RESET"
+	ActionMFAEnable     AuditAction = "MFA_ENABLE"
+	ActionMFADisable    AuditAction = "MFA_DISABLE"
+	ActionRoleChange    AuditAction = "ROLE_CHANGE"
+
+	// Tenant domain
+	ActionDisableTenant AuditAction = "DISABLE_TENANT"
+	ActionEnableTenant  AuditAction = "ENABLE_TENANT"
+	ActionFeatureToggle AuditAction = "FEATURE_TOGGLE"
+)
+
 // AuditStatus represents the outcome of the audited action
 type AuditStatus string
 
