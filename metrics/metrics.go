@@ -844,6 +844,17 @@ func (rw *ResponseWriter) Flush() {
 	}
 }
 
+// Unwrap returns the underlying http.ResponseWriter so that
+// http.NewResponseController (Go 1.20+) can recurse to find optional
+// interfaces like the deadline setters. Without this, an SSE handler
+// calling rc.SetWriteDeadline(time.Time{}) to escape the server-wide
+// WriteTimeout receives "feature not supported" — the deadline keeps
+// firing and the second heartbeat write fails. Same pass-through
+// shape as Hijack and Flush above.
+func (rw *ResponseWriter) Unwrap() http.ResponseWriter {
+	return rw.ResponseWriter
+}
+
 // RegisterAllMetrics registers all metrics with the registry
 func RegisterAllMetrics() {
 	registry.MustRegister(
