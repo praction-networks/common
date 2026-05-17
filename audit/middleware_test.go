@@ -44,3 +44,41 @@ func TestExtractResource(t *testing.T) {
 		}
 	}
 }
+
+func TestExtractResourceAndID(t *testing.T) {
+	cases := []struct {
+		path       string
+		wantRes    string
+		wantID     string
+	}{
+		// cuid2 (32 chars, lowercase alphanumeric)
+		{"/api/v1/olts/n4ybdyowbpo5nkpjzcf3n7vf79w5z1nz", "olt", "n4ybdyowbpo5nkpjzcf3n7vf79w5z1nz"},
+		{"/api/v1/tenant-users/abc123def456ghi789jkl012mno34567", "tenant-user", "abc123def456ghi789jkl012mno34567"},
+
+		// UUID
+		{"/api/v1/audit-logs/f483bddf-3221-4e98-8507-980f2016fc75", "audit-log", "f483bddf-3221-4e98-8507-980f2016fc75"},
+
+		// Numeric
+		{"/api/v1/invoices/42", "invoice", "42"},
+
+		// Nested: resource then id then sub-resource — we keep top-level resource + id
+		{"/api/v1/olts/n4ybdyowbpo5nkpjzcf3n7vf79w5z1nz/onts", "olt", "n4ybdyowbpo5nkpjzcf3n7vf79w5z1nz"},
+		{"/api/v1/tenants/ryyggweeb13wccx45uaopwvt25g0oq7e/verify", "tenant", "ryyggweeb13wccx45uaopwvt25g0oq7e"},
+
+		// No ID — bare collection
+		{"/api/v1/olts", "olt", ""},
+		{"/api/v1/subscribers", "subscriber", ""},
+
+		// Action verb sitting where ID would be — must not be misread as ID
+		{"/api/v1/olts/lookup", "olt", ""},
+		{"/api/v1/tenant-users/lookup", "tenant-user", ""},
+	}
+
+	for _, tc := range cases {
+		gotRes, gotID := extractResourceAndID(tc.path)
+		if gotRes != tc.wantRes || gotID != tc.wantID {
+			t.Errorf("extractResourceAndID(%q) = (%q, %q), want (%q, %q)",
+				tc.path, gotRes, gotID, tc.wantRes, tc.wantID)
+		}
+	}
+}

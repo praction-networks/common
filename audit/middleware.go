@@ -41,12 +41,14 @@ func Middleware(publisher *Publisher, serviceName string) func(next http.Handler
 				return // skip non-tenant requests
 			}
 
+			resource, resourceID := extractResourceAndID(r.URL.Path)
 			event := AuditEvent{
 				TenantID:   tenantID,
 				UserID:     userID,
 				UserName:   userName,
 				Action:     AuditAction(httpMethodToAction(r.Method)),
-				Resource:   extractResource(r.URL.Path),
+				Resource:   resource,
+				ResourceID: resourceID,
 				Service:    serviceName,
 				IPAddress:  extractIP(r),
 				UserAgent:  r.UserAgent(),
@@ -142,25 +144,93 @@ var pathResourceMap = map[string]string{
 // prefixes. Falls back to the raw segment (never empty string) so
 // unrecognised paths are still grouped consistently in audit queries.
 func extractResource(path string) string {
+	r, _ := extractResourceAndID(path)
+	return r
+}
+
+// extractResourceAndID walks the path and returns the canonical resource
+// name plus the resource ID if the next segment looks like an identifier
+// (cuid2, UUID, or numeric). For paths like /api/v1/olts/abc123 the
+// returned pair is ("olt", "abc123"). For /api/v1/olts (no id) the pair
+// is ("olt", ""). Identifier shapes that we recognise:
+//   - cuid2: 24-32 lowercase alphanumeric chars
+//   - UUID:  8-4-4-4-12 hex with dashes
+//   - numeric:  all digits, length 1-12
+//
+// Action-style suffixes (e.g. /olts/{id}/sync, /tenants/{id}/verify) are
+// preserved on Resource via the existing segment match so callers can
+// still tell read/sync/verify apart through the Action field; the ID
+// itself is the {id} between resource and verb.
+func extractResourceAndID(path string) (string, string) {
 	parts := strings.Split(strings.Trim(path, "/"), "/")
-	for _, part := range parts {
-		if part == "" {
+	resource := ""
+	for i, part := range parts {
+		if part == "" || part == "api" {
 			continue
 		}
-		if part == "api" {
-			continue
-		}
-		// Version prefixes like v1, v2, v10 — at most 3 chars starting with 'v'
 		if strings.HasPrefix(part, "v") && len(part) <= 3 {
 			continue
 		}
 		if canonical, ok := pathResourceMap[part]; ok {
-			return canonical
+			resource = canonical
+		} else {
+			resource = part
 		}
-		// Unknown segment — return as-is rather than guessing a singular
-		return part
+		// Look at the next segment for an identifier.
+		if i+1 < len(parts) {
+			candidate := parts[i+1]
+			if looksLikeID(candidate) {
+				return resource, candidate
+			}
+		}
+		return resource, ""
 	}
-	return "unknown"
+	return "unknown", ""
+}
+
+// looksLikeID returns true when s appears to be an entity identifier
+// rather than another path segment (sub-resource or action verb).
+func looksLikeID(s string) bool {
+	if s == "" {
+		return false
+	}
+	// UUID: contains dashes at 8-4-4-4-12 positions
+	if len(s) == 36 && s[8] == '-' && s[13] == '-' && s[18] == '-' && s[23] == '-' {
+		for i := 0; i < len(s); i++ {
+			c := s[i]
+			if c == '-' {
+				continue
+			}
+			if !isHex(c) {
+				return false
+			}
+		}
+		return true
+	}
+	// cuid2: 24-32 lowercase alphanumeric, no dashes
+	if len(s) >= 24 && len(s) <= 32 {
+		for i := 0; i < len(s); i++ {
+			c := s[i]
+			if !((c >= 'a' && c <= 'z') || (c >= '0' && c <= '9')) {
+				return false
+			}
+		}
+		return true
+	}
+	// Numeric ID
+	if len(s) >= 1 && len(s) <= 12 {
+		for i := 0; i < len(s); i++ {
+			if s[i] < '0' || s[i] > '9' {
+				return false
+			}
+		}
+		return true
+	}
+	return false
+}
+
+func isHex(c byte) bool {
+	return (c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F')
 }
 
 // extractIP gets the client IP, preferring X-Forwarded-For
