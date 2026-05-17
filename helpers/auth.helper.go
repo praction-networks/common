@@ -110,6 +110,15 @@ func (m *AuthMiddleware) ValidateServiceToken(next http.Handler) http.Handler {
 			ctx = context.WithValue(ctx, UserRoleKey, userRole)
 		}
 
+		// Extract X-User-Name header (set by auth-service via forward-auth).
+		// Optional — emitted by audit publishers so the UI shows
+		// "Ahmed Hassan" instead of the raw user cuid. Empty falls back
+		// to userId display gracefully.
+		userName := r.Header.Get("X-User-Name")
+		if userName != "" {
+			ctx = context.WithValue(ctx, UserNameKey, userName)
+		}
+
 		// Extract X-Is-System-User header (set by auth-service via forward-auth)
 		isSystemUser := false
 		if isSystemUserHeader := r.Header.Get("X-Is-System-User"); isSystemUserHeader != "" {

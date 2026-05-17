@@ -72,6 +72,10 @@ func (p *Publisher) Publish(ctx context.Context, event AuditEvent) error {
 	if event.UserRole == "" {
 		event.UserRole = helpers.GetUserRole(ctx)
 	}
+	// Note: UserName intentionally NOT denormalized into the audit event.
+	// The audit log keeps IDs only — frontend resolves userId → name
+	// against tenant-user-service at render time. Keeps the audit
+	// store immutable + small, avoids stale snapshots when users rename.
 
 	data, err := json.Marshal(event)
 	if err != nil {

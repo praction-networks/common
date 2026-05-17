@@ -20,6 +20,7 @@ type contextKey struct{ name string }
 var (
 	RequestIDKey         = &contextKey{"request_id"}
 	UserIDKey            = &contextKey{"user_id"}
+	UserNameKey          = &contextKey{"user_name"}
 	UserRoleKey          = &contextKey{"user_role"}
 	TenantIDKey          = &contextKey{"tenant_id"}
 	AccessibleTenantsKey = &contextKey{"accessible_tenants"}
@@ -269,6 +270,17 @@ func GetTenantID(ctx context.Context) string {
 func GetUserRole(ctx context.Context) string {
 	if userRole, ok := ctx.Value(UserRoleKey).(string); ok {
 		return userRole
+	}
+	return ""
+}
+
+// GetUserName retrieves the user display name from the request context.
+// Populated by ValidateServiceToken from the X-User-Name header set by
+// APISIX forward-auth. Returns "" when absent so audit events fall back
+// to userId display gracefully.
+func GetUserName(ctx context.Context) string {
+	if userName, ok := ctx.Value(UserNameKey).(string); ok {
+		return userName
 	}
 	return ""
 }
